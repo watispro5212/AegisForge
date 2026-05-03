@@ -1,0 +1,15 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "DELETE FROM reminders WHERE id = $1 AND user_id = $2 AND fired = FALSE",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Int8"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "5b37ba753c4835acaa6b6823838a131bf177e9370ec8a73bdabc3784f88b1596"
+}

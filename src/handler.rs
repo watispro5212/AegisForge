@@ -2,7 +2,7 @@ use poise::serenity_prelude as serenity;
 use tracing::info;
 
 pub async fn event_handler(
-    ctx: &serenity::Context,
+    _ctx: &serenity::Context,
     event: &serenity::FullEvent,
     _framework: poise::FrameworkContext<'_, crate::Data, crate::Error>,
     _data: &crate::Data,

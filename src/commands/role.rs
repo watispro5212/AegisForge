@@ -9,7 +9,7 @@ pub async fn add(
     #[description = "The role to add"] role: serenity::Role,
 ) -> Result<(), Error> {
     let guild_id = ctx.guild_id().ok_or("Must be in a guild")?;
-    let mut member = guild_id.member(ctx.http(), user.id).await?;
+    let member = guild_id.member(ctx.http(), user.id).await?;
     member.add_role(ctx.http(), role.id).await?;
 
     ctx.send(poise::CreateReply::default().embed(
@@ -29,7 +29,7 @@ pub async fn remove(
     #[description = "The role to remove"] role: serenity::Role,
 ) -> Result<(), Error> {
     let guild_id = ctx.guild_id().ok_or("Must be in a guild")?;
-    let mut member = guild_id.member(ctx.http(), user.id).await?;
+    let member = guild_id.member(ctx.http(), user.id).await?;
     member.remove_role(ctx.http(), role.id).await?;
 
     ctx.send(poise::CreateReply::default().embed(

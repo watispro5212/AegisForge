@@ -1,0 +1,22 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        UPDATE guild_case_counters\n        SET next_case = next_case + 1\n        WHERE guild_id = $1\n        RETURNING next_case - 1 AS \"case_number!\"\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "case_number!",
+        "type_info": "Int4"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8"
+      ]
+    },
+    "nullable": [
+      null
+    ]
+  },
+  "hash": "aff9efe21a22c8fe83141b62479cbb11063c6ef9ba3cf2dc4b72de3944fc43d4"
+}

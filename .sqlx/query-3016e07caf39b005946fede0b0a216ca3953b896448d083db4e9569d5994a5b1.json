@@ -1,0 +1,112 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        SELECT\n            guild_id,\n            prefix,\n            mod_log_channel,\n            message_log_channel,\n            member_log_channel,\n            welcome_channel,\n            welcome_message,\n            goodbye_channel,\n            goodbye_message,\n            auto_role_id,\n            mute_role_id,\n            automod_enabled,\n            automod_spam,\n            automod_invites,\n            automod_caps,\n            automod_mentions\n        FROM guild_configs\n        WHERE guild_id = $1\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "guild_id",
+        "type_info": "Int8"
+      },
+      {
+        "ordinal": 1,
+        "name": "prefix",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 2,
+        "name": "mod_log_channel",
+        "type_info": "Int8"
+      },
+      {
+        "ordinal": 3,
+        "name": "message_log_channel",
+        "type_info": "Int8"
+      },
+      {
+        "ordinal": 4,
+        "name": "member_log_channel",
+        "type_info": "Int8"
+      },
+      {
+        "ordinal": 5,
+        "name": "welcome_channel",
+        "type_info": "Int8"
+      },
+      {
+        "ordinal": 6,
+        "name": "welcome_message",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 7,
+        "name": "goodbye_channel",
+        "type_info": "Int8"
+      },
+      {
+        "ordinal": 8,
+        "name": "goodbye_message",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 9,
+        "name": "auto_role_id",
+        "type_info": "Int8"
+      },
+      {
+        "ordinal": 10,
+        "name": "mute_role_id",
+        "type_info": "Int8"
+      },
+      {
+        "ordinal": 11,
+        "name": "automod_enabled",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 12,
+        "name": "automod_spam",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 13,
+        "name": "automod_invites",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 14,
+        "name": "automod_caps",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 15,
+        "name": "automod_mentions",
+        "type_info": "Bool"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      true,
+      true,
+      true,
+      true,
+      false,
+      true,
+      false,
+      true,
+      true,
+      false,
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "3016e07caf39b005946fede0b0a216ca3953b896448d083db4e9569d5994a5b1"
+}

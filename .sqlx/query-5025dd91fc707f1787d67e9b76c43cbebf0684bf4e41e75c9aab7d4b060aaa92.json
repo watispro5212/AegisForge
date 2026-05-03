@@ -1,0 +1,14 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        INSERT INTO guild_case_counters (guild_id)\n        VALUES ($1)\n        ON CONFLICT (guild_id) DO NOTHING\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "5025dd91fc707f1787d67e9b76c43cbebf0684bf4e41e75c9aab7d4b060aaa92"
+}

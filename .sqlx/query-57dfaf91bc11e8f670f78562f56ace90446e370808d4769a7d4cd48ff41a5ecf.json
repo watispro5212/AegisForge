@@ -1,0 +1,15 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "UPDATE warnings SET pardoned = TRUE WHERE id = $1 AND guild_id = $2 AND pardoned = FALSE",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Int8"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "57dfaf91bc11e8f670f78562f56ace90446e370808d4769a7d4cd48ff41a5ecf"
+}
