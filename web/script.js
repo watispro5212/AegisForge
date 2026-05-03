@@ -75,3 +75,78 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         }
     });
 });
+
+// ── Live Dashboard Data Fetching ────────────────────
+async function fetchLiveStats() {
+    try {
+        const response = await fetch('/api/stats');
+        if (!response.ok) throw new Error('Network error');
+        const data = await response.json();
+        
+        if (data.stats) {
+            const animateValue = (id, end) => {
+                const obj = document.getElementById(id);
+                if (!obj) return;
+                let startTimestamp = null;
+                const duration = 1500;
+                const step = (timestamp) => {
+                    if (!startTimestamp) startTimestamp = timestamp;
+                    const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                    obj.innerHTML = Math.floor(progress * end);
+                    if (progress < 1) {
+                        window.requestAnimationFrame(step);
+                    } else {
+                        obj.innerHTML = end;
+                    }
+                };
+                window.requestAnimationFrame(step);
+            };
+
+            animateValue('stat-guilds', data.stats.guilds);
+            animateValue('stat-cases', data.stats.cases);
+            animateValue('stat-warnings', data.stats.warnings);
+            animateValue('stat-reminders', data.stats.reminders);
+        }
+
+        const leaderboardEl = document.getElementById('live-leaderboard');
+        if (data.leaderboard && data.leaderboard.length > 0) {
+            leaderboardEl.innerHTML = data.leaderboard.map(item => `
+                <li>
+                    <span class="activity-user">User ${item.user_id.substring(0, 8)}...</span>
+                    <span class="activity-detail badge">${item.infraction_count} warnings</span>
+                </li>
+            `).join('');
+        } else {
+            leaderboardEl.innerHTML = `<li><span class="activity-detail">No data available</span></li>`;
+        }
+
+        const activityEl = document.getElementById('live-activity');
+        if (data.recentActivity && data.recentActivity.length > 0) {
+            activityEl.innerHTML = data.recentActivity.map(item => `
+                <li>
+                    <span class="activity-user">Warn #${item.id}</span>
+                    <span class="activity-detail">${item.reason}</span>
+                    <span class="activity-time">${new Date(item.created_at).toLocaleDateString()}</span>
+                </li>
+            `).join('');
+        } else {
+            activityEl.innerHTML = `<li><span class="activity-detail">No recent activity</span></li>`;
+        }
+    } catch (error) {
+        console.error("Failed to load live stats:", error);
+        document.getElementById('live-leaderboard').innerHTML = `<li><span class="activity-detail">Stats Offline</span></li>`;
+        document.getElementById('live-activity').innerHTML = `<li><span class="activity-detail">Stats Offline</span></li>`;
+    }
+}
+
+const dashObserver = new IntersectionObserver((entries) => {
+    if (entries[0].isIntersecting) {
+        fetchLiveStats();
+        dashObserver.disconnect();
+    }
+}, { threshold: 0.1 });
+
+const dashboardSection = document.getElementById('dashboard');
+if (dashboardSection) {
+    dashObserver.observe(dashboardSection);
+}
