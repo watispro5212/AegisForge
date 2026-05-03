@@ -9,7 +9,7 @@ pub async fn ping(ctx: Context<'_>) -> Result<(), Error> {
     let elapsed = start.elapsed().as_millis();
 
     msg.edit(ctx, poise::CreateReply::default().embed(
-        serenity::CreateEmbed::default()
+        serenity::CreateEmbed::new()
             .title("⚡ AegisForge — Latency")
             .field("API Round-trip", format!("{}ms", elapsed), true)
             .color(0x00ffff),
@@ -23,15 +23,18 @@ pub async fn ping(ctx: Context<'_>) -> Result<(), Error> {
 pub async fn server(ctx: Context<'_>) -> Result<(), Error> {
     let guild = ctx.guild().ok_or("Must be in a guild")?.clone();
 
+    let icon = guild.icon_url().unwrap_or_default();
+    let boost_tier = format!("Tier {}", u8::from(guild.premium_tier));
+
     ctx.send(poise::CreateReply::default().embed(
-        serenity::CreateEmbed::default()
+        serenity::CreateEmbed::new()
             .title(format!("🔷 Server — {}", guild.name))
-            .thumbnail(guild.icon_url().unwrap_or_default())
+            .thumbnail(icon)
             .field("Owner", format!("<@{}>", guild.owner_id), true)
             .field("Members", guild.member_count.to_string(), true)
             .field("Channels", guild.channels.len().to_string(), true)
             .field("Roles", guild.roles.len().to_string(), true)
-            .field("Boost Level", format!("Tier {}", guild.premium_tier.num()), true)
+            .field("Boost Level", boost_tier, true)
             .field("Created", format!("<t:{}:R>", guild.id.created_at().unix_timestamp()), true)
             .color(0x00ffff),
     ))
@@ -48,7 +51,7 @@ pub async fn user(
     let target = user.as_ref().unwrap_or_else(|| ctx.author());
 
     ctx.send(poise::CreateReply::default().embed(
-        serenity::CreateEmbed::default()
+        serenity::CreateEmbed::new()
             .title(format!("👤 User — {}", target.name))
             .thumbnail(target.face())
             .field("ID", target.id.to_string(), true)
@@ -70,7 +73,7 @@ pub async fn avatar(
     let avatar_url = target.face();
 
     ctx.send(poise::CreateReply::default().embed(
-        serenity::CreateEmbed::default()
+        serenity::CreateEmbed::new()
             .title(format!("{}'s Avatar", target.name))
             .image(&avatar_url)
             .color(0x00ffff),
@@ -83,7 +86,7 @@ pub async fn avatar(
 #[poise::command(slash_command, prefix_command)]
 pub async fn uptime(ctx: Context<'_>) -> Result<(), Error> {
     ctx.send(poise::CreateReply::default().embed(
-        serenity::CreateEmbed::default()
+        serenity::CreateEmbed::new()
             .title("🔩 AegisForge — System Status")
             .field("Version", env!("CARGO_PKG_VERSION"), true)
             .field("Language", "Rust 🦀", true)

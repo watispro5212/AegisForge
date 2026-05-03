@@ -1,6 +1,6 @@
 use crate::{Context, Error};
 use poise::serenity_prelude as serenity;
-use chrono::{Utc, Duration};
+use chrono::Utc;
 
 /// Create a reminder for yourself
 #[poise::command(slash_command, prefix_command)]
@@ -9,31 +9,31 @@ pub async fn create(
     #[description = "Minutes until the reminder fires"] minutes: u64,
     #[description = "What to remind you about"] message: String,
 ) -> Result<(), Error> {
-    let author = ctx.author().clone();
+    let author_id = ctx.author().id;
     let channel = ctx.channel_id();
     let http = ctx.serenity_context().http.clone();
     let reminder_msg = message.clone();
 
-    let fire_at = Utc::now() + Duration::minutes(minutes as i64);
+    let fire_at = Utc::now().timestamp() + (minutes as i64 * 60);
 
     ctx.send(poise::CreateReply::default().embed(
-        serenity::CreateEmbed::default()
+        serenity::CreateEmbed::new()
             .title("⏰ Reminder Set")
             .description(format!("I'll remind you: **{}**", &message))
-            .field("Fires in", format!("<t:{}:R>", fire_at.timestamp()), true)
+            .field("Fires in", format!("<t:{}:R>", fire_at), true)
             .color(0x00ffff),
     ))
     .await?;
 
-    // Spawn a task to send the reminder after the delay
+    // Spawn a background task — fires even if the command context is dropped
     tokio::spawn(async move {
         tokio::time::sleep(tokio::time::Duration::from_secs(minutes * 60)).await;
         let _ = channel
             .send_message(&http, serenity::CreateMessage::default()
                 .embed(
-                    serenity::CreateEmbed::default()
+                    serenity::CreateEmbed::new()
                         .title("⏰ Reminder")
-                        .description(format!("<@{}>, here's your reminder:\n**{}**", author.id, reminder_msg))
+                        .description(format!("<@{}>, here's your reminder:\n**{}**", author_id, reminder_msg))
                         .color(0x00ffff),
                 )
             )

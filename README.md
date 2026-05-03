@@ -56,8 +56,29 @@ cargo run --release
 | Variable | Required | Description |
 |----------|----------|-------------|
 | `DISCORD_TOKEN` | ✅ | Your bot's token |
-| `DATABASE_URL` | ✅ | SQLite path or Postgres URL |
-| `RUST_LOG` | ❌ | Log level (`info`, `debug`, etc.) |
+| `DATABASE_URL` | ✅ | **Direct** Neon URL — used only for migrations at startup |
+| `DATABASE_POOL_URL` | ✅ | **Pooled** Neon URL — used for all bot queries |
+| `DB_MAX_CONNECTIONS` | ❌ | SQLx pool size to PgBouncer (default: `10`) |
+| `RUST_LOG` | ❌ | Log level, e.g. `aegisforge=info,sqlx=warn` |
+
+> **Why two URLs?** Neon runs PgBouncer in transaction mode for pooled connections.
+> Transaction mode doesn't support DDL statements (`CREATE TABLE`, etc.),
+> so migrations **must** use the direct URL. Normal queries use the pooled URL
+> which handles up to 10,000 client connections through Neon's built-in PgBouncer.
+
+### Getting Your Neon URLs
+
+The two URLs differ by only `-pooler` in the hostname:
+
+```
+# Direct (DATABASE_URL) — for migrations:
+postgresql://USER:PASS@ep-your-endpoint.region.aws.neon.tech/neondb?sslmode=require
+
+# Pooled (DATABASE_POOL_URL) — for the bot:
+postgresql://USER:PASS@ep-your-endpoint-pooler.region.aws.neon.tech/neondb?sslmode=require
+```
+
+Get both from the Neon Console → your project → **Connect** → toggle **Connection pooling**.
 
 ---
 
