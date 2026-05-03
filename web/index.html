@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AegisForge | Premium Rust Discord Bot</title>
+    <meta name="description" content="AegisForge is a fast Rust Discord bot for moderation, automation, role management, and server utilities. Built for speed, stability, and clean control.">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="logo-container">
+            <div class="nav-logo-ring">
+                <span class="nav-logo-icon">⚙</span>
+            </div>
+            <span class="logo-text">AEGIS<span class="logo-accent">FORGE</span></span>
+        </div>
+        <div class="nav-links">
+            <a href="#features">Features</a>
+            <a href="#commands">Commands</a>
+            <a href="#stack">Stack</a>
+            <a href="https://github.com/" target="_blank" class="nav-link-code">GitHub</a>
+            <button class="btn-primary" id="invite-btn">Invite Bot</button>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <header class="hero">
+        <div class="hero-particles" id="particles"></div>
+        <div class="hero-glow"></div>
+        <div class="hero-content">
+            <div class="hero-badge">🦀 Built with Rust</div>
+            <h1>Engineered for <br><span class="text-gradient">Precision.</span></h1>
+            <p>A premium, high-performance Discord bot that protects your community,<br>automates your workflow, and runs at the speed of metal.</p>
+            <div class="hero-btns">
+                <button class="btn-primary btn-lg">Get Started →</button>
+                <button class="btn-secondary btn-lg">View Docs</button>
+            </div>
+            <div class="hero-stats">
+                <div class="stat"><span class="stat-num">19</span><span class="stat-label">Commands</span></div>
+                <div class="stat-divider"></div>
+                <div class="stat"><span class="stat-num">4</span><span class="stat-label">Categories</span></div>
+                <div class="stat-divider"></div>
+                <div class="stat"><span class="stat-num">0ms</span><span class="stat-label">GC Pauses</span></div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Features -->
+    <section id="features" class="features">
+        <div class="section-header">
+            <span class="section-tag">Capabilities</span>
+            <h2>Everything you need,<br>nothing you don't.</h2>
+        </div>
+        <div class="feature-grid">
+            <div class="feature-card" data-reveal>
+                <div class="card-icon-wrap mod">🛡️</div>
+                <h3>Advanced Moderation</h3>
+                <p>Timeout, kick, ban, warn, purge — all with structured embed responses and audit trails built for accountability.</p>
+                <ul class="feature-list">
+                    <li>Auto-mod filters</li>
+                    <li>Case tracking</li>
+                    <li>Appeal-ready logs</li>
+                </ul>
+            </div>
+            <div class="feature-card" data-reveal>
+                <div class="card-icon-wrap util">⚡</div>
+                <h3>Utility Commands</h3>
+                <p>Server stats, user lookups, avatar fetching, Discord timestamps, and bot diagnostics — all instantly accessible.</p>
+                <ul class="feature-list">
+                    <li>Server & user info</li>
+                    <li>Latency tracking</li>
+                    <li>Timestamp formatter</li>
+                </ul>
+            </div>
+            <div class="feature-card" data-reveal>
+                <div class="card-icon-wrap auto">⚙️</div>
+                <h3>Smart Automation</h3>
+                <p>Auto-roles, configurable welcome messages, reaction role support, and in-memory reminders with async delivery.</p>
+                <ul class="feature-list">
+                    <li>Auto-role on join</li>
+                    <li>Welcome messages</li>
+                    <li>Async reminders</li>
+                </ul>
+            </div>
+            <div class="feature-card" data-reveal>
+                <div class="card-icon-wrap log">📊</div>
+                <h3>Deep Logging</h3>
+                <p>Track message edits, deletions, member joins and leaves, and all moderation actions with full timestamps and actor attribution.</p>
+                <ul class="feature-list">
+                    <li>Message events</li>
+                    <li>Member changes</li>
+                    <li>Mod action logs</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Commands Reference -->
+    <section id="commands" class="commands-section">
+        <div class="section-header">
+            <span class="section-tag">Reference</span>
+            <h2>Command Reference</h2>
+        </div>
+
+        <div class="cmd-tabs">
+            <button class="cmd-tab active" data-tab="moderation">Moderation</button>
+            <button class="cmd-tab" data-tab="utility">Utility</button>
+            <button class="cmd-tab" data-tab="role">Roles</button>
+            <button class="cmd-tab" data-tab="config">Config</button>
+            <button class="cmd-tab" data-tab="remind">Reminders</button>
+        </div>
+
+        <div class="cmd-panel active" id="tab-moderation">
+            <div class="cmd-table">
+                <div class="cmd-row"><code>/mod ban</code><span>Permanently ban a member with optional message purge</span></div>
+                <div class="cmd-row"><code>/mod unban</code><span>Unban a user by ID</span></div>
+                <div class="cmd-row"><code>/mod kick</code><span>Remove a member from the server</span></div>
+                <div class="cmd-row"><code>/mod timeout</code><span>Mute a member for a specified duration</span></div>
+                <div class="cmd-row"><code>/mod warn</code><span>Issue a formal warning logged to the database</span></div>
+                <div class="cmd-row"><code>/mod purge</code><span>Bulk delete up to 100 messages in a channel</span></div>
+            </div>
+        </div>
+        <div class="cmd-panel" id="tab-utility">
+            <div class="cmd-table">
+                <div class="cmd-row"><code>/util ping</code><span>Check API round-trip latency</span></div>
+                <div class="cmd-row"><code>/util server</code><span>Display detailed server information</span></div>
+                <div class="cmd-row"><code>/util user</code><span>Look up information on any user</span></div>
+                <div class="cmd-row"><code>/util avatar</code><span>Retrieve a user's full-resolution avatar</span></div>
+                <div class="cmd-row"><code>/util uptime</code><span>View bot uptime and version details</span></div>
+                <div class="cmd-row"><code>/util timestamp</code><span>Generate Discord timestamp formats from UNIX time</span></div>
+            </div>
+        </div>
+        <div class="cmd-panel" id="tab-role">
+            <div class="cmd-table">
+                <div class="cmd-row"><code>/role add</code><span>Assign a role to a member</span></div>
+                <div class="cmd-row"><code>/role remove</code><span>Remove a role from a member</span></div>
+                <div class="cmd-row"><code>/role list</code><span>List all roles in the server by hierarchy</span></div>
+            </div>
+        </div>
+        <div class="cmd-panel" id="tab-config">
+            <div class="cmd-table">
+                <div class="cmd-row"><code>/config logs</code><span>Set the moderation log channel</span></div>
+                <div class="cmd-row"><code>/config welcome</code><span>Set the welcome message channel and template</span></div>
+                <div class="cmd-row"><code>/config autorole</code><span>Set the role auto-assigned to new members</span></div>
+            </div>
+        </div>
+        <div class="cmd-panel" id="tab-remind">
+            <div class="cmd-table">
+                <div class="cmd-row"><code>/remind create</code><span>Set a reminder delivered to you after N minutes</span></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tech Stack -->
+    <section id="stack" class="tech-stack">
+        <div class="section-header">
+            <span class="section-tag">Under the Hood</span>
+            <h2>Built on a<br>rock-solid foundation.</h2>
+        </div>
+        <div class="stack-grid">
+            <div class="stack-card">
+                <span class="stack-icon">🦀</span>
+                <h4>Rust</h4>
+                <p>Memory-safe systems language with zero-cost abstractions and fearless concurrency.</p>
+            </div>
+            <div class="stack-card">
+                <span class="stack-icon">🍐</span>
+                <h4>Poise</h4>
+                <p>Slash-command-first framework for ergonomic Discord bot development in Rust.</p>
+            </div>
+            <div class="stack-card">
+                <span class="stack-icon">🌊</span>
+                <h4>Serenity</h4>
+                <p>Battle-tested Discord API bindings powering gateway events and REST interactions.</p>
+            </div>
+            <div class="stack-card">
+                <span class="stack-icon">⚡</span>
+                <h4>Tokio</h4>
+                <p>The industry-standard async runtime for high-throughput Rust applications.</p>
+            </div>
+            <div class="stack-card">
+                <span class="stack-icon">🗄️</span>
+                <h4>SQLx + SQLite</h4>
+                <p>Compile-time verified SQL queries with async execution for reliable data persistence.</p>
+            </div>
+            <div class="stack-card">
+                <span class="stack-icon">🔍</span>
+                <h4>Tracing</h4>
+                <p>Structured, level-filtered logging for production observability without noise.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section">
+        <div class="cta-glow"></div>
+        <h2>Ready to forge <span class="text-gradient">your server</span>?</h2>
+        <p>Add AegisForge to your server in seconds. No bloat, no noise — just clean, fast control.</p>
+        <div class="hero-btns">
+            <button class="btn-primary btn-lg">Invite AegisForge</button>
+            <button class="btn-secondary btn-lg">Read the Docs</button>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-top">
+            <div class="logo-container">
+                <div class="nav-logo-ring">
+                    <span class="nav-logo-icon">⚙</span>
+                </div>
+                <span class="logo-text">AEGIS<span class="logo-accent">FORGE</span></span>
+            </div>
+            <div class="footer-links">
+                <a href="#features">Features</a>
+                <a href="#commands">Commands</a>
+                <a href="#stack">Stack</a>
+                <a href="https://github.com/" target="_blank">GitHub</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 AegisForge. Forged with 🦀 Rust and precision.</p>
+            <p class="footer-tagline">Engineered, not improvised.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+# Environment
+.env
+
+# Rust build artifacts
+/target/
+Cargo.lock
+
+# Database files
+*.db
+*.db-shm
+*.db-wal
+
+# Editor directories
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
