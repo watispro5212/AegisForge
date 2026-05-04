@@ -172,7 +172,7 @@ pub async fn poll(
 pub async fn serverinfo(ctx: Context<'_>) -> Result<(), Error> {
     if let Some(guild_id) = ctx.guild_id() {
         let guild = guild_id.to_partial_guild(&ctx.http()).await?;
-        let members = guild.member_count;
+        let members = guild.approximate_member_count.unwrap_or(0);
         let created_at = guild.id.created_at();
         
         ctx.send(poise::CreateReply::default().embed(
