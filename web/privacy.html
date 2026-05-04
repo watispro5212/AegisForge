@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy | AegisForge</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        .legal-content {
+            max-width: 800px;
+            margin: 150px auto 100px;
+            padding: 0 5%;
+        }
+        .legal-content h1 {
+            color: var(--cyan);
+            margin-bottom: 1rem;
+        }
+        .legal-content h2 {
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+        .legal-content p, .legal-content li {
+            color: var(--text-dim);
+            margin-bottom: 1rem;
+            line-height: 1.8;
+        }
+        .legal-content ul {
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="logo-container">
+            <div class="nav-logo-ring">
+                <span class="nav-logo-icon">⚙</span>
+            </div>
+            <a href="index.html" style="text-decoration: none;"><span class="logo-text" style="color:var(--text);">AEGIS<span class="logo-accent">FORGE</span></span></a>
+        </div>
+        <div class="nav-links">
+            <a href="index.html#features">Features</a>
+            <a href="index.html#commands">Commands</a>
+            <a href="https://github.com/watispro5212/AegisForge" target="_blank" rel="noopener noreferrer" class="nav-link-code">GitHub</a>
+            <button class="btn-primary" id="invite-btn" onclick="window.location.href='/'">Invite Bot</button>
+        </div>
+    </nav>
+
+    <!-- Content -->
+    <main class="legal-content">
+        <h1>Privacy Policy</h1>
+        <p>Last updated: May 2026</p>
+        
+        <h2>1. Information We Collect</h2>
+        <p>AegisForge collects minimal data necessary to function securely and reliably. This includes:</p>
+        <ul>
+            <li><strong>Server IDs & Configuration:</strong> Guild configurations, role settings, and channel preferences.</li>
+            <li><strong>User IDs:</strong> When executing moderation commands or receiving warnings, User IDs are stored for audit logs.</li>
+            <li><strong>Message Metadata:</strong> For message caching and purging, temporary message IDs may be stored in memory.</li>
+        </ul>
+
+        <h2>2. How We Use Your Information</h2>
+        <p>We use this data strictly to provide AegisForge's intended functionality, such as keeping track of moderation warnings, executing timed reminders, and managing auto-roles. We do not sell or share data with third parties.</p>
+
+        <h2>3. Data Retention</h2>
+        <p>Moderation logs and user warnings are kept indefinitely for audit purposes unless explicitly purged by a server administrator. Reminders are deleted immediately upon successful execution.</p>
+
+        <h2>4. Your Rights</h2>
+        <p>Server administrators may request data deletion for their guild at any time by removing the bot or contacting our support team in the official AegisForge support server.</p>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-top">
+            <div class="logo-container">
+                <div class="nav-logo-ring">
+                    <span class="nav-logo-icon">⚙</span>
+                </div>
+                <span class="logo-text">AEGIS<span class="logo-accent">FORGE</span></span>
+            </div>
+            <div class="footer-links">
+                <a href="index.html#features">Features</a>
+                <a href="index.html#commands">Commands</a>
+                <a href="https://github.com/watispro5212/AegisForge" target="_blank" rel="noopener noreferrer">GitHub</a>
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="terms.html">Terms of Service</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 AegisForge. Forged with 🦀 Rust and precision.</p>
+        </div>
+    </footer>
+</body>
+</html>
