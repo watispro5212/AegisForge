@@ -1,5 +1,5 @@
 # Build Stage
-FROM rust:1.77-slim AS builder
+FROM rust:1.82-slim AS builder
 
 WORKDIR /usr/src/aegisforge
 
