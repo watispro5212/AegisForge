@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium | AegisForge</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        .page-content {
+            max-width: 1000px;
+            margin: 150px auto 100px;
+            padding: 0 5%;
+            text-align: center;
+        }
+        .page-content h1 {
+            font-size: 3rem;
+            color: var(--cyan);
+            margin-bottom: 1rem;
+        }
+        .subtitle {
+            color: var(--text-dim);
+            font-size: 1.2rem;
+            margin-bottom: 3rem;
+        }
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        .pricing-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 3rem 2rem;
+            transition: var(--transition);
+            position: relative;
+        }
+        .pricing-card.featured {
+            border-color: var(--cyan);
+            box-shadow: var(--glow);
+            transform: scale(1.05);
+        }
+        .pricing-card.featured::before {
+            content: "Most Popular";
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--cyan);
+            color: #050a15;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+        .pricing-title {
+            font-size: 1.5rem;
+            color: #ffffff;
+            margin-bottom: 1rem;
+        }
+        .pricing-price {
+            font-size: 3rem;
+            color: var(--cyan);
+            font-weight: 800;
+            margin-bottom: 2rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .pricing-price span {
+            font-size: 1rem;
+            color: var(--text-dim);
+        }
+        .pricing-features {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 2rem;
+            text-align: left;
+        }
+        .pricing-features li {
+            margin-bottom: 1rem;
+            color: var(--text-dim);
+            position: relative;
+            padding-left: 1.5rem;
+        }
+        .pricing-features li::before {
+            content: "✓";
+            color: var(--cyan);
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+        .btn-pricing {
+            display: inline-block;
+            width: 100%;
+            padding: 1rem;
+            border-radius: var(--radius);
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        .btn-pricing.outline {
+            border: 1px solid var(--cyan);
+            color: var(--cyan);
+            background: transparent;
+        }
+        .btn-pricing.outline:hover {
+            background: rgba(0, 229, 255, 0.1);
+        }
+        .btn-pricing.solid {
+            background: var(--cyan);
+            color: #050a15;
+            border: none;
+        }
+        .btn-pricing.solid:hover {
+            background: #00b8cc;
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.4);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="logo-container">
+            <div class="nav-logo-ring">
+                <span class="nav-logo-icon">⚙</span>
+            </div>
+            <a href="index.html" class="logo-link"><span class="logo-text">AEGIS<span class="logo-accent">FORGE</span></span></a>
+        </div>
+        <div class="nav-links">
+            <a href="index.html#features">Features</a>
+            <a href="commands.html">Commands</a>
+            <a href="premium.html">Premium</a>
+            <a href="team.html">Team</a>
+            <a href="changelog.html">Changelog</a>
+            <a href="https://github.com/watispro5212/AegisForge" target="_blank" rel="noopener noreferrer" class="nav-link-code">GitHub</a>
+            <a href="https://discord.com/oauth2/authorize?client_id=1500582485367722004&permissions=8&response_type=code&redirect_uri=https%3A%2F%2Fdiscord.com%2Foauth2%2Fauthorize%3Fclient_id%3D1500582485367722004&integration_type=0&scope=bot+identify+applications.commands+applications.commands.permissions.update+openid" target="_blank" rel="noopener noreferrer" class="btn-primary">Invite Bot</a>
+        </div>
+    </nav>
+
+    <!-- Content -->
+    <main class="page-content">
+        <h1>Unlock <span class="text-gradient">AegisForge v2</span></h1>
+        <p class="subtitle">Supercharge your Discord server with advanced AI moderation and custom branding.</p>
+        
+        <div class="pricing-grid">
+            <div class="pricing-card">
+                <div class="pricing-title">Standard</div>
+                <div class="pricing-price">$0<span>/mo</span></div>
+                <ul class="pricing-features">
+                    <li>Basic Moderation (Ban/Kick/Mute)</li>
+                    <li>Auto-Moderation (Bad Words)</li>
+                    <li>Utility Commands</li>
+                    <li>99.9% Uptime</li>
+                </ul>
+                <a href="#" class="btn-pricing outline">Current Plan</a>
+            </div>
+            
+            <div class="pricing-card featured">
+                <div class="pricing-title">Vanguard</div>
+                <div class="pricing-price">$4.99<span>/mo</span></div>
+                <ul class="pricing-features">
+                    <li>Everything in Standard</li>
+                    <li>Custom Bot Status & Activity</li>
+                    <li>Advanced Ticket System</li>
+                    <li>Reaction Roles</li>
+                    <li>Priority Support</li>
+                </ul>
+                <a href="#" class="btn-pricing solid">Upgrade to Vanguard</a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-top">
+            <div class="logo-container">
+                <div class="nav-logo-ring">
+                    <span class="nav-logo-icon">⚙</span>
+                </div>
+                <span class="logo-text">AEGIS<span class="logo-accent">FORGE</span></span>
+            </div>
+            <div class="footer-links">
+                <a href="index.html#features">Features</a>
+                <a href="commands.html">Commands</a>
+                <a href="premium.html">Premium</a>
+                <a href="team.html">Team</a>
+                <a href="changelog.html">Changelog</a>
+                <a href="about.html">About</a>
+                <a href="https://github.com/watispro5212/AegisForge" target="_blank" rel="noopener noreferrer">GitHub</a>
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="terms.html">Terms of Service</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 AegisForge. Forged with 🦀 Rust and precision.</p>
+        </div>
+    </footer>
+</body>
+</html>

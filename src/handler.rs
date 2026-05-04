@@ -10,6 +10,7 @@ pub async fn event_handler(
     match event {
         serenity::FullEvent::Ready { data_about_bot } => {
             info!("AegisForge connected as {}", data_about_bot.user.name);
+            _ctx.set_presence(Some(serenity::ActivityData::watching("over AegisForge HQ | v2.0")), serenity::OnlineStatus::Online);
         }
         serenity::FullEvent::MessageDelete { channel_id, deleted_message_id, guild_id: _ } => {
             info!("Message deleted in channel {}: {}", channel_id, deleted_message_id);

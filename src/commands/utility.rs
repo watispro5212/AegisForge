@@ -217,3 +217,70 @@ pub async fn whois(
     ctx.send(poise::CreateReply::default().embed(embed)).await?;
     Ok(())
 }
+
+/// Ask the Magic 8-Ball a question
+#[poise::command(slash_command, prefix_command)]
+pub async fn eightball(
+    ctx: Context<'_>,
+    #[description = "The question to ask"] question: String,
+) -> Result<(), Error> {
+    let responses = [
+        "It is certain.", "It is decidedly so.", "Without a doubt.", "Yes - definitely.",
+        "You may rely on it.", "As I see it, yes.", "Most likely.", "Outlook good.",
+        "Yes.", "Signs point to yes.", "Reply hazy, try again.", "Ask again later.",
+        "Better not tell you now.", "Cannot predict now.", "Concentrate and ask again.",
+        "Don't count on it.", "My reply is no.", "My sources say no.", "Outlook not so good.",
+        "Very doubtful."
+    ];
+    let index = rand::random::<usize>() % responses.len();
+    
+    ctx.send(poise::CreateReply::default().embed(
+        serenity::CreateEmbed::new()
+            .title("🎱 Magic 8-Ball")
+            .field("Question", question, false)
+            .field("Answer", responses[index], false)
+            .color(0x00ffff),
+    ))
+    .await?;
+    Ok(())
+}
+
+/// Get a random programming joke
+#[poise::command(slash_command, prefix_command)]
+pub async fn joke(ctx: Context<'_>) -> Result<(), Error> {
+    let jokes = [
+        "Why do programmers prefer dark mode?\nBecause light attracts bugs.",
+        "How many programmers does it take to change a light bulb?\nNone, that's a hardware problem.",
+        "To understand what recursion is, you must first understand recursion.",
+        "A programmer is told to \"go to the store and buy a loaf of bread. If they have eggs, get a dozen.\"\nHe returns with 12 loaves of bread.",
+        "There are 10 types of people in the world: those who understand binary, and those who don't.",
+        "Why did the programmer quit his job?\nBecause he didn't get arrays."
+    ];
+    let index = rand::random::<usize>() % jokes.len();
+    
+    ctx.send(poise::CreateReply::default().embed(
+        serenity::CreateEmbed::new()
+            .title("😂 Programming Joke")
+            .description(jokes[index])
+            .color(0x00ffff),
+    ))
+    .await?;
+    Ok(())
+}
+
+/// Create a custom embed
+#[poise::command(slash_command, prefix_command)]
+pub async fn embed(
+    ctx: Context<'_>,
+    #[description = "The title of the embed"] title: String,
+    #[description = "The description of the embed"] description: String,
+) -> Result<(), Error> {
+    ctx.send(poise::CreateReply::default().embed(
+        serenity::CreateEmbed::new()
+            .title(title)
+            .description(description)
+            .color(0x00ffff),
+    ))
+    .await?;
+    Ok(())
+}

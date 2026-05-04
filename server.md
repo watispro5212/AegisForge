@@ -17,7 +17,7 @@ This document contains the exact blueprint for creating the ultimate Discord Sup
 
 1. **👑 Founder**
    - **Color:** `#00e5ff` (Neon Cyan)
-   - **Permissions:** `Administrator`
+   - **Permissions:** `Administrator` (Bypasses all channel permissions).
    - **Display:** Display separately from online members.
 
 2. **🛠️ Developer**
@@ -25,64 +25,129 @@ This document contains the exact blueprint for creating the ultimate Discord Sup
    - **Permissions:** `Administrator`
    - **Display:** Display separately.
 
-3. **🛡️ Aegis Vanguard** (Moderators/Support Team)
-   - **Color:** `#4caf50` (Green)
-   - **Permissions:** `Manage Messages`, `Kick Members`, `Ban Members`, `Manage Threads`, `Mute/Deafen Members`.
+3. **📢 Community Manager**
+   - **Color:** `#e91e63` (Neon Pink)
+   - **Permissions:** `Manage Server`, `Manage Roles`, `Manage Channels`, `Manage Messages`, `Kick Members`, `Ban Members`, `Mention @everyone`.
    - **Display:** Display separately.
 
-4. **✨ Premium Supporter**
-   - **Color:** `#ffea00` (Gold)
-   - **Permissions:** Standard Member permissions + `Attach Files`, `Embed Links`, `Use External Emojis`.
+4. **🛡️ Aegis Vanguard** (Moderators/Support Team)
+   - **Color:** `#4caf50` (Green)
+   - **Permissions:** `Manage Messages`, `Kick Members`, `Ban Members`, `Manage Threads`, `Mute/Deafen Members`, `Move Members`.
+   - **Display:** Display separately.
 
 5. **🤖 AegisForge** (The Bot)
    - **Color:** `#ffffff`
    - **Permissions:** `Administrator` (Ensure this role is physically above the Member and Vanguard roles).
 
-6. **👥 Member** (Default auto-assigned role)
+6. **✨ Premium Supporter**
+   - **Color:** `#ffea00` (Gold)
+   - **Permissions:** Standard Member permissions + `Attach Files`, `Embed Links`, `Use External Emojis`, `Change Nickname`.
+
+7. **🌟 Contributor** (Open source contributors)
+   - **Color:** `#9c27b0` (Purple)
+   - **Permissions:** Standard Member permissions + `Attach Files`.
+
+8. **🧪 Beta Tester**
+   - **Color:** `#00bcd4` (Cyan)
+   - **Permissions:** Standard Member permissions + access to hidden beta channels.
+
+9. **👥 Member** (Default auto-assigned role)
    - **Color:** Default
    - **Permissions:** `View Channels`, `Send Messages`, `Read Message History`, `Add Reactions`, `Connect`, `Speak`. (NO @everyone/here mentions).
 
-7. **🔇 Muted**
-   - **Color:** `#424242` (Dark Grey)
-   - **Permissions:** Explicitly deny `Send Messages`, `Add Reactions`, `Connect` in all channel category settings.
+10. **🔔 Notification Squad** (Self-assigned ping role)
+    - **Color:** Default
+    - **Permissions:** No extra permissions, used only to mention for minor announcements.
+
+11. **🔇 Muted**
+    - **Color:** `#424242` (Dark Grey)
+    - **Permissions:** Explicitly deny `Send Messages`, `Add Reactions`, `Connect`, `Speak` in all channel category settings.
 
 ---
 
-## 3. Categories & Channels Setup
+## 3. Categories & Channels Setup (With Detailed Permissions)
 
-### 📌 INFORMATION (Read-only for Members)
+### 📌 INFORMATION
+*Category Permissions:* `@everyone`: `View Channel` ✅, `Send Messages` ❌, `Add Reactions` ❌ | `Aegis Vanguard`: `Send Messages` ✅
 
-- **#👋・welcome** (Read-only. Welcome messages go here)
-- **#📢・announcements** (Read-only. Bot updates and downtime notices)
-- **#📜・rules** (Read-only. See rules text below)
-- **#🔄・updates** (Read-only. Patch notes and new features)
-- **#📊・polls** (Read-only. Community voting and feedback)
+- **#👋・welcome** 
+  - *Permissions:* Syncs with category.
+- **#📢・announcements**
+  - *Permissions:* Syncs with category.
+- **#📜・rules**
+  - *Permissions:* Syncs with category.
+- **#🔄・updates**
+  - *Permissions:* Syncs with category.
+- **#📊・polls**
+  - *Permissions:* Syncs with category. `@everyone`: `Add Reactions` ✅
+- **#🎭・get-roles** 
+  - *Permissions:* Syncs with category. `@everyone`: `Add Reactions` ✅
 
 ### 💬 COMMUNITY
+*Category Permissions:* `@everyone`: `View Channel` ✅, `Send Messages` ✅, `Read Message History` ✅, `Attach Files` ❌
 
-- **#💬・general** (Standard chat for all members)
-- **#🤖・bot-commands** (Where users can test AegisForge commands)
-- **#💡・suggestions** (Where users can suggest new features)
-- **#✨・showcase** (For users to show off how they use the bot)
-- **#🎲・off-topic** (Discussions unrelated to the bot)
-- **#🐸・memes** (For sharing funny content)
+- **#💬・general**
+  - *Permissions:* Syncs with category.
+- **#🤖・bot-commands**
+  - *Permissions:* Syncs with category. `@everyone`: `Use Application Commands` ✅
+- **#💡・suggestions**
+  - *Permissions:* Syncs with category. `@everyone`: `Create Public Threads` ✅
+- **#✨・showcase**
+  - *Permissions:* Syncs with category. `@everyone`: `Attach Files` ✅, `Embed Links` ✅
+- **#🎨・media**
+  - *Permissions:* Syncs with category. `@everyone`: `Attach Files` ✅, `Embed Links` ✅
+- **#🎲・off-topic**
+  - *Permissions:* Syncs with category.
+- **#🐸・memes**
+  - *Permissions:* Syncs with category. `@everyone`: `Attach Files` ✅, `Embed Links` ✅
 
 ### 🛠️ SUPPORT
+*Category Permissions:* `@everyone`: `View Channel` ✅, `Send Messages` ❌
 
-- **#❓・faq** (Read-only. Common questions and answers)
-- **#🎫・open-a-ticket** (Read-only. Ticket system panel)
-- **#🐛・bug-reports** (Forum channel or standard channel for bug reporting)
+- **#❓・faq**
+  - *Permissions:* Syncs with category.
+- **#🎫・open-a-ticket**
+  - *Permissions:* Syncs with category.
+- **#💬・peer-support**
+  - *Permissions:* Syncs with category. `@everyone`: `Send Messages` ✅
+- **#🐛・bug-reports**
+  - *Permissions:* Forum Channel. `@everyone`: `Send Messages` ✅, `Create Posts` ✅
 
-### 🔐 STAFF (Hidden from standard Members)
+### 🧪 BETA TESTING (Hidden)
+*Category Permissions:* `@everyone`: `View Channel` ❌ | `Beta Tester`: `View Channel` ✅, `Send Messages` ✅
 
-- **#🛡️・staff-chat** (Private discussion for Vanguards and Developers)
-- **#📂・mod-logs** (AegisForge's moderation logging channel)
+- **#🧪・beta-chat**
+  - *Permissions:* Syncs with category.
+- **#📝・beta-feedback**
+  - *Permissions:* Syncs with category.
+
+### 🔐 STAFF (Hidden)
+*Category Permissions:* `@everyone`: `View Channel` ❌ | `Aegis Vanguard`: `View Channel` ✅, `Send Messages` ✅
+
+- **#🛡️・staff-chat**
+  - *Permissions:* Syncs with category.
+- **#👑・admin-chat**
+  - *Permissions:* `Aegis Vanguard`: `View Channel` ❌ | `Community Manager`: `View Channel` ✅
+- **#📂・mod-logs**
+  - *Permissions:* Syncs with category. `Aegis Vanguard`: `Send Messages` ❌ (Bot only)
+- **#🚨・bot-alerts**
+  - *Permissions:* Syncs with category. `Aegis Vanguard`: `Send Messages` ❌ (Bot only)
 
 ### 🎙️ VOICE CHANNELS
+*Category Permissions:* `@everyone`: `View Channel` ✅, `Connect` ✅, `Speak` ✅, `Video` ❌
 
-- **🔊 General Lounge** (Standard voice chat)
-- **🔊 Support Waiting Room** (For users needing live assistance)
-- **🔊 Staff Meeting** (Hidden. For staff only)
+- **🔊 General Lounge**
+  - *Permissions:* Syncs with category.
+- **🔊 Gaming Lounge 1**
+  - *Permissions:* Syncs with category.
+- **🔊 Gaming Lounge 2**
+  - *Permissions:* Syncs with category.
+- **🎥 Stream Room**
+  - *Permissions:* Syncs with category. `@everyone`: `Video` ✅
+- **🎧 Support Waiting Room**
+  - *Permissions:* Syncs with category. `@everyone`: `Speak` ❌ (Staff pulls users out)
+- **🔒 Staff Meeting**
+  - *Permissions:* `@everyone`: `View Channel` ❌ | `Aegis Vanguard`: `View Channel` ✅, `Connect` ✅
 
 ---
 
