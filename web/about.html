@@ -3,30 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Terms of Service | AegisForge</title>
+    <title>About | AegisForge</title>
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        .legal-content {
-            max-width: 800px;
+        .page-content {
+            max-width: 1000px;
             margin: 150px auto 100px;
             padding: 0 5%;
         }
-        .legal-content h1 {
+        .page-content h1 {
+            font-size: 3rem;
             color: var(--cyan);
-            margin-bottom: 1rem;
+            margin-bottom: 2rem;
+            text-align: center;
         }
-        .legal-content h2 {
-            margin-top: 2.5rem;
-            margin-bottom: 1rem;
-            color: #fff;
+        .about-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 3rem;
+            margin-bottom: 2rem;
         }
-        .legal-content p, .legal-content li {
+        .about-card p {
             color: var(--text-dim);
-            margin-bottom: 1rem;
+            font-size: 1.1rem;
             line-height: 1.8;
+            margin-bottom: 1.5rem;
         }
     </style>
 </head>
@@ -42,33 +47,22 @@
         </div>
         <div class="nav-links">
             <a href="index.html#features">Features</a>
-            <a href="index.html#commands">Commands</a>
+            <a href="commands.html">Commands</a>
+            <a href="about.html">About</a>
             <a href="https://github.com/watispro5212/AegisForge" target="_blank" rel="noopener noreferrer" class="nav-link-code">GitHub</a>
-            <button class="btn-primary" id="invite-btn" onclick="window.location.href='/'">Invite Bot</button>
+            <a href="https://discord.com/oauth2/authorize?client_id=1500582485367722004&permissions=8&response_type=code&redirect_uri=https%3A%2F%2Fdiscord.com%2Foauth2%2Fauthorize%3Fclient_id%3D1500582485367722004&integration_type=0&scope=bot+identify+applications.commands+applications.commands.permissions.update+openid" target="_blank" rel="noopener noreferrer" class="btn-primary">Invite Bot</a>
         </div>
     </nav>
 
     <!-- Content -->
-    <main class="legal-content">
-        <h1>Terms of Service</h1>
-        <p>Last updated: May 2026</p>
+    <main class="page-content">
+        <h1>About <span class="text-gradient">AegisForge</span></h1>
         
-        <h2>1. Acceptance of Terms</h2>
-        <p>By inviting AegisForge to your Discord server or utilizing its features, you agree to these Terms of Service. If you disagree with any part of these terms, you may not use the bot.</p>
-
-        <h2>2. Usage Restrictions</h2>
-        <p>AegisForge is designed to assist with moderation and server utilities. You agree not to:</p>
-        <ul>
-            <li>Use the bot to violate Discord's Terms of Service or Community Guidelines.</li>
-            <li>Spam commands or attempt to overload the bot's infrastructure.</li>
-            <li>Exploit bugs or vulnerabilities without responsibly disclosing them to our team.</li>
-        </ul>
-
-        <h2>3. Availability & Warranties</h2>
-        <p>AegisForge is provided "as is" without any warranties. While we strive for 99.9% uptime and zero-cost abstraction speed, we are not responsible for any damage or loss of data caused by bot downtime or misconfiguration.</p>
-
-        <h2>4. Changes to Terms</h2>
-        <p>We reserve the right to modify these terms at any time. Continued use of AegisForge constitutes acceptance of the new terms.</p>
+        <div class="about-card">
+            <p><strong>AegisForge</strong> is a next-generation Discord moderation and utility bot built entirely from the ground up in <strong>Rust</strong>. Designed for communities that demand maximum performance, zero downtime, and a highly polished interface.</p>
+            <p>Traditional bots are often sluggish, bloated with unnecessary features, and prone to going offline. We set out to change that. By leveraging Rust's fearless concurrency and a cutting-edge serverless database architecture via Neon Postgres, AegisForge operates at the speed of metal.</p>
+            <p>Whether you're managing a 10-person private group or a 100,000-member community hub, AegisForge scales effortlessly to meet your needs without compromising on response times or reliability.</p>
+        </div>
     </main>
 
     <!-- Footer -->
@@ -82,7 +76,8 @@
             </div>
             <div class="footer-links">
                 <a href="index.html#features">Features</a>
-                <a href="index.html#commands">Commands</a>
+                <a href="commands.html">Commands</a>
+                <a href="about.html">About</a>
                 <a href="https://github.com/watispro5212/AegisForge" target="_blank" rel="noopener noreferrer">GitHub</a>
                 <a href="privacy.html">Privacy Policy</a>
                 <a href="terms.html">Terms of Service</a>

@@ -57,8 +57,9 @@ nav.scrolled { background: rgba(8, 8, 16, 0.95); }
 .nav-logo-icon { font-size: 1.2rem; animation: spin 12s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-.logo-text { font-size: 1.4rem; font-weight: 800; letter-spacing: 3px; }
+.logo-text { font-size: 1.4rem; font-weight: 800; letter-spacing: 3px; color: var(--text); }
 .logo-accent { color: var(--cyan); font-weight: 300; }
+.logo-link { text-decoration: none; }
 
 .nav-links { display: flex; align-items: center; gap: 2rem; }
 .nav-links a { color: var(--text-dim); text-decoration: none; font-weight: 500; transition: var(--transition); }
@@ -78,6 +79,8 @@ nav.scrolled { background: rgba(8, 8, 16, 0.95); }
     font-size: 0.95rem;
     transition: var(--transition);
     box-shadow: 0 0 20px var(--cyan-dim);
+    text-decoration: none;
+    display: inline-block;
 }
 .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 35px rgba(0, 229, 255, 0.35); }
 
@@ -92,6 +95,8 @@ nav.scrolled { background: rgba(8, 8, 16, 0.95); }
     cursor: pointer;
     font-size: 0.95rem;
     transition: var(--transition);
+    text-decoration: none;
+    display: inline-block;
 }
 .btn-secondary:hover { border-color: var(--cyan); color: var(--cyan); transform: translateY(-2px); }
 

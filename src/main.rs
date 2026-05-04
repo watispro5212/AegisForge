@@ -79,6 +79,9 @@ async fn main() -> Result<(), Error> {
                 commands::utility::avatar(),
                 commands::utility::uptime(),
                 commands::utility::timestamp(),
+                commands::utility::coinflip(),
+                commands::utility::dice(),
+                commands::utility::poll(),
                 // Moderation
                 commands::moderation::ban(),
                 commands::moderation::unban(),

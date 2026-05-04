@@ -111,3 +111,58 @@ pub async fn timestamp(
     .await?;
     Ok(())
 }
+
+/// Flip a coin
+#[poise::command(slash_command, prefix_command)]
+pub async fn coinflip(ctx: Context<'_>) -> Result<(), Error> {
+    let result = if rand::random::<bool>() { "Heads" } else { "Tails" };
+    ctx.send(poise::CreateReply::default().embed(
+        serenity::CreateEmbed::new()
+            .title("🪙 Coin Flip")
+            .description(format!("The coin landed on **{}**!", result))
+            .color(0x00ffff),
+    ))
+    .await?;
+    Ok(())
+}
+
+/// Roll a dice
+#[poise::command(slash_command, prefix_command)]
+pub async fn dice(
+    ctx: Context<'_>,
+    #[description = "Number of sides (defaults to 6)"] sides: Option<u32>,
+) -> Result<(), Error> {
+    let sides = sides.unwrap_or(6).max(2);
+    let result = (rand::random::<u32>() % sides) + 1;
+    ctx.send(poise::CreateReply::default().embed(
+        serenity::CreateEmbed::new()
+            .title("🎲 Dice Roll")
+            .description(format!("You rolled a **{}** (1-{})", result, sides))
+            .color(0x00ffff),
+    ))
+    .await?;
+    Ok(())
+}
+
+/// Create a simple poll
+#[poise::command(slash_command, prefix_command)]
+pub async fn poll(
+    ctx: Context<'_>,
+    #[description = "The question to ask"] question: String,
+) -> Result<(), Error> {
+    let msg = ctx.send(poise::CreateReply::default().embed(
+        serenity::CreateEmbed::new()
+            .title("📊 Poll")
+            .description(question)
+            .color(0x00ffff),
+    ))
+    .await?
+    .into_message()
+    .await?;
+
+    msg.react(ctx, serenity::ReactionType::Unicode("👍".to_string())).await?;
+    msg.react(ctx, serenity::ReactionType::Unicode("👎".to_string())).await?;
+    msg.react(ctx, serenity::ReactionType::Unicode("🤷".to_string())).await?;
+
+    Ok(())
+}

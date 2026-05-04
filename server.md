@@ -3,6 +3,7 @@
 This document contains the exact blueprint for creating the ultimate Discord Support server for AegisForge. Follow these instructions carefully to set up your categories, channels, permissions, and roles.
 
 ## 1. Server Profile
+
 - **Server Name:** `AegisForge HQ`
 - **Server Description:** "The official development, support, and community hub for AegisForge — the premium, high-performance Rust Discord bot."
 - **Server Icon:** Use the `aegisforge_logo.png` we generated earlier.
@@ -50,23 +51,38 @@ This document contains the exact blueprint for creating the ultimate Discord Sup
 ## 3. Categories & Channels Setup
 
 ### 📌 INFORMATION (Read-only for Members)
+
 - **#👋・welcome** (Read-only. Welcome messages go here)
 - **#📢・announcements** (Read-only. Bot updates and downtime notices)
 - **#📜・rules** (Read-only. See rules text below)
+- **#🔄・updates** (Read-only. Patch notes and new features)
+- **#📊・polls** (Read-only. Community voting and feedback)
 
 ### 💬 COMMUNITY
+
 - **#💬・general** (Standard chat for all members)
 - **#🤖・bot-commands** (Where users can test AegisForge commands)
 - **#💡・suggestions** (Where users can suggest new features)
+- **#✨・showcase** (For users to show off how they use the bot)
+- **#🎲・off-topic** (Discussions unrelated to the bot)
+- **#🐸・memes** (For sharing funny content)
 
 ### 🛠️ SUPPORT
+
 - **#❓・faq** (Read-only. Common questions and answers)
 - **#🎫・open-a-ticket** (Read-only. Ticket system panel)
 - **#🐛・bug-reports** (Forum channel or standard channel for bug reporting)
 
 ### 🔐 STAFF (Hidden from standard Members)
+
 - **#🛡️・staff-chat** (Private discussion for Vanguards and Developers)
 - **#📂・mod-logs** (AegisForge's moderation logging channel)
+
+### 🎙️ VOICE CHANNELS
+
+- **🔊 General Lounge** (Standard voice chat)
+- **🔊 Support Waiting Room** (For users needing live assistance)
+- **🔊 Staff Meeting** (Hidden. For staff only)
 
 ---
 
@@ -80,6 +96,7 @@ This document contains the exact blueprint for creating the ultimate Discord Sup
 ## 5. Texts & Prompts
 
 ### 📜 Rules Text (Post this in #📜・rules)
+
 ```text
 **Welcome to AegisForge HQ! 🛡️**
 To keep our community safe and organized, please follow these rules:
@@ -94,6 +111,7 @@ To keep our community safe and organized, please follow these rules:
 ```
 
 ### 👋 Welcome Sign (Configure this in your bot or Welcome channel)
+
 ```text
 **Welcome to AegisForge HQ, {user}! 🎉**
 
