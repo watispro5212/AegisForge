@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Commands | AegisForge</title>
+    <title>Team | AegisForge</title>
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,34 +20,54 @@
             margin-bottom: 2rem;
             text-align: center;
         }
-        .cmd-grid {
+        .team-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-            margin-top: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
         }
-        .cmd-card {
+        .team-card {
             background: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: var(--radius);
-            padding: 2rem;
+            padding: 2.5rem 2rem;
+            text-align: center;
             transition: var(--transition);
         }
-        .cmd-card:hover {
+        .team-card:hover {
             border-color: rgba(0, 229, 255, 0.3);
             transform: translateY(-5px);
             box-shadow: var(--glow);
         }
-        .cmd-name {
-            font-family: 'JetBrains Mono', monospace;
-            color: var(--cyan);
-            font-size: 1.2rem;
+        .team-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--cyan), var(--blue));
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: #050a15;
+            font-weight: 800;
+        }
+        .team-name {
+            color: #ffffff;
+            font-size: 1.5rem;
             font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .team-role {
+            color: var(--cyan);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
             margin-bottom: 1rem;
         }
-        .cmd-desc {
+        .team-bio {
             color: var(--text-dim);
             font-size: 0.95rem;
+            line-height: 1.6;
         }
     </style>
 </head>
@@ -66,7 +86,6 @@
             <a href="commands.html">Commands</a>
             <a href="team.html">Team</a>
             <a href="changelog.html">Changelog</a>
-            <a href="about.html">About</a>
             <a href="https://github.com/watispro5212/AegisForge" target="_blank" rel="noopener noreferrer" class="nav-link-code">GitHub</a>
             <a href="https://discord.com/oauth2/authorize?client_id=1500582485367722004&permissions=8&response_type=code&redirect_uri=https%3A%2F%2Fdiscord.com%2Foauth2%2Fauthorize%3Fclient_id%3D1500582485367722004&integration_type=0&scope=bot+identify+applications.commands+applications.commands.permissions.update+openid" target="_blank" rel="noopener noreferrer" class="btn-primary">Invite Bot</a>
         </div>
@@ -74,44 +93,20 @@
 
     <!-- Content -->
     <main class="page-content">
-        <h1>Command <span class="text-gradient">Registry</span></h1>
+        <h1>Meet the <span class="text-gradient">Team</span></h1>
         
-        <div class="cmd-grid">
-            <div class="cmd-card">
-                <div class="cmd-name">/ban</div>
-                <div class="cmd-desc">Permanently ban a user from the server with an optional reason.</div>
+        <div class="team-grid">
+            <div class="team-card">
+                <div class="team-avatar">W</div>
+                <div class="team-name">watispro1</div>
+                <div class="team-role">Lead Developer</div>
+                <div class="team-bio">Architect and creator of AegisForge. Passionate about Rust, high-performance systems, and building tools that scale.</div>
             </div>
-            <div class="cmd-card">
-                <div class="cmd-name">/kick</div>
-                <div class="cmd-desc">Kick a user from the server with an optional reason.</div>
-            </div>
-            <div class="cmd-card">
-                <div class="cmd-name">/timeout</div>
-                <div class="cmd-desc">Temporarily mute a user for a specified duration.</div>
-            </div>
-            <div class="cmd-card">
-                <div class="cmd-name">/warn</div>
-                <div class="cmd-desc">Issue a formal warning to a user and log it to the database.</div>
-            </div>
-            <div class="cmd-card">
-                <div class="cmd-name">/purge</div>
-                <div class="cmd-desc">Bulk delete up to 100 messages at once.</div>
-            </div>
-            <div class="cmd-card">
-                <div class="cmd-name">/remind</div>
-                <div class="cmd-desc">Set a reminder to notify you after a specific amount of time.</div>
-            </div>
-            <div class="cmd-card">
-                <div class="cmd-name">/poll</div>
-                <div class="cmd-desc">Create a quick community poll with reaction voting.</div>
-            </div>
-            <div class="cmd-card">
-                <div class="cmd-name">/coinflip</div>
-                <div class="cmd-desc">Flip a virtual coin. Heads or Tails!</div>
-            </div>
-            <div class="cmd-card">
-                <div class="cmd-name">/dice</div>
-                <div class="cmd-desc">Roll a virtual dice with a custom number of sides.</div>
+            <div class="team-card">
+                <div class="team-avatar">A</div>
+                <div class="team-name">Aegis</div>
+                <div class="team-role">The Machine</div>
+                <div class="team-bio">The core intelligence driving community moderation. 0ms ping, never sleeps, always protecting.</div>
             </div>
         </div>
     </main>

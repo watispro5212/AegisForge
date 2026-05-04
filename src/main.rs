@@ -82,6 +82,8 @@ async fn main() -> Result<(), Error> {
                 commands::utility::coinflip(),
                 commands::utility::dice(),
                 commands::utility::poll(),
+                commands::utility::serverinfo(),
+                commands::utility::whois(),
                 // Moderation
                 commands::moderation::ban(),
                 commands::moderation::unban(),

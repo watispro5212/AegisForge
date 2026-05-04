@@ -17,6 +17,23 @@ pub async fn event_handler(
         serenity::FullEvent::GuildMemberAddition { new_member } => {
             info!("New member joined: {}", new_member.user.name);
         }
+        serenity::FullEvent::Message { new_message } => {
+            if new_message.author.bot {
+                return Ok(());
+            }
+
+            let content = new_message.content.to_lowercase();
+            let bad_words = ["badword1", "badword2", "spamlink.com", "freemoney.com"];
+            
+            if bad_words.iter().any(|word| content.contains(word)) {
+                if let Err(e) = new_message.delete(_ctx).await {
+                    tracing::error!("Failed to delete auto-modded message: {:?}", e);
+                } else {
+                    info!("Auto-deleted message from {} containing blacklisted word.", new_message.author.name);
+                    let _ = new_message.channel_id.say(_ctx, format!("<@{}> Please refrain from using blacklisted words or links.", new_message.author.id)).await;
+                }
+            }
+        }
         _ => {}
     }
     Ok(())

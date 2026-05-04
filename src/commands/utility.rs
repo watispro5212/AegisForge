@@ -166,3 +166,54 @@ pub async fn poll(
 
     Ok(())
 }
+
+/// Display detailed information about the current server
+#[poise::command(slash_command, prefix_command, guild_only)]
+pub async fn serverinfo(ctx: Context<'_>) -> Result<(), Error> {
+    if let Some(guild_id) = ctx.guild_id() {
+        let guild = guild_id.to_partial_guild(&ctx.http()).await?;
+        let members = guild.member_count;
+        let created_at = guild.id.created_at();
+        
+        ctx.send(poise::CreateReply::default().embed(
+            serenity::CreateEmbed::new()
+                .title(format!("Server Info: {}", guild.name))
+                .description(format!("**Owner:** <@{}>\n**Members:** {}\n**Created:** <t:{}:F>", guild.owner_id, members, created_at.unix_timestamp()))
+                .color(0x00ffff),
+        ))
+        .await?;
+    } else {
+        ctx.say("This command can only be used in a server!").await?;
+    }
+    Ok(())
+}
+
+/// Display detailed information about a specific user
+#[poise::command(slash_command, prefix_command)]
+pub async fn whois(
+    ctx: Context<'_>,
+    #[description = "The user to inspect"] user: Option<serenity::User>,
+) -> Result<(), Error> {
+    let u = user.as_ref().unwrap_or(ctx.author());
+    let created_at = u.id.created_at();
+    
+    let mut embed = serenity::CreateEmbed::new()
+        .title(format!("User Info: {}", u.name))
+        .description(format!("**ID:** {}\n**Account Created:** <t:{}:F>", u.id, created_at.unix_timestamp()))
+        .color(0x00ffff);
+        
+    if let Some(avatar_url) = u.avatar_url() {
+        embed = embed.thumbnail(avatar_url);
+    }
+    
+    if let Some(guild_id) = ctx.guild_id() {
+        if let Ok(member) = guild_id.member(&ctx.http(), u.id).await {
+            if let Some(joined_at) = member.joined_at {
+                embed = embed.field("Joined Server", format!("<t:{}:F>", joined_at.unix_timestamp()), false);
+            }
+        }
+    }
+    
+    ctx.send(poise::CreateReply::default().embed(embed)).await?;
+    Ok(())
+}
