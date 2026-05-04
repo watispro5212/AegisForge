@@ -1,13 +1,6 @@
-# Environment
-.env
-
 # Rust build artifacts
 /target/
-
-# Database files
-*.db
-*.db-shm
-*.db-wal
+.env
 
 # Editor directories
 .vscode/
@@ -16,3 +9,6 @@
 # OS files
 .DS_Store
 Thumbs.db
+
+# Version control
+.git/
