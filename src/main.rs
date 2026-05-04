@@ -1,6 +1,10 @@
+#![allow(dead_code)]
+#![allow(unused_imports)]
+#![allow(unused_variables)]
+
 use poise::serenity_prelude as serenity;
 use sqlx::postgres::PgPoolOptions;
-use tracing::info;
+use tracing::{error, info, Level};
 use std::{env, sync::Arc};
 use dotenvy::dotenv;
 

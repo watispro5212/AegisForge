@@ -150,3 +150,62 @@ const dashboardSection = document.getElementById('dashboard');
 if (dashboardSection) {
     dashObserver.observe(dashboardSection);
 }
+
+/* ─── MASSIVE UI OVERHAUL SCRIPT ADDITIONS ───────────────────── */
+
+// 1. Intersection Observer for Scroll Reveals
+const revealElements = document.querySelectorAll('.reveal-on-scroll, .feature-card, .stack-card');
+const revealOptions = {
+    threshold: 0.15,
+    rootMargin: "0px 0px -50px 0px"
+};
+
+const revealOnScroll = new IntersectionObserver(function(entries, observer) {
+    entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('visible', 'revealed');
+        observer.unobserve(entry.target);
+    });
+}, revealOptions);
+
+revealElements.forEach(el => revealOnScroll.observe(el));
+
+// 2. 3D Tilt Effect for Cards
+const tiltCards = document.querySelectorAll('.tilt-card, .feature-card, .dashboard-card, .stack-card, .pricing-card');
+
+tiltCards.forEach(card => {
+    // Ensure styles are set correctly
+    card.style.transformStyle = 'preserve-3d';
+    card.style.transition = 'transform 0.1s ease-out';
+    
+    // Add child translation for pop-out effect
+    Array.from(card.children).forEach(child => {
+        if (!child.style.transform && !child.classList.contains('hero-glow') && !child.classList.contains('cta-glow')) {
+            child.style.transform = 'translateZ(20px)';
+        }
+    });
+
+    card.addEventListener('mousemove', e => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left; // x position within the element
+        const y = e.clientY - rect.top;  // y position within the element
+        
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        
+        // Calculate rotation based on cursor position
+        const rotateX = ((y - centerY) / centerY) * -10; // Max 10 deg
+        const rotateY = ((x - centerX) / centerX) * 10;
+        
+        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+    });
+
+    card.addEventListener('mouseleave', () => {
+        card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+        // Smooth snap back
+        card.style.transition = 'transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1)';
+        setTimeout(() => {
+            card.style.transition = 'transform 0.1s ease-out';
+        }, 500);
+    });
+});

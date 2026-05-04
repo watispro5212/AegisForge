@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Network Status | AegisForge</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        .page-content { max-width: 1200px; margin: 150px auto 100px; padding: 0 5%; }
+        .status-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 3rem; border-bottom: 1px solid var(--border); padding-bottom: 2rem; }
+        .status-title h1 { font-size: 3rem; color: #fff; margin-bottom: 0.5rem; }
+        .status-title p { color: var(--text-dim); font-size: 1.1rem; }
+        .global-status { display: flex; align-items: center; gap: 1rem; background: rgba(0, 229, 255, 0.05); border: 1px solid var(--cyan); padding: 1rem 2rem; border-radius: 100px; font-weight: 700; color: var(--cyan); }
+        .status-dot { width: 12px; height: 12px; background: var(--cyan); border-radius: 50%; box-shadow: 0 0 10px var(--cyan); animation: pulse 2s infinite; }
+        
+        .system-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 4rem; }
+        .system-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 2rem; position: relative; overflow: hidden; }
+        .system-card::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--cyan); }
+        .system-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+        .system-name { font-size: 1.25rem; font-weight: 700; color: #fff; }
+        .system-state { font-size: 0.9rem; font-family: 'JetBrains Mono', monospace; color: var(--cyan); }
+        .uptime-bar-container { display: flex; gap: 4px; margin-top: 1.5rem; }
+        .uptime-tick { flex: 1; height: 30px; background: var(--cyan); border-radius: 2px; opacity: 0.8; transition: var(--transition); }
+        .uptime-tick:hover { opacity: 1; transform: scaleY(1.2); }
+        .uptime-tick.minor { background: var(--orange); }
+        .uptime-tick.major { background: #e91e63; }
+        
+        .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; }
+        .metric-card { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 12px; text-align: center; }
+        .metric-value { font-size: 2.5rem; font-family: 'JetBrains Mono', monospace; color: #fff; font-weight: 800; margin-bottom: 0.5rem; }
+        .metric-label { color: var(--text-dim); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; }
+
+        .section-title { margin-bottom: 1.5rem; }
+        .system-desc { color: var(--text-dim); font-size: 0.9rem; }
+
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(0, 229, 255, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(0, 229, 255, 0); } 100% { box-shadow: 0 0 0 0 rgba(0, 229, 255, 0); } }
+    </style>
+</head>
+<body>
+    <div class="grid-bg"></div>
+
+    <nav id="navbar">
+        <div class="logo-container">
+            <div class="nav-logo-ring"><span class="nav-logo-icon">⚙</span></div>
+            <a href="index.html" class="logo-link"><span class="logo-text">AEGIS<span class="logo-accent">FORGE</span></span></a>
+        </div>
+        <div class="nav-links">
+            <a href="status.html">Status</a>
+            <a href="premium.html">Premium</a>
+            <a href="commands.html">Commands</a>
+            <a href="changelog.html">Changelog</a>
+            <a href="https://discord.com/oauth2/authorize?client_id=1500582485367722004" target="_blank" rel="noopener noreferrer" class="btn-primary">Invite Bot</a>
+        </div>
+    </nav>
+
+    <main class="page-content reveal-on-scroll">
+        <div class="status-header">
+            <div class="status-title">
+                <h1>Network Status</h1>
+                <p>Live metrics and system operational state.</p>
+            </div>
+            <div class="global-status">
+                <div class="status-dot"></div>
+                All Systems Operational
+            </div>
+        </div>
+
+        <h2 class="section-title">System Components</h2>
+        <div class="system-grid">
+            <div class="system-card tilt-card">
+                <div class="system-header">
+                    <span class="system-name">Gateway Connection</span>
+                    <span class="system-state">100% Uptime</span>
+                </div>
+                <p class="system-desc">Discord WebSocket shard connectivity.</p>
+                <div class="uptime-bar-container" id="ticks-1"></div>
+            </div>
+
+            <div class="system-card tilt-card">
+                <div class="system-header">
+                    <span class="system-name">Neon Database</span>
+                    <span class="system-state">99.9% Uptime</span>
+                </div>
+                <p class="system-desc">PostgreSQL serverless data persistence.</p>
+                <div class="uptime-bar-container" id="ticks-2"></div>
+            </div>
+
+            <div class="system-card tilt-card">
+                <div class="system-header">
+                    <span class="system-name">REST API Hooks</span>
+                    <span class="system-state">100% Uptime</span>
+                </div>
+                <p class="system-desc">External webhooks and slash command routers.</p>
+                <div class="uptime-bar-container" id="ticks-3"></div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Live Performance</h2>
+        <div class="metrics-grid">
+            <div class="metric-card tilt-card">
+                <div class="metric-value">4ms</div>
+                <div class="metric-label">API Latency</div>
+            </div>
+            <div class="metric-card tilt-card">
+                <div class="metric-value">0%</div>
+                <div class="metric-label">Drop Rate</div>
+            </div>
+            <div class="metric-card tilt-card">
+                <div class="metric-value">99.99%</div>
+                <div class="metric-label">30-Day Uptime</div>
+            </div>
+            <div class="metric-card tilt-card">
+                <div class="metric-value">14.2MB</div>
+                <div class="metric-label">Memory Usage</div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-top">
+            <div class="logo-container">
+                <span class="logo-text">AEGIS<span class="logo-accent">FORGE</span></span>
+            </div>
+            <div class="footer-links">
+                <a href="index.html">Home</a>
+                <a href="status.html">Status</a>
+                <a href="https://github.com/watispro5212/AegisForge">GitHub</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        // Generate random ticks for uptime bars
+        function generateTicks(containerId) {
+            const container = document.getElementById(containerId);
+            for(let i=0; i<30; i++) {
+                const tick = document.createElement('div');
+                tick.className = 'uptime-tick';
+                if(Math.random() > 0.95 && containerId === 'ticks-2') tick.classList.add('minor');
+                container.appendChild(tick);
+            }
+        }
+        generateTicks('ticks-1');
+        generateTicks('ticks-2');
+        generateTicks('ticks-3');
+    </script>
+</body>
+</html>
