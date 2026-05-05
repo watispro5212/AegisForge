@@ -13,6 +13,11 @@ RUN cargo build --release
 # Remove the dummy source and copy the real code
 RUN rm -rf src
 COPY src ./src
+COPY .sqlx ./.sqlx
+COPY migrations ./migrations
+
+# Use sqlx offline mode
+ENV SQLX_OFFLINE=true
 
 # Touch main.rs to force recompilation of the actual project
 RUN touch src/main.rs
