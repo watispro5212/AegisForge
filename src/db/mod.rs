@@ -2,6 +2,8 @@ pub mod guild;
 pub mod mod_cases;
 pub mod reminders;
 pub mod warnings;
+pub mod economy;
+pub mod leveling;
 
 use dashmap::DashMap;
 use sqlx::PgPool;

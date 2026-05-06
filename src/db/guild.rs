@@ -47,7 +47,10 @@ pub async fn get_or_create(pool: &PgPool, guild_id: i64) -> sqlx::Result<GuildCo
             automod_spam,
             automod_invites,
             automod_caps,
-            automod_mentions
+            automod_mentions,
+            economy_enabled,
+            leveling_enabled,
+            level_up_message
         FROM guild_configs
         WHERE guild_id = $1
         "#,

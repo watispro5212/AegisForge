@@ -27,4 +27,9 @@ pub struct GuildConfig {
     pub automod_invites: bool,
     pub automod_caps: bool,
     pub automod_mentions: bool,
+
+    // v3 additions
+    pub economy_enabled: bool,
+    pub leveling_enabled: bool,
+    pub level_up_message: String,
 }

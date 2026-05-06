@@ -90,22 +90,18 @@ async fn main() -> Result<(), Error> {
                 // Utility
                 commands::utility::help(),
                 commands::utility::ping(),
-                commands::utility::server(),
-                commands::utility::user(),
                 commands::utility::avatar(),
                 commands::utility::uptime(),
                 commands::utility::timestamp(),
-                commands::utility::coinflip(),
-                commands::utility::dice(),
-                commands::utility::poll(),
                 commands::utility::serverinfo(),
                 commands::utility::whois(),
-                commands::utility::eightball(),
-                commands::utility::joke(),
                 commands::utility::embed(),
-                commands::utility::fact(),
-                commands::utility::cat(),
-                commands::utility::cookie(),
+                // Fun
+                commands::fun::fun(),
+                // Economy
+                commands::economy::economy(),
+                // Leveling
+                commands::leveling::leveling(),
                 // Moderation
                 commands::moderation::ban(),
                 commands::moderation::unban(),
@@ -146,7 +142,7 @@ async fn main() -> Result<(), Error> {
             event_handler: |ctx, event, framework, data| {
                 Box::pin(handler::event_handler(ctx, event, framework, data))
             },
-            prefix_options: poise::PrefixOptions {
+            prefix_options: poise::PrefixFrameworkOptions {
                 prefix: Some("!".into()),
                 dynamic_prefix: Some(|ctx| {
                     Box::pin(async move {

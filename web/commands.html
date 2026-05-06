@@ -21,7 +21,7 @@
         </div>
         <div class="nav-links">
             <a href="index.html#features">Features</a>
-            <a href="commands.html">Commands</a>
+            <a href="commands.html" class="active">Commands</a>
             <a href="team.html">Team</a>
             <a href="changelog.html">Changelog</a>
             <a href="status.html">Status</a>
@@ -44,7 +44,10 @@
         <div class="tabs-container">
             <div class="cmd-tabs">
                 <button class="cmd-tab active" data-tab="moderation">Moderation</button>
+                <button class="cmd-tab" data-tab="economy">Economy</button>
+                <button class="cmd-tab" data-tab="leveling">Leveling</button>
                 <button class="cmd-tab" data-tab="utility">Utility</button>
+                <button class="cmd-tab" data-tab="fun">Fun</button>
                 <button class="cmd-tab" data-tab="roles">Roles</button>
                 <button class="cmd-tab" data-tab="config">Configuration</button>
             </div>
@@ -85,6 +88,54 @@
                     <div class="cmd-card">
                         <div class="cmd-name">/unlock</div>
                         <div class="cmd-desc">Restore message permissions in a locked channel.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Economy Panel -->
+            <div class="cmd-panel" id="tab-economy">
+                <div class="cmd-grid">
+                    <div class="cmd-card">
+                        <div class="cmd-name">/balance</div>
+                        <div class="cmd-desc">Check your current wallet and bank balance.</div>
+                    </div>
+                    <div class="cmd-card">
+                        <div class="cmd-name">/daily</div>
+                        <div class="cmd-desc">Claim your daily credit reward to boost your wealth.</div>
+                    </div>
+                    <div class="cmd-card">
+                        <div class="cmd-name">/work</div>
+                        <div class="cmd-desc">Perform a job to earn credits with a short cooldown.</div>
+                    </div>
+                    <div class="cmd-card">
+                        <div class="cmd-name">/pay</div>
+                        <div class="cmd-desc">Transfer credits to another server member securely.</div>
+                    </div>
+                    <div class="cmd-card">
+                        <div class="cmd-name">/rob</div>
+                        <div class="cmd-desc">Try to steal credits from another user (high risk!).</div>
+                    </div>
+                    <div class="cmd-card">
+                        <div class="cmd-name">/leaderboard economy</div>
+                        <div class="cmd-desc">View the wealthiest users in the current server.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Leveling Panel -->
+            <div class="cmd-panel" id="tab-leveling">
+                <div class="cmd-grid">
+                    <div class="cmd-card">
+                        <div class="cmd-name">/rank</div>
+                        <div class="cmd-desc">View your current level, XP, and global ranking.</div>
+                    </div>
+                    <div class="cmd-card">
+                        <div class="cmd-name">/leaderboard leveling</div>
+                        <div class="cmd-desc">See who has the most XP in the server.</div>
+                    </div>
+                    <div class="cmd-card">
+                        <div class="cmd-name">/config levels</div>
+                        <div class="cmd-desc">Enable or disable the leveling system for your guild.</div>
                     </div>
                 </div>
             </div>
@@ -131,6 +182,32 @@
                     <div class="cmd-card">
                         <div class="cmd-name">/embed</div>
                         <div class="cmd-desc">Create a professional looking message embed with custom fields.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fun Panel -->
+            <div class="cmd-panel" id="tab-fun">
+                <div class="cmd-grid">
+                    <div class="cmd-card">
+                        <div class="cmd-name">/meme</div>
+                        <div class="cmd-desc">Fetch a random trending meme from Reddit.</div>
+                    </div>
+                    <div class="cmd-card">
+                        <div class="cmd-name">/cat</div>
+                        <div class="cmd-desc">Get a random cute cat image or GIF.</div>
+                    </div>
+                    <div class="cmd-card">
+                        <div class="cmd-name">/dog</div>
+                        <div class="cmd-desc">Get a random cute dog image or GIF.</div>
+                    </div>
+                    <div class="cmd-card">
+                        <div class="cmd-name">/coinflip</div>
+                        <div class="cmd-desc">Flip a virtual coin for a heads or tails result.</div>
+                    </div>
+                    <div class="cmd-card">
+                        <div class="cmd-name">/roll</div>
+                        <div class="cmd-desc">Roll a dice with a custom number of sides.</div>
                     </div>
                 </div>
             </div>

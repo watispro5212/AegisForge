@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        SELECT\n            guild_id,\n            prefix,\n            mod_log_channel,\n            message_log_channel,\n            member_log_channel,\n            welcome_channel,\n            welcome_message,\n            goodbye_channel,\n            goodbye_message,\n            auto_role_id,\n            mute_role_id,\n            automod_enabled,\n            automod_spam,\n            automod_invites,\n            automod_caps,\n            automod_mentions\n        FROM guild_configs\n        WHERE guild_id = $1\n        ",
+  "query": "\n        SELECT\n            guild_id,\n            prefix,\n            mod_log_channel,\n            message_log_channel,\n            member_log_channel,\n            welcome_channel,\n            welcome_message,\n            goodbye_channel,\n            goodbye_message,\n            auto_role_id,\n            mute_role_id,\n            automod_enabled,\n            automod_spam,\n            automod_invites,\n            automod_caps,\n            automod_mentions,\n            economy_enabled,\n            leveling_enabled,\n            level_up_message\n        FROM guild_configs\n        WHERE guild_id = $1\n        ",
   "describe": {
     "columns": [
       {
@@ -82,6 +82,21 @@
         "ordinal": 15,
         "name": "automod_mentions",
         "type_info": "Bool"
+      },
+      {
+        "ordinal": 16,
+        "name": "economy_enabled",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 17,
+        "name": "leveling_enabled",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 18,
+        "name": "level_up_message",
+        "type_info": "Text"
       }
     ],
     "parameters": {
@@ -105,8 +120,11 @@
       false,
       false,
       false,
+      false,
+      false,
+      false,
       false
     ]
   },
-  "hash": "3016e07caf39b005946fede0b0a216ca3953b896448d083db4e9569d5994a5b1"
+  "hash": "ccdd61873f728048c632511d7d4ece60b7ddcdcc8bcceec474ff4aaa766cfa34"
 }

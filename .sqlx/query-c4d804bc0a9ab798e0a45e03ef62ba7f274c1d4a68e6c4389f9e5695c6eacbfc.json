@@ -1,0 +1,17 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "UPDATE users_leveling SET xp = $1, level = $2, last_msg = NOW() WHERE guild_id = $3 AND user_id = $4",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Int4",
+        "Int8",
+        "Int8"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "c4d804bc0a9ab798e0a45e03ef62ba7f274c1d4a68e6c4389f9e5695c6eacbfc"
+}

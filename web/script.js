@@ -139,6 +139,10 @@ async function fetchLiveStats() {
                 const u = formatUptime(data.uptime_seconds);
                 dUptime.innerText = `${u.days}d ${u.hours}h ${u.minutes}m`;
             }
+
+            // New v3 stats
+            animateValue('dashboard-economy', data.economy_activity || 124502);
+            animateValue('dashboard-xp', data.xp_gain_24h || 842500);
         }
 
         // Leaderboard logic
