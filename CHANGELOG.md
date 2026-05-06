@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [3.0.0] - 2026-05-06
 
-### Added
+### Added in v3.0.0
 
 - **Eternal Forge Update**: Major backend and feature overhaul.
 - **Economy System**: Fully integrated economy with `/work`, `/daily`, `/pay`, and `/balance`. Includes server-wide leaderboards.
@@ -16,6 +16,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Warnings System**: Integrated warning system linked to moderation cases.
 - **Custom Prefix Support**: Servers can now set a custom prefix for traditional message commands via `/config prefix`.
 - **Fly.io Optimization**: Hardened production deployment with persistent machines and pooled database connectivity for Neon.
+- **Security Hardening**: Migrated entire TLS stack to `native-tls` to resolve `RUSTSEC-2026-0104` (High DoS) and multiple `rustls-webpki` name constraint vulnerabilities.
+- **SQLx Upgrade**: Upgraded to `v0.8.6` to patch critical binary protocol misinterpretation issues (`RUSTSEC-2024-0363`).
 
 ### Fixed
 
@@ -32,7 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.0.0] - 2026-05-03
 
-### Added
+### Added in v2.0.0
 
 - Initial v2 feature set.
 - Basic moderation and utility commands.

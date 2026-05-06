@@ -43,6 +43,8 @@
                 <li>Added **Moderation Audit Logs** with permanent database storage and unique Case IDs.</li>
                 <li>Introduced **Custom Prefix** support for traditional message commands.</li>
                 <li>Hardened Fly.io production deployment with persistent connection optimization.</li>
+                <li>**Security Hardening**: Migrated to `native-tls` to resolve High-severity DoS vulnerabilities in `rustls-webpki`.</li>
+                <li>Upgraded to **SQLx v0.8.6** to patch critical binary protocol misinterpretation flaws.</li>
             </ul>
         </div>
         

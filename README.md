@@ -28,8 +28,9 @@
 
 - **Language:** Rust 🦀
 - **Framework:** [Poise](https://github.com/serenity-rs/poise) + [Serenity](https://github.com/serenity-rs/serenity)
+- **Networking:** Secure Native-TLS stack
 - **Async:** Tokio
-- **Database:** SQLx + SQLite (swap for Postgres in production)
+- **Database:** SQLx + Neon PostgreSQL (Serverless)
 - **Logging:** Tracing
 
 ---
