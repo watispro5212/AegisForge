@@ -18,6 +18,9 @@ pub async fn get_user_leveling(pool: &PgPool, guild_id: i64, user_id: i64) -> sq
     if let Some(lvl) = leveling {
         Ok(lvl)
     } else {
+        // Ensure guild exists first to satisfy foreign key
+        crate::db::guild::get_or_create(pool, guild_id).await?;
+
         // Create default
         sqlx::query!(
             "INSERT INTO users_leveling (guild_id, user_id) VALUES ($1, $2) ON CONFLICT DO NOTHING",
