@@ -15,9 +15,11 @@
 | Category | Commands |
 | :--- | :--- |
 | **Moderation** | `/mod ban` `/mod unban` `/mod kick` `/mod timeout` `/mod warn` `/mod purge` |
+| **Economy** | `/economy balance` `/economy work` `/economy daily` `/economy pay` `/economy leaderboard` |
+| **Leveling** | `/leveling rank` `/leveling leaderboard` |
 | **Utility** | `/util ping` `/util server` `/util user` `/util avatar` `/util uptime` `/util timestamp` |
 | **Roles** | `/role add` `/role remove` `/role list` |
-| **Config** | `/config logs` `/config welcome` `/config autorole` |
+| **Config** | `/config logs` `/config welcome` `/config autorole` `/config prefix` |
 | **Reminders** | `/remind create` |
 
 ---
@@ -41,21 +43,29 @@
 
 ### Setup
 
-```bash
-# 1. Clone the repository
-git clone https://github.com/your-username/AegisForge.git
-cd AegisForge
+1. **Clone & Environment**
 
-# 2. Copy and fill in the environment file
-cp .env.example .env
-# Edit .env and paste your bot token
+   ```bash
+   git clone https://github.com/your-username/AegisForge.git
+   cd AegisForge
+   cp .env.example .env
+   # Fill in DISCORD_TOKEN and both DATABASE URLs (see below)
+   ```
 
-# 3. Run migrations (creates aegisforge.db)
-sqlx migrate run
+2. **Database Migrations**
 
-# 4. Build and run
-cargo run --release
-```
+   AegisForge v3 uses Neon PostgreSQL. You must run migrations against the **Direct** URL before starting.
+
+   ```bash
+   # Ensure DATABASE_URL is set in your shell or .env
+   sqlx migrate run
+   ```
+
+3. **Build & Run**
+
+   ```bash
+   cargo run --release
+   ```
 
 ### Environment Variables
 
