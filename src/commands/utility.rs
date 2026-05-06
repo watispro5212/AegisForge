@@ -338,3 +338,35 @@ pub async fn cookie(
     ctx.send(poise::CreateReply::default().embed(embed)).await?;
     Ok(())
 }
+
+/// Displays all available commands
+#[poise::command(slash_command, prefix_command)]
+pub async fn help(
+    ctx: Context<'_>,
+    #[description = "Specific command to show help about"] command: Option<String>,
+) -> Result<(), Error> {
+    if let Some(cmd) = command {
+        let msg = format!("Help for `{}` command is coming soon! For now, explore the categories.", cmd);
+        ctx.send(poise::CreateReply::default().embed(
+            serenity::CreateEmbed::new()
+                .title(format!("🔍 Help — {}", cmd))
+                .description(msg)
+                .color(0x00ffff),
+        )).await?;
+        return Ok(());
+    }
+
+    ctx.send(poise::CreateReply::default().embed(
+        serenity::CreateEmbed::new()
+            .title("🛡️ AegisForge — Command Center")
+            .description("Here is a list of all available commands. Use `/help <command>` for more details.")
+            .field("⚙️ Utility", "`ping`, `server`, `user`, `avatar`, `uptime`, `fact`, `cat`, `cookie`, `help`", false)
+            .field("🔨 Moderation", "`ban`, `kick`, `mute`, `unmute`, `purge`, `lock`, `unlock`, `slowmode`", false)
+            .field("🔧 Automation", "`autorole`, `reactionrole`, `logchannel`, `filter`", false)
+            .field("🎵 Entertainment", "`play`, `skip`, `stop`, `queue`", false)
+            .footer(serenity::CreateEmbedFooter::new("Powered by Rust | Fast, secure, reliable"))
+            .color(0x5865F2),
+    )).await?;
+    
+    Ok(())
+}

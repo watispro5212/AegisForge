@@ -169,7 +169,7 @@ This document contains the exact blueprint for creating the ultimate Discord Sup
 
 ## 4. Required Bots
 
-1. **🤖 AegisForge**: Your own custom bot! Handles advanced moderation, custom webhook logging (in `#mod-logs` and `#status`), utility commands, and dynamic embeds.
+1. **🤖 AegisForge**: Your own custom bot! Handles advanced moderation, custom webhook logging (in `#mod-logs` and `#status`), utility commands, and dynamic embeds. Recently updated with a new `/help` command!
 2. **👋 Welcomer**: Dedicated to generating high-quality image welcome cards when members join, logging member leaves, and automatically sending a direct message to new users with server rules.
 3. **🎫 Ticket Tool**: Creates a highly professional support ticket system. Users click a button in `#support` to open a private thread that only they and the `Aegis Vanguard`/`Aegis Sentinel` roles can see.
 4. **⚔️ Arcane**: A powerful leveling and economy bot that rewards members with XP for being active in text and voice channels. Automatically assigns the `⭐ VIP Member` role when they reach level 10.

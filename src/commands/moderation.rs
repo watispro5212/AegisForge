@@ -137,3 +137,68 @@ pub async fn purge(
     reply.delete(ctx).await?;
     Ok(())
 }
+
+/// Set the slowmode for the current channel
+#[poise::command(slash_command, prefix_command, required_permissions = "MANAGE_CHANNELS", guild_only)]
+pub async fn slowmode(
+    ctx: Context<'_>,
+    #[description = "Delay in seconds (0 to disable)"] seconds: u64,
+) -> Result<(), Error> {
+    let channel_id = ctx.channel_id();
+    
+    // We use edit_channel to update rate_limit_per_user
+    channel_id.edit(ctx.http(), serenity::EditChannel::default().rate_limit_per_user(seconds as u16)).await?;
+
+    if seconds == 0 {
+        ctx.say("✅ Slowmode has been **disabled** for this channel.").await?;
+    } else {
+        ctx.say(format!("✅ Slowmode has been set to **{} seconds**.", seconds)).await?;
+    }
+    
+    Ok(())
+}
+
+/// Lock the current channel (denies @everyone SEND_MESSAGES)
+#[poise::command(slash_command, prefix_command, required_permissions = "MANAGE_CHANNELS", guild_only)]
+pub async fn lock(ctx: Context<'_>) -> Result<(), Error> {
+    let channel_id = ctx.channel_id();
+    let guild_id = ctx.guild_id().ok_or("Must be in a guild")?;
+    let role_id = guild_id.everyone_role();
+
+    let overwrite = serenity::PermissionOverwrite {
+        allow: serenity::Permissions::empty(),
+        deny: serenity::Permissions::SEND_MESSAGES,
+        kind: serenity::PermissionOverwriteType::Role(role_id),
+    };
+
+    channel_id.create_permission(ctx.http(), overwrite).await?;
+
+    ctx.send(poise::CreateReply::default().embed(
+        serenity::CreateEmbed::new()
+            .title("🔒 Channel Locked")
+            .description("Public messaging has been disabled in this channel.")
+            .color(0xff0000),
+    )).await?;
+
+    Ok(())
+}
+
+/// Unlock the current channel (removes @everyone SEND_MESSAGES deny)
+#[poise::command(slash_command, prefix_command, required_permissions = "MANAGE_CHANNELS", guild_only)]
+pub async fn unlock(ctx: Context<'_>) -> Result<(), Error> {
+    let channel_id = ctx.channel_id();
+    let guild_id = ctx.guild_id().ok_or("Must be in a guild")?;
+    let role_id = guild_id.everyone_role();
+
+    channel_id.delete_permission(ctx.http(), serenity::PermissionOverwriteType::Role(role_id)).await?;
+
+    ctx.send(poise::CreateReply::default().embed(
+        serenity::CreateEmbed::new()
+            .title("🔓 Channel Unlocked")
+            .description("Public messaging has been re-enabled.")
+            .color(0x00ff00),
+    )).await?;
+
+    Ok(())
+}
+

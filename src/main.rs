@@ -77,6 +77,7 @@ async fn main() -> Result<(), Error> {
         .options(poise::FrameworkOptions {
             commands: vec![
                 // Utility
+                commands::utility::help(),
                 commands::utility::ping(),
                 commands::utility::server(),
                 commands::utility::user(),
@@ -98,6 +99,9 @@ async fn main() -> Result<(), Error> {
                 commands::moderation::ban(),
                 commands::moderation::unban(),
                 commands::moderation::kick(),
+                commands::moderation::slowmode(),
+                commands::moderation::lock(),
+                commands::moderation::unlock(),
                 commands::moderation::timeout(),
                 commands::moderation::warn(),
                 commands::moderation::purge(),
