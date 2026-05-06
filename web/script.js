@@ -80,6 +80,13 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 async function fetchLiveStats() {
     const API_URL = 'https://aegisforge.fly.dev/api/stats';
     
+    const formatUptime = (seconds) => {
+        const days = Math.floor(seconds / 86400);
+        const hours = Math.floor((seconds % 86400) / 3600);
+        const minutes = Math.floor((seconds % 3600) / 60);
+        return { days, hours, minutes };
+    };
+    
     const animateValue = (id, end, isTime = false) => {
         const obj = document.getElementById(id);
         if (!obj) return;
@@ -94,8 +101,8 @@ async function fetchLiveStats() {
             const current = easeProgress * (end - startValue) + startValue;
             
             if (isTime) {
-                const days = (current / 86400).toFixed(1);
-                obj.innerHTML = `${days} days`;
+                const uptime = formatUptime(current);
+                obj.innerHTML = `${uptime.days}d ${uptime.hours}h ${uptime.minutes}m`;
             } else {
                 obj.innerHTML = Math.floor(current).toLocaleString();
             }
@@ -123,6 +130,18 @@ async function fetchLiveStats() {
             animateValue('stat-users', data.user_count);
             animateValue('stat-uptime', data.uptime_seconds, true);
             animateValue('stat-cases', Math.floor(data.user_count * 0.08));
+
+            // Update Status page elements if they exist
+            const guildsStatus = document.getElementById('stat-guilds-status');
+            const usersStatus = document.getElementById('stat-users-status');
+            const uptimeStatus = document.getElementById('stat-uptime-status');
+
+            if (guildsStatus) guildsStatus.innerText = data.server_count.toLocaleString();
+            if (usersStatus) usersStatus.innerText = data.user_count.toLocaleString();
+            if (uptimeStatus) {
+                const uptimeData = formatUptime(data.uptime_seconds); // Using the inner logic of animateValue's true flag
+                uptimeStatus.innerText = `${uptimeData.days}d ${uptimeData.hours}h ${uptimeData.minutes}m`;
+            }
         }
 
         // Leaderboard logic
@@ -226,4 +245,72 @@ tiltCards.forEach(card => {
             card.style.transition = 'transform 0.1s ease-out';
         }, 500);
     });
+});
+
+// 3. Command Search and Tabs
+document.addEventListener('DOMContentLoaded', () => {
+    const searchInput = document.getElementById('cmd-search');
+    const tabs = document.querySelectorAll('.cmd-tab');
+    const panels = document.querySelectorAll('.cmd-panel');
+    const commandCards = document.querySelectorAll('.cmd-card');
+
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            
+            if (query === '') {
+                // Restore tabs if search is cleared
+                const activeTab = document.querySelector('.cmd-tab.active');
+                if (activeTab) {
+                    const tabId = activeTab.getAttribute('data-tab');
+                    showPanel(tabId);
+                }
+                return;
+            }
+
+            // Search mode: show all matching cards regardless of tab
+            panels.forEach(p => p.style.display = 'block');
+            commandCards.forEach(card => {
+                const name = card.querySelector('.cmd-name').textContent.toLowerCase();
+                const desc = card.querySelector('.cmd-desc').textContent.toLowerCase();
+                if (name.includes(query) || desc.includes(query)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            // Hide panels that have no matching cards
+            panels.forEach(panel => {
+                const visibleCards = panel.querySelectorAll('.cmd-card[style="display: block;"]');
+                if (visibleCards.length === 0) {
+                    panel.style.display = 'none';
+                }
+            });
+        });
+    }
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            if (searchInput) searchInput.value = ''; // Clear search
+            
+            const tabId = tab.getAttribute('data-tab');
+            
+            tabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            
+            showPanel(tabId);
+        });
+    });
+
+    function showPanel(tabId) {
+        panels.forEach(panel => {
+            panel.classList.remove('active');
+            panel.style.display = ''; // Reset search overrides
+            if (panel.id === `tab-${tabId}`) {
+                panel.classList.add('active');
+            }
+        });
+        commandCards.forEach(c => c.style.display = ''); // Reset search overrides
+    }
 });

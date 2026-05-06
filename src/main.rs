@@ -23,6 +23,7 @@ use db::Database;
 #[derive(Debug)]
 pub struct Data {
     pub database: Arc<Database>,
+    pub start_time: std::time::Instant,
 }
 
 #[derive(Serialize)]
@@ -134,7 +135,7 @@ async fn main() -> Result<(), Error> {
                         poise::FrameworkError::Command { error, ctx, .. } => {
                             error!("Command error in {}: {:?}", ctx.command().name, error);
                             let _ = ctx.send(poise::CreateReply::default()
-                                .content(format!("❌ {}", error))
+                                .content(format!("❌ **Error:** {}", error))
                                 .ephemeral(true)).await;
                         }
                         other => error!("Framework error: {:?}", other),
@@ -151,7 +152,10 @@ async fn main() -> Result<(), Error> {
             Box::pin(async move {
                 info!("🔩 AegisForge online as {}!", ready.user.name);
                 poise::builtins::register_globally(ctx, &framework.options().commands).await?;
-                Ok(Data { database: db })
+                Ok(Data { 
+                    database: db,
+                    start_time,
+                })
             })
         })
         .build();
@@ -171,6 +175,7 @@ async fn main() -> Result<(), Error> {
     };
 
     let app = Router::new()
+        .route("/", get(|| async { "OK" }))
         .route("/api/stats", get(get_stats))
         .layer(CorsLayer::new()
             .allow_origin(Any)

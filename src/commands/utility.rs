@@ -85,9 +85,19 @@ pub async fn avatar(
 /// Show the bot's uptime and version info
 #[poise::command(slash_command, prefix_command)]
 pub async fn uptime(ctx: Context<'_>) -> Result<(), Error> {
+    let uptime = ctx.data().start_time.elapsed();
+    let seconds = uptime.as_secs();
+    let days = seconds / 86400;
+    let hours = (seconds % 86400) / 3600;
+    let minutes = (seconds % 3600) / 60;
+    let secs = seconds % 60;
+
+    let uptime_str = format!("{}d {}h {}m {}s", days, hours, minutes, secs);
+
     ctx.send(poise::CreateReply::default().embed(
         serenity::CreateEmbed::new()
             .title("🔩 AegisForge — System Status")
+            .field("Uptime", uptime_str, true)
             .field("Version", env!("CARGO_PKG_VERSION"), true)
             .field("Language", "Rust 🦀", true)
             .field("Framework", "Poise + Serenity", true)
