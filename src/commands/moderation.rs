@@ -202,3 +202,59 @@ pub async fn unlock(ctx: Context<'_>) -> Result<(), Error> {
     Ok(())
 }
 
+/// Mute a member (alias for timeout with 1 hour default)
+#[poise::command(slash_command, prefix_command, required_permissions = "MODERATE_MEMBERS", guild_only)]
+pub async fn mute(
+    ctx: Context<'_>,
+    #[description = "The user to mute"] user: serenity::User,
+    #[description = "Duration in minutes (defaults to 60)"] minutes: Option<u64>,
+    #[description = "The reason for the mute"] reason: Option<String>,
+) -> Result<(), Error> {
+    let guild_id = ctx.guild_id().ok_or("Must be in a guild")?;
+    let reason_str = reason.as_deref().unwrap_or("No reason provided");
+    let m = minutes.unwrap_or(60);
+
+    let until = serenity::Timestamp::from_unix_timestamp(
+        chrono::Utc::now().timestamp() + (m as i64 * 60),
+    )?;
+
+    let mut member = guild_id.member(ctx.http(), user.id).await?;
+    member.disable_communication_until_datetime(ctx.http(), until).await?;
+
+    ctx.send(poise::CreateReply::default().embed(
+        serenity::CreateEmbed::new()
+            .title("Member Muted")
+            .description(format!("**{}** has been muted for **{} minute(s)**.", user.name, m))
+            .field("Reason", reason_str, false)
+            .color(0xff4500),
+    ))
+    .await?;
+    Ok(())
+}
+
+
+/// Unmute a member (removes timeout)
+#[poise::command(slash_command, prefix_command, required_permissions = "MODERATE_MEMBERS", guild_only)]
+pub async fn unmute(
+    ctx: Context<'_>,
+    #[description = "The user to unmute"] user: serenity::User,
+    #[description = "The reason for the unmute"] reason: Option<String>,
+) -> Result<(), Error> {
+    let guild_id = ctx.guild_id().ok_or("Must be in a guild")?;
+    let reason_str = reason.as_deref().unwrap_or("No reason provided");
+
+    let mut member = guild_id.member(ctx.http(), user.id).await?;
+    member.enable_communication(ctx.http()).await?;
+
+    ctx.send(poise::CreateReply::default().embed(
+        serenity::CreateEmbed::new()
+            .title("Member Unmuted")
+            .description(format!("**{}** has been unmuted.", user.name))
+            .field("Reason", reason_str, false)
+            .color(0x00ff00),
+    ))
+    .await?;
+    Ok(())
+}
+
+

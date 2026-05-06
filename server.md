@@ -61,21 +61,32 @@ This document contains the exact blueprint for creating the ultimate Discord Sup
 
 11. **🎉 Event Winner**
     - **Color:** `#ffc107` (Amber)
-    - **Permissions:** Base member perms.
 
-12. **✅ Verified**
+12. **🤝 Partner**
+    - **Color:** `#1abc9c` (Turquoise)
+    - **Permissions:** Base member perms + ability to post links in designated channels.
+
+13. **🐛 Bug Hunter**
+    - **Color:** `#e67e22` (Orange)
+    - **Permissions:** Access to private #bug-testing channels.
+
+14. **🌍 Translator**
+    - **Color:** `#3498db` (Blue)
+    - **Permissions:** Recognition for helping localize AegisForge commands.
+
+15. **✅ Verified**
     - **Color:** `#bbbbbb` (Grey)
     - **Permissions:** View Channels, Send Messages, Read Message History.
 
-13. **👥 Member** (Default auto-assigned role)
+16. **👥 Member** (Default auto-assigned role)
     - **Color:** Default
     - **Permissions:** `View Channels`, `Send Messages`, `Read Message History`, `Add Reactions`, `Connect`, `Speak`. (NO @everyone/here mentions).
 
-14. **🔔 Notification Squad** (Self-assigned ping role)
+17. **🔔 Notification Squad** (Self-assigned ping role)
     - **Color:** Default
     - **Permissions:** No extra permissions, used only to mention for minor announcements.
 
-15. **🔇 Muted**
+18. **🔇 Muted**
     - **Color:** `#000000` (Black)
     - **Permissions:** Explicitly denies `Send Messages`, `Add Reactions`, `Speak`.
 
@@ -84,9 +95,10 @@ This document contains the exact blueprint for creating the ultimate Discord Sup
 ## 3. Categories & Channels Setup (With Detailed Permissions)
 
 ### 📌 INFORMATION
+
 *Category Permissions:* `@everyone`: `View Channel` ✅, `Send Messages` ❌, `Add Reactions` ❌ | `Aegis Vanguard`: `Send Messages` ✅
 
-- **#👋・welcome** 
+- **#👋・welcome**
   - *Permissions:* Syncs with category.
 - **#📢・announcements**
   - *Permissions:* Syncs with category.
@@ -96,10 +108,13 @@ This document contains the exact blueprint for creating the ultimate Discord Sup
   - *Permissions:* Syncs with category.
 - **#📊・polls**
   - *Permissions:* Syncs with category. `@everyone`: `Add Reactions` ✅
-- **#🎭・get-roles** 
+- **#🎭・get-roles**
   - *Permissions:* Syncs with category. `@everyone`: `Add Reactions` ✅
+- **#📡・status**
+  - *Permissions:* Syncs with category. Receives bot heartbeat and server count updates via webhook.
 
 ### 💬 COMMUNITY
+
 *Category Permissions:* `@everyone`: `View Channel` ✅, `Send Messages` ✅, `Read Message History` ✅, `Attach Files` ❌
 
 - **#💬・general**
@@ -118,6 +133,7 @@ This document contains the exact blueprint for creating the ultimate Discord Sup
   - *Permissions:* Syncs with category. `@everyone`: `Attach Files` ✅, `Embed Links` ✅
 
 ### 🛠️ SUPPORT
+
 *Category Permissions:* `@everyone`: `View Channel` ✅, `Send Messages` ❌
 
 - **#❓・faq**
@@ -130,6 +146,7 @@ This document contains the exact blueprint for creating the ultimate Discord Sup
   - *Permissions:* Forum Channel. `@everyone`: `Send Messages` ✅, `Create Posts` ✅
 
 ### 🧪 BETA TESTING (Hidden)
+
 *Category Permissions:* `@everyone`: `View Channel` ❌ | `Beta Tester`: `View Channel` ✅, `Send Messages` ✅
 
 - **#🧪・beta-chat**
@@ -138,6 +155,7 @@ This document contains the exact blueprint for creating the ultimate Discord Sup
   - *Permissions:* Syncs with category.
 
 ### 🔐 STAFF (Hidden)
+
 *Category Permissions:* `@everyone`: `View Channel` ❌ | `Aegis Vanguard`: `View Channel` ✅, `Send Messages` ✅
 
 - **#🛡️・staff-chat**
@@ -150,6 +168,7 @@ This document contains the exact blueprint for creating the ultimate Discord Sup
   - *Permissions:* Syncs with category. `Aegis Vanguard`: `Send Messages` ❌ (Bot only)
 
 ### 🎙️ VOICE CHANNELS
+
 *Category Permissions:* `@everyone`: `View Channel` ✅, `Connect` ✅, `Speak` ✅, `Video` ❌
 
 - **🔊 General Lounge**
@@ -173,7 +192,11 @@ This document contains the exact blueprint for creating the ultimate Discord Sup
 2. **👋 Welcomer**: Dedicated to generating high-quality image welcome cards when members join, logging member leaves, and automatically sending a direct message to new users with server rules.
 3. **🎫 Ticket Tool**: Creates a highly professional support ticket system. Users click a button in `#support` to open a private thread that only they and the `Aegis Vanguard`/`Aegis Sentinel` roles can see.
 4. **⚔️ Arcane**: A powerful leveling and economy bot that rewards members with XP for being active in text and voice channels. Automatically assigns the `⭐ VIP Member` role when they reach level 10.
+5. **🐢 Carl-bot**: Used for high-end reaction roles, custom logging (separate from Aegis), and advanced automated moderation triggers that require complex regex patterns.
+6. **🦕 Dyno**: A secondary moderation layer and automated message cleaning utility. Perfect for massive spam events where multiple bots are needed to sweep channels.
+7. **📊 Member Count**: Creates a dynamic voice channel at the top of the server list that displays the current member count in real-time.
 
+---
 
 ## 5. Texts & Prompts
 
@@ -205,7 +228,8 @@ We're thrilled to have you here. AegisForge is the ultimate high-performance Rus
 Enjoy your stay! 🛡️
 ```
 
-### ?? Status Channel
+### 🛰️ Status Channel
+
 - **Name:** #status
 - **Type:** Text Channel
 - **Category:** Information / System

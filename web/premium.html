@@ -19,58 +19,162 @@
             <img src="assets/logo.png" alt="AegisForge Logo" class="nav-logo-img">
             <a href="index.html" class="logo-link"><span class="logo-text">AEGIS<span class="logo-accent">FORGE</span></span></a>
         </div>
-                        <div class="nav-links">
+        <div class="nav-links">
             <a href="index.html#features">Features</a>
             <a href="commands.html">Commands</a>
             <a href="team.html">Team</a>
             <a href="changelog.html">Changelog</a>
             <a href="premium.html" class="nav-link-premium">Premium</a>
+            <a href="status.html">Status</a>
             <a href="about.html">About</a>
             <a href="https://github.com/watispro5212/AegisForge" target="_blank" rel="noopener noreferrer" class="nav-link-code">GitHub</a>
             <a href="https://discord.com/oauth2/authorize?client_id=1500582485367722004&permissions=8&response_type=code&redirect_uri=https%3A%2F%2Fdiscord.com%2Foauth2%2Fauthorize%3Fclient_id%3D1500582485367722004&integration_type=0&scope=bot+identify+applications.commands+applications.commands.permissions.update+openid" target="_blank" rel="noopener noreferrer" class="btn-primary">Invite Bot</a>
         </div>
     </nav>
 
-    <header class="premium-hero">
-        <div class="hero-badge">Aegis Sentinel</div>
-        <h1>Level up with <span class="text-gradient">Premium</span></h1>
-        <p>Unlock the full power of Rust-engineered automation. Experience lightning-fast AI moderation, custom branding, and enterprise-grade reliability.</p>
-        <div class="hero-btns">
-            <a href="https://discord.gg/yourlink" class="btn-primary btn-lg shine-effect">Subscribe via Discord</a>
-            <a href="#features" class="btn-secondary btn-lg">Explore Features</a>
-        </div>
-    </header>
+    <main class="page-content">
+        <header class="premium-hero">
+            <div class="hero-badge">Aegis Sentinel</div>
+            <h1>Level up with <span class="text-gradient">Premium</span></h1>
+            <p>Unlock the full power of Rust-engineered automation. Experience lightning-fast AI moderation, custom branding, and enterprise-grade reliability.</p>
+            <div class="hero-btns">
+                <a href="https://discord.gg/yourlink" class="btn-primary btn-lg shine-effect">Subscribe via Discord</a>
+                <a href="#tiers" class="btn-secondary btn-lg">View Pricing Tiers</a>
+            </div>
+        </header>
 
-    <section id="features" class="features-grid">
-        <div class="feature-item tilt-card" data-reveal>
-            <i>🤖</i>
-            <h3>AI Auto-Mod</h3>
-            <p>Advanced neural networks analyze message intent in real-time, catching raids and toxicity before they disrupt your community.</p>
+        <section id="tiers">
+            <h2>Choose Your <span class="text-gradient">Aegis Tier</span></h2>
+
+            <div class="pricing-grid">
+                <div class="pricing-card" data-reveal>
+                    <div class="tier-name">Vanguard</div>
+                    <div class="price">$4.99<span>/mo</span></div>
+                    <ul class="tier-features">
+                        <li>AI Auto-Mod (Basic)</li>
+                        <li>Priority Queue</li>
+                        <li>Custom Bot Status</li>
+                        <li>20 Custom Commands</li>
+                    </ul>
+                    <a href="#" class="btn-secondary">Get Started</a>
+                </div>
+                <div class="pricing-card popular" data-reveal>
+                    <div class="popular-badge">Most Popular</div>
+                    <div class="tier-name">Sentinel</div>
+                    <div class="price">$9.99<span>/mo</span></div>
+                    <ul class="tier-features">
+                        <li>AI Auto-Mod (Pro)</li>
+                        <li>Advanced Analytics</li>
+                        <li>Full Custom Branding</li>
+                        <li>Unlimited Commands</li>
+                        <li>Priority Dev Support</li>
+                    </ul>
+                    <a href="#" class="btn-primary shine-effect">Go Pro</a>
+                </div>
+                <div class="pricing-card" data-reveal>
+                    <div class="tier-name">Titan</div>
+                    <div class="price">$19.99<span>/mo</span></div>
+                    <ul class="tier-features">
+                        <li>Full Source Access</li>
+                        <li>Self-Hosting Support</li>
+                        <li>Custom Bot Instance</li>
+                        <li>White-label Solution</li>
+                        <li>24/7 Dedicated Concierge</li>
+                    </ul>
+                    <a href="#" class="btn-secondary">Contact Sales</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="features" class="features-grid">
+            <div class="feature-item tilt-card" data-reveal>
+                <i>🤖</i>
+                <h3>AI Auto-Mod</h3>
+                <p>Advanced neural networks analyze message intent in real-time, catching raids and toxicity before they disrupt your community.</p>
+            </div>
+            <div class="feature-item tilt-card" data-reveal>
+                <i>⚡</i>
+                <h3>Priority Processing</h3>
+                <p>Your commands are routed through dedicated high-priority threads, ensuring sub-10ms response times even during global peaks.</p>
+            </div>
+            <div class="feature-item tilt-card" data-reveal>
+                <i>🎨</i>
+                <h3>Custom Branding</h3>
+                <p>Personalize the bot's appearance with custom footers, hex colors, and image-based welcome cards that match your server's identity.</p>
+            </div>
+            <div class="feature-item tilt-card" data-reveal>
+                <i>📊</i>
+                <h3>Advanced Analytics</h3>
+                <p>Gain deep insights into your community's growth, activity trends, and moderation effectiveness with detailed exportable reports.</p>
+            </div>
+            <div class="feature-item tilt-card" data-reveal>
+                <i>🔔</i>
+                <h3>Custom Alerts</h3>
+                <p>Configure granular webhook notifications for everything from new member joins to complex moderation events across multiple channels.</p>
+            </div>
+            <div class="feature-item tilt-card" data-reveal>
+                <i>📞</i>
+                <h3>Direct Support</h3>
+                <p>Skip the ticket queue. Premium members get access to a private developer channel for immediate assistance and feature requests.</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Plan Comparison -->
+    <section class="comparison-section reveal-on-scroll">
+        <div class="section-header">
+            <span class="section-tag">Deep Dive</span>
+            <h2>Compare Plans</h2>
         </div>
-        <div class="feature-item tilt-card" data-reveal>
-            <i>⚡</i>
-            <h3>Priority Processing</h3>
-            <p>Your commands are routed through dedicated high-priority threads, ensuring sub-10ms response times even during global peaks.</p>
-        </div>
-        <div class="feature-item tilt-card" data-reveal>
-            <i>🎨</i>
-            <h3>Custom Branding</h3>
-            <p>Personalize the bot's appearance with custom footers, hex colors, and image-based welcome cards that match your server's identity.</p>
-        </div>
-        <div class="feature-item tilt-card" data-reveal>
-            <i>📊</i>
-            <h3>Advanced Analytics</h3>
-            <p>Gain deep insights into your community's growth, activity trends, and moderation effectiveness with detailed exportable reports.</p>
-        </div>
-        <div class="feature-item tilt-card" data-reveal>
-            <i>🔔</i>
-            <h3>Custom Alerts</h3>
-            <p>Configure granular webhook notifications for everything from new member joins to complex moderation events across multiple channels.</p>
-        </div>
-        <div class="feature-item tilt-card" data-reveal>
-            <i>📞</i>
-            <h3>Direct Support</h3>
-            <p>Skip the ticket queue. Premium members get access to a private developer channel for immediate assistance and feature requests.</p>
+        <div class="comparison-container">
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        <th>Free</th>
+                        <th>Pro</th>
+                        <th>Enterprise</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>AI Auto-Mod</td>
+                        <td>Standard</td>
+                        <td>Advanced</td>
+                        <td>Full Suite</td>
+                    </tr>
+                    <tr>
+                        <td>Case History</td>
+                        <td>30 Days</td>
+                        <td>Unlimited</td>
+                        <td>Unlimited + Audit</td>
+                    </tr>
+                    <tr>
+                        <td>Custom Branding</td>
+                        <td>❌</td>
+                        <td>Limited</td>
+                        <td>Full Control</td>
+                    </tr>
+                    <tr>
+                        <td>API Access</td>
+                        <td>❌</td>
+                        <td>✅ (Standard)</td>
+                        <td>✅ (Priority)</td>
+                    </tr>
+                    <tr>
+                        <td>Response Time</td>
+                        <td>24h</td>
+                        <td>4h</td>
+                        <td>< 1h (Dedicated)</td>
+                    </tr>
+                    <tr>
+                        <td>Server Analytics</td>
+                        <td>Basic</td>
+                        <td>Detailed</td>
+                        <td>Real-time Predictive</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </section>
 
@@ -81,12 +185,13 @@
                 <img src="assets/logo.png" alt="AegisForge Logo" class="nav-logo-img">
                 <span class="logo-text">AEGIS<span class="logo-accent">FORGE</span></span>
             </div>
-                                    <div class="footer-links">
+            <div class="footer-links">
                 <a href="index.html#features">Features</a>
                 <a href="commands.html">Commands</a>
                 <a href="team.html">Team</a>
                 <a href="changelog.html">Changelog</a>
                 <a href="premium.html">Premium</a>
+                <a href="status.html">Status</a>
                 <a href="about.html">About</a>
                 <a href="https://github.com/watispro5212/AegisForge" target="_blank" rel="noopener noreferrer">GitHub</a>
                 <a href="privacy.html">Privacy Policy</a>
