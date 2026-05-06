@@ -168,16 +168,19 @@ async fn main() -> Result<(), Error> {
             },
             ..Default::default()
         })
-        .setup(move |ctx, ready, framework| {
-            let db = Arc::clone(&database);
-            Box::pin(async move {
-                info!("🔩 AegisForge online as {}!", ready.user.name);
-                poise::builtins::register_globally(ctx, &framework.options().commands).await?;
-                Ok(Data { 
-                    database: db,
-                    start_time,
+        .setup({
+            let database = Arc::clone(&database);
+            move |ctx, ready, framework| {
+                let db = Arc::clone(&database);
+                Box::pin(async move {
+                    info!("🔩 AegisForge online as {}!", ready.user.name);
+                    poise::builtins::register_globally(ctx, &framework.options().commands).await?;
+                    Ok(Data { 
+                        database: db,
+                        start_time,
+                    })
                 })
-            })
+            }
         })
         .build();
 

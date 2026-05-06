@@ -30,15 +30,18 @@ pub async fn serverinfo(ctx: Context<'_>) -> Result<(), Error> {
 
     ctx.send(poise::CreateReply::default().embed(
         serenity::CreateEmbed::new()
-            .title(format!("🔷 Server — {}", guild.name))
+            .title(format!("🔷 AegisForge — {}", guild.name))
+            .description(format!("Comprehensive overview of the **{}** forge.", guild.name))
             .thumbnail(icon)
-            .field("Owner", format!("<@{}>", guild.owner_id), true)
-            .field("Members", guild.member_count.to_string(), true)
-            .field("Channels", guild.channels.len().to_string(), true)
-            .field("Roles", guild.roles.len().to_string(), true)
-            .field("Boost Level", boost_tier, true)
-            .field("Created", format!("<t:{}:R>", guild.id.created_at().unix_timestamp()), true)
-            .color(0x00ffff),
+            .field("👑 Owner", format!("<@{}>", guild.owner_id), true)
+            .field("👥 Members", guild.member_count.to_string(), true)
+            .field("📺 Channels", guild.channels.len().to_string(), true)
+            .field("📜 Roles", guild.roles.len().to_string(), true)
+            .field("🚀 Boost Level", boost_tier, true)
+            .field("📅 Created", format!("<t:{}:F>", guild.id.created_at().unix_timestamp()), true)
+            .footer(serenity::CreateEmbedFooter::new(format!("ID: {} | Forged with precision", guild.id)))
+            .timestamp(serenity::Timestamp::now())
+            .color(0x00E5FF),
     ))
     .await?;
     Ok(())
@@ -54,12 +57,16 @@ pub async fn whois(
 
     ctx.send(poise::CreateReply::default().embed(
         serenity::CreateEmbed::new()
-            .title(format!("👤 User — {}", target.name))
+            .title(format!("👤 AegisForge — Profile"))
+            .description(format!("Identity data for **{}**.", target.name))
             .thumbnail(target.face())
-            .field("ID", target.id.to_string(), true)
-            .field("Bot", if target.bot { "Yes" } else { "No" }, true)
-            .field("Created", format!("<t:{}:R>", target.id.created_at().unix_timestamp()), true)
-            .color(0x00ffff),
+            .field("📝 Username", format!("**{}**", target.name), true)
+            .field("🆔 User ID", target.id.to_string(), true)
+            .field("🤖 Entity Type", if target.bot { "Service Bot" } else { "Human User" }, true)
+            .field("📅 Account Created", format!("<t:{}:F>", target.id.created_at().unix_timestamp()), false)
+            .footer(serenity::CreateEmbedFooter::new("Forged with precision | v3 Core"))
+            .timestamp(serenity::Timestamp::now())
+            .color(0x00E5FF),
     ))
     .await?;
     Ok(())
@@ -76,9 +83,12 @@ pub async fn avatar(
 
     ctx.send(poise::CreateReply::default().embed(
         serenity::CreateEmbed::new()
-            .title(format!("{}'s Avatar", target.name))
+            .title(format!("🖼️ AegisForge — Visual Identity"))
+            .description(format!("Avatar asset for **{}**.", target.name))
             .image(&avatar_url)
-            .color(0x00ffff),
+            .footer(serenity::CreateEmbedFooter::new(format!("Requested by {}", ctx.author().name)))
+            .timestamp(serenity::Timestamp::now())
+            .color(0x00E5FF),
     ))
     .await?;
     Ok(())
