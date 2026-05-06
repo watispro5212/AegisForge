@@ -56,34 +56,28 @@ This document contains the exact blueprint for creating the ultimate Discord Sup
    - **Permissions:** Base member perms + ability to bypass slowmode.
 
 10. **🚀 Server Booster**
-   - **Color:** `#f47fff` (Light Pink)
-   - **Permissions:** Granted by Discord automatically.
+    - **Color:** `#f47fff` (Light Pink)
+    - **Permissions:** Granted by Discord automatically.
 
 11. **🎉 Event Winner**
-   - **Color:** `#ffc107` (Amber)
-   - **Permissions:** Base member perms.
+    - **Color:** `#ffc107` (Amber)
+    - **Permissions:** Base member perms.
 
 12. **✅ Verified**
-   - **Color:** `#bbbbbb` (Grey)
-   - **Permissions:** View Channels, Send Messages, Read Message History.
+    - **Color:** `#bbbbbb` (Grey)
+    - **Permissions:** View Channels, Send Messages, Read Message History.
 
-13. **🔇 Muted**
-   - **Color:** `#000000` (Black)
-   - **Permissions:** Explicitly denies `Send Messages`, `Add Reactions`, `Speak`.
-   - **Color:** `#00bcd4` (Cyan)
-   - **Permissions:** Standard Member permissions + access to hidden beta channels.
+13. **👥 Member** (Default auto-assigned role)
+    - **Color:** Default
+    - **Permissions:** `View Channels`, `Send Messages`, `Read Message History`, `Add Reactions`, `Connect`, `Speak`. (NO @everyone/here mentions).
 
-9. **👥 Member** (Default auto-assigned role)
-   - **Color:** Default
-   - **Permissions:** `View Channels`, `Send Messages`, `Read Message History`, `Add Reactions`, `Connect`, `Speak`. (NO @everyone/here mentions).
-
-10. **🔔 Notification Squad** (Self-assigned ping role)
+14. **🔔 Notification Squad** (Self-assigned ping role)
     - **Color:** Default
     - **Permissions:** No extra permissions, used only to mention for minor announcements.
 
-11. **🔇 Muted**
-    - **Color:** `#424242` (Dark Grey)
-    - **Permissions:** Explicitly deny `Send Messages`, `Add Reactions`, `Connect`, `Speak` in all channel category settings.
+15. **🔇 Muted**
+    - **Color:** `#000000` (Black)
+    - **Permissions:** Explicitly denies `Send Messages`, `Add Reactions`, `Speak`.
 
 ---
 
