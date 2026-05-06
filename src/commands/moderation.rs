@@ -13,6 +13,19 @@ pub async fn kick(
     let reason_str = reason.as_deref().unwrap_or("No reason provided");
 
     guild_id.kick_with_reason(ctx.http(), user.id, reason_str).await?;
+    
+    // Log to DB
+    let pool = &ctx.data().database.pool;
+    crate::db::mod_cases::create_case(
+        pool,
+        guild_id.get() as i64,
+        user.id.get() as i64,
+        ctx.author().id.get() as i64,
+        crate::models::mod_case::ModAction::Kick,
+        Some(reason_str),
+        None,
+        None,
+    ).await?;
 
     ctx.send(poise::CreateReply::default().embed(
         serenity::CreateEmbed::new()
@@ -43,6 +56,19 @@ pub async fn timeout(
     let mut member = guild_id.member(ctx.http(), user.id).await?;
     member.disable_communication_until_datetime(ctx.http(), until).await?;
 
+    // Log to DB
+    let pool = &ctx.data().database.pool;
+    crate::db::mod_cases::create_case(
+        pool,
+        guild_id.get() as i64,
+        user.id.get() as i64,
+        ctx.author().id.get() as i64,
+        crate::models::mod_case::ModAction::Timeout,
+        Some(reason_str),
+        Some(minutes as i64 * 60),
+        Some(chrono::DateTime::from_timestamp(until.unix_timestamp(), 0).unwrap().with_timezone(&chrono::Utc)),
+    ).await?;
+
     ctx.send(poise::CreateReply::default().embed(
         serenity::CreateEmbed::new()
             .title("Member Timed Out")
@@ -68,6 +94,19 @@ pub async fn ban(
 
     guild_id.ban_with_reason(ctx.http(), user.id, days, reason_str).await?;
 
+    // Log to DB
+    let pool = &ctx.data().database.pool;
+    crate::db::mod_cases::create_case(
+        pool,
+        guild_id.get() as i64,
+        user.id.get() as i64,
+        ctx.author().id.get() as i64,
+        crate::models::mod_case::ModAction::Ban,
+        Some(reason_str),
+        None,
+        None,
+    ).await?;
+
     ctx.send(poise::CreateReply::default().embed(
         serenity::CreateEmbed::new()
             .title("Member Banned")
@@ -89,6 +128,19 @@ pub async fn unban(
     let guild_id = ctx.guild_id().ok_or("Must be in a guild")?;
     guild_id.unban(ctx.http(), user_id).await?;
 
+    // Log to DB
+    let pool = &ctx.data().database.pool;
+    crate::db::mod_cases::create_case(
+        pool,
+        guild_id.get() as i64,
+        user_id.get() as i64,
+        ctx.author().id.get() as i64,
+        crate::models::mod_case::ModAction::Unban,
+        None,
+        None,
+        None,
+    ).await?;
+
     ctx.say(format!("Successfully unbanned user `{}`.", user_id)).await?;
     Ok(())
 }
@@ -100,11 +152,35 @@ pub async fn warn(
     #[description = "The user to warn"] user: serenity::User,
     #[description = "The reason for the warning"] reason: String,
 ) -> Result<(), Error> {
+    // Log to DB
+    let pool = &ctx.data().database.pool;
+    let guild_id = ctx.guild_id().unwrap().get() as i64;
+    let case = crate::db::mod_cases::create_case(
+        pool,
+        guild_id,
+        user.id.get() as i64,
+        ctx.author().id.get() as i64,
+        crate::models::mod_case::ModAction::Warn,
+        Some(&reason),
+        None,
+        None,
+    ).await?;
+
+    crate::db::warnings::create(
+        pool,
+        guild_id,
+        user.id.get() as i64,
+        ctx.author().id.get() as i64,
+        &reason,
+        Some(case.id),
+    ).await?;
+
     ctx.send(poise::CreateReply::default().embed(
         serenity::CreateEmbed::new()
             .title("Warning Issued")
             .description(format!("**{}** has been warned.", user.name))
             .field("Reason", &reason, false)
+            .field("Case Number", format!("#{}", case.case_number), true)
             .footer(serenity::CreateEmbedFooter::new("Moderation action logged."))
             .color(0xffaa00),
     ))
@@ -221,6 +297,19 @@ pub async fn mute(
     let mut member = guild_id.member(ctx.http(), user.id).await?;
     member.disable_communication_until_datetime(ctx.http(), until).await?;
 
+    // Log to DB
+    let pool = &ctx.data().database.pool;
+    crate::db::mod_cases::create_case(
+        pool,
+        guild_id.get() as i64,
+        user.id.get() as i64,
+        ctx.author().id.get() as i64,
+        crate::models::mod_case::ModAction::Mute,
+        Some(reason_str),
+        Some(m as i64 * 60),
+        Some(chrono::DateTime::from_timestamp(until.unix_timestamp(), 0).unwrap().with_timezone(&chrono::Utc)),
+    ).await?;
+
     ctx.send(poise::CreateReply::default().embed(
         serenity::CreateEmbed::new()
             .title("Member Muted")
@@ -245,6 +334,19 @@ pub async fn unmute(
 
     let mut member = guild_id.member(ctx.http(), user.id).await?;
     member.enable_communication(ctx.http()).await?;
+
+    // Log to DB
+    let pool = &ctx.data().database.pool;
+    crate::db::mod_cases::create_case(
+        pool,
+        guild_id.get() as i64,
+        user.id.get() as i64,
+        ctx.author().id.get() as i64,
+        crate::models::mod_case::ModAction::Unmute,
+        Some(reason_str),
+        None,
+        None,
+    ).await?;
 
     ctx.send(poise::CreateReply::default().embed(
         serenity::CreateEmbed::new()

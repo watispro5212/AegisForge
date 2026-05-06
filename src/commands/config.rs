@@ -7,6 +7,9 @@ pub async fn logs(
     ctx: Context<'_>,
     #[description = "The channel to send mod logs to"] channel: serenity::GuildChannel,
 ) -> Result<(), Error> {
+    let guild_id = ctx.guild_id().unwrap().get() as i64;
+    crate::db::guild::set_mod_log_channel(&ctx.data().database.pool, guild_id, channel.id.get() as i64).await?;
+    ctx.data().database.invalidate_cache(guild_id);
     ctx.say(format!("✅ Mod log channel set to <#{}>.", channel.id)).await?;
     Ok(())
 }
@@ -18,7 +21,10 @@ pub async fn welcome(
     #[description = "The channel for welcome messages"] channel: serenity::GuildChannel,
     #[description = "Custom welcome message (use {user} as placeholder)"] message: Option<String>,
 ) -> Result<(), Error> {
+    let guild_id = ctx.guild_id().unwrap().get() as i64;
     let msg = message.unwrap_or_else(|| "Welcome, {user}! 🎉".to_string());
+    crate::db::guild::set_welcome_channel(&ctx.data().database.pool, guild_id, channel.id.get() as i64, &msg).await?;
+    ctx.data().database.invalidate_cache(guild_id);
     ctx.say(format!("✅ Welcome channel set to <#{}>.\nMessage: `{}`", channel.id, msg)).await?;
     Ok(())
 }
