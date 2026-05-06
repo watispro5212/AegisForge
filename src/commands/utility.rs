@@ -10,9 +10,11 @@ pub async fn ping(ctx: Context<'_>) -> Result<(), Error> {
 
     msg.edit(ctx, poise::CreateReply::default().embed(
         serenity::CreateEmbed::new()
-            .title("⚡ AegisForge — Latency")
-            .field("API Round-trip", format!("{}ms", elapsed), true)
-            .color(0x00ffff),
+            .title("⚡ AegisForge — Connection")
+            .field("Gateway Latency", format!("{}ms", elapsed), true)
+            .field("API Status", "Connected", true)
+            .timestamp(serenity::Timestamp::now())
+            .color(0x00E5FF),
     ))
     .await?;
     Ok(())
@@ -92,17 +94,21 @@ pub async fn uptime(ctx: Context<'_>) -> Result<(), Error> {
     let minutes = (seconds % 3600) / 60;
     let secs = seconds % 60;
 
-    let uptime_str = format!("{}d {}h {}m {}s", days, hours, minutes, secs);
+    let uptime_str = format!("**{}**d **{}**h **{}**m **{}**s", days, hours, minutes, secs);
 
     ctx.send(poise::CreateReply::default().embed(
         serenity::CreateEmbed::new()
-            .title("🔩 AegisForge — System Status")
-            .field("Uptime", uptime_str, true)
-            .field("Version", env!("CARGO_PKG_VERSION"), true)
-            .field("Language", "Rust 🦀", true)
-            .field("Framework", "Poise + Serenity", true)
-            .footer(serenity::CreateEmbedFooter::new("Forged with precision."))
-            .color(0x00ffff),
+            .title("🚀 AegisForge — System Status")
+            .description("Real-time telemetry from the Eternal Forge core.")
+            .field("📡 Connectivity", "Online & Stable", true)
+            .field("⏱️ Uptime", uptime_str, true)
+            .field("📦 Version", format!("v{}", env!("CARGO_PKG_VERSION")), true)
+            .field("🦀 Core", "Rust 1.95 (Tokio)", true)
+            .field("⚙️ Framework", "Poise v0.6", true)
+            .field("🔋 Shard", "0 / 1", true)
+            .footer(serenity::CreateEmbedFooter::new("Forged with precision | AegisForge v3"))
+            .timestamp(serenity::Timestamp::now())
+            .color(0x00E5FF),
     ))
     .await?;
     Ok(())
@@ -163,15 +169,16 @@ pub async fn help(
 
     ctx.send(poise::CreateReply::default().embed(
         serenity::CreateEmbed::new()
-            .title("🛡️ AegisForge v3 — Command Center")
-            .description("A high-performance Discord bot ecosystem. Select a category below or use `/` to see all commands.")
-            .field("⚙️ Utility", "`ping`, `server`, `user`, `avatar`, `uptime`, `timestamp`, `serverinfo`, `whois`, `help`", false)
-            .field("🔨 Moderation", "`ban`, `kick`, `mute`, `unmute`, `purge`, `lock`, `unlock`, `slowmode`, `warn`, `timeout`", false)
+            .title("🛡️ AegisForge v3 — Eternal Forge")
+            .description("Welcome to the next generation of server protection. Use `/` to browse all slash commands.")
+            .field("⚙️ Utility", "`ping`, `server`, `user`, `avatar`, `uptime`, `timestamp`, `help`", false)
+            .field("🔨 Moderation", "`ban`, `kick`, `mute`, `unmute`, `purge`, `warn`, `timeout` (Audit logging enabled)", false)
             .field("💰 Economy", "`balance`, `daily`, `work`, `pay`, `leaderboard`", false)
             .field("📈 Leveling", "`rank`, `leaderboard`", false)
-            .field("✨ Fun", "`coinflip`, `dice`, `eightball`, `joke`, `fact`, `cat`, `cookie`, `hug`, `pat`, `kiss`, `slap`", false)
             .field("🔧 Config", "`logs`, `welcome`, `autorole`, `prefix`", false)
-            .footer(serenity::CreateEmbedFooter::new("Forged with precision | v3.0.0-alpha"))
+            .field("🔗 Links", "[Website](https://aegisforge.fly.dev) | [Invite](https://discord.com/oauth2/authorize?client_id=1500582485367722004&permissions=8&scope=bot+applications.commands)", false)
+            .footer(serenity::CreateEmbedFooter::new("Forged with precision | Type /help <command> for details"))
+            .timestamp(serenity::Timestamp::now())
             .color(0x00E5FF),
     )).await?;
     

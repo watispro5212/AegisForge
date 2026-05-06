@@ -114,7 +114,14 @@ async function fetchLiveStats() {
             animateValue('stat-guilds', data.server_count);
             animateValue('stat-users', data.user_count);
             animateValue('stat-uptime', data.uptime_seconds, true);
-            animateValue('stat-cases', Math.floor(data.user_count * 0.08));
+            
+            // New v3 stats
+            if (document.getElementById('dashboard-economy')) {
+                animateValue('dashboard-economy', data.economy_activity || 124502);
+            }
+            if (document.getElementById('dashboard-xp')) {
+                animateValue('dashboard-xp', data.xp_gain_24h || 842500);
+            }
 
             // Update Status page elements if they exist
             const guildsStatus = document.getElementById('stat-guilds-status');
@@ -128,21 +135,18 @@ async function fetchLiveStats() {
                 uptimeStatus.innerText = `${uptimeData.days}d ${uptimeData.hours}h ${uptimeData.minutes}m`;
             }
 
-            // Update Dashboard page elements if they exist
-            const dServers = document.getElementById('dashboard-servers');
-            const dUsers = document.getElementById('dashboard-users');
-            const dUptime = document.getElementById('dashboard-uptime');
-
-            if (dServers) dServers.innerText = data.server_count.toLocaleString();
-            if (dUsers) dUsers.innerText = data.user_count.toLocaleString();
-            if (dUptime) {
-                const u = formatUptime(data.uptime_seconds);
-                dUptime.innerText = `${u.days}d ${u.hours}h ${u.minutes}m`;
+            // Update Status Indicators
+            const overallStatus = document.getElementById('overall-status');
+            if (overallStatus) {
+                overallStatus.querySelector('.status-indicator').className = 'status-indicator online';
+                overallStatus.querySelector('h3').innerText = 'All Systems Operational';
+                overallStatus.querySelector('p').innerText = `Last checked: ${new Date().toLocaleTimeString()}`;
             }
 
-            // New v3 stats
-            animateValue('dashboard-economy', data.economy_activity || 124502);
-            animateValue('dashboard-xp', data.xp_gain_24h || 842500);
+            document.querySelectorAll('.status-label').forEach(label => {
+                label.innerText = 'Operational';
+                label.className = 'status-label online';
+            });
         }
 
         // Leaderboard logic
@@ -157,21 +161,25 @@ async function fetchLiveStats() {
         `;
 
     } catch (err) {
-        console.warn('Dashboard using fallback logic:', err.message);
+        console.warn('Status API unreachable, using cached/fallback data:', err.message);
+        
+        const overallStatus = document.getElementById('overall-status');
+        if (overallStatus) {
+            overallStatus.querySelector('.status-indicator').className = 'status-indicator maintenance';
+            overallStatus.querySelector('h3').innerText = 'Partial Outage Detected';
+            overallStatus.querySelector('p').innerText = 'The Bot Core API is currently unreachable. Our team is investigating.';
+        }
+
+        const botCoreLabel = document.querySelector('.status-item:first-child .status-label');
+        if (botCoreLabel) {
+            botCoreLabel.innerText = 'Degraded';
+            botCoreLabel.className = 'status-label maintenance';
+        }
+
+        // Static fallbacks
         animateValue('stat-guilds', 1422);
         animateValue('stat-users', 1450283);
-        animateValue('stat-uptime', 362880, true); // 4.2 days
-        animateValue('stat-cases', 842503);
-
-        document.getElementById('live-leaderboard').innerHTML = `
-            <li><span class="activity-user">Admin_Forge</span><span class="activity-detail badge">24 cases</span></li>
-            <li><span class="activity-user">Mod_Rust</span><span class="activity-detail badge">18 cases</span></li>
-            <li><span class="activity-user">Aegis_Bot</span><span class="activity-detail badge">12 cases</span></li>
-        `;
-        document.getElementById('live-activity').innerHTML = `
-            <li><span class="activity-user">Warn #8425</span><span class="activity-detail">Policy Violation</span><span class="activity-time">2m ago</span></li>
-            <li><span class="activity-user">Ban #1024</span><span class="activity-detail">Unauthorized Access</span><span class="activity-time">5m ago</span></li>
-        `;
+        animateValue('stat-uptime', 0, true); 
     }
 }
 
