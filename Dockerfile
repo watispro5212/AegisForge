@@ -1,6 +1,12 @@
 # Build Stage
 FROM rust:1.95-slim AS builder
 
+# Install system dependencies for native-tls
+RUN apt-get update && apt-get install -y \
+    pkg-config \
+    libssl-dev \
+    && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /usr/src/aegisforge
 
 # Copy manifests
@@ -26,8 +32,8 @@ RUN cargo build --release
 # Runtime Stage (Minimal Debian)
 FROM debian:bookworm-slim
 
-# Install CA certificates (required for Rustls to verify Discord/Neon DB certs)
-RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
+# Install CA certificates and OpenSSL runtime
+RUN apt-get update && apt-get install -y ca-certificates openssl && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
