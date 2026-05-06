@@ -5,8 +5,9 @@ This document contains the exact blueprint for creating the ultimate Discord Sup
 ## 1. Server Profile
 
 - **Server Name:** `AegisForge HQ`
-- **Server Description:** "The official development, support, and community hub for AegisForge — the premium, high-performance Rust Discord bot."
-- **Server Icon:** Use the `aegisforge_logo.png` we generated earlier.
+- **Server Description:** "The official development, support, and community hub for AegisForge — the ultimate high-performance Rust Discord bot."
+- **Official Avatar:** `web/assets/logo.jpg` (Official bot pfp)
+- **Official Banner:** `web/assets/banner.png` (Official bot banner)
 - **System Messages Channel:** Set to a hidden `#server-logs` channel or disable them.
 
 ---
@@ -99,73 +100,73 @@ This document contains the exact blueprint for creating the ultimate Discord Sup
 *Category Permissions:* `@everyone`: `View Channel` ✅, `Send Messages` ❌, `Add Reactions` ❌ | `Aegis Vanguard`: `Send Messages` ✅
 
 - **#👋・welcome**
-  - *Permissions:* Syncs with category.
+  - *Description:* Where all new members land. Welcomer bot posts high-quality cards here to greet newcomers.
 - **#📢・announcements**
-  - *Permissions:* Syncs with category.
+  - *Description:* Critical project updates, major feature launches, and important community news.
 - **#📜・rules**
-  - *Permissions:* Syncs with category.
+  - *Description:* The definitive guide to community conduct. All members must read and adhere to these.
 - **#🔄・updates**
-  - *Permissions:* Syncs with category.
+  - *Description:* Automated feed of GitHub commits and smaller changelog entries for power users.
 - **#📊・polls**
-  - *Permissions:* Syncs with category. `@everyone`: `Add Reactions` ✅
+  - *Description:* Community feedback hub where users vote on upcoming features and project direction.
 - **#🎭・get-roles**
-  - *Permissions:* Syncs with category. `@everyone`: `Add Reactions` ✅
+  - *Description:* Self-assignable roles for notifications, platforms, and community interests.
 - **#📡・status**
-  - *Permissions:* Syncs with category. Receives bot heartbeat and server count updates via webhook.
+  - *Description:* Live heartbeat monitor receiving real-time uptime and server count updates via AegisForge webhooks.
 
 ### 💬 COMMUNITY
 
 *Category Permissions:* `@everyone`: `View Channel` ✅, `Send Messages` ✅, `Read Message History` ✅, `Attach Files` ❌
 
 - **#💬・general**
-  - *Permissions:* Syncs with category.
+  - *Description:* The main hub for community conversation. Keep it civil and respect the rules.
 - **#🤖・bot-commands**
-  - *Permissions:* Syncs with category. `@everyone`: `Use Application Commands` ✅
+  - *Description:* The dedicated playground for testing AegisForge and other bots without cluttering general chat.
 - **#💡・suggestions**
-  - *Permissions:* Syncs with category. `@everyone`: `Create Public Threads` ✅
+  - *Description:* Got an idea for AegisForge? Post it here for community discussion and developer review.
 - **#✨・showcase**
-  - *Permissions:* Syncs with category. `@everyone`: `Attach Files` ✅, `Embed Links` ✅
+  - *Description:* Share your server setups, custom embeds, or interesting ways you're using AegisForge.
 - **#🎨・media**
-  - *Permissions:* Syncs with category. `@everyone`: `Attach Files` ✅, `Embed Links` ✅
+  - *Description:* Images, videos, and creative content related to the community and the bot.
 - **#🎲・off-topic**
-  - *Permissions:* Syncs with category.
+  - *Description:* For conversations that don't fit in general—random chat, hobbies, and more.
 - **#🐸・memes**
-  - *Permissions:* Syncs with category. `@everyone`: `Attach Files` ✅, `Embed Links` ✅
+  - *Description:* The community meme repository. Keep it light, funny, and within SFW guidelines.
 
 ### 🛠️ SUPPORT
 
 *Category Permissions:* `@everyone`: `View Channel` ✅, `Send Messages` ❌
 
 - **#❓・faq**
-  - *Permissions:* Syncs with category.
+  - *Description:* Quick answers to common questions about AegisForge setup and functionality.
 - **#🎫・open-a-ticket**
-  - *Permissions:* Syncs with category.
+  - *Description:* The private support portal. Click to open a ticket for direct assistance from the staff.
 - **#💬・peer-support**
-  - *Permissions:* Syncs with category. `@everyone`: `Send Messages` ✅
+  - *Description:* Community-driven help where experienced users assist newcomers with setup.
 - **#🐛・bug-reports**
-  - *Permissions:* Forum Channel. `@everyone`: `Send Messages` ✅, `Create Posts` ✅
+  - *Description:* Forum channel for reporting issues. Use the standard template for faster resolution.
 
 ### 🧪 BETA TESTING (Hidden)
 
 *Category Permissions:* `@everyone`: `View Channel` ❌ | `Beta Tester`: `View Channel` ✅, `Send Messages` ✅
 
 - **#🧪・beta-chat**
-  - *Permissions:* Syncs with category.
+  - *Description:* Private discussion for Beta Testers regarding upcoming experimental features.
 - **#📝・beta-feedback**
-  - *Permissions:* Syncs with category.
+  - *Description:* Detailed reports and usability feedback on current beta builds of AegisForge.
 
 ### 🔐 STAFF (Hidden)
 
 *Category Permissions:* `@everyone`: `View Channel` ❌ | `Aegis Vanguard`: `View Channel` ✅, `Send Messages` ✅
 
 - **#🛡️・staff-chat**
-  - *Permissions:* Syncs with category.
+  - *Description:* Internal coordination and moderation discussion for the Aegis Vanguard team.
 - **#👑・admin-chat**
-  - *Permissions:* `Aegis Vanguard`: `View Channel` ❌ | `Community Manager`: `View Channel` ✅
+  - *Description:* High-level management discussion for founders and community managers.
 - **#📂・mod-logs**
-  - *Permissions:* Syncs with category. `Aegis Vanguard`: `Send Messages` ❌ (Bot only)
+  - *Description:* Automated audit feed of all moderation actions taken by AegisForge across the server.
 - **#🚨・bot-alerts**
-  - *Permissions:* Syncs with category. `Aegis Vanguard`: `Send Messages` ❌ (Bot only)
+  - *Description:* Critical system alerts, API errors, and high-priority bot notifications.
 
 ### 🎙️ VOICE CHANNELS
 

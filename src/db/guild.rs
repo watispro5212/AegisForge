@@ -94,3 +94,14 @@ pub async fn set_auto_role(pool: &PgPool, guild_id: i64, role_id: i64) -> sqlx::
     .await?;
     Ok(())
 }
+
+pub async fn set_prefix(pool: &PgPool, guild_id: i64, prefix: &str) -> sqlx::Result<()> {
+    sqlx::query!(
+        "UPDATE guild_configs SET prefix = $1 WHERE guild_id = $2",
+        prefix,
+        guild_id
+    )
+    .execute(pool)
+    .await?;
+    Ok(())
+}

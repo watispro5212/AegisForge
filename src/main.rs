@@ -126,6 +126,7 @@ async fn main() -> Result<(), Error> {
                 commands::config::logs(),
                 commands::config::welcome(),
                 commands::config::autorole(),
+                commands::config::prefix(),
                 // Reminders
                 commands::remind::create(),
             ],
@@ -144,6 +145,21 @@ async fn main() -> Result<(), Error> {
             },
             event_handler: |ctx, event, framework, data| {
                 Box::pin(handler::event_handler(ctx, event, framework, data))
+            },
+            prefix_options: poise::PrefixOptions {
+                prefix: Some("!".into()),
+                dynamic_prefix: Some(|ctx| {
+                    Box::pin(async move {
+                        let guild_id = ctx.guild_id.map(|id| id.get() as i64).unwrap_or(0);
+                        if guild_id == 0 { return Ok(Some("!".into())); }
+                        let config = ctx.data.database.get_guild_config(guild_id).await.ok();
+                        Ok(config.map(|c| c.prefix))
+                    })
+                }),
+                edit_tracker: Some(Arc::new(poise::EditTracker::for_timespan(
+                    std::time::Duration::from_secs(3600),
+                ))),
+                ..Default::default()
             },
             ..Default::default()
         })

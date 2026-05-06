@@ -1569,3 +1569,8 @@ footer { border-top: 1px solid var(--border); padding: 3rem 5%; }
         font-size: 0.85rem;
     }
 }
+
+/* Dashboard health metric bars */
+.latency-fill { width: 12%; }
+.db-fill { width: 8%; }
+.cpu-fill { width: 15%; }

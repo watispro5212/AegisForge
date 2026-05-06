@@ -1,13 +1,19 @@
 # ⚙ AegisForge
 
-> A fast, secure, and customizable Rust-powered Discord bot for moderation, automation, and server utilities.
+![AegisForge Banner](web/assets/banner.png)
+
+<p align="center">
+  <img src="web/assets/logo.jpg" alt="AegisForge Logo" width="128" height="128" style="border-radius: 50%">
+</p>
+
+> A fast, secure, and customizable Rust-powered Discord bot for moderation, automation, and server utilities. Built for performance, designed for precision.
 
 ---
 
 ## Features
 
 | Category | Commands |
-|----------|----------|
+| :--- | :--- |
 | **Moderation** | `/mod ban` `/mod unban` `/mod kick` `/mod timeout` `/mod warn` `/mod purge` |
 | **Utility** | `/util ping` `/util server` `/util user` `/util avatar` `/util uptime` `/util timestamp` |
 | **Roles** | `/role add` `/role remove` `/role list` |
@@ -54,7 +60,7 @@ cargo run --release
 ### Environment Variables
 
 | Variable | Required | Description |
-|----------|----------|-------------|
+| :--- | :--- | :--- |
 | `DISCORD_TOKEN` | ✅ | Your bot's token |
 | `DATABASE_URL` | ✅ | **Direct** Neon URL — used only for migrations at startup |
 | `DATABASE_POOL_URL` | ✅ | **Pooled** Neon URL — used for all bot queries |
@@ -70,7 +76,7 @@ cargo run --release
 
 The two URLs differ by only `-pooler` in the hostname:
 
-```
+```text
 # Direct (DATABASE_URL) — for migrations:
 postgresql://USER:PASS@ep-your-endpoint.region.aws.neon.tech/neondb?sslmode=require
 
@@ -84,7 +90,7 @@ Get both from the Neon Console → your project → **Connect** → toggle **Con
 
 ## Project Structure
 
-```
+```text
 AegisForge/
 ├── src/
 │   ├── main.rs              # Entry point, bot setup
@@ -116,6 +122,7 @@ AegisForge/
 ## Permissions
 
 AegisForge requests only what it needs:
+
 - `Read Messages` / `Send Messages`
 - `Embed Links`
 - `Manage Messages`
@@ -128,4 +135,14 @@ AegisForge requests only what it needs:
 
 ## License
 
-MIT — built with 🦀 and precision.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## Security
+
+For security vulnerability reports, please refer to our [Security Policy](SECURITY.md).
+
+---
+
+Built with 🦀 and precision by the AegisForge Team.

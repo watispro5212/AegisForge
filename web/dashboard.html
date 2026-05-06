@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | AegisForge</title>
+    <meta name="description" content="Manage your AegisForge experience. View live statistics, server counts, and bot performance in real-time.">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="grid-bg"></div>
+    <div class="ambient-glow"></div>
+
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="logo-container">
+            <img src="assets/logo.jpg" alt="AegisForge Logo" class="nav-logo-img">
+            <span class="logo-text">AEGIS<span class="logo-accent">FORGE</span></span>
+        </div>
+        <div class="nav-links">
+            <a href="index.html#features">Features</a>
+            <a href="commands.html">Commands</a>
+            <a href="team.html">Team</a>
+            <a href="changelog.html">Changelog</a>
+            <a href="status.html">Status</a>
+            <a href="dashboard.html" class="active">Dashboard</a>
+            <a href="about.html">About</a>
+            <a href="https://github.com/watispro5212/AegisForge" target="_blank" rel="noopener noreferrer" class="nav-link-code">GitHub</a>
+            <a href="https://discord.com/oauth2/authorize?client_id=1500582485367722004&permissions=8&response_type=code&redirect_uri=https%3A%2F%2Fdiscord.com%2Foauth2%2Fauthorize%3Fclient_id%3D1500582485367722004&integration_type=0&scope=bot+identify+applications.commands+applications.commands.permissions.update+openid" target="_blank" rel="noopener noreferrer" class="btn-primary">Invite Bot</a>
+        </div>
+    </nav>
+
+    <main class="container page-content">
+        <section class="page-header" data-reveal>
+            <div class="hero-badge">Real-time Analytics</div>
+            <h1>AegisForge <span class="text-gradient">Dashboard</span></h1>
+            <p>Live metrics and performance telemetry from the AegisForge core engine.</p>
+        </section>
+
+        <!-- Dashboard Stats Grid -->
+        <div class="stats-grid" data-reveal>
+            <div class="stat-card glass">
+                <div class="stat-icon server-icon"></div>
+                <div class="stat-info">
+                    <span class="stat-label">Total Servers</span>
+                    <h2 class="stat-value" id="dashboard-servers">...</h2>
+                    <span class="stat-trend positive">↑ Live</span>
+                </div>
+            </div>
+            <div class="stat-card glass">
+                <div class="stat-icon user-icon"></div>
+                <div class="stat-info">
+                    <span class="stat-label">Global Users</span>
+                    <h2 class="stat-value" id="dashboard-users">...</h2>
+                    <span class="stat-trend">Secured</span>
+                </div>
+            </div>
+            <div class="stat-card glass">
+                <div class="stat-icon clock-icon"></div>
+                <div class="stat-info">
+                    <span class="stat-label">Bot Uptime</span>
+                    <h2 class="stat-value" id="dashboard-uptime">...</h2>
+                    <span class="stat-trend positive">99.9% stable</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <section class="dashboard-actions" data-reveal>
+            <div class="section-title">
+                <h2>Quick <span class="text-gradient">Actions</span></h2>
+            </div>
+            <div class="action-cards">
+                <a href="https://discord.com/oauth2/authorize?client_id=1500582485367722004&permissions=8&response_type=code&redirect_uri=https%3A%2F%2Fdiscord.com%2Foauth2%2Fauthorize%3Fclient_id%3D1500582485367722004&integration_type=0&scope=bot+identify+applications.commands+applications.commands.permissions.update+openid" target="_blank" rel="noopener noreferrer" class="action-card glass">
+                    <div class="action-icon">➕</div>
+                    <h3>Add to Server</h3>
+                    <p>Deploy AegisForge to a new Discord community.</p>
+                </a>
+                <a href="commands.html" class="action-card glass">
+                    <div class="action-icon">📖</div>
+                    <h3>Documentation</h3>
+                    <p>Explore the full command registry and features.</p>
+                </a>
+                <a href="https://discord.gg/aegisforge" target="_blank" rel="noopener noreferrer" class="action-card glass">
+                    <div class="action-icon">🛡️</div>
+                    <h3>Support Server</h3>
+                    <p>Get help and join our developer community.</p>
+                </a>
+            </div>
+        </section>
+
+        <!-- System Health -->
+        <section class="system-health" data-reveal>
+            <div class="glass health-container">
+                <div class="health-header">
+                    <h3>System Health</h3>
+                    <span class="status-indicator online">Operational</span>
+                </div>
+                <div class="health-metrics">
+                    <div class="metric-row">
+                        <span>Gateway Latency</span>
+                        <div class="metric-bar"><div class="bar-fill latency-fill"></div></div>
+                        <span class="metric-val">12ms</span>
+                    </div>
+                    <div class="metric-row">
+                        <span>Database Response</span>
+                        <div class="metric-bar"><div class="bar-fill db-fill"></div></div>
+                        <span class="metric-val">8ms</span>
+                    </div>
+                    <div class="metric-row">
+                        <span>CPU Utilization</span>
+                        <div class="metric-bar"><div class="bar-fill cpu-fill"></div></div>
+                        <span class="metric-val">15%</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-top">
+            <div class="logo-container">
+                <img src="assets/logo.jpg" alt="AegisForge Logo" class="nav-logo-img">
+                <span class="logo-text">AEGIS<span class="logo-accent">FORGE</span></span>
+            </div>
+            <div class="footer-links">
+                <a href="index.html#features">Features</a>
+                <a href="commands.html">Commands</a>
+                <a href="team.html">Team</a>
+                <a href="changelog.html">Changelog</a>
+                <a href="status.html">Status</a>
+                <a href="dashboard.html">Dashboard</a>
+                <a href="about.html">About</a>
+                <a href="https://github.com/watispro5212/AegisForge" target="_blank" rel="noopener noreferrer">GitHub</a>
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="terms.html">Terms of Service</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 AegisForge. Built with Rust for precision.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

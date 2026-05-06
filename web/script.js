@@ -124,8 +124,20 @@ async function fetchLiveStats() {
             if (guildsStatus) guildsStatus.innerText = data.server_count.toLocaleString();
             if (usersStatus) usersStatus.innerText = data.user_count.toLocaleString();
             if (uptimeStatus) {
-                const uptimeData = formatUptime(data.uptime_seconds); // Using the inner logic of animateValue's true flag
+                const uptimeData = formatUptime(data.uptime_seconds); 
                 uptimeStatus.innerText = `${uptimeData.days}d ${uptimeData.hours}h ${uptimeData.minutes}m`;
+            }
+
+            // Update Dashboard page elements if they exist
+            const dServers = document.getElementById('dashboard-servers');
+            const dUsers = document.getElementById('dashboard-users');
+            const dUptime = document.getElementById('dashboard-uptime');
+
+            if (dServers) dServers.innerText = data.server_count.toLocaleString();
+            if (dUsers) dUsers.innerText = data.user_count.toLocaleString();
+            if (dUptime) {
+                const u = formatUptime(data.uptime_seconds);
+                dUptime.innerText = `${u.days}d ${u.hours}h ${u.minutes}m`;
             }
         }
 
