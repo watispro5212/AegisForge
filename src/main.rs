@@ -46,14 +46,16 @@ async fn get_stats(State(state): State<AppState>) -> Json<Stats> {
     let guilds = state.cache.guild_count();
     let users = state.cache.user_count();
     
-    // For now, we mock these or we could query the DB
-    // Since this is a stats endpoint, we'll use a mix of cache and fixed targets for v3
+    let pool = &state.database.pool;
+    let total_wealth = crate::db::economy::get_total_wealth(pool).await.unwrap_or(0);
+    let total_xp = crate::db::leveling::get_total_xp(pool).await.unwrap_or(0);
+    
     Json(Stats {
         server_count: guilds,
         user_count: users,
         uptime_seconds: state.start_time.elapsed().as_secs(),
-        economy_activity: 12540, // Replace with DB count if needed
-        xp_gain_24h: 84250,      // Replace with DB sum if needed
+        economy_activity: total_wealth,
+        xp_gain_24h: total_xp,
     })
 }
 
@@ -101,6 +103,7 @@ async fn main() -> Result<(), Error> {
                 commands::utility::ping(),
                 commands::utility::avatar(),
                 commands::utility::uptime(),
+                commands::utility::stats(),
                 commands::utility::timestamp(),
                 commands::utility::serverinfo(),
                 commands::utility::whois(),

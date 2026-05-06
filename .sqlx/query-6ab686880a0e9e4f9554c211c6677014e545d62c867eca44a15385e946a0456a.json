@@ -1,0 +1,28 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "SELECT user_id, SUM(balance + bank)::BIGINT as \"total_balance!\" FROM users_economy GROUP BY user_id ORDER BY SUM(balance + bank) DESC LIMIT $1",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "user_id",
+        "type_info": "Int8"
+      },
+      {
+        "ordinal": 1,
+        "name": "total_balance!",
+        "type_info": "Int8"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      null
+    ]
+  },
+  "hash": "6ab686880a0e9e4f9554c211c6677014e545d62c867eca44a15385e946a0456a"
+}

@@ -193,8 +193,14 @@ const dashObserver = new IntersectionObserver((entries) => {
 }, { threshold: 0.1 });
 
 const dashboardSection = document.getElementById('dashboard');
+const statusSection = document.getElementById('overall-status');
+const dashboardServers = document.getElementById('dashboard-servers');
+
 if (dashboardSection) {
     dashObserver.observe(dashboardSection);
+} else if (statusSection || dashboardServers) {
+    // If we're on the status or dashboard page, fetch immediately
+    fetchLiveStats();
 }
 
 /* ─── MASSIVE UI OVERHAUL SCRIPT ADDITIONS ───────────────────── */

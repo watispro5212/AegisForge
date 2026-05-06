@@ -13,7 +13,7 @@ pub async fn leveling(_ctx: Context<'_>) -> Result<(), Error> {
 }
 
 /// Check your or someone else's rank
-#[poise::command(slash_command)]
+#[poise::command(slash_command, guild_only)]
 pub async fn rank(
     ctx: Context<'_>,
     #[description = "User to check rank of"] user: Option<serenity::User>,
@@ -42,21 +42,40 @@ pub async fn rank(
     Ok(())
 }
 
-/// View the most active users in the server
-#[poise::command(slash_command)]
-pub async fn leaderboard(ctx: Context<'_>) -> Result<(), Error> {
-    let guild_id = ctx.guild_id().unwrap().get() as i64;
-    let lb = leveling::get_leaderboard(&ctx.data().database.pool, guild_id, 10).await?;
+/// View the most active users
+#[poise::command(slash_command, guild_only)]
+pub async fn leaderboard(
+    ctx: Context<'_>,
+    #[description = "Show global leaderboard across all servers"] global: Option<bool>,
+) -> Result<(), Error> {
+    let is_global = global.unwrap_or(false);
     
     let mut content = String::new();
-    for (i, lvl) in lb.iter().enumerate() {
-        content.push_str(&format!("{}. <@{}> — Level `{}` (`{} XP`)\n", i + 1, lvl.user_id, lvl.level, lvl.xp));
+    let title = if is_global {
+        let lb = leveling::get_global_leaderboard(&ctx.data().database.pool, 10).await?;
+        for (i, entry) in lb.iter().enumerate() {
+            content.push_str(&format!("**{}**. <@{}> — `{} XP`\n", i + 1, entry.user_id, entry.total_xp));
+        }
+        "🏆 Global Activity Leaderboard"
+    } else {
+        let guild_id = ctx.guild_id().unwrap().get() as i64;
+        let lb = leveling::get_leaderboard(&ctx.data().database.pool, guild_id, 10).await?;
+        for (i, lvl) in lb.iter().enumerate() {
+            content.push_str(&format!("**{}**. <@{}> — Level `{}` (`{} XP`)\n", i + 1, lvl.user_id, lvl.level, lvl.xp));
+        }
+        "🏆 Server Activity Leaderboard"
+    };
+
+    if content.is_empty() {
+        content = "_No data found yet._".to_string();
     }
     
     ctx.send(poise::CreateReply::default()
         .embed(serenity::CreateEmbed::new()
-            .title("🏆 Activity Leaderboard")
+            .title(title)
             .description(content)
+            .footer(serenity::CreateEmbedFooter::new(if is_global { "Top 10 Most Active Across All Realms" } else { "Top 10 Most Active in This Server" }))
+            .timestamp(serenity::Timestamp::now())
             .color(0x00E5FF)
         )).await?;
     

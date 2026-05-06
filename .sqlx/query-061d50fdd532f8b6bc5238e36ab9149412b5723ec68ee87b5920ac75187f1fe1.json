@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "SELECT * FROM users_economy WHERE guild_id = $1 ORDER BY balance DESC LIMIT $2",
+  "query": "SELECT * FROM users_economy WHERE guild_id = $1 ORDER BY (balance + bank) DESC LIMIT $2",
   "describe": {
     "columns": [
       {
@@ -61,5 +61,5 @@
       false
     ]
   },
-  "hash": "e290a201f57e6ff9db3458bdec7dbd12c49ece02fefcda509dea2cd0a87a3c6b"
+  "hash": "061d50fdd532f8b6bc5238e36ab9149412b5723ec68ee87b5920ac75187f1fe1"
 }

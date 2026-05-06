@@ -6,14 +6,15 @@ use crate::db::economy;
 #[poise::command(
     slash_command,
     subcommands("balance", "daily", "work", "pay", "leaderboard"),
-    category = "Economy"
+    category = "Economy",
+    guild_only
 )]
 pub async fn economy(_ctx: Context<'_>) -> Result<(), Error> {
     Ok(())
 }
 
 /// Check your or someone else's balance
-#[poise::command(slash_command)]
+#[poise::command(slash_command, guild_only)]
 pub async fn balance(
     ctx: Context<'_>,
     #[description = "User to check balance of"] user: Option<serenity::User>,
@@ -36,7 +37,7 @@ pub async fn balance(
 }
 
 /// Claim your daily reward
-#[poise::command(slash_command)]
+#[poise::command(slash_command, guild_only)]
 pub async fn daily(ctx: Context<'_>) -> Result<(), Error> {
     let guild_id = ctx.guild_id().unwrap().get() as i64;
     let user_id = ctx.author().id.get() as i64;
@@ -61,7 +62,7 @@ pub async fn daily(ctx: Context<'_>) -> Result<(), Error> {
 }
 
 /// Work to earn some money
-#[poise::command(slash_command)]
+#[poise::command(slash_command, guild_only)]
 pub async fn work(ctx: Context<'_>) -> Result<(), Error> {
     let guild_id = ctx.guild_id().unwrap().get() as i64;
     let user_id = ctx.author().id.get() as i64;
@@ -78,7 +79,7 @@ pub async fn work(ctx: Context<'_>) -> Result<(), Error> {
 }
 
 /// Pay another user from your wallet
-#[poise::command(slash_command)]
+#[poise::command(slash_command, guild_only)]
 pub async fn pay(
     ctx: Context<'_>,
     #[description = "User to pay"] user: serenity::User,
@@ -105,21 +106,40 @@ pub async fn pay(
     Ok(())
 }
 
-/// View the richest users in the server
+/// View the richest users
 #[poise::command(slash_command)]
-pub async fn leaderboard(ctx: Context<'_>) -> Result<(), Error> {
-    let guild_id = ctx.guild_id().unwrap().get() as i64;
-    let lb = economy::get_leaderboard(&ctx.data().database.pool, guild_id, 10).await?;
+pub async fn leaderboard(
+    ctx: Context<'_>,
+    #[description = "Show global leaderboard across all servers"] global: Option<bool>,
+) -> Result<(), Error> {
+    let is_global = global.unwrap_or(false);
     
     let mut content = String::new();
-    for (i, eco) in lb.iter().enumerate() {
-        content.push_str(&format!("{}. <@{}> — `${}`\n", i + 1, eco.user_id, eco.balance + eco.bank));
+    let title = if is_global {
+        let lb = economy::get_global_leaderboard(&ctx.data().database.pool, 10).await?;
+        for (i, entry) in lb.iter().enumerate() {
+            content.push_str(&format!("**{}**. <@{}> — `${}`\n", i + 1, entry.user_id, entry.total_balance));
+        }
+        "🏆 Global Economy Leaderboard"
+    } else {
+        let guild_id = ctx.guild_id().unwrap().get() as i64;
+        let lb = economy::get_leaderboard(&ctx.data().database.pool, guild_id, 10).await?;
+        for (i, eco) in lb.iter().enumerate() {
+            content.push_str(&format!("**{}**. <@{}> — `${}`\n", i + 1, eco.user_id, eco.balance + eco.bank));
+        }
+        "🏆 Server Economy Leaderboard"
+    };
+
+    if content.is_empty() {
+        content = "_No data found yet._".to_string();
     }
     
     ctx.send(poise::CreateReply::default()
         .embed(serenity::CreateEmbed::new()
-            .title("🏆 Economy Leaderboard")
+            .title(title)
             .description(content)
+            .footer(serenity::CreateEmbedFooter::new(if is_global { "Top 10 Wealthiest Across All Realms" } else { "Top 10 Wealthiest in This Server" }))
+            .timestamp(serenity::Timestamp::now())
             .color(0x00E5FF)
         )).await?;
     

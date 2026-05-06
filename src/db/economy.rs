@@ -66,8 +66,30 @@ pub async fn set_last_daily(pool: &PgPool, guild_id: i64, user_id: i64, time: Da
 pub async fn get_leaderboard(pool: &PgPool, guild_id: i64, limit: i64) -> sqlx::Result<Vec<UserEconomy>> {
     sqlx::query_as!(
         UserEconomy,
-        "SELECT * FROM users_economy WHERE guild_id = $1 ORDER BY balance DESC LIMIT $2",
+        "SELECT * FROM users_economy WHERE guild_id = $1 ORDER BY (balance + bank) DESC LIMIT $2",
         guild_id,
         limit
     ).fetch_all(pool).await
+}
+
+pub struct GlobalLeaderboardEntry {
+    pub user_id: i64,
+    pub total_balance: i64,
+}
+
+pub async fn get_global_leaderboard(pool: &PgPool, limit: i64) -> Result<Vec<GlobalLeaderboardEntry>, sqlx::Error> {
+    sqlx::query_as!(
+        GlobalLeaderboardEntry,
+        "SELECT user_id, SUM(balance + bank)::BIGINT as \"total_balance!\" FROM users_economy GROUP BY user_id ORDER BY SUM(balance + bank) DESC LIMIT $1",
+        limit
+    )
+    .fetch_all(pool)
+    .await
+}
+
+pub async fn get_total_wealth(pool: &PgPool) -> Result<i64, sqlx::Error> {
+    let row = sqlx::query!("SELECT SUM(balance + bank)::BIGINT as \"total!\" FROM users_economy")
+        .fetch_one(pool)
+        .await?;
+    Ok(row.total)
 }

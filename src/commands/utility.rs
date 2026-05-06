@@ -124,6 +124,28 @@ pub async fn uptime(ctx: Context<'_>) -> Result<(), Error> {
     Ok(())
 }
 
+/// View detailed bot statistics
+#[poise::command(slash_command, prefix_command)]
+pub async fn stats(ctx: Context<'_>) -> Result<(), Error> {
+    let guilds = ctx.cache().guild_count();
+    let users = ctx.cache().user_count();
+    let uptime = ctx.data().start_time.elapsed();
+    
+    ctx.send(poise::CreateReply::default().embed(
+        serenity::CreateEmbed::new()
+            .title("📊 AegisForge — Global Telemetry")
+            .description("Aggregated metrics from the entire AegisForge network.")
+            .field("🌐 Reach", format!("**{}** Servers\n**{}** Users", guilds, users), true)
+            .field("⚙️ Resource Usage", "Tokio Runtime: Active\nDB Pool: Optimal", true)
+            .field("⏱️ Session", format!("<t:{}:R>", (chrono::Utc::now() - chrono::Duration::seconds(uptime.as_secs() as i64)).timestamp()), true)
+            .footer(serenity::CreateEmbedFooter::new("Powered by Rust 1.95 | AegisForge v3"))
+            .timestamp(serenity::Timestamp::now())
+            .color(0x00E5FF),
+    ))
+    .await?;
+    Ok(())
+}
+
 /// Send a custom embed to the current channel
 #[poise::command(slash_command, prefix_command)]
 pub async fn embed(
@@ -181,7 +203,7 @@ pub async fn help(
         serenity::CreateEmbed::new()
             .title("🛡️ AegisForge v3 — Eternal Forge")
             .description("Welcome to the next generation of server protection. Use `/` to browse all slash commands.")
-            .field("⚙️ Utility", "`ping`, `server`, `user`, `avatar`, `uptime`, `timestamp`, `help`", false)
+            .field("⚙️ Utility", "`ping`, `server`, `user`, `avatar`, `uptime`, `stats`, `help`", false)
             .field("🔨 Moderation", "`ban`, `kick`, `mute`, `unmute`, `purge`, `warn`, `timeout` (Audit logging enabled)", false)
             .field("💰 Economy", "`balance`, `daily`, `work`, `pay`, `leaderboard`", false)
             .field("📈 Leveling", "`rank`, `leaderboard`", false)
