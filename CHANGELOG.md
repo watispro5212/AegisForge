@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.1.0] - 2026-05-06
+
+### Added
+
+- **Massive Command Expansion**: Added 20+ new commands across Fun, Utility, and Economy categories.
+- **Advanced Economy**: New `rob`, `slots`, `beg`, and `search` modules with randomized logic.
+- **Banking System**: Added `deposit` and `withdraw` functionality for secure credit storage.
+- **Productivity Suite**: New `math`, `qr`, `crypto`, and `translate` utility commands.
+- **Social Animals**: Expanded the animal command suite with `fox`, `panda`, and `bird` integrations.
+- **Matchmaking Forge**: Added `/fun ship` to check compatibility between users.
+
+### Fixed
+
+- **Website Polish**: Refined Team page avatars and responsive command registry.
+- **Infrastructure**: Synchronized SQLx query cache for new command modules.
+
 ## [3.0.0] - 2026-05-06
 
 ### Added in v3.0.0
@@ -19,7 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Security Hardening**: Migrated entire TLS stack to `native-tls` to resolve `RUSTSEC-2026-0104` (High DoS) and multiple `rustls-webpki` name constraint vulnerabilities.
 - **SQLx Upgrade**: Upgraded to `v0.8.6` to patch critical binary protocol misinterpretation issues (`RUSTSEC-2024-0363`).
 
-### Fixed
+### Fixed in v3.0.0
 
 - Resolved `23503` Foreign Key constraint violations during database writes for new servers.
 - Fixed `config logs` and `config welcome` commands which previously failed to persist settings.

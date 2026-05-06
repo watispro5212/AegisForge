@@ -93,3 +93,25 @@ pub async fn get_total_wealth(pool: &PgPool) -> Result<i64, sqlx::Error> {
         .await?;
     Ok(row.total)
 }
+
+pub async fn update_bank(pool: &PgPool, guild_id: i64, user_id: i64, amount: i64) -> sqlx::Result<()> {
+    get_user_economy(pool, guild_id, user_id).await?;
+    sqlx::query!(
+        "UPDATE users_economy SET bank = bank + $1 WHERE guild_id = $2 AND user_id = $3",
+        amount,
+        guild_id,
+        user_id
+    ).execute(pool).await?;
+    Ok(())
+}
+
+pub async fn transfer_to_bank(pool: &PgPool, guild_id: i64, user_id: i64, amount: i64) -> sqlx::Result<()> {
+    get_user_economy(pool, guild_id, user_id).await?;
+    sqlx::query!(
+        "UPDATE users_economy SET balance = balance - $1, bank = bank + $1 WHERE guild_id = $2 AND user_id = $3",
+        amount,
+        guild_id,
+        user_id
+    ).execute(pool).await?;
+    Ok(())
+}

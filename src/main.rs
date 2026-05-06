@@ -108,6 +108,10 @@ async fn main() -> Result<(), Error> {
                 commands::utility::serverinfo(),
                 commands::utility::whois(),
                 commands::utility::embed(),
+                commands::utility::math(),
+                commands::utility::qr(),
+                commands::utility::crypto(),
+                commands::utility::translate(),
                 // Fun
                 commands::fun::fun(),
                 // Economy

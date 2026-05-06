@@ -1,11 +1,12 @@
 use crate::{Context, Error};
+use rand::prelude::*;
 use poise::serenity_prelude as serenity;
 use crate::db::economy;
 
 /// Economy commands
 #[poise::command(
     slash_command,
-    subcommands("balance", "daily", "work", "pay", "leaderboard"),
+    subcommands("balance", "daily", "work", "pay", "leaderboard", "rob", "slots", "beg", "search", "deposit", "withdraw"),
     category = "Economy",
     guild_only
 )]
@@ -68,7 +69,6 @@ pub async fn work(ctx: Context<'_>) -> Result<(), Error> {
     let user_id = ctx.author().id.get() as i64;
     
     // Simple work logic: earn 50-200
-    use rand::Rng;
     let reward = rand::thread_rng().gen_range(50..200);
     
     economy::update_balance(&ctx.data().database.pool, guild_id, user_id, reward).await?;
@@ -142,6 +142,170 @@ pub async fn leaderboard(
             .timestamp(serenity::Timestamp::now())
             .color(0x00E5FF)
         )).await?;
+    
+    Ok(())
+}
+
+/// Deposit money into your bank for safekeeping
+#[poise::command(slash_command, guild_only)]
+pub async fn deposit(
+    ctx: Context<'_>,
+    #[description = "Amount to deposit"] amount: i64,
+) -> Result<(), Error> {
+    let guild_id = ctx.guild_id().unwrap().get() as i64;
+    let user_id = ctx.author().id.get() as i64;
+    
+    let eco = economy::get_user_economy(&ctx.data().database.pool, guild_id, user_id).await?;
+    if amount > eco.balance {
+        return Err("You don't have that much in your wallet.".into());
+    }
+    
+    economy::transfer_to_bank(&ctx.data().database.pool, guild_id, user_id, amount).await?;
+    ctx.say(format!("🏦 Deposited `${}` into your bank!", amount)).await?;
+    Ok(())
+}
+
+/// Withdraw money from your bank
+#[poise::command(slash_command, guild_only)]
+pub async fn withdraw(
+    ctx: Context<'_>,
+    #[description = "Amount to withdraw"] amount: i64,
+) -> Result<(), Error> {
+    let guild_id = ctx.guild_id().unwrap().get() as i64;
+    let user_id = ctx.author().id.get() as i64;
+    
+    let eco = economy::get_user_economy(&ctx.data().database.pool, guild_id, user_id).await?;
+    if amount > eco.bank {
+        return Err("You don't have that much in your bank.".into());
+    }
+    
+    economy::transfer_to_bank(&ctx.data().database.pool, guild_id, user_id, -amount).await?;
+    ctx.say(format!("💰 Withdrew `${}` from your bank!", amount)).await?;
+    Ok(())
+}
+
+/// Beg for some spare change
+#[poise::command(slash_command, guild_only)]
+pub async fn beg(ctx: Context<'_>) -> Result<(), Error> {
+    let guild_id = ctx.guild_id().unwrap().get() as i64;
+    let user_id = ctx.author().id.get() as i64;
+    
+    let reward = rand::thread_rng().gen_range(0..50);
+    if reward == 0 {
+        ctx.say("🥺 Nobody gave you anything. Better luck next time!").await?;
+    } else {
+        economy::update_balance(&ctx.data().database.pool, guild_id, user_id, reward).await?;
+        ctx.say(format!("🤲 A kind stranger gave you `${}`!", reward)).await?;
+    }
+    Ok(())
+}
+
+/// Search for money in random places
+#[poise::command(slash_command, guild_only)]
+pub async fn search(ctx: Context<'_>) -> Result<(), Error> {
+    let guild_id = ctx.guild_id().unwrap().get() as i64;
+    let user_id = ctx.author().id.get() as i64;
+    
+    let locations = ["under the sofa", "in a trash can", "at the park", "in your old coat", "behind a vending machine"];
+    let loc = locations[rand::thread_rng().gen_range(0..locations.len())];
+    let reward = rand::thread_rng().gen_range(10..150);
+    
+    economy::update_balance(&ctx.data().database.pool, guild_id, user_id, reward).await?;
+    ctx.say(format!("🔍 You searched **{}** and found `${}`!", loc, reward)).await?;
+    Ok(())
+}
+
+/// Try your luck at the slot machine
+#[poise::command(slash_command, guild_only)]
+pub async fn slots(
+    ctx: Context<'_>,
+    #[description = "Amount to bet"] bet: i64,
+) -> Result<(), Error> {
+    if bet < 10 {
+        return Err("Minimum bet is $10.".into());
+    }
+    
+    let guild_id = ctx.guild_id().unwrap().get() as i64;
+    let user_id = ctx.author().id.get() as i64;
+    
+    let eco = economy::get_user_economy(&ctx.data().database.pool, guild_id, user_id).await?;
+    if bet > eco.balance {
+        return Err("You don't have enough money in your wallet.".into());
+    }
+    
+    let emojis = ["🍒", "🍋", "🍇", "💎", "⭐"];
+    let r1 = emojis[rand::thread_rng().gen_range(0..emojis.len())];
+    let r2 = emojis[rand::thread_rng().gen_range(0..emojis.len())];
+    let r3 = emojis[rand::thread_rng().gen_range(0..emojis.len())];
+    
+    let (won, multiplier) = if r1 == r2 && r2 == r3 {
+        (true, 5)
+    } else if r1 == r2 || r2 == r3 || r1 == r3 {
+        (true, 2)
+    } else {
+        (false, 0)
+    };
+    
+    let embed = if won {
+        let prize = bet * multiplier;
+        economy::update_balance(&ctx.data().database.pool, guild_id, user_id, prize - bet).await?;
+        serenity::CreateEmbed::new()
+            .title("🎰 Slot Machine — WINNER!")
+            .description(format!("> [ {} | {} | {} ]\n\nCongratulations! You won `${}`!", r1, r2, r3, prize))
+            .color(0x00FF88)
+    } else {
+        economy::update_balance(&ctx.data().database.pool, guild_id, user_id, -bet).await?;
+        serenity::CreateEmbed::new()
+            .title("🎰 Slot Machine — LOSER")
+            .description(format!("> [ {} | {} | {} ]\n\nBetter luck next time! You lost `${}`.", r1, r2, r3, bet))
+            .color(0xFF3B3B)
+    };
+    
+    ctx.send(poise::CreateReply::default().embed(embed)).await?;
+    Ok(())
+}
+
+/// Rob another user's wallet
+#[poise::command(slash_command, guild_only)]
+pub async fn rob(
+    ctx: Context<'_>,
+    #[description = "User to rob"] user: serenity::User,
+) -> Result<(), Error> {
+    if user.id == ctx.author().id {
+        return Err("You can't rob yourself!".into());
+    }
+    
+    let guild_id = ctx.guild_id().unwrap().get() as i64;
+    let author_id = ctx.author().id.get() as i64;
+    let target_id = user.id.get() as i64;
+    
+    let target_eco = economy::get_user_economy(&ctx.data().database.pool, guild_id, target_id).await?;
+    if target_eco.balance < 100 {
+        return Err("This user is too poor to be worth robbing.".into());
+    }
+    
+    let success = rand::thread_rng().gen_bool(0.4); // 40% success rate
+    if success {
+        let stolen = (target_eco.balance as f64 * rand::thread_rng().gen_range(0.1..0.5)) as i64;
+        economy::update_balance(&ctx.data().database.pool, guild_id, author_id, stolen).await?;
+        economy::update_balance(&ctx.data().database.pool, guild_id, target_id, -stolen).await?;
+        
+        ctx.send(poise::CreateReply::default().embed(
+            serenity::CreateEmbed::new()
+                .title("🥷 Successful Heist")
+                .description(format!("You snuck into **{}**'s room and made off with `${}`!", user.name, stolen))
+                .color(0x00FF88)
+        )).await?;
+    } else {
+        let fine = 200;
+        economy::update_balance(&ctx.data().database.pool, guild_id, author_id, -fine).await?;
+        ctx.send(poise::CreateReply::default().embed(
+            serenity::CreateEmbed::new()
+                .title("👮 BUSTED!")
+                .description(format!("You were caught trying to rob **{}**! You paid a `${}` fine.", user.name, fine))
+                .color(0xFF3B3B)
+        )).await?;
+    }
     
     Ok(())
 }

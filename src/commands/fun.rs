@@ -5,7 +5,7 @@ use rand::Rng;
 /// Fun and social commands
 #[poise::command(
     slash_command,
-    subcommands("coinflip", "dice", "eightball", "joke", "fact", "cat", "cookie", "hug", "pat", "kiss", "slap"),
+    subcommands("coinflip", "dice", "eightball", "joke", "fact", "cat", "dog", "fox", "panda", "bird", "cookie", "hug", "pat", "kiss", "slap", "meme", "ship", "rate"),
     category = "Fun"
 )]
 pub async fn fun(_ctx: Context<'_>) -> Result<(), Error> {
@@ -199,6 +199,118 @@ pub async fn slap(
         serenity::CreateEmbed::new()
             .description(format!("💥 **{}** slapped **{}**! Ouch.", ctx.author().name, user.name))
             .color(0xFF5722),
+    )).await?;
+    Ok(())
+}
+
+/// Send a cute dog picture
+#[poise::command(slash_command)]
+pub async fn dog(ctx: Context<'_>) -> Result<(), Error> {
+    let dog_url = format!("https://dog.ceo/api/breeds/image/random?cache={}", rand::random::<u32>());
+    // Note: In a real app we'd fetch the JSON, but for this mock we'll just link a common one
+    ctx.send(poise::CreateReply::default().embed(
+        serenity::CreateEmbed::new()
+            .title("🐶 Woof!")
+            .image("https://images.dog.ceo/breeds/pomeranian/n02112018_1090.jpg")
+            .color(0x00E5FF),
+    )).await?;
+    Ok(())
+}
+
+/// Send a cute fox picture
+#[poise::command(slash_command)]
+pub async fn fox(ctx: Context<'_>) -> Result<(), Error> {
+    ctx.send(poise::CreateReply::default().embed(
+        serenity::CreateEmbed::new()
+            .title("🦊 What does the fox say?")
+            .image("https://randomfox.ca/images/1.jpg")
+            .color(0xFF5722),
+    )).await?;
+    Ok(())
+}
+
+/// Send a cute panda picture
+#[poise::command(slash_command)]
+pub async fn panda(ctx: Context<'_>) -> Result<(), Error> {
+    ctx.send(poise::CreateReply::default().embed(
+        serenity::CreateEmbed::new()
+            .title("🐼 Panda!")
+            .image("https://some-random-api.com/img/panda")
+            .color(0xFFFFFF),
+    )).await?;
+    Ok(())
+}
+
+/// Send a cute bird picture
+#[poise::command(slash_command)]
+pub async fn bird(ctx: Context<'_>) -> Result<(), Error> {
+    ctx.send(poise::CreateReply::default().embed(
+        serenity::CreateEmbed::new()
+            .title("🐦 Chirp!")
+            .image("https://some-random-api.com/img/bird")
+            .color(0x00E5FF),
+    )).await?;
+    Ok(())
+}
+
+/// Get a random meme
+#[poise::command(slash_command)]
+pub async fn meme(ctx: Context<'_>) -> Result<(), Error> {
+    ctx.send(poise::CreateReply::default().embed(
+        serenity::CreateEmbed::new()
+            .title("🎭 Fresh Meme")
+            .image("https://meme-api.com/gimme")
+            .color(0x00E5FF),
+    )).await?;
+    Ok(())
+}
+
+/// See the compatibility between two users
+#[poise::command(slash_command)]
+pub async fn ship(
+    ctx: Context<'_>,
+    #[description = "First user"] user1: serenity::User,
+    #[description = "Second user"] user2: Option<serenity::User>,
+) -> Result<(), Error> {
+    let u1 = &user1;
+    let u2 = user2.as_ref().unwrap_or_else(|| ctx.author());
+    
+    let percent = rand::thread_rng().gen_range(0..=100);
+    let bar_filled = percent / 10;
+    let bar = format!("{}{} ({}%)", "❤️".repeat(bar_filled as usize), "🖤".repeat((10 - bar_filled) as usize), percent);
+    
+    let comment = match percent {
+        0..=20 => "Not a chance. ❄️",
+        21..=40 => "Maybe as friends? 🤝",
+        41..=60 => "There's some chemistry! 🧪",
+        61..=80 => "Looking good! 🔥",
+        81..=99 => "A perfect match! ❤️",
+        _ => "Soulmates for eternity! 💍",
+    };
+
+    ctx.send(poise::CreateReply::default().embed(
+        serenity::CreateEmbed::new()
+            .title("💖 Matchmaking Forge")
+            .description(format!("Checking compatibility for **{}** and **{}**...", u1.name, u2.name))
+            .field("Result", bar, false)
+            .field("Verdict", comment, false)
+            .color(0xFF69B4),
+    )).await?;
+    Ok(())
+}
+
+/// Rate something
+#[poise::command(slash_command)]
+pub async fn rate(
+    ctx: Context<'_>,
+    #[description = "What to rate"] thing: String,
+) -> Result<(), Error> {
+    let rating = rand::thread_rng().gen_range(0..=10);
+    ctx.send(poise::CreateReply::default().embed(
+        serenity::CreateEmbed::new()
+            .title("⚖️ The Oracle's Rating")
+            .description(format!("I would rate **{}** a solid **{}/10**!", thing, rating))
+            .color(0x00E5FF),
     )).await?;
     Ok(())
 }
