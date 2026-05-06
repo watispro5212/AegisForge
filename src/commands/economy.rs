@@ -234,30 +234,44 @@ pub async fn slots(
     }
     
     let emojis = ["🍒", "🍋", "🍇", "💎", "⭐"];
-    let r1 = emojis[rand::thread_rng().gen_range(0..emojis.len())];
-    let r2 = emojis[rand::thread_rng().gen_range(0..emojis.len())];
-    let r3 = emojis[rand::thread_rng().gen_range(0..emojis.len())];
+    let (r1, r2, r3) = {
+        let mut rng = rand::thread_rng();
+        (
+            emojis[rng.gen_range(0..emojis.len())],
+            emojis[rng.gen_range(0..emojis.len())],
+            emojis[rng.gen_range(0..emojis.len())]
+        )
+    };
     
-    let (won, multiplier) = if r1 == r2 && r2 == r3 {
-        (true, 5)
+    let has_diamond = r1 == "💎" || r2 == "💎" || r3 == "💎";
+    
+    let (won, multiplier, message) = if r1 == r2 && r2 == r3 {
+        if r1 == "💎" {
+            (true, 10.0, "💎 MEGA JACKPOT! 💎")
+        } else {
+            (true, 5.0, "✨ TRIPLE MATCH! ✨")
+        }
     } else if r1 == r2 || r2 == r3 || r1 == r3 {
-        (true, 2)
+        (true, 2.0, "🍀 Double Match! 🍀")
+    } else if has_diamond {
+        (true, 1.5, "💎 Diamond Consolation! 💎")
     } else {
-        (false, 0)
+        (false, 0.0, "Better luck next time!")
     };
     
     let embed = if won {
-        let prize = bet * multiplier;
+        let prize = (bet as f64 * multiplier) as i64;
         economy::update_balance(&ctx.data().database.pool, guild_id, user_id, prize - bet).await?;
         serenity::CreateEmbed::new()
-            .title("🎰 Slot Machine — WINNER!")
+            .title(format!("🎰 Slot Machine — {}", message))
             .description(format!("> [ {} | {} | {} ]\n\nCongratulations! You won `${}`!", r1, r2, r3, prize))
             .color(0x00FF88)
+            .footer(serenity::CreateEmbedFooter::new(format!("Multiplier: {}x", multiplier)))
     } else {
         economy::update_balance(&ctx.data().database.pool, guild_id, user_id, -bet).await?;
         serenity::CreateEmbed::new()
             .title("🎰 Slot Machine — LOSER")
-            .description(format!("> [ {} | {} | {} ]\n\nBetter luck next time! You lost `${}`.", r1, r2, r3, bet))
+            .description(format!("> [ {} | {} | {} ]\n\n{} You lost `${}`.", r1, r2, r3, message, bet))
             .color(0xFF3B3B)
     };
     
@@ -284,9 +298,13 @@ pub async fn rob(
         return Err("This user is too poor to be worth robbing.".into());
     }
     
-    let success = rand::thread_rng().gen_bool(0.4); // 40% success rate
+    let (success, stolen_multiplier) = {
+        let mut rng = rand::thread_rng();
+        (rng.gen_bool(0.4), rng.gen_range(0.1..0.5))
+    };
+    
     if success {
-        let stolen = (target_eco.balance as f64 * rand::thread_rng().gen_range(0.1..0.5)) as i64;
+        let stolen = (target_eco.balance as f64 * stolen_multiplier) as i64;
         economy::update_balance(&ctx.data().database.pool, guild_id, author_id, stolen).await?;
         economy::update_balance(&ctx.data().database.pool, guild_id, target_id, -stolen).await?;
         
