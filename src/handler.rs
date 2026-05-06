@@ -10,7 +10,35 @@ pub async fn event_handler(
     match event {
         serenity::FullEvent::Ready { data_about_bot } => {
             info!("AegisForge connected as {}", data_about_bot.user.name);
-            _ctx.set_presence(Some(serenity::ActivityData::watching("over AegisForge HQ | v2.0")), serenity::OnlineStatus::Online);
+            let guild_count = _ctx.cache.guild_count();
+            _ctx.set_presence(Some(serenity::ActivityData::watching(format!("over {} servers | /help", guild_count))), serenity::OnlineStatus::Online);
+            
+            if let Ok(webhook_url) = std::env::var("STATUS_WEBHOOK_URL") {
+                if let Ok(webhook) = serenity::model::webhook::Webhook::from_url(&_ctx.http, &webhook_url).await {
+                    let count = _ctx.cache.guild_count();
+                    let embed = serenity::builder::CreateEmbed::new()
+                        .title("🚀 System Online")
+                        .description(format!("AegisForge is now online and monitoring **{}** servers.", count))
+                        .color(0x00E5FF);
+                    let builder = serenity::builder::ExecuteWebhook::new().embed(embed);
+                    let _ = webhook.execute(&_ctx.http, false, builder).await;
+                }
+            }
+        }
+        serenity::FullEvent::GuildCreate { guild, is_new } => {
+            if let Some(true) = is_new {
+                if let Ok(webhook_url) = std::env::var("STATUS_WEBHOOK_URL") {
+                    if let Ok(webhook) = serenity::model::webhook::Webhook::from_url(&_ctx.http, &webhook_url).await {
+                        let member_count = guild.member_count;
+                        let embed = serenity::builder::CreateEmbed::new()
+                            .title("📥 Joined New Server")
+                            .description(format!("AegisForge was added to **{}**! This server has **{}** members.", guild.name, member_count))
+                            .color(0x57F287);
+                        let builder = serenity::builder::ExecuteWebhook::new().embed(embed);
+                        let _ = webhook.execute(&_ctx.http, false, builder).await;
+                    }
+                }
+            }
         }
         serenity::FullEvent::MessageDelete { channel_id, deleted_message_id, guild_id: _ } => {
             info!("Message deleted in channel {}: {}", channel_id, deleted_message_id);

@@ -91,6 +91,9 @@ async fn main() -> Result<(), Error> {
                 commands::utility::eightball(),
                 commands::utility::joke(),
                 commands::utility::embed(),
+                commands::utility::fact(),
+                commands::utility::cat(),
+                commands::utility::cookie(),
                 // Moderation
                 commands::moderation::ban(),
                 commands::moderation::unban(),

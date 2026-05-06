@@ -284,3 +284,57 @@ pub async fn embed(
     .await?;
     Ok(())
 }
+
+/// Get a random interesting fact
+#[poise::command(slash_command, prefix_command)]
+pub async fn fact(ctx: Context<'_>) -> Result<(), Error> {
+    let facts = [
+        "A jiffy is an actual unit of time: 1/100th of a second.",
+        "The first computer bug was an actual real bug: a moth.",
+        "There are over 700 programming languages in the world.",
+        "The Apollo 11 guidance computer had less processing power than a modern smartphone charger.",
+        "Honey never spoils. Archaeologists have found pots of honey in ancient Egyptian tombs that are over 3,000 years old.",
+        "Octopuses have three hearts."
+    ];
+    let index = rand::random::<usize>() % facts.len();
+    
+    ctx.send(poise::CreateReply::default().embed(
+        serenity::CreateEmbed::new()
+            .title("💡 Random Fact")
+            .description(facts[index])
+            .color(0xffeb3b),
+    ))
+    .await?;
+    Ok(())
+}
+
+/// Send a cute cat picture
+#[poise::command(slash_command, prefix_command)]
+pub async fn cat(ctx: Context<'_>) -> Result<(), Error> {
+    // We'll use a public placeholder for a cat image API since we don't have an async HTTP client set up right now, but we can just use cataas.
+    let cat_url = format!("https://cataas.com/cat?width=500&height=500&cache={}", rand::random::<u32>());
+    
+    ctx.send(poise::CreateReply::default().embed(
+        serenity::CreateEmbed::new()
+            .title("🐱 Meow!")
+            .image(cat_url)
+            .color(0xff9800),
+    ))
+    .await?;
+    Ok(())
+}
+
+/// Give someone a virtual cookie
+#[poise::command(slash_command, prefix_command)]
+pub async fn cookie(
+    ctx: Context<'_>,
+    #[description = "The user to give a cookie to"] user: serenity::User,
+) -> Result<(), Error> {
+    let embed = serenity::CreateEmbed::new()
+        .title("🍪 Cookie Delivery!")
+        .description(format!("{} gave a cookie to {}!", ctx.author().name, user.name))
+        .color(0xd2691e);
+
+    ctx.send(poise::CreateReply::default().embed(embed)).await?;
+    Ok(())
+}

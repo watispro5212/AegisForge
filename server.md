@@ -49,6 +49,28 @@ This document contains the exact blueprint for creating the ultimate Discord Sup
 
 8. **🧪 Beta Tester**
    - **Color:** `#00bcd4` (Cyan)
+   - **Permissions:** Base member perms.
+
+9. **🎨 Content Creator**
+   - **Color:** `#e91e63` (Pink)
+   - **Permissions:** Base member perms + ability to bypass slowmode.
+
+10. **🚀 Server Booster**
+   - **Color:** `#f47fff` (Light Pink)
+   - **Permissions:** Granted by Discord automatically.
+
+11. **🎉 Event Winner**
+   - **Color:** `#ffc107` (Amber)
+   - **Permissions:** Base member perms.
+
+12. **✅ Verified**
+   - **Color:** `#bbbbbb` (Grey)
+   - **Permissions:** View Channels, Send Messages, Read Message History.
+
+13. **🔇 Muted**
+   - **Color:** `#000000` (Black)
+   - **Permissions:** Explicitly denies `Send Messages`, `Add Reactions`, `Speak`.
+   - **Color:** `#00bcd4` (Cyan)
    - **Permissions:** Standard Member permissions + access to hidden beta channels.
 
 9. **👥 Member** (Default auto-assigned role)
@@ -153,10 +175,11 @@ This document contains the exact blueprint for creating the ultimate Discord Sup
 
 ## 4. Required Bots
 
-1. **🤖 AegisForge**: Your own bot! It will handle all the moderation, logging (in `#mod-logs`), and utility commands.
-2. **🎫 Ticket Tool** (or **Ticketmatic**): Use this in the `#🎫・open-a-ticket` channel. It allows users to click a button to open a private support channel with the `🛡️ Aegis Vanguard` team.
+1. **🤖 AegisForge**: Your own custom bot! Handles advanced moderation, custom webhook logging (in `#mod-logs` and `#status`), utility commands, and dynamic embeds.
+2. **👋 Welcomer**: Dedicated to generating high-quality image welcome cards when members join, logging member leaves, and automatically sending a direct message to new users with server rules.
+3. **🎫 Ticket Tool**: Creates a highly professional support ticket system. Users click a button in `#support` to open a private thread that only they and the `Aegis Vanguard`/`Aegis Sentinel` roles can see.
+4. **⚔️ Arcane**: A powerful leveling and economy bot that rewards members with XP for being active in text and voice channels. Automatically assigns the `⭐ VIP Member` role when they reach level 10.
 
----
 
 ## 5. Texts & Prompts
 
@@ -187,3 +210,13 @@ We're thrilled to have you here. AegisForge is the ultimate high-performance Rus
 
 Enjoy your stay! 🛡️
 ```
+
+### ?? Status Channel
+- **Name:** #status
+- **Type:** Text Channel
+- **Category:** Information / System
+- **Permissions:**
+  - @everyone: View Channel, Read Message History
+  - @everyone: Send Messages (DENY)
+  - Bot: View Channel, Send Messages, Embed Links
+- **Purpose:** Receives automated webhook pings whenever the AegisForge bot goes online or joins a new server. Allows users to monitor the exact uptime and scale of the ecosystem.
