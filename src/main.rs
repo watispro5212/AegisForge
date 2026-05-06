@@ -61,7 +61,8 @@ async fn main() -> Result<(), Error> {
         .with_max_level(Level::INFO)
         .init();
 
-    let direct_url = env::var("DATABASE_URL").expect("Missing DATABASE_URL in .env");
+    let direct_url = env::var("DATABASE_URL").map_err(|_| "Missing DATABASE_URL environment variable")?;
+    let pool_url = env::var("DATABASE_POOL_URL").unwrap_or_else(|_| direct_url.clone());
     
     // ── Migration pool ──────────────────────────────────────────
     info!("Running database migrations...");
@@ -76,11 +77,12 @@ async fn main() -> Result<(), Error> {
     // ── App pool ────────────────────────────────────────────────
     let pool = PgPoolOptions::new()
         .max_connections(5)
-        .connect(&direct_url)
-        .await?;
+        .connect(&pool_url)
+        .await
+        .map_err(|e| format!("Failed to connect to application database: {}", e))?;
     let database = Arc::new(Database::new(pool));
 
-    let token = env::var("DISCORD_TOKEN").expect("Missing DISCORD_TOKEN in .env");
+    let token = env::var("DISCORD_TOKEN").map_err(|_| "Missing DISCORD_TOKEN environment variable")?;
     let start_time = std::time::Instant::now();
 
     // ── Poise Framework ─────────────────────────────────────────
