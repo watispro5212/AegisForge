@@ -113,7 +113,7 @@ pub async fn uptime(ctx: Context<'_>) -> Result<(), Error> {
             .field("📡 Connectivity", "Online & Stable", true)
             .field("⏱️ Uptime", uptime_str, true)
             .field("📦 Version", format!("v{}", env!("CARGO_PKG_VERSION")), true)
-            .field("🦀 Core", "Rust 1.95 (Tokio)", true)
+            .field("🦀 Core", "Rust (Tokio async runtime)", true)
             .field("⚙️ Framework", "Poise v0.6", true)
             .field("🔋 Shard", "0 / 1", true)
             .footer(serenity::CreateEmbedFooter::new("Forged with precision | AegisForge v3"))
@@ -138,7 +138,7 @@ pub async fn stats(ctx: Context<'_>) -> Result<(), Error> {
             .field("🌐 Reach", format!("**{}** Servers\n**{}** Users", guilds, users), true)
             .field("⚙️ Resource Usage", "Tokio Runtime: Active\nDB Pool: Optimal", true)
             .field("⏱️ Session", format!("<t:{}:R>", (chrono::Utc::now() - chrono::Duration::seconds(uptime.as_secs() as i64)).timestamp()), true)
-            .footer(serenity::CreateEmbedFooter::new("Powered by Rust 1.95 | AegisForge v3"))
+            .footer(serenity::CreateEmbedFooter::new("Powered by Rust + Tokio | AegisForge v3"))
             .timestamp(serenity::Timestamp::now())
             .color(0x00E5FF),
     ))
@@ -203,12 +203,13 @@ pub async fn help(
         serenity::CreateEmbed::new()
             .title("🛡️ AegisForge v3 — Eternal Forge")
             .description("Welcome to the next generation of server protection. Use `/` to browse all slash commands.")
-            .field("⚙️ Utility", "`ping`, `server`, `user`, `avatar`, `uptime`, `stats`, `timer`, `dictionary`, `worldclock`, `poll`, `help`", false)
-            .field("🔨 Moderation", "`ban`, `kick`, `mute`, `unmute`, `purge`, `warn`, `timeout` (Audit logging enabled)", false)
-            .field("💰 Economy", "`balance`, `daily`, `work`, `pay`, `leaderboard`, `slots`, `rob`, `gamble_info`", false)
+            .field("⚙️ Utility", "`ping`, `server`, `user`, `avatar`, `uptime`, `stats`, `embed`, `qr`, `math`, `worldclock`, `poll`, `timestamp`, `timer`, `help`", false)
+            .field("🛡️ Moderation", "`ban`, `unban`, `kick`, `mute`, `unmute`, `timeout`, `warn`, `purge`, `slowmode`, `lock`, `unlock`", false)
+            .field("💰 Economy", "`balance`, `daily`, `work`, `pay`, `deposit`, `withdraw`, `beg`, `search`, `slots`, `rob`, `leaderboard`, `gamble_info`", false)
             .field("📈 Leveling", "`rank`, `leaderboard`", false)
-            .field("🎮 Fun", "`meme`, `joke`, `fact`, `ship`, `rate`, `mock`, `reverse`, `owo`, `ascii`, `coinflip`, `dice`", false)
-            .field("🔧 Config", "`logs`, `welcome`, `autorole`, `prefix`", false)
+            .field("🎮 Fun", "`coinflip`, `dice`, `eightball`, `joke`, `fact`, `ship`, `rate`, `mock`, `reverse`, `owo`, `ascii`, `choose`, `trivia`, `roast`, `compliment`, `meme`, animal pics + more`", false)
+            .field("🔧 Config", "`logs`, `welcome`, `autorole`, `prefix`, `settings`", false)
+            .field("👤 Roles", "`role add`, `role remove`, `role list`", false)
             .field("🔗 Links", "[Website](https://aegisforge-vert.vercel.app) | [Invite](https://discord.com/oauth2/authorize?client_id=1500582485367722004&permissions=8&scope=bot+applications.commands)", false)
             .footer(serenity::CreateEmbedFooter::new("Forged with precision | Type /help <command> for details"))
             .timestamp(serenity::Timestamp::now())
@@ -277,14 +278,22 @@ pub async fn crypto(
 }
 
 
-/// Translate text between languages
+/// Translate text between languages (requires API key — contact server admin)
 #[poise::command(slash_command, prefix_command)]
 pub async fn translate(
     ctx: Context<'_>,
     #[description = "Text to translate"] text: String,
-    #[description = "Target language (e.g. en, fr, es)"] target: String,
+    #[description = "Target language code (e.g. en, fr, es, ja)"] target: String,
 ) -> Result<(), Error> {
-    ctx.say(format!("🌍 **Translation ({})**: `{}`\n_(Note: Real translation API requires a key. This is a Hyperforge mock.)_", target, text)).await?;
+    ctx.send(poise::CreateReply::default().embed(
+        serenity::CreateEmbed::new()
+            .title("🌍 Translation")
+            .description(format!("**Original:** {}", text))
+            .field("Target Language", format!("`{}`", target.to_lowercase()), true)
+            .field("Status", "Translation API key not configured for this instance.", true)
+            .footer(serenity::CreateEmbedFooter::new("Configure TRANSLATE_API_KEY in your .env to enable this"))
+            .color(0xFFAA00),
+    )).await?;
     Ok(())
 }
 
@@ -301,17 +310,22 @@ pub async fn timer(
     Ok(())
 }
 
-/// Look up a word in the AegisForge dictionary
+/// Look up a word definition
 #[poise::command(slash_command, prefix_command)]
 pub async fn dictionary(
     ctx: Context<'_>,
     #[description = "Word to look up"] word: String,
 ) -> Result<(), Error> {
+    let url = format!("https://en.wiktionary.org/wiki/{}", urlencoding::encode(&word));
     ctx.send(poise::CreateReply::default().embed(
         serenity::CreateEmbed::new()
             .title(format!("📖 Dictionary — {}", word))
-            .description(format!("Searching the AegisForge archives for **{}**...", word))
-            .field("Status", "Indexing...", true)
+            .description(format!(
+                "Look up **{}** on Wiktionary for a full definition, etymology, and usage examples.",
+                word
+            ))
+            .field("🔗 Wiktionary", format!("[View definition]({})", url), false)
+            .footer(serenity::CreateEmbedFooter::new("Powered by Wiktionary"))
             .color(0x00E5FF),
     )).await?;
     Ok(())

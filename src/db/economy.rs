@@ -63,6 +63,17 @@ pub async fn set_last_daily(pool: &PgPool, guild_id: i64, user_id: i64, time: Da
     Ok(())
 }
 
+pub async fn set_last_work(pool: &PgPool, guild_id: i64, user_id: i64, time: DateTime<Utc>) -> sqlx::Result<()> {
+    get_user_economy(pool, guild_id, user_id).await?;
+    sqlx::query!(
+        "UPDATE users_economy SET last_work = $1 WHERE guild_id = $2 AND user_id = $3",
+        time,
+        guild_id,
+        user_id
+    ).execute(pool).await?;
+    Ok(())
+}
+
 pub async fn get_leaderboard(pool: &PgPool, guild_id: i64, limit: i64) -> sqlx::Result<Vec<UserEconomy>> {
     sqlx::query_as!(
         UserEconomy,

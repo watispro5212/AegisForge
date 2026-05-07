@@ -5,7 +5,13 @@ use rand::Rng;
 /// fun stuff
 #[poise::command(
     slash_command,
-    subcommands("coinflip", "dice", "eightball", "joke", "fact", "cat", "dog", "fox", "panda", "bird", "cookie", "hug", "pat", "kiss", "slap", "meme", "ship", "rate", "mock", "reverse", "owo", "ascii"),
+    subcommands(
+        "coinflip", "dice", "eightball", "joke", "fact",
+        "cat", "dog", "fox", "panda", "bird",
+        "cookie", "hug", "pat", "kiss", "slap",
+        "meme", "ship", "rate", "mock", "reverse", "owo", "ascii",
+        "choose", "trivia", "roast", "compliment"
+    ),
     category = "fun"
 )]
 pub async fn fun(_ctx: Context<'_>) -> Result<(), Error> {
@@ -15,11 +21,16 @@ pub async fn fun(_ctx: Context<'_>) -> Result<(), Error> {
 /// flip a coin
 #[poise::command(slash_command)]
 pub async fn coinflip(ctx: Context<'_>) -> Result<(), Error> {
-    let result = if rand::random::<bool>() { "Heads" } else { "Tails" };
+    let (result, emoji) = if rand::random::<bool>() {
+        ("Heads", "🪙")
+    } else {
+        ("Tails", "🥈")
+    };
     ctx.send(poise::CreateReply::default().embed(
         serenity::CreateEmbed::new()
-            .title("🪙 Coin Flip")
+            .title(format!("{} Coin Flip", emoji))
             .description(format!("The coin landed on **{}**!", result))
+            .footer(serenity::CreateEmbedFooter::new("50/50 odds, no house edge"))
             .color(0x00E5FF),
     ))
     .await?;
@@ -33,106 +44,225 @@ pub async fn dice(
     #[description = "Number of sides (defaults to 6)"] sides: Option<u32>,
 ) -> Result<(), Error> {
     let sides = sides.unwrap_or(6).max(2);
-    let result = (rand::thread_rng().gen_range(0..sides)) + 1;
+    let result = rand::thread_rng().gen_range(1..=sides);
     ctx.send(poise::CreateReply::default().embed(
         serenity::CreateEmbed::new()
             .title("🎲 Dice Roll")
-            .description(format!("You rolled a **{}** (1-{})", result, sides))
+            .description(format!("You rolled a **{}** on a d{}", result, sides))
+            .footer(serenity::CreateEmbedFooter::new(format!("Range: 1–{}", sides)))
             .color(0x00E5FF),
     ))
     .await?;
     Ok(())
 }
 
-/// ask the 8ball something
+/// ask the magic 8-ball
 #[poise::command(slash_command)]
 pub async fn eightball(
     ctx: Context<'_>,
     #[description = "The question to ask"] question: String,
 ) -> Result<(), Error> {
     let responses = [
-        "It is certain.", "It is decidedly so.", "Without a doubt.", "Yes - definitely.",
-        "You may rely on it.", "As I see it, yes.", "Most likely.", "Outlook good.",
-        "Yes.", "Signs point to yes.", "Reply hazy, try again.", "Ask again later.",
-        "Better not tell you now.", "Cannot predict now.", "Concentrate and ask again.",
-        "Don't count on it.", "My reply is no.", "My sources say no.", "Outlook not so good.",
-        "Very doubtful."
+        ("It is certain.", 0x00FF88),
+        ("It is decidedly so.", 0x00FF88),
+        ("Without a doubt.", 0x00FF88),
+        ("Yes — definitely.", 0x00FF88),
+        ("You may rely on it.", 0x00FF88),
+        ("As I see it, yes.", 0x00FF88),
+        ("Most likely.", 0x00E5FF),
+        ("Outlook good.", 0x00E5FF),
+        ("Yes.", 0x00E5FF),
+        ("Signs point to yes.", 0x00E5FF),
+        ("Reply hazy, try again.", 0xFFAA00),
+        ("Ask again later.", 0xFFAA00),
+        ("Better not tell you now.", 0xFFAA00),
+        ("Cannot predict now.", 0xFFAA00),
+        ("Concentrate and ask again.", 0xFFAA00),
+        ("Don't count on it.", 0xFF3B3B),
+        ("My reply is no.", 0xFF3B3B),
+        ("My sources say no.", 0xFF3B3B),
+        ("Outlook not so good.", 0xFF3B3B),
+        ("Very doubtful.", 0xFF3B3B),
     ];
-    let index = rand::thread_rng().gen_range(0..responses.len());
-    
+    let (answer, color) = responses[rand::thread_rng().gen_range(0..responses.len())];
+
     ctx.send(poise::CreateReply::default().embed(
         serenity::CreateEmbed::new()
             .title("🎱 Magic 8-Ball")
-            .field("Question", question, false)
-            .field("Answer", responses[index], false)
-            .color(0x00E5FF),
+            .field("Question", &question, false)
+            .field("Answer", answer, false)
+            .footer(serenity::CreateEmbedFooter::new("The oracle has spoken"))
+            .color(color),
     ))
     .await?;
     Ok(())
 }
 
-/// Get a random programming joke
+/// get a random programming joke
 #[poise::command(slash_command)]
 pub async fn joke(ctx: Context<'_>) -> Result<(), Error> {
     let jokes = [
         "Why do programmers prefer dark mode?\nBecause light attracts bugs.",
-        "How many programmers does it take to change a light bulb?\nNone, that's a hardware problem.",
-        "To understand what recursion is, you must first understand recursion.",
-        "A programmer is told to \"go to the store and buy a loaf of bread. If they have eggs, get a dozen.\"\nHe returns with 12 loaves of bread.",
+        "How many programmers does it take to change a light bulb?\nNone — that's a hardware problem.",
+        "To understand recursion, you must first understand recursion.",
+        "A programmer was told: \"Go to the store. Buy a loaf of bread. If they have eggs, get a dozen.\"\nHe returned with 12 loaves of bread.",
         "There are 10 types of people in the world: those who understand binary, and those who don't.",
-        "Why did the programmer quit his job?\nBecause he didn't get arrays."
+        "Why did the programmer quit his job?\nBecause he didn't get arrays.",
+        "What's a programmer's favorite place?\nThe foo bar.",
+        "Why don't programmers like nature?\nToo many bugs and no documentation.",
+        "A SQL query walks into a bar, walks up to two tables, and asks... 'Can I join you?'",
+        "Why was the JavaScript developer sad?\nBecause he didn't Node how to Express himself.",
     ];
-    let index = rand::thread_rng().gen_range(0..jokes.len());
-    
+    let joke = jokes[rand::thread_rng().gen_range(0..jokes.len())];
+
     ctx.send(poise::CreateReply::default().embed(
         serenity::CreateEmbed::new()
             .title("😂 Programming Joke")
-            .description(jokes[index])
+            .description(joke)
+            .footer(serenity::CreateEmbedFooter::new("Powered by AegisForge Humor Engine v1.0"))
             .color(0x00E5FF),
     ))
     .await?;
     Ok(())
 }
 
-/// Get a random interesting fact
+/// get a random interesting fact
 #[poise::command(slash_command)]
 pub async fn fact(ctx: Context<'_>) -> Result<(), Error> {
     let facts = [
-        "A jiffy is an actual unit of time: 1/100th of a second.",
-        "The first computer bug was an actual real bug: a moth.",
-        "There are over 700 programming languages in the world.",
-        "The Apollo 11 guidance computer had less processing power than a modern smartphone charger.",
-        "Honey never spoils. Archaeologists have found pots of honey in ancient Egyptian tombs that are over 3,000 years old.",
-        "Octopuses have three hearts."
+        "A jiffy is an actual unit of time — 1/100th of a second.",
+        "The first computer bug was a real bug: a moth found in a Harvard relay in 1947.",
+        "There are over 700 programming languages in existence.",
+        "The Apollo 11 guidance computer had less processing power than a modern toaster.",
+        "Honey never spoils — edible honey has been found in 3,000-year-old Egyptian tombs.",
+        "Octopuses have three hearts and blue blood.",
+        "Rust was voted the most-loved programming language on Stack Overflow 8 years in a row.",
+        "The word 'byte' was coined in 1956 to avoid accidental confusion with 'bit'.",
+        "The first 1GB hard drive (1980) weighed 550 lbs and cost $40,000.",
+        "Cleopatra lived closer in time to the Moon landing than to the construction of the Great Pyramid.",
     ];
-    let index = rand::thread_rng().gen_range(0..facts.len());
-    
+    let f = facts[rand::thread_rng().gen_range(0..facts.len())];
+
     ctx.send(poise::CreateReply::default().embed(
         serenity::CreateEmbed::new()
             .title("💡 Random Fact")
-            .description(facts[index])
+            .description(f)
+            .footer(serenity::CreateEmbedFooter::new("AegisForge Knowledge Core"))
             .color(0x00E5FF),
     ))
     .await?;
     Ok(())
 }
 
-/// Send a cute cat picture
+/// send a cute cat picture
 #[poise::command(slash_command)]
 pub async fn cat(ctx: Context<'_>) -> Result<(), Error> {
-    let cat_url = format!("https://cataas.com/cat?width=500&height=500&cache={}", rand::random::<u32>());
-    
+    let cache_bust = rand::thread_rng().gen_range(1..=10000u32);
+    let url = format!("https://cataas.com/cat?width=480&height=480&cache={}", cache_bust);
     ctx.send(poise::CreateReply::default().embed(
         serenity::CreateEmbed::new()
             .title("🐱 Meow!")
-            .image(cat_url)
+            .image(url)
+            .footer(serenity::CreateEmbedFooter::new("Powered by cataas.com"))
             .color(0x00E5FF),
     ))
     .await?;
     Ok(())
 }
 
-/// Give someone a virtual cookie
+/// send a cute dog picture
+#[poise::command(slash_command)]
+pub async fn dog(ctx: Context<'_>) -> Result<(), Error> {
+    // Curated list of dog image URLs from dog.ceo (stable breed images)
+    let dogs = [
+        "https://images.dog.ceo/breeds/retriever-golden/n02099601_7771.jpg",
+        "https://images.dog.ceo/breeds/husky/n02110185_1469.jpg",
+        "https://images.dog.ceo/breeds/labrador/n02099712_3025.jpg",
+        "https://images.dog.ceo/breeds/pomeranian/n02112018_1090.jpg",
+        "https://images.dog.ceo/breeds/shiba/shiba-7.jpg",
+        "https://images.dog.ceo/breeds/corgi-cardigan/n02113186_1030.jpg",
+        "https://images.dog.ceo/breeds/samoyed/n02111889_4266.jpg",
+        "https://images.dog.ceo/breeds/chow/n02112137_9985.jpg",
+        "https://images.dog.ceo/breeds/malinois/n02105162_622.jpg",
+        "https://images.dog.ceo/breeds/retriever-golden/n02099601_3004.jpg",
+    ];
+    let url = dogs[rand::thread_rng().gen_range(0..dogs.len())];
+    ctx.send(poise::CreateReply::default().embed(
+        serenity::CreateEmbed::new()
+            .title("🐶 Woof!")
+            .image(url)
+            .footer(serenity::CreateEmbedFooter::new("Powered by dog.ceo"))
+            .color(0xD2691E),
+    ))
+    .await?;
+    Ok(())
+}
+
+/// send a cute fox picture
+#[poise::command(slash_command)]
+pub async fn fox(ctx: Context<'_>) -> Result<(), Error> {
+    // randomfox.ca hosts 123 numbered fox images
+    let n = rand::thread_rng().gen_range(1..=123u32);
+    let url = format!("https://randomfox.ca/images/{}.jpg", n);
+    ctx.send(poise::CreateReply::default().embed(
+        serenity::CreateEmbed::new()
+            .title("🦊 What does the fox say?")
+            .image(url)
+            .footer(serenity::CreateEmbedFooter::new("Powered by randomfox.ca"))
+            .color(0xFF5722),
+    ))
+    .await?;
+    Ok(())
+}
+
+/// send a cute panda picture
+#[poise::command(slash_command)]
+pub async fn panda(ctx: Context<'_>) -> Result<(), Error> {
+    let pandas = [
+        "https://upload.wikimedia.org/wikipedia/commons/0/0f/Grosser_Panda.JPG",
+        "https://upload.wikimedia.org/wikipedia/commons/3/3c/Giant_Panda_2004-03-2.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/1/1e/Giant_panda_at_Vienna_Zoo_edit.jpg",
+    ];
+    let url = pandas[rand::thread_rng().gen_range(0..pandas.len())];
+    ctx.send(poise::CreateReply::default().embed(
+        serenity::CreateEmbed::new()
+            .title("🐼 Panda Time!")
+            .image(url)
+            .footer(serenity::CreateEmbedFooter::new("Stay endangered-species-aware"))
+            .color(0x111111),
+    ))
+    .await?;
+    Ok(())
+}
+
+/// send a cute bird picture
+#[poise::command(slash_command)]
+pub async fn bird(ctx: Context<'_>) -> Result<(), Error> {
+    let birds = [
+        "https://upload.wikimedia.org/wikipedia/commons/a/a7/Camponotus_flavomarginatus_ant.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/4/45/A_small_cup_of_coffee.JPG",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Culinary_fruits_front_view.jpg/1200px-Culinary_fruits_front_view.jpg",
+    ];
+    // Use Wikimedia bird images
+    let bird_imgs = [
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Eopsaltria_australis_-_Mogo_Campground.jpg/800px-Eopsaltria_australis_-_Mogo_Campground.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/European_robin_aka.jpg/800px-European_robin_aka.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Dog_Breeds.jpg/1200px-Dog_Breeds.jpg",
+    ];
+    let _ = birds; // suppress unused warning
+    let url = bird_imgs[rand::thread_rng().gen_range(0..bird_imgs.len())];
+    ctx.send(poise::CreateReply::default().embed(
+        serenity::CreateEmbed::new()
+            .title("🐦 Chirp!")
+            .image(url)
+            .footer(serenity::CreateEmbedFooter::new("Powered by Wikimedia Commons"))
+            .color(0x00E5FF),
+    ))
+    .await?;
+    Ok(())
+}
+
+/// give someone a virtual cookie
 #[poise::command(slash_command)]
 pub async fn cookie(
     ctx: Context<'_>,
@@ -141,13 +271,17 @@ pub async fn cookie(
     ctx.send(poise::CreateReply::default().embed(
         serenity::CreateEmbed::new()
             .title("🍪 Cookie Delivery!")
-            .description(format!("{} gave a cookie to **{}**!", ctx.author().name, user.name))
+            .description(format!(
+                "**{}** slid a warm cookie across the table to **{}**! 🍪",
+                ctx.author().name, user.name
+            ))
             .color(0xD2691E),
-    )).await?;
+    ))
+    .await?;
     Ok(())
 }
 
-/// Give someone a hug
+/// give someone a hug
 #[poise::command(slash_command)]
 pub async fn hug(
     ctx: Context<'_>,
@@ -155,13 +289,17 @@ pub async fn hug(
 ) -> Result<(), Error> {
     ctx.send(poise::CreateReply::default().embed(
         serenity::CreateEmbed::new()
-            .description(format!("🤗 **{}** gave **{}** a big warm hug!", ctx.author().name, user.name))
+            .description(format!(
+                "🤗 **{}** wrapped **{}** in a big warm hug!",
+                ctx.author().name, user.name
+            ))
             .color(0xFF69B4),
-    )).await?;
+    ))
+    .await?;
     Ok(())
 }
 
-/// Give someone a pat
+/// give someone a pat
 #[poise::command(slash_command)]
 pub async fn pat(
     ctx: Context<'_>,
@@ -169,13 +307,17 @@ pub async fn pat(
 ) -> Result<(), Error> {
     ctx.send(poise::CreateReply::default().embed(
         serenity::CreateEmbed::new()
-            .description(format!("🖐️ **{}** patted **{}** on the head!", ctx.author().name, user.name))
+            .description(format!(
+                "🖐️ **{}** gave **{}** a gentle head pat!",
+                ctx.author().name, user.name
+            ))
             .color(0x00E5FF),
-    )).await?;
+    ))
+    .await?;
     Ok(())
 }
 
-/// Give someone a kiss
+/// give someone a kiss
 #[poise::command(slash_command)]
 pub async fn kiss(
     ctx: Context<'_>,
@@ -183,13 +325,17 @@ pub async fn kiss(
 ) -> Result<(), Error> {
     ctx.send(poise::CreateReply::default().embed(
         serenity::CreateEmbed::new()
-            .description(format!("💋 **{}** gave **{}** a sweet kiss!", ctx.author().name, user.name))
+            .description(format!(
+                "💋 **{}** gave **{}** a sweet kiss! 💕",
+                ctx.author().name, user.name
+            ))
             .color(0xFF0000),
-    )).await?;
+    ))
+    .await?;
     Ok(())
 }
 
-/// Slap someone
+/// slap someone
 #[poise::command(slash_command)]
 pub async fn slap(
     ctx: Context<'_>,
@@ -197,139 +343,126 @@ pub async fn slap(
 ) -> Result<(), Error> {
     ctx.send(poise::CreateReply::default().embed(
         serenity::CreateEmbed::new()
-            .description(format!("💥 **{}** slapped **{}**! Ouch.", ctx.author().name, user.name))
+            .description(format!(
+                "💥 **{}** slapped **{}** with full force! OUCH.",
+                ctx.author().name, user.name
+            ))
             .color(0xFF5722),
-    )).await?;
+    ))
+    .await?;
     Ok(())
 }
 
-/// Send a cute dog picture
-#[poise::command(slash_command)]
-pub async fn dog(ctx: Context<'_>) -> Result<(), Error> {
-    let dog_url = format!("https://dog.ceo/api/breeds/image/random?cache={}", rand::random::<u32>());
-    // Note: In a real app we'd fetch the JSON, but for this mock we'll just link a common one
-    ctx.send(poise::CreateReply::default().embed(
-        serenity::CreateEmbed::new()
-            .title("🐶 Woof!")
-            .image("https://images.dog.ceo/breeds/pomeranian/n02112018_1090.jpg")
-            .color(0x00E5FF),
-    )).await?;
-    Ok(())
-}
-
-/// Send a cute fox picture
-#[poise::command(slash_command)]
-pub async fn fox(ctx: Context<'_>) -> Result<(), Error> {
-    ctx.send(poise::CreateReply::default().embed(
-        serenity::CreateEmbed::new()
-            .title("🦊 What does the fox say?")
-            .image("https://randomfox.ca/images/1.jpg")
-            .color(0xFF5722),
-    )).await?;
-    Ok(())
-}
-
-/// Send a cute panda picture
-#[poise::command(slash_command)]
-pub async fn panda(ctx: Context<'_>) -> Result<(), Error> {
-    ctx.send(poise::CreateReply::default().embed(
-        serenity::CreateEmbed::new()
-            .title("🐼 Panda!")
-            .image("https://some-random-api.com/img/panda")
-            .color(0xFFFFFF),
-    )).await?;
-    Ok(())
-}
-
-/// Send a cute bird picture
-#[poise::command(slash_command)]
-pub async fn bird(ctx: Context<'_>) -> Result<(), Error> {
-    ctx.send(poise::CreateReply::default().embed(
-        serenity::CreateEmbed::new()
-            .title("🐦 Chirp!")
-            .image("https://some-random-api.com/img/bird")
-            .color(0x00E5FF),
-    )).await?;
-    Ok(())
-}
-
-/// Get a random meme
+/// get a random meme image
 #[poise::command(slash_command)]
 pub async fn meme(ctx: Context<'_>) -> Result<(), Error> {
+    // Curated stable meme image URLs
+    let memes = [
+        ("This Is Fine", "https://i.kym-cdn.com/entries/icons/original/000/018/012/this_is_fine.jpeg"),
+        ("Drake Approves", "https://i.kym-cdn.com/entries/icons/original/000/019/490/dd2.jpg"),
+        ("Distracted Boyfriend", "https://i.kym-cdn.com/photos/images/newsfeed/001/525/547/0b3.jpg"),
+        ("Expanding Brain", "https://i.kym-cdn.com/photos/images/newsfeed/001/035/474/04a.jpg"),
+        ("Surprised Pikachu", "https://i.kym-cdn.com/photos/images/newsfeed/001/480/179/07e.jpg"),
+        ("Woman Yelling at Cat", "https://i.kym-cdn.com/photos/images/newsfeed/001/536/075/c40.jpg"),
+        ("Two Buttons", "https://i.kym-cdn.com/photos/images/newsfeed/001/070/617/bec.jpg"),
+    ];
+    let (title, url) = memes[rand::thread_rng().gen_range(0..memes.len())];
     ctx.send(poise::CreateReply::default().embed(
         serenity::CreateEmbed::new()
-            .title("🎭 Fresh Meme")
-            .image("https://meme-api.com/gimme")
+            .title(format!("🎭 {}", title))
+            .image(url)
+            .footer(serenity::CreateEmbedFooter::new("Fresh from the meme vault"))
             .color(0x00E5FF),
-    )).await?;
+    ))
+    .await?;
     Ok(())
 }
 
-/// See the compatibility between two users
+/// check the compatibility between two users
 #[poise::command(slash_command)]
 pub async fn ship(
     ctx: Context<'_>,
     #[description = "First user"] user1: serenity::User,
-    #[description = "Second user"] user2: Option<serenity::User>,
+    #[description = "Second user (defaults to you)"] user2: Option<serenity::User>,
 ) -> Result<(), Error> {
-    let u1 = &user1;
     let u2 = user2.as_ref().unwrap_or_else(|| ctx.author());
-    
-    let percent = rand::thread_rng().gen_range(0..=100);
-    let bar_filled = percent / 10;
-    let bar = format!("{}{} ({}%)", "❤️".repeat(bar_filled as usize), "🖤".repeat((10 - bar_filled) as usize), percent);
-    
-    let comment = match percent {
+    let percent: u32 = rand::thread_rng().gen_range(0..=100);
+    let filled = (percent / 10) as usize;
+    let bar = format!(
+        "{}{} {}%",
+        "❤️".repeat(filled),
+        "🖤".repeat(10 - filled),
+        percent
+    );
+    let verdict = match percent {
         0..=20 => "Not a chance. ❄️",
         21..=40 => "Maybe as friends? 🤝",
         41..=60 => "There's some chemistry! 🧪",
-        61..=80 => "Looking good! 🔥",
+        61..=80 => "Looking pretty good! 🔥",
         81..=99 => "A perfect match! ❤️",
         _ => "Soulmates for eternity! 💍",
     };
-
     ctx.send(poise::CreateReply::default().embed(
         serenity::CreateEmbed::new()
             .title("💖 Matchmaking Forge")
-            .description(format!("Checking compatibility for **{}** and **{}**...", u1.name, u2.name))
-            .field("Result", bar, false)
-            .field("Verdict", comment, false)
+            .description(format!("Checking compatibility between **{}** and **{}**...", user1.name, u2.name))
+            .field("Compatibility", bar, false)
+            .field("Verdict", verdict, false)
+            .footer(serenity::CreateEmbedFooter::new("Results are 100% scientifically accurate"))
             .color(0xFF69B4),
-    )).await?;
+    ))
+    .await?;
     Ok(())
 }
 
-/// Rate something
+/// rate something out of 10
 #[poise::command(slash_command)]
 pub async fn rate(
     ctx: Context<'_>,
     #[description = "What to rate"] thing: String,
 ) -> Result<(), Error> {
-    let rating = rand::thread_rng().gen_range(0..=10);
+    let rating: u32 = rand::thread_rng().gen_range(0..=10);
+    let comment = match rating {
+        0 => "Absolutely terrible. No notes.",
+        1..=3 => "Pretty rough. Could be worse.",
+        4..=6 => "Decent. Room for improvement.",
+        7..=8 => "Pretty solid, actually.",
+        9 => "Exceptional work. Chef's kiss.",
+        _ => "A perfect 10. Genuinely flawless.",
+    };
     ctx.send(poise::CreateReply::default().embed(
         serenity::CreateEmbed::new()
             .title("⚖️ The Oracle's Rating")
-            .description(format!("I would rate **{}** a solid **{}/10**!", thing, rating))
+            .description(format!("**{}** gets a **{}/10**", thing, rating))
+            .field("Verdict", comment, false)
             .color(0x00E5FF),
-    )).await?;
+    ))
+    .await?;
     Ok(())
 }
 
-/// Mock some text (sPoNgEbOb CaSe)
+/// mock text in sPoNgEbOb CaSe
 #[poise::command(slash_command)]
 pub async fn mock(
     ctx: Context<'_>,
     #[description = "The text to mock"] text: String,
 ) -> Result<(), Error> {
-    let mocked: String = text.chars().enumerate().map(|(i, c)| {
-        if i % 2 == 0 { c.to_lowercase().to_string() } else { c.to_uppercase().to_string() }
-    }).collect();
-    
+    let mocked: String = text
+        .chars()
+        .enumerate()
+        .map(|(i, c)| {
+            if i % 2 == 0 {
+                c.to_lowercase().to_string()
+            } else {
+                c.to_uppercase().to_string()
+            }
+        })
+        .collect();
     ctx.say(mocked).await?;
     Ok(())
 }
 
-/// Reverse some text
+/// reverse some text
 #[poise::command(slash_command)]
 pub async fn reverse(
     ctx: Context<'_>,
@@ -346,27 +479,171 @@ pub async fn owo(
     ctx: Context<'_>,
     #[description = "The text to owoify"] text: String,
 ) -> Result<(), Error> {
-    let owoified = text.replace("r", "w").replace("l", "w").replace("R", "W").replace("L", "W") + " uwu";
-    ctx.say(owoified).await?;
+    let result = text
+        .replace('r', "w")
+        .replace('l', "w")
+        .replace('R', "W")
+        .replace('L', "W")
+        + " uwu";
+    ctx.say(result).await?;
     Ok(())
 }
 
-/// Convert text to large ASCII blocks (simple mock)
+/// convert text to spaced-out ASCII display
 #[poise::command(slash_command)]
 pub async fn ascii(
     ctx: Context<'_>,
-    #[description = "The text to convert"] text: String,
+    #[description = "The text to convert (max 10 chars)"] text: String,
 ) -> Result<(), Error> {
     if text.len() > 10 {
-        return Err("Text too long for ASCII conversion (max 10 chars).".into());
+        return Err("Text must be 10 characters or fewer.".into());
     }
-    
-    let mut result = String::from("```\n");
-    for c in text.to_uppercase().chars() {
-        result.push_str(&format!(" {} ", c));
+    let spaced: String = text
+        .to_uppercase()
+        .chars()
+        .map(|c| format!(" {} ", c))
+        .collect::<Vec<_>>()
+        .join("");
+    ctx.say(format!("```\n{}\n```", spaced.trim())).await?;
+    Ok(())
+}
+
+/// randomly choose between options (separate with commas or spaces)
+#[poise::command(slash_command)]
+pub async fn choose(
+    ctx: Context<'_>,
+    #[description = "Options to pick from, separated by commas (e.g. pizza, sushi, tacos)"]
+    options: String,
+) -> Result<(), Error> {
+    let choices: Vec<&str> = options
+        .split(',')
+        .map(|s| s.trim())
+        .filter(|s| !s.is_empty())
+        .collect();
+
+    if choices.len() < 2 {
+        return Err("Please provide at least 2 options separated by commas.".into());
     }
-    result.push_str("\n```");
-    
-    ctx.say(result).await?;
+
+    let chosen = choices[rand::thread_rng().gen_range(0..choices.len())];
+
+    ctx.send(poise::CreateReply::default().embed(
+        serenity::CreateEmbed::new()
+            .title("🎯 AegisForge Decides")
+            .description(format!("Out of **{}** options, the forge chose:", choices.len()))
+            .field("Winner", format!("**{}**", chosen), false)
+            .footer(serenity::CreateEmbedFooter::new("Cryptographically random™"))
+            .color(0x00E5FF),
+    ))
+    .await?;
+    Ok(())
+}
+
+/// get a random trivia question
+#[poise::command(slash_command)]
+pub async fn trivia(ctx: Context<'_>) -> Result<(), Error> {
+    let questions = [
+        ("What is the capital of Australia?", "Canberra", vec!["Sydney", "Melbourne", "Brisbane"]),
+        ("How many bits are in a byte?", "8", vec!["4", "16", "32"]),
+        ("Which planet is closest to the Sun?", "Mercury", vec!["Venus", "Earth", "Mars"]),
+        ("What year was the first iPhone released?", "2007", vec!["2005", "2008", "2010"]),
+        ("What programming language is Rust's borrow checker written in?", "Rust", vec!["C++", "Haskell", "Python"]),
+        ("What does HTML stand for?", "HyperText Markup Language", vec!["High-Tech Modern Language", "HyperText Modeling Language", "Home Tool Markup Language"]),
+        ("How many colors are in a rainbow?", "7", vec!["5", "6", "8"]),
+        ("What is the chemical symbol for gold?", "Au", vec!["Go", "Gd", "Ag"]),
+        ("Which country invented the Internet?", "United States", vec!["United Kingdom", "Germany", "Japan"]),
+        ("What is 7 × 8?", "56", vec!["54", "58", "48"]),
+    ];
+
+    let (question, answer, mut wrong) = questions[rand::thread_rng().gen_range(0..questions.len())].clone();
+
+    let mut all: Vec<&str> = vec![answer];
+    all.append(&mut wrong);
+    // shuffle options
+    for i in (1..all.len()).rev() {
+        let j = rand::thread_rng().gen_range(0..=i);
+        all.swap(i, j);
+    }
+
+    let letters = ["🇦", "🇧", "🇨", "🇩"];
+    let options_display: String = all
+        .iter()
+        .enumerate()
+        .map(|(i, opt)| format!("{} {}", letters[i], opt))
+        .collect::<Vec<_>>()
+        .join("\n");
+
+    ctx.send(poise::CreateReply::default().embed(
+        serenity::CreateEmbed::new()
+            .title("🧠 AegisForge Trivia")
+            .description(format!("**{}**", question))
+            .field("Options", &options_display, false)
+            .field("Answer", format!("||{}||", answer), false)
+            .footer(serenity::CreateEmbedFooter::new("Answer is hidden — click to reveal!"))
+            .color(0xBF5AF2),
+    ))
+    .await?;
+    Ok(())
+}
+
+/// roast someone (all in good fun)
+#[poise::command(slash_command)]
+pub async fn roast(
+    ctx: Context<'_>,
+    #[description = "The user to roast"] user: serenity::User,
+) -> Result<(), Error> {
+    let roasts = [
+        "is the human equivalent of a participation trophy.",
+        "has the personality of a lukewarm cup of water.",
+        "is like a software update — when you see them, you think 'not now'.",
+        "is the reason we have warning labels on everything.",
+        "could start a fight in an empty room.",
+        "types with two fingers and still makes typos.",
+        "is the loading screen nobody asked for.",
+        "peaked in a server nobody remembers.",
+        "has a face only a CAPTCHA could love.",
+        "is like a NaN — not a number, not a person, just an error.",
+    ];
+    let roast = roasts[rand::thread_rng().gen_range(0..roasts.len())];
+
+    ctx.send(poise::CreateReply::default().embed(
+        serenity::CreateEmbed::new()
+            .title("🔥 Roast Session")
+            .description(format!("**{}** {}", user.name, roast))
+            .footer(serenity::CreateEmbedFooter::new("Requested by the forge • All in good fun"))
+            .color(0xFF5722),
+    ))
+    .await?;
+    Ok(())
+}
+
+/// give someone a genuine compliment
+#[poise::command(slash_command)]
+pub async fn compliment(
+    ctx: Context<'_>,
+    #[description = "The user to compliment"] user: serenity::User,
+) -> Result<(), Error> {
+    let compliments = [
+        "is genuinely one of the most reliable people in this server. 🌟",
+        "has a great sense of humor and makes every conversation better. 😄",
+        "is the kind of person who makes a community actually worth being in. 💎",
+        "has incredible taste. Seriously impressive. ✨",
+        "is underrated. People should talk about how great they are more often. 🚀",
+        "brings energy to this server that can't be replaced. 🔥",
+        "is smarter than they give themselves credit for. 🧠",
+        "has a way of making people feel welcome without even trying. 🤝",
+        "is proof that good people still exist on the internet. 💙",
+        "is an absolute legend in the making. The forge approves. 🛡️",
+    ];
+    let compliment = compliments[rand::thread_rng().gen_range(0..compliments.len())];
+
+    ctx.send(poise::CreateReply::default().embed(
+        serenity::CreateEmbed::new()
+            .title("💙 A Genuine Compliment")
+            .description(format!("**{}** {}", user.name, compliment))
+            .footer(serenity::CreateEmbedFooter::new("Spread positivity • AegisForge"))
+            .color(0x00FF88),
+    ))
+    .await?;
     Ok(())
 }

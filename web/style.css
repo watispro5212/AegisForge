@@ -1710,14 +1710,104 @@ footer { border-top: 1px solid var(--border); padding: 3rem 5%; }
 
 
 
+/* ─── HERO LAYOUT ──────────────────────────────────── */
+.hero-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+    max-width: 1300px;
+    width: 100%;
+}
+
+.hero-visual {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* ─── MOBILE NAV ───────────────────────────────────── */
+.mobile-menu-btn {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+}
+.mobile-menu-btn span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: var(--text);
+    border-radius: 2px;
+    transition: var(--transition);
+}
+.mobile-nav {
+    display: none;
+    flex-direction: column;
+    gap: 1rem;
+    position: fixed;
+    top: 72px;
+    left: 0;
+    right: 0;
+    background: rgba(8, 8, 16, 0.98);
+    border-bottom: 1px solid var(--border);
+    padding: 2rem 5%;
+    z-index: 999;
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+}
+.mobile-nav.open { display: flex; }
+.mobile-nav a { color: var(--text-dim); text-decoration: none; font-size: 1rem; font-weight: 500; }
+.mobile-nav a:hover { color: var(--text); }
+.mobile-nav-invite {
+    display: inline-block;
+    text-align: center;
+    margin-top: 1rem;
+}
+
+/* ─── BUTTON ICON ──────────────────────────────────── */
+.btn-icon i { margin-right: 6px; }
+
+/* ─── MOCKUP EXTRAS ────────────────────────────────── */
+.mockup-name-mod { color: #57f287; }
+.embed-sidebar.success-alt { background: #57f287; }
+
+/* ─── REGISTRY TEASER ──────────────────────────────── */
+.registry-teaser {
+    max-width: 700px;
+    margin: 0 auto;
+    text-align: center;
+}
+.registry-teaser p {
+    color: var(--text-dim);
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    line-height: 1.7;
+}
+
+@media (max-width: 1024px) {
+    .hero-inner {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+    .hero-visual { display: none; }
+    .hero-stats { justify-content: center; }
+    .hero-btns { justify-content: center; }
+}
+
 @media (max-width: 768px) {
     nav { padding: 1rem 4%; }
-    .nav-links a:not(:last-child) { display: none; }
+    .nav-links { display: none; }
+    .mobile-menu-btn { display: flex; }
     .hero { padding: 100px 4% 60px; }
     .hero-stats { gap: 1rem; padding: 1rem 1.5rem; }
     .cmd-row { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
     .cmd-row code { min-width: unset; }
     .footer-top, .footer-bottom { flex-direction: column; text-align: center; }
+    .footer-links { flex-wrap: wrap; justify-content: center; gap: 1rem; }
 }
 
 /* ─── TECH STACK ────────────────────────────────── */
@@ -1998,6 +2088,7 @@ footer { border-top: 1px solid var(--border); padding: 3rem 5%; }
     background: conic-gradient(transparent, var(--cyan), transparent 30%);
     animation: rotate-avatar 4s linear infinite;
     opacity: 0.3;
+    will-change: transform;
 }
 
 @keyframes rotate-avatar {

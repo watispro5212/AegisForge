@@ -6,6 +6,22 @@ if (navbar) {
     });
 }
 
+// ── Mobile menu toggle ────────────────────────────────
+const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+const mobileNav = document.getElementById('mobileNav');
+if (mobileMenuBtn && mobileNav) {
+    mobileMenuBtn.addEventListener('click', () => {
+        mobileNav.classList.toggle('open');
+        mobileMenuBtn.setAttribute('aria-expanded', mobileNav.classList.contains('open'));
+    });
+    // Close on outside click
+    document.addEventListener('click', (e) => {
+        if (!navbar.contains(e.target) && !mobileNav.contains(e.target)) {
+            mobileNav.classList.remove('open');
+        }
+    });
+}
+
 // ── Particle system ───────────────────────────────────
 const particleContainer = document.getElementById('particles');
 if (particleContainer) {
@@ -25,19 +41,28 @@ if (particleContainer) {
     }
 }
 
-// ── Scroll reveal for feature cards ──────────────────
-const observer = new IntersectionObserver((entries) => {
+// ── Scroll reveal logic ──────────────────────────
+const revealOptions = {
+    threshold: 0.1,
+    rootMargin: "0px 0px -50px 0px"
+};
+
+const revealOnScroll = new IntersectionObserver((entries, observer) => {
     entries.forEach((entry, i) => {
         if (entry.isIntersecting) {
             setTimeout(() => {
-                entry.target.classList.add('revealed');
-            }, i * 100);
+                entry.target.classList.add('visible', 'revealed');
+            }, i * 50);
             observer.unobserve(entry.target);
         }
     });
-}, { threshold: 0.1 });
+}, revealOptions);
 
-document.querySelectorAll('[data-reveal]').forEach(el => observer.observe(el));
+function initReveals() {
+    document.querySelectorAll('.reveal-on-scroll, [data-reveal], .feature-card, .stack-card').forEach(el => {
+        revealOnScroll.observe(el);
+    });
+}
 
 
 // Inject keyframe for tab transition
@@ -126,6 +151,7 @@ async function fetchLiveStats() {
             if (document.getElementById('dashboard-xp')) {
                 animateValue('dashboard-xp', data.xp_gain_24h || 842500);
             }
+        }
 
         // Update Status page elements if they exist
         const guildsStatus = document.getElementById('stat-guilds-status');
@@ -158,6 +184,12 @@ async function fetchLiveStats() {
     } catch (err) {
         console.warn('Status API unreachable, using cached/fallback data:', err.message);
         
+        const fallbackData = {
+            server_count: 1422,
+            user_count: 1450283,
+            uptime_seconds: 86400 * 42
+        };
+
         const overallStatus = document.getElementById('overall-status');
         if (overallStatus) {
             overallStatus.querySelector('.status-indicator').className = 'status-indicator maintenance';
@@ -171,12 +203,26 @@ async function fetchLiveStats() {
             botCoreLabel.className = 'status-label maintenance';
         }
 
-        // Static fallbacks for visual consistency
-        animateValue('stat-guilds', 1422);
-        animateValue('stat-users', 1450283);
-        animateValue('stat-uptime', 86400 * 42, true); 
+        // Apply fallbacks
+        animateValue('stat-guilds', fallbackData.server_count);
+        animateValue('stat-users', fallbackData.user_count);
+        animateValue('stat-uptime', fallbackData.uptime_seconds, true);
         
-        initUptimeSegments(true); // Realistic segments with some "hiccups"
+        animateValue('hero-servers', fallbackData.server_count);
+        animateValue('hero-users', fallbackData.user_count);
+
+        const guildsStatus = document.getElementById('stat-guilds-status');
+        const usersStatus = document.getElementById('stat-users-status');
+        const uptimeStatus = document.getElementById('stat-uptime-status');
+
+        if (guildsStatus) guildsStatus.innerText = fallbackData.server_count.toLocaleString();
+        if (usersStatus) usersStatus.innerText = fallbackData.user_count.toLocaleString();
+        if (uptimeStatus) {
+            const uptimeData = formatUptime(fallbackData.uptime_seconds); 
+            uptimeStatus.innerText = `${uptimeData.days}d ${uptimeData.hours}h ${uptimeData.minutes}m`;
+        }
+        
+        initUptimeSegments(true); 
     }
 }
 
@@ -218,22 +264,7 @@ if (statsSection) {
 
 /* ─── MASSIVE UI OVERHAUL SCRIPT ADDITIONS ───────────────────── */
 
-// 1. Intersection Observer for Scroll Reveals
-const revealElements = document.querySelectorAll('.reveal-on-scroll, .feature-card, .stack-card');
-const revealOptions = {
-    threshold: 0.15,
-    rootMargin: "0px 0px -50px 0px"
-};
-
-const revealOnScroll = new IntersectionObserver(function(entries, observer) {
-    entries.forEach(entry => {
-        if (!entry.isIntersecting) return;
-        entry.target.classList.add('visible', 'revealed');
-        observer.unobserve(entry.target);
-    });
-}, revealOptions);
-
-revealElements.forEach(el => revealOnScroll.observe(el));
+// This is now handled in initReveals()
 
 // 2. 3D Tilt Effect for Cards
 const tiltCards = document.querySelectorAll('.tilt-card, .feature-card, .dashboard-card, .stack-card, .pricing-card');
@@ -367,11 +398,19 @@ document.addEventListener('mousemove', (e) => {
     cursorGlow.style.top = e.clientY + 'px';
 });
 
-// 5. Page Load Fade In
-document.addEventListener('DOMContentLoaded', () => {
+// 5. Page Initialization
+function initApp() {
     document.body.style.opacity = '0';
     document.body.style.transition = 'opacity 0.6s ease';
     setTimeout(() => {
         document.body.style.opacity = '1';
     }, 50);
-});
+
+    initReveals();
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initApp);
+} else {
+    initApp();
+}
