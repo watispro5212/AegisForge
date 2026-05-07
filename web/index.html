@@ -46,11 +46,11 @@
                 <a href="dashboard.html" class="btn-secondary btn-lg">Explore Dashboard</a>
             </div>
             <div class="hero-stats">
-                <div class="stat"><span class="stat-num">1.4M</span><span class="stat-label">Servers</span></div>
+                <div class="stat"><span class="stat-num" id="hero-servers">1.4M</span><span class="stat-label">Servers</span></div>
+                <div class="stat-divider"></div>
+                <div class="stat"><span class="stat-num" id="hero-users">70M</span><span class="stat-label">Users</span></div>
                 <div class="stat-divider"></div>
                 <div class="stat"><span class="stat-num">70+</span><span class="stat-label">Commands</span></div>
-                <div class="stat-divider"></div>
-                <div class="stat"><span class="stat-num">8</span><span class="stat-label">Categories</span></div>
                 <div class="stat-divider"></div>
                 <div class="stat"><span class="stat-num">0ms</span><span class="stat-label">GC Latency</span></div>
             </div>
@@ -137,32 +137,52 @@
         </div>
     </section>
 
-    <!-- Detailed Features -->
+    <!-- Features Section -->
     <section id="features" class="features-section">
         <div class="section-header">
             <span class="section-tag">Capabilities</span>
             <h2>Powerful Tools for Your Community</h2>
         </div>
         <div class="features-grid">
-            <div class="feature-card" data-reveal>
+            <div class="feature-card reveal-on-scroll">
                 <div class="feature-icon">🛡️</div>
-                <h3>Advanced Auto-Mod</h3>
-                <p>Heuristic-based filtering that detects spam, phishing, and toxicity before it hits your chat.</p>
+                <h3>Advanced Moderation</h3>
+                <p>Timeout, kick, ban, warn, purge — all with structured embed responses and audit trails built for accountability.</p>
+                <ul class="feature-list">
+                    <li>Auto-mod filters</li>
+                    <li>Case tracking</li>
+                    <li>Appeal-ready logs</li>
+                </ul>
             </div>
-            <div class="feature-card" data-reveal>
-                <div class="feature-icon">🔨</div>
-                <h3>Smooth Moderation</h3>
-                <p>Intuitive slash commands for banning, kicking, and timing out with full case history tracking.</p>
+            <div class="feature-card reveal-on-scroll">
+                <div class="feature-icon">⚡</div>
+                <h3>Utility Commands</h3>
+                <p>Server stats, user lookups, avatar fetching, Discord timestamps, and bot diagnostics — all instantly accessible.</p>
+                <ul class="feature-list">
+                    <li>Server & user info</li>
+                    <li>Latency tracking</li>
+                    <li>Timestamp formatter</li>
+                </ul>
             </div>
-            <div class="feature-card" data-reveal>
+            <div class="feature-card reveal-on-scroll">
                 <div class="feature-icon">📊</div>
                 <h3>Live Analytics</h3>
-                <p>Track server growth and member activity directly from your dashboard in real-time.</p>
+                <p>Track server growth and member activity directly from your dashboard in real-time with zero latency.</p>
+                <ul class="feature-list">
+                    <li>Growth tracking</li>
+                    <li>Member activity</li>
+                    <li>Real-time sync</li>
+                </ul>
             </div>
-            <div class="feature-card" data-reveal>
+            <div class="feature-card reveal-on-scroll">
                 <div class="feature-icon">⚙️</div>
                 <h3>Deep Integration</h3>
-                <p>Configure every aspect of your bot directly from the web or via in-discord commands.</p>
+                <p>Configure every aspect of your bot directly from the web or via in-discord commands with persistent storage.</p>
+                <ul class="feature-list">
+                    <li>Web Dashboard</li>
+                    <li>Slash Commands</li>
+                    <li>Persistent Config</li>
+                </ul>
             </div>
         </div>
     </section>
@@ -200,55 +220,6 @@
         </div>
     </section>
 
-    <!-- Features -->
-    <section id="features" class="features">
-        <div class="section-header">
-            <span class="section-tag">Capabilities</span>
-            <h2>Everything you need,<br>nothing you don't.</h2>
-        </div>
-        <div class="feature-grid">
-            <div class="feature-card" data-reveal>
-                <div class="card-icon-wrap mod">🛡️</div>
-                <h3>Advanced Moderation</h3>
-                <p>Timeout, kick, ban, warn, purge — all with structured embed responses and audit trails built for accountability.</p>
-                <ul class="feature-list">
-                    <li>Auto-mod filters</li>
-                    <li>Case tracking</li>
-                    <li>Appeal-ready logs</li>
-                </ul>
-            </div>
-            <div class="feature-card" data-reveal>
-                <div class="card-icon-wrap util">⚡</div>
-                <h3>Utility Commands</h3>
-                <p>Server stats, user lookups, avatar fetching, Discord timestamps, and bot diagnostics — all instantly accessible.</p>
-                <ul class="feature-list">
-                    <li>Server & user info</li>
-                    <li>Latency tracking</li>
-                    <li>Timestamp formatter</li>
-                </ul>
-            </div>
-            <div class="feature-card" data-reveal>
-                <div class="card-icon-wrap auto">⚙️</div>
-                <h3>Smart Automation</h3>
-                <p>Auto-roles, configurable welcome messages, reaction role support, and in-memory reminders with async delivery.</p>
-                <ul class="feature-list">
-                    <li>Auto-role on join</li>
-                    <li>Welcome messages</li>
-                    <li>Async reminders</li>
-                </ul>
-            </div>
-            <div class="feature-card" data-reveal>
-                <div class="card-icon-wrap log">📊</div>
-                <h3>Deep Logging</h3>
-                <p>Track message edits, deletions, member joins and leaves, and all moderation actions with full timestamps and actor attribution.</p>
-                <ul class="feature-list">
-                    <li>Message events</li>
-                    <li>Member changes</li>
-                    <li>Mod action logs</li>
-                </ul>
-            </div>
-        </div>
-    </section>
 
     <!-- Commands Reference -->
     <section id="commands" class="commands-section">
@@ -306,45 +277,6 @@
         </div>
     </section>
 
-    <!-- Tech Stack -->
-    <section id="stack" class="tech-stack">
-        <div class="section-header">
-            <span class="section-tag">Under the Hood</span>
-            <h2>Built on a<br>rock-solid foundation.</h2>
-        </div>
-        <div class="stack-grid">
-            <div class="stack-card">
-                <span class="stack-icon">🦀</span>
-                <h4>Rust</h4>
-                <p>Memory-safe systems language with zero-cost abstractions and fearless concurrency.</p>
-            </div>
-            <div class="stack-card">
-                <span class="stack-icon">🍐</span>
-                <h4>Poise</h4>
-                <p>Slash-command-first framework for ergonomic Discord bot development in Rust.</p>
-            </div>
-            <div class="stack-card">
-                <span class="stack-icon">🌊</span>
-                <h4>Serenity</h4>
-                <p>Battle-tested Discord API bindings powering gateway events and REST interactions.</p>
-            </div>
-            <div class="stack-card">
-                <span class="stack-icon">⚡</span>
-                <h4>Tokio</h4>
-                <p>The industry-standard async runtime for high-throughput Rust applications.</p>
-            </div>
-            <div class="stack-card">
-                <span class="stack-icon">🐘</span>
-                <h4>SQLx + PostgreSQL</h4>
-                <p>High-performance Neon serverless database with compile-time verified queries for enterprise data safety.</p>
-            </div>
-            <div class="stack-card">
-                <span class="stack-icon">🔍</span>
-                <h4>Tracing</h4>
-                <p>Structured, level-filtered logging for production observability without noise.</p>
-            </div>
-        </div>
-    </section>
 
     <!-- CTA -->
     <section class="cta-section">

@@ -1,16 +1,17 @@
 :root {
-    --bg: #080810;
-    --bg-card: rgba(255, 255, 255, 0.03);
-    --bg-card-hover: rgba(255, 255, 255, 0.06);
-    --cyan: #00e5ff;
-    --cyan-dim: rgba(0, 229, 255, 0.15);
+    --bg: #05050a;
+    --bg-card: rgba(255, 255, 255, 0.02);
+    --bg-card-hover: rgba(255, 255, 255, 0.05);
+    --cyan: #00f2ff;
+    --cyan-dim: rgba(0, 242, 255, 0.1);
     --orange: #ff5722;
-    --border: rgba(255, 255, 255, 0.08);
-    --text: #e8e8f0;
-    --text-dim: #7a7a95;
-    --glow: 0 0 40px rgba(0, 229, 255, 0.15);
-    --radius: 16px;
-    --transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    --purple: #bf5af2;
+    --border: rgba(255, 255, 255, 0.06);
+    --text: #f0f0f5;
+    --text-dim: #9494b8;
+    --glow: 0 0 30px rgba(0, 242, 255, 0.12);
+    --radius: 20px;
+    --transition: 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -75,11 +76,27 @@ body {
 }
 
 .glass-panel {
-    background: rgba(10, 10, 20, 0.6);
-    -webkit-backdrop-filter: blur(20px);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    background: rgba(12, 12, 25, 0.6);
+    -webkit-backdrop-filter: blur(25px);
+    backdrop-filter: blur(25px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.glass-card {
+    background: rgba(255, 255, 255, 0.01);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    transition: var(--transition);
+}
+
+.glass-card:hover {
+    background: rgba(255, 255, 255, 0.03);
+    border-color: rgba(0, 242, 255, 0.4);
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(0, 242, 255, 0.1);
 }
 
 /* ─── NAV ─────────────────────────────────────────── */
@@ -242,12 +259,12 @@ nav.scrolled { background: rgba(8, 8, 16, 0.95); }
 }
 
 .text-gradient {
-    background: linear-gradient(135deg, var(--cyan), #66b2ff, #bb86fc, var(--cyan));
+    background: linear-gradient(135deg, var(--cyan), #70d1ff, #c8a2ff, var(--cyan));
     background-size: 300% 300%;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    animation: gradientFlow 6s ease infinite;
+    animation: gradientFlow 8s ease infinite;
 }
 
 @keyframes gradientFlow {
@@ -794,6 +811,37 @@ footer { border-top: 1px solid var(--border); padding: 3rem 5%; }
 .pricing-card:hover {
     border-color: rgba(0, 229, 255, 0.3);
     background: var(--bg-card-hover);
+}
+
+.cursor-glow {
+    position: fixed;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(0, 242, 255, 0.05) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: width 0.3s ease, height 0.3s ease;
+    mix-blend-mode: screen;
+}
+
+.uptime-segment {
+    width: 6px;
+    height: 24px;
+    border-radius: 4px;
+    background: var(--border);
+    transition: var(--transition);
+    cursor: help;
+}
+
+.uptime-segment.online { background: #00ff88; box-shadow: 0 0 10px rgba(0, 255, 136, 0.2); }
+.uptime-segment.maintenance { background: #ffaa00; box-shadow: 0 0 10px rgba(255, 170, 0, 0.2); }
+.uptime-segment.offline { background: #ff4444; box-shadow: 0 0 10px rgba(255, 68, 68, 0.2); }
+
+.uptime-segment:hover {
+    transform: scaleY(1.2);
+    filter: brightness(1.2);
 }
 
 .pricing-card.premium-tier {
@@ -1583,3 +1631,38 @@ footer { border-top: 1px solid var(--border); padding: 3rem 5%; }
 .latency-fill { width: 12%; }
 .db-fill { width: 8%; }
 .cpu-fill { width: 15%; }
+
+/* Team Page - Machine Avatar */
+.machine-avatar {
+    background: linear-gradient(135deg, #05050a 0%, #1a1a2e 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    border: 2px solid var(--cyan);
+    box-shadow: 0 0 20px rgba(0, 242, 255, 0.2), inset 0 0 10px rgba(0, 242, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.machine-avatar::after {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%; width: 200%; height: 200%;
+    background: conic-gradient(transparent, var(--cyan), transparent 30%);
+    animation: rotate-avatar 4s linear infinite;
+    opacity: 0.3;
+}
+
+@keyframes rotate-avatar {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.team-card.reveal-on-scroll {
+    transition-delay: 0.2s;
+}
+
+.team-card:nth-child(2) {
+    transition-delay: 0.4s;
+}

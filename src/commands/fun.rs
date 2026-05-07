@@ -5,7 +5,7 @@ use rand::Rng;
 /// Fun and social commands
 #[poise::command(
     slash_command,
-    subcommands("coinflip", "dice", "eightball", "joke", "fact", "cat", "dog", "fox", "panda", "bird", "cookie", "hug", "pat", "kiss", "slap", "meme", "ship", "rate"),
+    subcommands("coinflip", "dice", "eightball", "joke", "fact", "cat", "dog", "fox", "panda", "bird", "cookie", "hug", "pat", "kiss", "slap", "meme", "ship", "rate", "mock", "reverse", "owo", "ascii"),
     category = "Fun"
 )]
 pub async fn fun(_ctx: Context<'_>) -> Result<(), Error> {
@@ -312,5 +312,61 @@ pub async fn rate(
             .description(format!("I would rate **{}** a solid **{}/10**!", thing, rating))
             .color(0x00E5FF),
     )).await?;
+    Ok(())
+}
+
+/// Mock some text (sPoNgEbOb CaSe)
+#[poise::command(slash_command)]
+pub async fn mock(
+    ctx: Context<'_>,
+    #[description = "The text to mock"] text: String,
+) -> Result<(), Error> {
+    let mocked: String = text.chars().enumerate().map(|(i, c)| {
+        if i % 2 == 0 { c.to_lowercase().to_string() } else { c.to_uppercase().to_string() }
+    }).collect();
+    
+    ctx.say(mocked).await?;
+    Ok(())
+}
+
+/// Reverse some text
+#[poise::command(slash_command)]
+pub async fn reverse(
+    ctx: Context<'_>,
+    #[description = "The text to reverse"] text: String,
+) -> Result<(), Error> {
+    let reversed: String = text.chars().rev().collect();
+    ctx.say(reversed).await?;
+    Ok(())
+}
+
+/// owoify some text
+#[poise::command(slash_command)]
+pub async fn owo(
+    ctx: Context<'_>,
+    #[description = "The text to owoify"] text: String,
+) -> Result<(), Error> {
+    let owoified = text.replace("r", "w").replace("l", "w").replace("R", "W").replace("L", "W") + " uwu";
+    ctx.say(owoified).await?;
+    Ok(())
+}
+
+/// Convert text to large ASCII blocks (simple mock)
+#[poise::command(slash_command)]
+pub async fn ascii(
+    ctx: Context<'_>,
+    #[description = "The text to convert"] text: String,
+) -> Result<(), Error> {
+    if text.len() > 10 {
+        return Err("Text too long for ASCII conversion (max 10 chars).".into());
+    }
+    
+    let mut result = String::from("```\n");
+    for c in text.to_uppercase().chars() {
+        result.push_str(&format!(" {} ", c));
+    }
+    result.push_str("\n```");
+    
+    ctx.say(result).await?;
     Ok(())
 }

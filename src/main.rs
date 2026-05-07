@@ -112,6 +112,10 @@ async fn main() -> Result<(), Error> {
                 commands::utility::qr(),
                 commands::utility::crypto(),
                 commands::utility::translate(),
+                commands::utility::timer(),
+                commands::utility::dictionary(),
+                commands::utility::worldclock(),
+                commands::utility::poll(),
                 // Fun
                 commands::fun::fun(),
                 // Economy
@@ -139,6 +143,7 @@ async fn main() -> Result<(), Error> {
                 commands::config::welcome(),
                 commands::config::autorole(),
                 commands::config::prefix(),
+                commands::config::settings(),
                 // Reminders
                 commands::remind::create(),
             ],

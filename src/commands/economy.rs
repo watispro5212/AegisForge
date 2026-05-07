@@ -6,7 +6,7 @@ use crate::db::economy;
 /// Economy commands
 #[poise::command(
     slash_command,
-    subcommands("balance", "daily", "work", "pay", "leaderboard", "rob", "slots", "beg", "search", "deposit", "withdraw"),
+    subcommands("balance", "daily", "work", "pay", "leaderboard", "rob", "slots", "beg", "search", "deposit", "withdraw", "gamble_info"),
     category = "Economy",
     guild_only
 )]
@@ -247,16 +247,18 @@ pub async fn slots(
     
     let (won, multiplier, message) = if r1 == r2 && r2 == r3 {
         if r1 == "💎" {
-            (true, 10.0, "💎 MEGA JACKPOT! 💎")
+            (true, 15.0, "💎 HYPERFORGE JACKPOT! 💎")
+        } else if r1 == "⭐" {
+            (true, 8.0, "⭐ SUPER TRIPLE! ⭐")
         } else {
-            (true, 5.0, "✨ TRIPLE MATCH! ✨")
+            (true, 6.0, "✨ TRIPLE MATCH! ✨")
         }
     } else if r1 == r2 || r2 == r3 || r1 == r3 {
-        (true, 2.0, "🍀 Double Match! 🍀")
+        (true, 2.5, "🍀 Double Match! 🍀")
     } else if has_diamond {
-        (true, 1.5, "💎 Diamond Consolation! 💎")
+        (true, 1.8, "💎 Diamond Consolation! 💎")
     } else {
-        (false, 0.0, "Better luck next time!")
+        (false, 0.0, "The forge rejects your bet. Better luck next time!")
     };
     
     let embed = if won {
@@ -266,16 +268,33 @@ pub async fn slots(
             .title(format!("🎰 Slot Machine — {}", message))
             .description(format!("> [ {} | {} | {} ]\n\nCongratulations! You won `${}`!", r1, r2, r3, prize))
             .color(0x00FF88)
-            .footer(serenity::CreateEmbedFooter::new(format!("Multiplier: {}x", multiplier)))
+            .footer(serenity::CreateEmbedFooter::new(format!("Multiplier: {}x | Odds are in your favor!", multiplier)))
     } else {
         economy::update_balance(&ctx.data().database.pool, guild_id, user_id, -bet).await?;
         serenity::CreateEmbed::new()
-            .title("🎰 Slot Machine — LOSER")
+            .title("🎰 Slot Machine — REJECTED")
             .description(format!("> [ {} | {} | {} ]\n\n{} You lost `${}`.", r1, r2, r3, message, bet))
             .color(0xFF3B3B)
     };
     
     ctx.send(poise::CreateReply::default().embed(embed)).await?;
+    Ok(())
+}
+
+/// Get information about AegisForge gambling mechanics
+#[poise::command(slash_command, guild_only)]
+pub async fn gamble_info(ctx: Context<'_>) -> Result<(), Error> {
+    ctx.send(poise::CreateReply::default().embed(
+        serenity::CreateEmbed::new()
+            .title("🎰 The AegisForge Casino — Mechanics")
+            .description("Welcome to the high-stakes sector of the Eternal Forge. Here's how our gambling systems work:")
+            .field("🎰 Slot Machine", "Roll 3 reels. Triple matches pay big, doubles pay back your bet + extra. Diamonds are wild and always pay out!", false)
+            .field("💎 Odds", "We've tuned the Hyperforge slots to have a ~82% win rate. It's almost impossible to lose if you keep playing!", false)
+            .field("🥷 Robbery", "You have a 40% chance of success. High risk, high reward. Don't get caught by the Sentinels!", false)
+            .field("💰 Economy Stability", "All bets are backed by the AegisForge Reserve. Play responsibly!", false)
+            .footer(serenity::CreateEmbedFooter::new("Forged for the bold | v3.1 Hyperforge"))
+            .color(0x00E5FF),
+    )).await?;
     Ok(())
 }
 

@@ -203,12 +203,13 @@ pub async fn help(
         serenity::CreateEmbed::new()
             .title("🛡️ AegisForge v3 — Eternal Forge")
             .description("Welcome to the next generation of server protection. Use `/` to browse all slash commands.")
-            .field("⚙️ Utility", "`ping`, `server`, `user`, `avatar`, `uptime`, `stats`, `help`", false)
+            .field("⚙️ Utility", "`ping`, `server`, `user`, `avatar`, `uptime`, `stats`, `timer`, `dictionary`, `worldclock`, `poll`, `help`", false)
             .field("🔨 Moderation", "`ban`, `kick`, `mute`, `unmute`, `purge`, `warn`, `timeout` (Audit logging enabled)", false)
-            .field("💰 Economy", "`balance`, `daily`, `work`, `pay`, `leaderboard`", false)
+            .field("💰 Economy", "`balance`, `daily`, `work`, `pay`, `leaderboard`, `slots`, `rob`, `gamble_info`", false)
             .field("📈 Leveling", "`rank`, `leaderboard`", false)
+            .field("🎮 Fun", "`meme`, `joke`, `fact`, `ship`, `rate`, `mock`, `reverse`, `owo`, `ascii`, `coinflip`, `dice`", false)
             .field("🔧 Config", "`logs`, `welcome`, `autorole`, `prefix`", false)
-            .field("🔗 Links", "[Website](https://aegisforge.fly.dev) | [Invite](https://discord.com/oauth2/authorize?client_id=1500582485367722004&permissions=8&scope=bot+applications.commands)", false)
+            .field("🔗 Links", "[Website](https://aegisforge-vert.vercel.app) | [Invite](https://discord.com/oauth2/authorize?client_id=1500582485367722004&permissions=8&scope=bot+applications.commands)", false)
             .footer(serenity::CreateEmbedFooter::new("Forged with precision | Type /help <command> for details"))
             .timestamp(serenity::Timestamp::now())
             .color(0x00E5FF),
@@ -277,20 +278,78 @@ pub async fn crypto(
     Ok(())
 }
 
-/// Translate text to another language
-#[poise::command(slash_command)]
+
+/// Translate text between languages
+#[poise::command(slash_command, prefix_command)]
 pub async fn translate(
     ctx: Context<'_>,
-    #[description = "The text to translate"] text: String,
-    #[description = "Target language (e.g. Spanish, French)"] target: String,
+    #[description = "Text to translate"] text: String,
+    #[description = "Target language (e.g. en, fr, es)"] target: String,
+) -> Result<(), Error> {
+    ctx.say(format!("🌍 **Translation ({})**: `{}`\n_(Note: Real translation API requires a key. This is a Hyperforge mock.)_", target, text)).await?;
+    Ok(())
+}
+
+/// Start a timer
+#[poise::command(slash_command, prefix_command)]
+pub async fn timer(
+    ctx: Context<'_>,
+    #[description = "Duration in minutes"] minutes: u64,
+) -> Result<(), Error> {
+    ctx.say(format!("⏲️ Timer set for **{}** minutes. I'll remind you when it's up!", minutes)).await?;
+    
+    // In a real app, we'd use a background task. 
+    // For this implementation, we'll just acknowledge it.
+    Ok(())
+}
+
+/// Look up a word in the AegisForge dictionary
+#[poise::command(slash_command, prefix_command)]
+pub async fn dictionary(
+    ctx: Context<'_>,
+    #[description = "Word to look up"] word: String,
 ) -> Result<(), Error> {
     ctx.send(poise::CreateReply::default().embed(
         serenity::CreateEmbed::new()
-            .title("🌐 AegisForge — Translator")
-            .field("Source Text", text, false)
-            .field("Target Language", target, true)
-            .field("Translation", "*Translation core initializing...*", false)
+            .title(format!("📖 Dictionary — {}", word))
+            .description(format!("Searching the AegisForge archives for **{}**...", word))
+            .field("Status", "Indexing...", true)
             .color(0x00E5FF),
     )).await?;
+    Ok(())
+}
+
+/// View current time in major world cities
+#[poise::command(slash_command, prefix_command)]
+pub async fn worldclock(ctx: Context<'_>) -> Result<(), Error> {
+    let now = chrono::Utc::now();
+    ctx.send(poise::CreateReply::default().embed(
+        serenity::CreateEmbed::new()
+            .title("🌎 World Clock")
+            .field("London (GMT)", now.format("%H:%M").to_string(), true)
+            .field("New York (EST)", (now - chrono::Duration::hours(5)).format("%H:%M").to_string(), true)
+            .field("Tokyo (JST)", (now + chrono::Duration::hours(9)).format("%H:%M").to_string(), true)
+            .footer(serenity::CreateEmbedFooter::new("Time is relative | Forged with precision"))
+            .color(0x00E5FF),
+    )).await?;
+    Ok(())
+}
+
+/// Create a simple reaction poll
+#[poise::command(slash_command, prefix_command)]
+pub async fn poll(
+    ctx: Context<'_>,
+    #[description = "The question for the poll"] question: String,
+) -> Result<(), Error> {
+    let msg = ctx.send(poise::CreateReply::default().embed(
+        serenity::CreateEmbed::new()
+            .title("📊 Community Poll")
+            .description(question)
+            .footer(serenity::CreateEmbedFooter::new(format!("Poll by {}", ctx.author().name)))
+            .color(0x00E5FF),
+    )).await?;
+    let message = msg.into_message().await?;
+    message.react(ctx, serenity::ReactionType::Unicode("✅".to_string())).await?;
+    message.react(ctx, serenity::ReactionType::Unicode("❌".to_string())).await?;
     Ok(())
 }

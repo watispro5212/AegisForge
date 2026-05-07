@@ -66,3 +66,23 @@ pub async fn prefix(
     }
     Ok(())
 }
+
+/// View all current server configurations
+#[poise::command(slash_command, prefix_command, required_permissions = "MANAGE_GUILD", guild_only)]
+pub async fn settings(ctx: Context<'_>) -> Result<(), Error> {
+    let guild_id = ctx.guild_id().unwrap().get() as i64;
+    let config = ctx.data().database.get_guild_config(guild_id).await?;
+    
+    ctx.send(poise::CreateReply::default()
+        .embed(serenity::CreateEmbed::new()
+            .title(format!("⚙️ {} — Configuration", ctx.guild().unwrap().name))
+            .field("Prefix", format!("`{}`", config.prefix), true)
+            .field("Mod Logs", if config.mod_log_channel.is_some() { format!("<#{}>", config.mod_log_channel.unwrap()) } else { "_Not Set_".to_string() }, true)
+            .field("Auto-Role", if config.auto_role_id.is_some() { format!("<@&{}>", config.auto_role_id.unwrap()) } else { "_Not Set_".to_string() }, true)
+            .field("Welcome Channel", if config.welcome_channel.is_some() { format!("<#{}>", config.welcome_channel.unwrap()) } else { "_Not Set_".to_string() }, true)
+            .field("Welcome Message", format!("`{}`", config.welcome_message), false)
+            .color(0x00E5FF)
+            .footer(serenity::CreateEmbedFooter::new("AegisForge — Security & Automation"))
+        )).await?;
+    Ok(())
+}
