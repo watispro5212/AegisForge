@@ -381,10 +381,16 @@ pub async fn slots(
     }
 
     let emojis = ["🍒", "🍋", "🍇", "💎", "⭐"];
-    let mut rng = rand::thread_rng();
-    let r1 = emojis[rng.gen_range(0..emojis.len())];
-    let r2 = emojis[rng.gen_range(0..emojis.len())];
-    let r3 = emojis[rng.gen_range(0..emojis.len())];
+    // Compute all random values inside a block so ThreadRng is dropped before any await
+    let (r1, r2, r3, protection_win) = {
+        let mut rng = rand::thread_rng();
+        (
+            emojis[rng.gen_range(0..emojis.len())],
+            emojis[rng.gen_range(0..emojis.len())],
+            emojis[rng.gen_range(0..emojis.len())],
+            rng.gen_bool(0.6),
+        )
+    };
 
     let has_diamond = r1 == "💎" || r2 == "💎" || r3 == "💎";
 
@@ -398,7 +404,7 @@ pub async fn slots(
         (true, 5.0, "🍀 Double Match!")
     } else if has_diamond {
         (true, 2.0, "💎 Diamond Wild!")
-    } else if rng.gen_bool(0.6) {
+    } else if protection_win {
         (true, 1.2, "🛡️ Aegis Protection Win!")
     } else {
         (false, 0.0, "The forge rejects your bet.")
@@ -516,9 +522,11 @@ pub async fn rob(
         ).into());
     }
 
-    let mut rng = rand::thread_rng();
-    let success = rng.gen_bool(0.4);
-    let stolen_fraction: f64 = rng.gen_range(0.1..0.5);
+    // Drop ThreadRng before any await — ThreadRng is !Send
+    let (success, stolen_fraction) = {
+        let mut rng = rand::thread_rng();
+        (rng.gen_bool(0.4), rng.gen_range(0.1_f64..0.5))
+    };
 
     if success {
         let stolen = (target_eco.balance as f64 * stolen_fraction) as i64;

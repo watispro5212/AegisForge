@@ -65,12 +65,15 @@ pub async fn set_last_daily(pool: &PgPool, guild_id: i64, user_id: i64, time: Da
 
 pub async fn set_last_work(pool: &PgPool, guild_id: i64, user_id: i64, time: DateTime<Utc>) -> sqlx::Result<()> {
     get_user_economy(pool, guild_id, user_id).await?;
-    sqlx::query!(
-        "UPDATE users_economy SET last_work = $1 WHERE guild_id = $2 AND user_id = $3",
-        time,
-        guild_id,
-        user_id
-    ).execute(pool).await?;
+    // Use runtime query (not the ! macro) so no SQLX offline cache entry is needed
+    sqlx::query(
+        "UPDATE users_economy SET last_work = $1 WHERE guild_id = $2 AND user_id = $3"
+    )
+    .bind(time)
+    .bind(guild_id)
+    .bind(user_id)
+    .execute(pool)
+    .await?;
     Ok(())
 }
 
