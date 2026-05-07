@@ -33,107 +33,179 @@
         </div>
     </nav>
 
-    <main class="container page-content">
-        <section class="page-header" data-reveal>
-            <div class="hero-badge">Real-time Analytics</div>
-            <h1>AegisForge <span class="text-gradient">Dashboard</span></h1>
-            <p>Live metrics and performance telemetry from the AegisForge core engine.</p>
-        </section>
+    <main class="dashboard-container">
+        <!-- Sidebar Navigation (Glass) -->
+        <aside class="dash-sidebar" data-reveal>
+            <div class="sidebar-user">
+                <div class="user-avatar-glow">
+                    <img src="https://avatars.githubusercontent.com/u/150058248?v=4" alt="User">
+                </div>
+                <div class="user-info">
+                    <span class="user-name">mzlad</span>
+                    <span class="user-status">Project Owner</span>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active">🏠 Overview</a>
+                <a href="#" class="nav-item">📊 Detailed Stats</a>
+                <a href="#" class="nav-item">🛡️ Mod Actions</a>
+                <a href="#" class="nav-item">⚙️ Settings</a>
+            </nav>
+            <div class="sidebar-footer">
+                <span class="version-badge">v3.1.0 HYPERFORGE</span>
+            </div>
+        </aside>
 
-        <!-- Dashboard Stats Grid -->
-        <div class="stats-grid" data-reveal>
-            <div class="stat-card glass">
-                <div class="stat-icon server-icon"></div>
-                <div class="stat-info">
-                    <span class="stat-label">Total Servers</span>
-                    <h2 class="stat-value" id="dashboard-servers">...</h2>
-                    <span class="stat-trend positive">↑ Live</span>
+        <!-- Main Dashboard Content -->
+        <div class="dash-content">
+            <section class="dash-header" data-reveal>
+                <div class="header-main">
+                    <h1>System <span class="text-gradient">Control Center</span></h1>
+                    <p>Live telemetry and node synchronization data.</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn-primary btn-sm shine-effect" onclick="location.reload()">🔄 Refresh Feed</button>
+                </div>
+            </section>
+
+            <!-- Stats Overview -->
+            <div class="dash-grid-stats" data-reveal>
+                <div class="dash-stat-card glass-card tilt-card">
+                    <div class="card-icon cyan">🌐</div>
+                    <div class="card-data">
+                        <span class="label">Total Servers</span>
+                        <h2 id="dashboard-servers">...</h2>
+                        <span class="trend pos">↑ 12.4% this week</span>
+                    </div>
+                </div>
+                <div class="dash-stat-card glass-card tilt-card">
+                    <div class="card-icon purple">👥</div>
+                    <div class="card-data">
+                        <span class="label">Total Users</span>
+                        <h2 id="dashboard-users">...</h2>
+                        <span class="trend pos">↑ 8.2% this week</span>
+                    </div>
+                </div>
+                <div class="dash-stat-card glass-card tilt-card">
+                    <div class="card-icon orange">⚡</div>
+                    <div class="card-data">
+                        <span class="label">Economy (Bank)</span>
+                        <h2 id="dashboard-economy">...</h2>
+                        <span class="trend pos">↑ Active</span>
+                    </div>
+                </div>
+                <div class="dash-stat-card glass-card tilt-card">
+                    <div class="card-icon cyan">📈</div>
+                    <div class="card-data">
+                        <span class="label">XP Flow</span>
+                        <h2 id="dashboard-xp">...</h2>
+                        <span class="trend">Stable</span>
+                    </div>
                 </div>
             </div>
-            <div class="stat-card glass">
-                <div class="stat-icon user-icon"></div>
-                <div class="stat-info">
-                    <span class="stat-label">Global Users</span>
-                    <h2 class="stat-value" id="dashboard-users">...</h2>
-                    <span class="stat-trend">Secured</span>
+
+            <!-- Main Panels Grid -->
+            <div class="dash-panels-grid" data-reveal>
+                <!-- Performance Chart (Simulated) -->
+                <div class="panel glass-card">
+                    <div class="panel-header">
+                        <h3>Node Performance</h3>
+                        <div class="chart-legend">
+                            <span class="legend-item"><i class="dot cyan"></i> Latency</span>
+                            <span class="legend-item"><i class="dot purple"></i> DB IO</span>
+                        </div>
+                    </div>
+                    <div class="performance-chart-container">
+                        <div class="bar-chart">
+                            <div class="bar" style="height: 40%"><span class="tooltip">12ms</span></div>
+                            <div class="bar" style="height: 60%"><span class="tooltip">18ms</span></div>
+                            <div class="bar" style="height: 35%"><span class="tooltip">10ms</span></div>
+                            <div class="bar" style="height: 80%"><span class="tooltip">24ms</span></div>
+                            <div class="bar" style="height: 55%"><span class="tooltip">16ms</span></div>
+                            <div class="bar" style="height: 45%"><span class="tooltip">14ms</span></div>
+                            <div class="bar" style="height: 70%"><span class="tooltip">21ms</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Activity Feed -->
+                <div class="panel glass-card">
+                    <div class="panel-header">
+                        <h3>Live Signal Feed</h3>
+                        <span class="status-badge pulse">LIVE</span>
+                    </div>
+                    <div class="activity-feed" id="live-activity-feed">
+                        <div class="feed-item">
+                            <div class="feed-icon economy">💰</div>
+                            <div class="feed-info">
+                                <span class="feed-text"><strong>User-842</strong> won the Slots Jackpot!</span>
+                                <span class="feed-time">Just now</span>
+                            </div>
+                        </div>
+                        <div class="feed-item">
+                            <div class="feed-icon security">🛡️</div>
+                            <div class="feed-info">
+                                <span class="feed-text"><strong>Auto-Mod</strong> filtered invite in Guild-12</span>
+                                <span class="feed-time">2m ago</span>
+                            </div>
+                        </div>
+                        <div class="feed-item">
+                            <div class="feed-icon leveling">📈</div>
+                            <div class="feed-info">
+                                <span class="feed-text"><strong>System</strong> synchronized DB Shard-4</span>
+                                <span class="feed-time">5m ago</span>
+                            </div>
+                        </div>
+                        <div class="feed-item">
+                            <div class="feed-icon bot">🤖</div>
+                            <div class="feed-info">
+                                <span class="feed-text"><strong>Heartbeat</strong> sent to Discord Gateway</span>
+                                <span class="feed-time">10m ago</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="stat-card glass">
-                <div class="stat-icon economy-icon">💰</div>
-                <div class="stat-info">
-                    <span class="stat-label">Economy Activity</span>
-                    <h2 class="stat-value" id="dashboard-economy">...</h2>
-                    <span class="stat-trend positive">↑ Transactions</span>
+
+            <!-- Node Health Section -->
+            <section class="node-health" data-reveal>
+                <div class="panel glass-card full-width">
+                    <div class="health-overview">
+                        <div class="health-stat">
+                            <span class="label">Memory Usage</span>
+                            <div class="progress-ring-container">
+                                <svg class="progress-ring" width="100" height="100">
+                                    <circle class="progress-ring__circle" stroke="var(--cyan)" stroke-width="8" fill="transparent" r="40" cx="50" cy="50"/>
+                                </svg>
+                                <span class="progress-value">242MB</span>
+                            </div>
+                        </div>
+                        <div class="health-stat">
+                            <span class="label">CPU Load</span>
+                            <div class="progress-ring-container">
+                                <svg class="progress-ring" width="100" height="100">
+                                    <circle class="progress-ring__circle" stroke="var(--purple)" stroke-width="8" fill="transparent" r="40" cx="50" cy="50" style="stroke-dasharray: 251.2; stroke-dashoffset: 213.5;"/>
+                                </svg>
+                                <span class="progress-value">15%</span>
+                            </div>
+                        </div>
+                        <div class="health-stat">
+                            <span class="label">Shard Status</span>
+                            <div class="shard-grid">
+                                <div class="shard online"></div>
+                                <div class="shard online"></div>
+                                <div class="shard online"></div>
+                                <div class="shard maintenance"></div>
+                                <div class="shard online"></div>
+                                <div class="shard online"></div>
+                            </div>
+                            <span class="shard-count">5/6 Online</span>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="stat-card glass">
-                <div class="stat-icon level-icon">⭐</div>
-                <div class="stat-info">
-                    <span class="stat-label">XP Earned (24h)</span>
-                    <h2 class="stat-value" id="dashboard-xp">...</h2>
-                    <span class="stat-trend positive">↑ Leveling</span>
-                </div>
-            </div>
-            <div class="stat-card glass">
-                <div class="stat-icon clock-icon"></div>
-                <div class="stat-info">
-                    <span class="stat-label">Bot Uptime</span>
-                    <h2 class="stat-value" id="dashboard-uptime">...</h2>
-                    <span class="stat-trend positive">99.9% stable</span>
-                </div>
-            </div>
+            </section>
         </div>
-
-        <!-- Quick Actions -->
-        <section class="dashboard-actions" data-reveal>
-            <div class="section-title">
-                <h2>Quick <span class="text-gradient">Actions</span></h2>
-            </div>
-            <div class="action-cards">
-                <a href="https://discord.com/oauth2/authorize?client_id=1500582485367722004&permissions=8&response_type=code&redirect_uri=https%3A%2F%2Fdiscord.com%2Foauth2%2Fauthorize%3Fclient_id%3D1500582485367722004&integration_type=0&scope=bot+identify+applications.commands+applications.commands.permissions.update+openid" target="_blank" rel="noopener noreferrer" class="action-card glass">
-                    <div class="action-icon">➕</div>
-                    <h3>Add to Server</h3>
-                    <p>Deploy AegisForge to a new Discord community.</p>
-                </a>
-                <a href="commands.html" class="action-card glass">
-                    <div class="action-icon">📖</div>
-                    <h3>Documentation</h3>
-                    <p>Explore the full command registry and features.</p>
-                </a>
-                <a href="https://discord.gg/aegisforge" target="_blank" rel="noopener noreferrer" class="action-card glass">
-                    <div class="action-icon">🛡️</div>
-                    <h3>Support Server</h3>
-                    <p>Get help and join our developer community.</p>
-                </a>
-            </div>
-        </section>
-
-        <!-- System Health -->
-        <section class="system-health" data-reveal>
-            <div class="glass health-container">
-                <div class="health-header">
-                    <h3>System Health</h3>
-                    <span class="status-indicator online">Operational</span>
-                </div>
-                <div class="health-metrics">
-                    <div class="metric-row">
-                        <span>Gateway Latency</span>
-                        <div class="metric-bar"><div class="bar-fill latency-fill"></div></div>
-                        <span class="metric-val">12ms</span>
-                    </div>
-                    <div class="metric-row">
-                        <span>Database Response</span>
-                        <div class="metric-bar"><div class="bar-fill db-fill"></div></div>
-                        <span class="metric-val">8ms</span>
-                    </div>
-                    <div class="metric-row">
-                        <span>CPU Utilization</span>
-                        <div class="metric-bar"><div class="bar-fill cpu-fill"></div></div>
-                        <span class="metric-val">15%</span>
-                    </div>
-                </div>
-            </div>
-        </section>
+    </main>
     </main>
 
     <!-- Footer -->
