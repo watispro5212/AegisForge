@@ -19,7 +19,7 @@ mod models;
 
 use db::Database;
 
-/// The shared application state passed into every command context.
+/// bot data stuff
 #[derive(Debug)]
 pub struct Data {
     pub database: Arc<Database>,
@@ -73,8 +73,8 @@ async fn main() -> Result<(), Error> {
     let direct_url = env::var("DATABASE_URL").map_err(|_| "Missing DATABASE_URL environment variable")?;
     let pool_url = env::var("DATABASE_POOL_URL").unwrap_or_else(|_| direct_url.clone());
     
-    // ── Migration pool ──────────────────────────────────────────
-    info!("Running database migrations...");
+    // ── migrate db ──────────────────────────────────────────
+    info!("doing migrations lol...");
     let migrate_pool = PgPoolOptions::new()
         .max_connections(2)
         .connect(&direct_url)
@@ -83,7 +83,7 @@ async fn main() -> Result<(), Error> {
     sqlx::migrate!("./migrations").run(&migrate_pool).await?;
     migrate_pool.close().await;
 
-    // ── App pool ────────────────────────────────────────────────
+    // ── bot db ────────────────────────────────────────────────
     let pool = PgPoolOptions::new()
         .max_connections(5)
         .connect(&pool_url)
@@ -94,7 +94,7 @@ async fn main() -> Result<(), Error> {
     let token = env::var("DISCORD_TOKEN").map_err(|_| "Missing DISCORD_TOKEN environment variable")?;
     let start_time = std::time::Instant::now();
 
-    // ── Poise Framework ─────────────────────────────────────────
+    // ── commands setup ─────────────────────────────────────────
     let framework = poise::Framework::builder()
         .options(poise::FrameworkOptions {
             commands: vec![

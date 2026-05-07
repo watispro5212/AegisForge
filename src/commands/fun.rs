@@ -2,17 +2,17 @@ use crate::{Context, Error};
 use poise::serenity_prelude as serenity;
 use rand::Rng;
 
-/// Fun and social commands
+/// fun stuff
 #[poise::command(
     slash_command,
     subcommands("coinflip", "dice", "eightball", "joke", "fact", "cat", "dog", "fox", "panda", "bird", "cookie", "hug", "pat", "kiss", "slap", "meme", "ship", "rate", "mock", "reverse", "owo", "ascii"),
-    category = "Fun"
+    category = "fun"
 )]
 pub async fn fun(_ctx: Context<'_>) -> Result<(), Error> {
     Ok(())
 }
 
-/// Flip a coin
+/// flip a coin
 #[poise::command(slash_command)]
 pub async fn coinflip(ctx: Context<'_>) -> Result<(), Error> {
     let result = if rand::random::<bool>() { "Heads" } else { "Tails" };
@@ -26,7 +26,7 @@ pub async fn coinflip(ctx: Context<'_>) -> Result<(), Error> {
     Ok(())
 }
 
-/// Roll a dice
+/// roll some dice
 #[poise::command(slash_command)]
 pub async fn dice(
     ctx: Context<'_>,
@@ -44,7 +44,7 @@ pub async fn dice(
     Ok(())
 }
 
-/// Ask the Magic 8-Ball a question
+/// ask the 8ball something
 #[poise::command(slash_command)]
 pub async fn eightball(
     ctx: Context<'_>,

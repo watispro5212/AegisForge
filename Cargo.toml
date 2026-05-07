@@ -1,9 +1,9 @@
 [package]
 name = "aegisforge"
-version = "0.1.0"
+version = "3.1.0"
 edition = "2021"
-authors = ["watispro1"]
-description = "A premium, high-performance Discord bot written in Rust."
+authors = ["Watispro"]
+description = "AegisForge v3.1 Hyperforge - High-performance Discord automation."
 
 [dependencies]
 # Discord
@@ -46,6 +46,7 @@ thiserror = "1.0"
 axum = "0.7"
 tower-http = { version = "0.5", features = ["cors"] }
 urlencoding = "2"
+evalexpr = "8.1"
 
 
 [dev-dependencies]

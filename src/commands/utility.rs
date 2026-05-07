@@ -1,7 +1,7 @@
 use crate::{Context, Error};
 use poise::serenity_prelude as serenity;
 
-/// Check the bot's latency and connection status
+/// check if the bot is laggy
 #[poise::command(slash_command, prefix_command)]
 pub async fn ping(ctx: Context<'_>) -> Result<(), Error> {
     let start = std::time::Instant::now();
@@ -20,7 +20,7 @@ pub async fn ping(ctx: Context<'_>) -> Result<(), Error> {
     Ok(())
 }
 
-/// Display information about this server
+/// info about the server
 #[poise::command(slash_command, prefix_command, guild_only, rename = "server")]
 pub async fn serverinfo(ctx: Context<'_>) -> Result<(), Error> {
     let guild = ctx.guild().ok_or("Must be in a guild")?.clone();
@@ -47,7 +47,7 @@ pub async fn serverinfo(ctx: Context<'_>) -> Result<(), Error> {
     Ok(())
 }
 
-/// Display information about a user
+/// info about a user
 #[poise::command(slash_command, prefix_command, rename = "user")]
 pub async fn whois(
     ctx: Context<'_>,
@@ -72,7 +72,7 @@ pub async fn whois(
     Ok(())
 }
 
-/// Get the avatar of a user
+/// get someone's profile picture
 #[poise::command(slash_command, prefix_command)]
 pub async fn avatar(
     ctx: Context<'_>,
@@ -94,7 +94,7 @@ pub async fn avatar(
     Ok(())
 }
 
-/// Show the bot's uptime and version info
+/// how long the bot has been running
 #[poise::command(slash_command, prefix_command)]
 pub async fn uptime(ctx: Context<'_>) -> Result<(), Error> {
     let uptime = ctx.data().start_time.elapsed();
@@ -124,7 +124,7 @@ pub async fn uptime(ctx: Context<'_>) -> Result<(), Error> {
     Ok(())
 }
 
-/// View detailed bot statistics
+/// bot stats and stuff
 #[poise::command(slash_command, prefix_command)]
 pub async fn stats(ctx: Context<'_>) -> Result<(), Error> {
     let guilds = ctx.cache().guild_count();
@@ -224,19 +224,17 @@ pub async fn math(
     ctx: Context<'_>,
     #[description = "Expression to evaluate (e.g. 2 + 2 * 5)"] expression: String,
 ) -> Result<(), Error> {
-    // Basic calculation for safety (real app would use evalexpr)
-    let result = if expression.contains("+") {
-        "Calculated via AegisForge Math Core"
-    } else {
-        "Awaiting complex evaluator integration"
+    let result = match evalexpr::eval(&expression) {
+        Ok(value) => value.to_string(),
+        Err(e) => format!("Error: {}", e),
     };
 
     ctx.send(poise::CreateReply::default().embed(
         serenity::CreateEmbed::new()
             .title("🔢 AegisForge — Calculator")
             .field("Expression", format!("`{}`", expression), false)
-            .field("Result", "**Evaluation Successful** (See bot logs for precision)", false)
-            .footer(serenity::CreateEmbedFooter::new("Forged with precision"))
+            .field("Result", format!("**{}**", result), false)
+            .footer(serenity::CreateEmbedFooter::new("Forged with precision via evalexpr"))
             .color(0x00E5FF),
     )).await?;
     Ok(())

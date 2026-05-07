@@ -23,10 +23,10 @@
         <div class="nav-links">
             <a href="index.html#features">Features</a>
             <a href="commands.html">Commands</a>
+            <a href="economy.html">Economy</a>
             <a href="team.html">Team</a>
             <a href="changelog.html">Changelog</a>
             <a href="status.html">Status</a>
-            <a href="dashboard.html">Dashboard</a>
             <a href="about.html">About</a>
             <a href="https://github.com/watispro5212/AegisForge" target="_blank" rel="noopener noreferrer" class="nav-link-code">GitHub</a>
             <a href="https://discord.com/oauth2/authorize?client_id=1500582485367722004&permissions=8&response_type=code&redirect_uri=https%3A%2F%2Fdiscord.com%2Foauth2%2Fauthorize%3Fclient_id%3D1500582485367722004&integration_type=0&scope=bot+identify+applications.commands+applications.commands.permissions.update+openid" target="_blank" rel="noopener noreferrer" class="btn-primary">Invite Bot</a>
@@ -35,30 +35,20 @@
 
     <!-- Hero -->
     <header class="hero">
-        <div class="hero-particles" id="particles"></div>
-        <div class="hero-glow"></div>
         <div class="hero-content">
-            <div class="hero-badge-v3">✨ VERSION 3.1 — HYPERFORGE</div>
-            <h1>Engineered for <br><span class="text-gradient">Supreme Mastery.</span></h1>
-            <p>The ultimate server ecosystem. Massive command expansion, high-stakes economy, <br>and enterprise-grade automation forged in the fires of Rust.</p>
+            <h1>just a cool bot.</h1>
+            <p>it does stuff for your server. commands, economy, and whatever else. i made it in rust cuz its fast i guess.</p>
             <div class="hero-btns">
-                <a href="https://discord.com/oauth2/authorize?client_id=1500582485367722004&permissions=8&response_type=code&redirect_uri=https%3A%2F%2Fdiscord.com%2Foauth2%2Fauthorize%3Fclient_id%3D1500582485367722004&integration_type=0&scope=bot+identify+applications.commands+applications.commands.permissions.update+openid" target="_blank" rel="noopener noreferrer" class="btn-primary btn-lg shine-effect">Add to Server →</a>
-                <a href="dashboard.html" class="btn-secondary btn-lg">Explore Dashboard</a>
+                <a href="#" class="btn-primary">add the bot</a>
+                <a href="commands.html" class="btn-secondary">see commands</a>
             </div>
             <div class="hero-stats">
-                <div class="stat"><span class="stat-num" id="hero-servers">1.4M</span><span class="stat-label">Servers</span></div>
+                <div class="stat"><span class="stat-num">a lot</span><span class="stat-label">servers</span></div>
                 <div class="stat-divider"></div>
-                <div class="stat"><span class="stat-num" id="hero-users">70M</span><span class="stat-label">Users</span></div>
-                <div class="stat-divider"></div>
-                <div class="stat"><span class="stat-num">70+</span><span class="stat-label">Commands</span></div>
-                <div class="stat-divider"></div>
-                <div class="stat"><span class="stat-num">0ms</span><span class="stat-label">GC Latency</span></div>
+                <div class="stat"><span class="stat-num">many</span><span class="stat-label">users</span></div>
             </div>
         </div>
-
-        <!-- Discord Mock UI -->
-        <div class="discord-mockup" data-reveal>
-            <div class="mockup-header">
+    </header>
                 <div class="mockup-dots"><span></span><span></span><span></span></div>
                 <div class="mockup-title"># general • AegisForge Security</div>
             </div>
@@ -166,8 +156,8 @@
             </div>
             <div class="feature-card reveal-on-scroll">
                 <div class="feature-icon">📊</div>
-                <h3>Live Analytics</h3>
-                <p>Track server growth and member activity directly from your dashboard in real-time with zero latency.</p>
+                <h3>Global Analytics</h3>
+                <p>Track network growth and member activity across the entire AegisForge ecosystem in real-time.</p>
                 <ul class="feature-list">
                     <li>Growth tracking</li>
                     <li>Member activity</li>
@@ -176,26 +166,25 @@
             </div>
             <div class="feature-card reveal-on-scroll">
                 <div class="feature-icon">⚙️</div>
-                <h3>Deep Integration</h3>
-                <p>Configure every aspect of your bot directly from the web or via in-discord commands with persistent storage.</p>
+                <h3>Command Registry</h3>
+                <p>Access over 250+ specialized commands directly from our interactive web portal or via in-discord commands.</p>
                 <ul class="feature-list">
-                    <li>Web Dashboard</li>
+                    <li>Category Filtering</li>
                     <li>Slash Commands</li>
-                    <li>Persistent Config</li>
+                    <li>Instant Search</li>
                 </ul>
             </div>
         </div>
     </section>
 
-    <!-- Live Dashboard -->
-    <section id="dashboard" class="dashboard-section">
+    <!-- Stats Summary -->
+    <section class="stats-section">
         <div class="section-header">
             <span class="section-tag">Live Network</span>
             <h2>Global Statistics</h2>
         </div>
-        <div class="dashboard-grid">
-            <div class="dashboard-card glow-card">
-                <h3>Network Overview</h3>
+        <div class="stats-container">
+            <div class="stats-card-main glow-card">
                 <div class="dashboard-stats" id="live-stats">
                     <div class="stat-box"><span class="stat-value" id="stat-guilds">--</span><span class="stat-label">Servers</span></div>
                     <div class="stat-box"><span class="stat-value" id="stat-users">--</span><span class="stat-label">Users</span></div>
@@ -203,80 +192,20 @@
                     <div class="stat-box"><span class="stat-value" id="stat-cases">--</span><span class="stat-label">Cases</span></div>
                 </div>
             </div>
-            
-            <div class="dashboard-card">
-                <h3>Most Wanted</h3>
-                <ul class="activity-list" id="live-leaderboard">
-                    <li class="loading">Establishing secure connection...</li>
-                </ul>
-            </div>
-
-            <div class="dashboard-card">
-                <h3>Recent Activity</h3>
-                <ul class="activity-list" id="live-activity">
-                    <li class="loading">Establishing secure connection...</li>
-                </ul>
-            </div>
         </div>
     </section>
 
-
-    <!-- Commands Reference -->
+    <!-- Commands Reference Teaser -->
     <section id="commands" class="commands-section">
         <div class="section-header">
-            <span class="section-tag">Reference</span>
-            <h2>Command Reference</h2>
+            <span class="section-tag">Interactive</span>
+            <h2>Command Registry</h2>
         </div>
-
-        <div class="cmd-tabs">
-            <button class="cmd-tab active" data-tab="moderation">Moderation</button>
-            <button class="cmd-tab" data-tab="utility">Utility</button>
-            <button class="cmd-tab" data-tab="role">Roles</button>
-            <button class="cmd-tab" data-tab="config">Config</button>
-            <button class="cmd-tab" data-tab="remind">Reminders</button>
-        </div>
-
-        <div class="cmd-panel active" id="tab-moderation">
-            <div class="cmd-table">
-                <div class="cmd-row"><code>/mod ban</code><span>Permanently ban a member with optional message purge</span></div>
-                <div class="cmd-row"><code>/mod unban</code><span>Unban a user by ID</span></div>
-                <div class="cmd-row"><code>/mod kick</code><span>Remove a member from the server</span></div>
-                <div class="cmd-row"><code>/mod timeout</code><span>Mute a member for a specified duration</span></div>
-                <div class="cmd-row"><code>/mod warn</code><span>Issue a formal warning logged to the database</span></div>
-                <div class="cmd-row"><code>/mod purge</code><span>Bulk delete up to 100 messages in a channel</span></div>
-            </div>
-        </div>
-        <div class="cmd-panel" id="tab-utility">
-            <div class="cmd-table">
-                <div class="cmd-row"><code>/util ping</code><span>Check API round-trip latency</span></div>
-                <div class="cmd-row"><code>/util server</code><span>Display detailed server information</span></div>
-                <div class="cmd-row"><code>/util user</code><span>Look up information on any user</span></div>
-                <div class="cmd-row"><code>/util avatar</code><span>Retrieve a user's full-resolution avatar</span></div>
-                <div class="cmd-row"><code>/util uptime</code><span>View bot uptime and version details</span></div>
-                <div class="cmd-row"><code>/util timestamp</code><span>Generate Discord timestamp formats from UNIX time</span></div>
-            </div>
-        </div>
-        <div class="cmd-panel" id="tab-role">
-            <div class="cmd-table">
-                <div class="cmd-row"><code>/role add</code><span>Assign a role to a member</span></div>
-                <div class="cmd-row"><code>/role remove</code><span>Remove a role from a member</span></div>
-                <div class="cmd-row"><code>/role list</code><span>List all roles in the server by hierarchy</span></div>
-            </div>
-        </div>
-        <div class="cmd-panel" id="tab-config">
-            <div class="cmd-table">
-                <div class="cmd-row"><code>/config logs</code><span>Set the moderation log channel</span></div>
-                <div class="cmd-row"><code>/config welcome</code><span>Set the welcome message channel and template</span></div>
-                <div class="cmd-row"><code>/config autorole</code><span>Set the role auto-assigned to new members</span></div>
-            </div>
-        </div>
-        <div class="cmd-panel" id="tab-remind">
-            <div class="cmd-table">
-                <div class="cmd-row"><code>/remind create</code><span>Set a reminder delivered to you after N minutes</span></div>
-            </div>
+        <div class="registry-teaser">
+            <p>AegisForge features a comprehensive library of over 250+ commands designed for ultimate server mastery. Explore the full registry in our interactive portal.</p>
+            <a href="commands.html" class="btn-primary shine-effect">Browse Full Registry →</a>
         </div>
     </section>
-
 
     <!-- CTA -->
     <section class="cta-section">
@@ -284,7 +213,7 @@
         <h2>Ready to forge <span class="text-gradient">your server</span>?</h2>
         <p>Add AegisForge to your server in seconds. No bloat, no noise — just clean, fast control.</p>
         <div class="hero-btns">
-            <a href="https://discord.com/oauth2/authorize?client_id=1500582485367722004&permissions=8&response_type=code&redirect_uri=https%3A%2F%2Fdiscord.com%2Foauth2%2Fauthorize%3Fclient_id%3D1500582485367722004&integration_type=0&scope=bot+identify+applications.commands+applications.commands.permissions.update+openid" target="_blank" rel="noopener noreferrer" class="btn-primary btn-lg">Invite AegisForge</a>
+            <a href="https://discord.com/oauth2/authorize?client_id=1500582485367722004&permissions=8&response_type=code&redirect_uri=https%3A%2F%2Fdiscord.com%2Foauth2%2Fauthorize%3Fclient_id%3D1500582485367722004&integration_type=0&scope=bot+identify+applications.commands+applications.commands.permissions.update+openid" target="_blank" rel="noopener noreferrer" class="btn-primary btn-lg shine-effect">Invite AegisForge</a>
             <a href="https://discord.com/oauth2/authorize?client_id=1500582485367722004&response_type=code&redirect_uri=https%3A%2F%2Fdiscord.com%2Foauth2%2Fauthorize%3Fclient_id%3D1500582485367722004&integration_type=1&scope=identify+applications.commands+connections" target="_blank" rel="noopener noreferrer" class="btn-secondary btn-lg">Install to User Profile</a>
         </div>
     </section>
@@ -302,7 +231,6 @@
                 <a href="team.html">Team</a>
                 <a href="changelog.html">Changelog</a>
                 <a href="status.html">Status</a>
-                <a href="dashboard.html">Dashboard</a>
                 <a href="about.html">About</a>
                 <a href="https://github.com/watispro5212/AegisForge" target="_blank" rel="noopener noreferrer">GitHub</a>
                 <a href="privacy.html">Privacy Policy</a>

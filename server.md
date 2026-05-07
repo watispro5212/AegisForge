@@ -95,24 +95,24 @@ This document contains the exact blueprint for creating the ultimate Discord Sup
 
 ## 3. Categories & Channels Setup (With Detailed Permissions)
 
-### 📌 INFORMATION
+### 📌 info
 
-*Category Permissions:* `@everyone`: `View Channel` ✅, `Send Messages` ❌, `Add Reactions` ❌ | `Aegis Vanguard`: `Send Messages` ✅
+*permissions:* everyone can see. `staff` can talk.
 
 - **#👋・welcome**
-  - *Description:* Where all new members land. Welcomer bot posts high-quality cards here to greet newcomers.
+  - says hi to new people.
 - **#📢・announcements**
-  - *Description:* Critical project updates, major feature launches, and important community news.
+  - updates and stuff.
 - **#📜・rules**
-  - *Description:* The definitive guide to community conduct. All members must read and adhere to these.
+  - read these or get banned lol.
 - **#🔄・updates**
-  - *Description:* Automated feed of GitHub commits and smaller changelog entries for power users.
+  - bot code updates.
 - **#📊・polls**
-  - *Description:* Community feedback hub where users vote on upcoming features and project direction.
+  - vote on things.
 - **#🎭・get-roles**
-  - *Description:* Self-assignable roles for notifications, platforms, and community interests.
+  - pick your roles.
 - **#📡・status**
-  - *Description:* Live heartbeat monitor receiving real-time uptime and server count updates via AegisForge webhooks.
+  - is the bot alive?
 
 ### 💬 COMMUNITY
 

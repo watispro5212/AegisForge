@@ -8,32 +8,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        .page-content {
-            max-width: 1000px;
-            margin: 150px auto 100px;
-            padding: 0 5%;
-        }
-        .page-content h1 {
-            font-size: 3rem;
-            color: var(--cyan);
-            margin-bottom: 2rem;
-            text-align: center;
-        }
-        .about-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 3rem;
-            margin-bottom: 2rem;
-        }
-        .about-card p {
-            color: var(--text-dim);
-            font-size: 1.1rem;
-            line-height: 1.8;
-            margin-bottom: 1.5rem;
-        }
-    </style>
 </head>
 <body>
 
@@ -56,14 +30,14 @@
     </nav>
 
     <!-- Content -->
-    <main class="page-content">
+    <main class="about-page-content">
         <h1>About <span class="text-gradient">AegisForge</span></h1>
-        <img src="assets/banner.png" alt="AegisForge Banner" class="banner-img">
+        <img src="assets/banner.png" alt="AegisForge Banner" class="banner-img reveal-on-scroll">
         
-        <div class="about-card">
-            <p><strong>AegisForge</strong> is a next-generation Discord moderation and utility bot built entirely from the ground up in <strong>Rust</strong>. Designed for communities that demand maximum performance, zero downtime, and a highly polished interface.</p>
-            <p>Traditional bots are often sluggish, bloated with unnecessary features, and prone to going offline. We set out to change that. By leveraging Rust's fearless concurrency and a cutting-edge serverless database architecture via Neon Postgres, AegisForge operates at the speed of metal.</p>
-            <p>Whether you're managing a 10-person private group or a 100,000-member community hub, AegisForge scales effortlessly to meet your needs without compromising on response times or reliability.</p>
+        <div class="about-card reveal-on-scroll">
+            <p><strong>aegisforge</strong> is just a discord bot i made using <strong>rust</strong>. it does moderation and some other stuff. i made it because i wanted a bot that works fast and doesn't crash all the time.</p>
+            <p>other bots are slow and have too much junk. i made this one simple. it uses a database so it saves your stuff. it works for small servers or big ones, doesn't really matter.</p>
+            <p>i'll probably add more stuff later when i feel like it. for now it just works i guess.</p>
         </div>
     </main>
 
@@ -87,8 +61,10 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2026 AegisForge. Forged with 🦀 Rust and precision.</p>
+            <p>&copy; 2026 aegisforge. i made it in rust.</p>
         </div>
     </footer>
+
+    <script src="script.js"></script>
 </body>
 </html>

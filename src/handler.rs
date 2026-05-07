@@ -9,7 +9,7 @@ pub async fn event_handler(
 ) -> Result<(), crate::Error> {
     match event {
         serenity::FullEvent::Ready { data_about_bot } => {
-            info!("AegisForge connected as {}", data_about_bot.user.name);
+            info!("bot is up lol: {}", data_about_bot.user.name);
             let guild_count = _ctx.cache.guild_count();
             _ctx.set_presence(Some(serenity::ActivityData::watching(format!("over {} servers | aegisforge.com", guild_count))), serenity::OnlineStatus::Online);
             
@@ -17,8 +17,8 @@ pub async fn event_handler(
                 if let Ok(webhook) = serenity::model::webhook::Webhook::from_url(&_ctx.http, &webhook_url).await {
                     let count = _ctx.cache.guild_count();
                     let embed = serenity::builder::CreateEmbed::new()
-                        .title("🚀 System Online")
-                        .description(format!("AegisForge is now online and monitoring **{}** servers.", count))
+                        .title("🚀 up now")
+                        .description(format!("bot is online for **{}** servers.", count))
                         .color(0x00E5FF);
                     let builder = serenity::builder::ExecuteWebhook::new().embed(embed);
                     let _ = webhook.execute(&_ctx.http, false, builder).await;
@@ -34,8 +34,8 @@ pub async fn event_handler(
                     if let Ok(webhook) = serenity::model::webhook::Webhook::from_url(&_ctx.http, &webhook_url).await {
                         let member_count = guild.member_count;
                         let embed = serenity::builder::CreateEmbed::new()
-                            .title("📥 Joined New Server")
-                            .description(format!("AegisForge was added to **{}**! This server has **{}** members.", guild.name, member_count))
+                            .title("📥 new server join")
+                            .description(format!("bot joined **{}**! it has **{}** people.", guild.name, member_count))
                             .color(0x57F287);
                         let builder = serenity::builder::ExecuteWebhook::new().embed(embed);
                         let _ = webhook.execute(&_ctx.http, false, builder).await;
@@ -61,7 +61,7 @@ pub async fn event_handler(
                     let _ = new_member.add_role(&_ctx.http, serenity::RoleId::new(role_id as u64)).await;
                 }
 
-                // Welcome message
+                // welcome stuff
                 if let Some(channel_id) = config.welcome_channel {
                     let template = &config.welcome_message;
                     if !template.is_empty() {
@@ -95,7 +95,7 @@ pub async fn event_handler(
             if config.leveling_enabled {
                 match crate::db::leveling::add_xp(&db.pool, guild_id, new_message.author.id.get() as i64, 15).await {
                     Ok(true) => {
-                        // Level up!
+                        // level up lol
                         if let Ok(user_lvl) = crate::db::leveling::get_user_leveling(&db.pool, guild_id, new_message.author.id.get() as i64).await {
                             let template = if config.level_up_message.is_empty() {
                                 "GG {user}, you leveled up to **Level {level}**!".to_string()
@@ -129,16 +129,22 @@ pub async fn event_handler(
 
             // ── Automod ─────────────────────────────────────────────
             let content = new_message.content.to_lowercase();
-            // Basic hardcoded blacklist + we could extend to DB-backed one later
-            let bad_words = ["badword1", "badword2", "spamlink.com", "freemoney.com"];
             
-            if bad_words.iter().any(|word| content.contains(word)) {
-                if let Err(e) = new_message.delete(_ctx).await {
-                    tracing::error!("Failed to delete auto-modded message: {:?}", e);
-                } else {
-                    info!("Auto-deleted message from {} containing blacklisted word.", new_message.author.name);
-                    let _ = new_message.channel_id.say(_ctx, format!("<@{}> Please refrain from using blacklisted words or links.", new_message.author.id)).await;
+            // get blacklist
+            let blacklisted = vec!["badword1", "badword2", "spamlink.com", "freemoney.com"];
+            if let Ok(guild_blacklist) = db.get_automod_blacklist(guild_id).await {
+                for phrase in guild_blacklist {
+                    if content.contains(&phrase.to_lowercase()) {
+                        let _ = new_message.delete(_ctx).await;
+                        let _ = new_message.channel_id.say(_ctx, format!("🛡️ **automod:** <@{}> no bad words lol.", new_message.author.id)).await;
+                        return Ok(());
+                    }
                 }
+            }
+            
+            if blacklisted.iter().any(|word| content.contains(word)) {
+                let _ = new_message.delete(_ctx).await;
+                let _ = new_message.channel_id.say(_ctx, format!("🛡️ **Aegis Automod:** <@{}> Blacklisted word detected.", new_message.author.id)).await;
             }
         }
         _ => {}

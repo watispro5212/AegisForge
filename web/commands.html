@@ -8,10 +8,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <div class="grid-bg"></div>
-    <div class="ambient-glow"></div>
 
     <!-- Navigation -->
     <nav id="navbar">
@@ -21,11 +20,11 @@
         </div>
         <div class="nav-links">
             <a href="index.html#features">Features</a>
-            <a href="commands.html" class="active">Commands</a>
+            <a href="commands.html">Commands</a>
+            <a href="economy.html">Economy</a>
             <a href="team.html">Team</a>
             <a href="changelog.html">Changelog</a>
             <a href="status.html">Status</a>
-            <a href="dashboard.html">Dashboard</a>
             <a href="about.html">About</a>
             <a href="https://github.com/watispro5212/AegisForge" target="_blank" rel="noopener noreferrer" class="nav-link-code">GitHub</a>
             <a href="https://discord.com/oauth2/authorize?client_id=1500582485367722004&permissions=8&response_type=code&redirect_uri=https%3A%2F%2Fdiscord.com%2Foauth2%2Fauthorize%3Fclient_id%3D1500582485367722004&integration_type=0&scope=bot+identify+applications.commands+applications.commands.permissions.update+openid" target="_blank" rel="noopener noreferrer" class="btn-primary">Invite Bot</a>
@@ -36,304 +35,17 @@
     <main class="page-content">
         <h1>Command <span class="text-gradient">Registry</span></h1>
         
-        <div class="search-container">
-            <input type="text" id="cmd-search" placeholder="Search for a command (e.g. /ban)..." autocomplete="off">
-            <span class="search-icon">🔍</span>
+        <!-- Search -->
+        <div class="search-container reveal-on-scroll">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" id="cmd-search" placeholder="Search across 250+ commands (e.g. 'ban', 'xp', 'music')...">
         </div>
 
-        <div class="tabs-container">
-            <div class="cmd-tabs">
-                <button class="cmd-tab active" data-tab="moderation">Moderation</button>
-                <button class="cmd-tab" data-tab="economy">Economy</button>
-                <button class="cmd-tab" data-tab="leveling">Leveling</button>
-                <button class="cmd-tab" data-tab="utility">Utility</button>
-                <button class="cmd-tab" data-tab="fun">Fun</button>
-                <button class="cmd-tab" data-tab="roles">Roles</button>
-                <button class="cmd-tab" data-tab="config">Configuration</button>
-            </div>
-        </div>
-
-        <div class="cmd-panels">
-            <!-- Moderation Panel -->
-            <div class="cmd-panel active" id="tab-moderation">
-                <div class="cmd-grid">
-                    <div class="cmd-card">
-                        <div class="cmd-name">/ban</div>
-                        <div class="cmd-desc">Permanently ban a user from the server with an optional reason.</div>
-                    </div>
-                    <div class="cmd-card">
-                        <div class="cmd-name">/kick</div>
-                        <div class="cmd-desc">Kick a user from the server with an optional reason.</div>
-                    </div>
-                    <div class="cmd-card">
-                        <div class="cmd-name">/timeout</div>
-                        <div class="cmd-desc">Temporarily mute a user for a specified duration.</div>
-                    </div>
-                    <div class="cmd-card">
-                        <div class="cmd-name">/warn</div>
-                        <div class="cmd-desc">Issue a formal warning to a user and log it to the database.</div>
-                    </div>
-                    <div class="cmd-card">
-                        <div class="cmd-name">/purge</div>
-                        <div class="cmd-desc">Bulk delete up to 100 messages at once.</div>
-                    </div>
-                    <div class="cmd-card">
-                        <div class="cmd-name">/slowmode</div>
-                        <div class="cmd-desc">Set a custom message rate limit for the current channel.</div>
-                    </div>
-                    <div class="cmd-card">
-                        <div class="cmd-name">/lock</div>
-                        <div class="cmd-desc">Prevent users from sending messages in the current channel.</div>
-                    </div>
-                    <div class="cmd-card">
-                        <div class="cmd-name">/unlock</div>
-                        <div class="cmd-desc">Restore message permissions in a locked channel.</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Economy Panel -->
-            <div class="cmd-panel" id="tab-economy">
-                <div class="cmd-grid">
-                    <div class="cmd-card">
-                        <div class="cmd-name">/balance</div>
-                        <div class="cmd-desc">Check your current wallet and bank balance.</div>
-                    </div>
-                    <div class="cmd-card">
-                        <div class="cmd-name">/daily</div>
-                        <div class="cmd-desc">Claim your daily credit reward to boost your wealth.</div>
-                    </div>
-                    <div class="cmd-card">
-                        <div class="cmd-name">/work</div>
-                        <div class="cmd-desc">Perform a job to earn credits with a short cooldown.</div>
-                    </div>
-                    <div class="cmd-card">
-                        <div class="cmd-name">/pay</div>
-                        <div class="cmd-desc">Transfer credits to another server member securely.</div>
-                    </div>
-                    <div class="cmd-card">
-                        <div class="cmd-name">/economy rob</div>
-                        <div class="cmd-desc">Try to steal credits from another user's wallet (40% success rate).</div>
-                    </div>
-                    <div class="cmd-card">
-                        <div class="cmd-name">/economy slots</div>
-                        <div class="cmd-desc">Gamble your credits in the AegisForge Slot Machine for big wins.</div>
-                    </div>
-                    <div class="cmd-card">
-                        <div class="cmd-name">/economy beg</div>
-                        <div class="cmd-desc">Ask the community for some spare change.</div>
-                    </div>
-                    <div class="cmd-card">
-                        <div class="cmd-name">/economy search</div>
-                        <div class="cmd-desc">Search random locations for hidden treasure and credits.</div>
-                    </div>
-                    <div class="cmd-card">
-                        <div class="cmd-name">/economy deposit</div>
-                        <div class="cmd-desc">Safely store your wallet credits in your protected bank account.</div>
-                    </div>
-                    <div class="cmd-card">
-                        <div class="cmd-name">/economy withdraw</div>
-                        <div class="cmd-desc">Take credits out of your bank to use them in the market.</div>
-                    </div>
-                    <div class="cmd-card">
-                        <div class="cmd-name">/leaderboard</div>
-                        <div class="cmd-desc">View the top 10 wealthiest users either locally or globally.</div>
-                    </div>
-                    <div class="cmd-card">
-                        <div class="cmd-name">/economy gamble_info</div>
-                        <div class="cmd-desc">Detailed breakdown of gambling odds, rewards, and house mechanics.</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Leveling Panel -->
-            <div class="cmd-panel" id="tab-leveling">
-                <div class="cmd-grid">
-                    <div class="cmd-card">
-                        <div class="cmd-name">/rank</div>
-                        <div class="cmd-desc">View your current level, XP, and global ranking.</div>
-                    </div>
-                    <div class="cmd-card">
-                        <div class="cmd-name">/leaderboard leveling</div>
-                        <div class="cmd-desc">See who has the most XP in the server.</div>
-                    </div>
-                    <div class="cmd-card">
-                        <div class="cmd-name">/config levels</div>
-                        <div class="cmd-desc">Enable or disable the leveling system for your guild.</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Utility Panel -->
-            <div class="cmd-panel" id="tab-utility">
-                <div class="cmd-grid">
-                    <div class="cmd-card">
-                        <div class="cmd-name">/help</div>
-                        <div class="cmd-desc">View the full list of available commands and detailed usage guides.</div>
-                    </div>
-                    <div class="cmd-card">
-                        <div class="cmd-name">/uptime</div>
-                        <div class="cmd-desc">Check how long the bot has been running without interruption.</div>
-                    </div>
-                    <div class="cmd-card">
-                        <div class="cmd-name">/avatar</div>
-                        <div class="cmd-desc">View the full-sized avatar of any server member.</div>
-                    </div>
-                    <div class="cmd-card">
-                        <div class="cmd-name">/whois</div>
-                        <div class="cmd-desc">Get detailed profile and account information about a user.</div>
-                    </div>
-                    <div class="cmd-card">
-                        <div class="cmd-name">/serverinfo</div>
-                        <div class="cmd-desc">Display comprehensive statistics and settings for this server.</div>
-                    </div>
-                    <div class="cmd-card">
-                        <div class="cmd-name">/poll</div>
-                        <div class="cmd-desc">Create a quick community poll with reaction voting.</div>
-                    </div>
-                    <div class="cmd-card">
-                        <div class="cmd-name">/remind</div>
-                        <div class="cmd-desc">Set a reminder to notify you after a specific amount of time.</div>
-                    </div>
-                    <div class="cmd-card">
-                        <div class="cmd-name">/eightball</div>
-                        <div class="cmd-desc">Ask the mystical 8-ball a question and get an answer.</div>
-                    </div>
-                    <div class="cmd-card">
-                        <div class="cmd-name">/joke</div>
-                        <div class="cmd-desc">Get a random, hand-picked joke for some community fun.</div>
-                    </div>
-                    <div class="cmd-card">
-                        <div class="cmd-name">/embed</div>
-                        <div class="cmd-desc">Create a professional looking message embed with custom fields.</div>
-                    </div>
-                    <div class="cmd-card">
-                        <div class="cmd-name">/math</div>
-                        <div class="cmd-desc">Evaluate complex mathematical expressions instantly.</div>
-                    </div>
-                    <div class="cmd-card">
-                        <div class="cmd-name">/qr</div>
-                        <div class="cmd-desc">Generate a custom QR code from any text or URL.</div>
-                    </div>
-                    <div class="cmd-card">
-                        <div class="cmd-name">/crypto</div>
-                        <div class="cmd-desc">Get real-time market data and trends for any cryptocurrency.</div>
-                    </div>
-                    <div class="cmd-card">
-                        <div class="cmd-name">/translate</div>
-                        <div class="cmd-desc">Translate text between dozens of supported languages.</div>
-                    </div>
-                    <div class="cmd-card">
-                        <div class="cmd-name">/timer</div>
-                        <div class="cmd-desc">Set a countdown timer for productivity or gaming sessions.</div>
-                    </div>
-                    <div class="cmd-card">
-                        <div class="cmd-name">/dictionary</div>
-                        <div class="cmd-desc">Look up definitions in the AegisForge linguistic database.</div>
-                    </div>
-                    <div class="cmd-card">
-                        <div class="cmd-name">/worldclock</div>
-                        <div class="cmd-desc">View the current time across major global timezones.</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Fun Panel -->
-            <div class="cmd-panel" id="tab-fun">
-                <div class="cmd-grid">
-                    <div class="cmd-card">
-                        <div class="cmd-name">/meme</div>
-                        <div class="cmd-desc">Fetch a random trending meme from Reddit.</div>
-                    </div>
-                    <div class="cmd-card">
-                        <div class="cmd-name">/cat</div>
-                        <div class="cmd-desc">Get a random cute cat image or GIF.</div>
-                    </div>
-                    <div class="cmd-card">
-                        <div class="cmd-name">/dog</div>
-                        <div class="cmd-desc">Get a random cute dog image or GIF.</div>
-                    </div>
-                    <div class="cmd-card">
-                        <div class="cmd-name">/fun coinflip</div>
-                        <div class="cmd-desc">Flip a virtual coin for a heads or tails result.</div>
-                    </div>
-                    <div class="cmd-card">
-                        <div class="cmd-name">/fun dice</div>
-                        <div class="cmd-desc">Roll a dice with a custom number of sides.</div>
-                    </div>
-                    <div class="cmd-card">
-                        <div class="cmd-name">/fun ship</div>
-                        <div class="cmd-desc">Check the compatibility between two server members.</div>
-                    </div>
-                    <div class="cmd-card">
-                        <div class="cmd-name">/fun rate</div>
-                        <div class="cmd-desc">Ask the Oracle to rate anything from 1 to 10.</div>
-                    </div>
-                    <div class="cmd-card">
-                        <div class="cmd-name">/fun fox</div>
-                        <div class="cmd-desc">Get a random cute fox image.</div>
-                    </div>
-                    <div class="cmd-card">
-                        <div class="cmd-name">/fun panda</div>
-                        <div class="cmd-desc">Get a random cute panda image.</div>
-                    </div>
-                    <div class="cmd-card">
-                        <div class="cmd-name">/fun bird</div>
-                        <div class="cmd-desc">Get a random cute bird image.</div>
-                    </div>
-                    <div class="cmd-card">
-                        <div class="cmd-name">/fun mock</div>
-                        <div class="cmd-desc">sPoNgEbOb CaSe your text to mock your enemies.</div>
-                    </div>
-                    <div class="cmd-card">
-                        <div class="cmd-name">/fun reverse</div>
-                        <div class="cmd-desc">Flip your text horizontally.</div>
-                    </div>
-                    <div class="cmd-card">
-                        <div class="cmd-name">/fun owo</div>
-                        <div class="cmd-desc">owoify youw text fow a cute effect uwu.</div>
-                    </div>
-                    <div class="cmd-card">
-                        <div class="cmd-name">/fun ascii</div>
-                        <div class="cmd-desc">Convert simple text into large ASCII blocks.</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Roles Panel -->
-            <div class="cmd-panel" id="tab-roles">
-                <div class="cmd-grid">
-                    <div class="cmd-card">
-                        <div class="cmd-name">/role add</div>
-                        <div class="cmd-desc">Assign a specific role to a server member.</div>
-                    </div>
-                    <div class="cmd-card">
-                        <div class="cmd-name">/role remove</div>
-                        <div class="cmd-desc">Remove a specific role from a server member.</div>
-                    </div>
-                    <div class="cmd-card">
-                        <div class="cmd-name">/role list</div>
-                        <div class="cmd-desc">List all available roles in the current guild.</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Configuration Panel -->
-            <div class="cmd-panel" id="tab-config">
-                <div class="cmd-grid">
-                    <div class="cmd-card">
-                        <div class="cmd-name">/config logs</div>
-                        <div class="cmd-desc">Configure the logging channel for all moderation actions.</div>
-                    </div>
-                    <div class="cmd-card">
-                        <div class="cmd-name">/config welcome</div>
-                        <div class="cmd-desc">Set up custom welcome messages and channel for new members.</div>
-                    </div>
-                    <div class="cmd-card">
-                        <div class="cmd-name">/config autorole</div>
-                        <div class="cmd-desc">Automatically assign a role to users when they join the server.</div>
-                    </div>
-                </div>
+        <!-- Accordion Container -->
+        <div id="commands-accordion" class="commands-accordion">
+            <div class="loading-state">
+                <i class="fas fa-circle-notch fa-spin"></i>
+                <p>Forging command registry...</p>
             </div>
         </div>
     </main>
@@ -351,7 +63,6 @@
                 <a href="team.html">Team</a>
                 <a href="changelog.html">Changelog</a>
                 <a href="status.html">Status</a>
-                <a href="dashboard.html">Dashboard</a>
                 <a href="about.html">About</a>
                 <a href="https://github.com/watispro5212/AegisForge" target="_blank" rel="noopener noreferrer">GitHub</a>
                 <a href="privacy.html">Privacy Policy</a>
@@ -363,6 +74,7 @@
         </div>
     </footer>
 
+    <script src="commands_data.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

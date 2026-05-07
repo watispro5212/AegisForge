@@ -8,8 +8,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
+    <div class="grid-bg"></div>
+    <div class="ambient-glow"></div>
 
     <!-- Navigation -->
     <nav id="navbar">
@@ -20,10 +23,10 @@
         <div class="nav-links">
             <a href="index.html#features">Features</a>
             <a href="commands.html">Commands</a>
+            <a href="economy.html">Economy</a>
             <a href="team.html">Team</a>
             <a href="changelog.html">Changelog</a>
             <a href="status.html">Status</a>
-            <a href="dashboard.html">Dashboard</a>
             <a href="about.html">About</a>
             <a href="https://github.com/watispro5212/AegisForge" target="_blank" rel="noopener noreferrer" class="nav-link-code">GitHub</a>
             <a href="https://discord.com/oauth2/authorize?client_id=1500582485367722004&permissions=8&response_type=code&redirect_uri=https%3A%2F%2Fdiscord.com%2Foauth2%2Fauthorize%3Fclient_id%3D1500582485367722004&integration_type=0&scope=bot+identify+applications.commands+applications.commands.permissions.update+openid" target="_blank" rel="noopener noreferrer" class="btn-primary">Invite Bot</a>
@@ -32,20 +35,44 @@
 
     <!-- Content -->
     <main class="page-content">
-        <h1>Meet the <span class="text-gradient">Team</span></h1>
+        <h1>people who <span class="text-gradient">made this</span></h1>
         
         <div class="team-grid">
-            <div class="team-card reveal-on-scroll">
-                <img src="https://avatars.githubusercontent.com/u/150058248?v=4" alt="mzlad" class="team-avatar-img">
-                <div class="team-name">mzlad</div>
-                <div class="team-role">Lead Developer & Visionary</div>
-                <div class="team-bio">The architect behind AegisForge. Dedicated to pushing the boundaries of what's possible with Rust and high-performance server automation. Forging the future of community management.</div>
+            <!-- Owner/Founder -->
+            <div class="team-card reveal-on-scroll glow-card">
+                <div class="team-role-badge">i made this</div>
+                <div class="team-img-wrapper">
+                    <img src="https://github.com/watispro5212.png" alt="Watispro" class="team-img">
+                </div>
+                <h3 class="team-name">Watispro</h3>
+                <p class="team-bio">i made this bot because i was bored i guess. i use rust because it works. i do code stuff.</p>
+                <div class="team-socials">
+                    <a href="https://github.com/watispro5212" target="_blank" rel="noopener" title="GitHub"><i class="fab fa-github"></i></a>
+                    <a href="https://discord.com/users/watispro5212" target="_blank" rel="noopener" title="Discord"><i class="fab fa-discord"></i></a>
+                </div>
             </div>
+
+            <!-- Community / Support -->
             <div class="team-card reveal-on-scroll">
-                <div class="team-avatar-img machine-avatar">🛡️</div>
-                <div class="team-name">AEGIS</div>
-                <div class="team-role">The Eternal Sentinel</div>
-                <div class="team-bio">The core artificial intelligence driving the Forge. 0ms internal latency, real-time telemetry processing, and autonomous community protection. The machine never sleeps.</div>
+                <div class="team-role-badge">helpers</div>
+                <div class="team-img-wrapper staff-placeholder">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h3 class="team-name">Staff Team</h3>
+                <p class="team-bio">people who help me out with stuff and the discord server.</p>
+                <div class="team-socials">
+                    <a href="https://discord.gg/aegisforge" target="_blank" rel="noopener" title="Join Support"><i class="fab fa-discord"></i></a>
+                </div>
+            </div>
+
+            <!-- The Bot AI -->
+            <div class="team-card reveal-on-scroll machine-card">
+                <div class="team-role-badge">the bot</div>
+                <div class="team-img-wrapper machine-avatar">
+                    <span>🛡️</span>
+                </div>
+                <h3 class="team-name">AEGIS CORE</h3>
+                <p class="team-bio">its just a bunch of code that runs on a server somewhere.</p>
             </div>
         </div>
     </main>
@@ -63,7 +90,6 @@
                 <a href="team.html">Team</a>
                 <a href="changelog.html">Changelog</a>
                 <a href="status.html">Status</a>
-                <a href="dashboard.html">Dashboard</a>
                 <a href="about.html">About</a>
                 <a href="https://github.com/watispro5212/AegisForge" target="_blank" rel="noopener noreferrer">GitHub</a>
                 <a href="privacy.html">Privacy Policy</a>
@@ -71,8 +97,11 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2026 AegisForge. Forged with 🦀 Rust and precision.</p>
+            <p>&copy; 2026 aegisforge. i made it in rust.</p>
+            <p class="footer-tagline">it works i guess.</p>
         </div>
+    </footer>
+
     <script src="script.js"></script>
 </body>
 </html>

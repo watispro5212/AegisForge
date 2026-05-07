@@ -10,15 +10,13 @@ use sqlx::PgPool;
 use std::sync::Arc;
 use crate::models::config::GuildConfig;
 
-/// The central database handle passed everywhere via `Arc`.
-/// Wraps the PostgreSQL connection pool and a hot in-memory cache
-/// for guild configs so every slash command doesn't hit the DB.
+/// db stuff
+/// its just a pool and a cache so its fast.
 #[derive(Debug, Clone)]
 pub struct Database {
     pub pool: PgPool,
-    /// In-memory cache keyed by guild_id.
-    /// DashMap is a lock-free concurrent hashmap — safe to share across
-    /// thousands of concurrent command executions without contention.
+    /// stuff we saved in memory.
+    /// dashmap is fast and safe.
     cache: Arc<DashMap<i64, GuildConfig>>,
 }
 
@@ -30,15 +28,14 @@ impl Database {
         }
     }
 
-    /// Fetch guild config from cache; fall back to DB and populate cache.
-    /// Creates a default row if the guild has never interacted with the bot.
+    /// get the config or make a new one.
     pub async fn get_guild_config(&self, guild_id: i64) -> sqlx::Result<GuildConfig> {
-        // Fast path: serve from cache
+        // fast way
         if let Some(cfg) = self.cache.get(&guild_id) {
             return Ok(cfg.clone());
         }
 
-        // Slow path: query DB, upsert default if missing, then cache
+        // slow way
         let config = guild::get_or_create(&self.pool, guild_id).await?;
         self.cache.insert(guild_id, config.clone());
         Ok(config)
@@ -52,5 +49,15 @@ impl Database {
     /// Returns the number of guild configs currently cached.
     pub fn cache_size(&self) -> usize {
         self.cache.len()
+    }
+
+    /// Fetch the list of blacklisted phrases for a guild.
+    pub async fn get_automod_blacklist(&self, guild_id: i64) -> sqlx::Result<Vec<String>> {
+        let rows = sqlx::query!(
+            "SELECT phrase FROM automod_blacklist WHERE guild_id = $1",
+            guild_id
+        ).fetch_all(&self.pool).await?;
+        
+        Ok(rows.into_iter().map(|r| r.phrase).collect())
     }
 }

@@ -127,51 +127,33 @@ async function fetchLiveStats() {
                 animateValue('dashboard-xp', data.xp_gain_24h || 842500);
             }
 
-            // Update Status page elements if they exist
-            const guildsStatus = document.getElementById('stat-guilds-status');
-            const usersStatus = document.getElementById('stat-users-status');
-            const uptimeStatus = document.getElementById('stat-uptime-status');
+        // Update Status page elements if they exist
+        const guildsStatus = document.getElementById('stat-guilds-status');
+        const usersStatus = document.getElementById('stat-users-status');
+        const uptimeStatus = document.getElementById('stat-uptime-status');
 
-            if (guildsStatus) guildsStatus.innerText = data.server_count.toLocaleString();
-            if (usersStatus) usersStatus.innerText = data.user_count.toLocaleString();
-            if (uptimeStatus) {
-                const uptimeData = formatUptime(data.uptime_seconds); 
-                uptimeStatus.innerText = `${uptimeData.days}d ${uptimeData.hours}h ${uptimeData.minutes}m`;
-            }
-
-            // Update Status Indicators
-            const overallStatus = document.getElementById('overall-status');
-            if (overallStatus) {
-                overallStatus.querySelector('.status-indicator').className = 'status-indicator online';
-                overallStatus.querySelector('h3').innerText = 'All Systems Operational';
-                overallStatus.querySelector('p').innerText = `Last checked: ${new Date().toLocaleTimeString()} (Bot Version v3.1.0)`;
-            }
-
-            document.querySelectorAll('.status-label').forEach(label => {
-                label.innerText = 'Operational';
-                label.className = 'status-label online';
-            });
-
-            // Initialize dynamic uptime segments
-            initUptimeSegments();
+        if (guildsStatus) guildsStatus.innerText = data.server_count.toLocaleString();
+        if (usersStatus) usersStatus.innerText = data.user_count.toLocaleString();
+        if (uptimeStatus) {
+            const uptimeData = formatUptime(data.uptime_seconds); 
+            uptimeStatus.innerText = `${uptimeData.days}d ${uptimeData.hours}h ${uptimeData.minutes}m`;
         }
 
-        // Leaderboard logic
-        const leaderboard = document.getElementById('live-leaderboard');
-        if (leaderboard) {
-            leaderboard.innerHTML = `
-                <li><span class="activity-user">Nexus-1</span><span class="activity-detail badge">2.4M Credits</span></li>
-                <li><span class="activity-user">CryptoCat</span><span class="activity-detail badge">1.8M Credits</span></li>
-                <li><span class="activity-user">ForgeMaster</span><span class="activity-detail badge">1.2M Credits</span></li>
-            `;
+        // Update Status Indicators
+        const overallStatus = document.getElementById('overall-status');
+        if (overallStatus) {
+            overallStatus.querySelector('.status-indicator').className = 'status-indicator online';
+            overallStatus.querySelector('h3').innerText = 'All Systems Operational';
+            overallStatus.querySelector('p').innerText = `Last checked: ${new Date().toLocaleTimeString()} (Bot Version v3.1.0)`;
         }
-        const activity = document.getElementById('live-activity');
-        if (activity) {
-            activity.innerHTML = `
-                <li><span class="activity-user">Economy</span><span class="activity-detail">Jackpot won on /slots!</span><span class="activity-time">Just now</span></li>
-                <li><span class="activity-user">System</span><span class="activity-detail">Database Shard Sync Complete</span><span class="activity-time">2m ago</span></li>
-            `;
-        }
+
+        document.querySelectorAll('.status-label').forEach(label => {
+            label.innerText = 'Operational';
+            label.className = 'status-label online';
+        });
+
+        // Initialize dynamic uptime segments
+        initUptimeSegments();
 
     } catch (err) {
         console.warn('Status API unreachable, using cached/fallback data:', err.message);
@@ -225,14 +207,12 @@ const dashObserver = new IntersectionObserver((entries) => {
     }
 }, { threshold: 0.1 });
 
-const dashboardSection = document.getElementById('dashboard');
+const statsSection = document.querySelector('.stats-section');
 const statusSection = document.getElementById('overall-status');
-const dashboardServers = document.getElementById('dashboard-servers');
 
-if (dashboardSection) {
-    dashObserver.observe(dashboardSection);
-} else if (statusSection || dashboardServers) {
-    // If we're on the status or dashboard page, fetch immediately
+if (statsSection) {
+    dashObserver.observe(statsSection);
+} else if (statusSection) {
     fetchLiveStats();
 }
 
@@ -295,71 +275,85 @@ tiltCards.forEach(card => {
     });
 });
 
-// 3. Command Search and Tabs
+// 3. Command Registry Rendering (Accordion)
 document.addEventListener('DOMContentLoaded', () => {
+    const accordionContainer = document.getElementById('commands-accordion');
     const searchInput = document.getElementById('cmd-search');
-    const tabs = document.querySelectorAll('.cmd-tab');
-    const panels = document.querySelectorAll('.cmd-panel');
-    const commandCards = document.querySelectorAll('.cmd-card');
 
-    if (searchInput) {
-        searchInput.addEventListener('input', (e) => {
-            const query = e.target.value.toLowerCase().trim();
+    if (!accordionContainer || typeof commandsData === 'undefined') return;
+
+    function renderCommands(filter = '') {
+        accordionContainer.innerHTML = '';
+        let matchCount = 0;
+
+        commandsData.forEach((cat, index) => {
+            const filteredCmds = cat.commands.filter(cmd => 
+                cmd.name.toLowerCase().includes(filter.toLowerCase()) || 
+                cmd.desc.toLowerCase().includes(filter.toLowerCase())
+            );
+
+            if (filteredCmds.length === 0) return;
+            matchCount += filteredCmds.length;
+
+            const categoryItem = document.createElement('div');
+            categoryItem.className = 'accordion-item reveal-on-scroll';
             
-            if (query === '') {
-                // Restore tabs if search is cleared
-                const activeTab = document.querySelector('.cmd-tab.active');
-                if (activeTab) {
-                    const tabId = activeTab.getAttribute('data-tab');
-                    showPanel(tabId);
-                }
-                return;
-            }
+            categoryItem.innerHTML = `
+                <div class="accordion-header" data-index="${index}">
+                    <div class="category-info">
+                        <span class="category-icon">${cat.icon}</span>
+                        <h3>${cat.category}</h3>
+                        <span class="cmd-count">${filteredCmds.length} Commands</span>
+                    </div>
+                    <i class="fas fa-chevron-down toggle-icon"></i>
+                </div>
+                <div class="accordion-content">
+                    <div class="cmd-grid">
+                        ${filteredCmds.map(cmd => `
+                            <div class="cmd-card glow-card">
+                                <div class="cmd-main">
+                                    <span class="cmd-name">${cmd.name}</span>
+                                    <p class="cmd-desc">${cmd.desc}</p>
+                                </div>
+                                ${cmd.usage ? `<div class="cmd-usage"><code>${cmd.usage}</code></div>` : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
 
-            // Search mode: show all matching cards regardless of tab
-            panels.forEach(p => p.style.display = 'block');
-            commandCards.forEach(card => {
-                const name = card.querySelector('.cmd-name').textContent.toLowerCase();
-                const desc = card.querySelector('.cmd-desc').textContent.toLowerCase();
-                if (name.includes(query) || desc.includes(query)) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-
-            // Hide panels that have no matching cards
-            panels.forEach(panel => {
-                const visibleCards = panel.querySelectorAll('.cmd-card[style="display: block;"]');
-                if (visibleCards.length === 0) {
-                    panel.style.display = 'none';
-                }
+            accordionContainer.appendChild(categoryItem);
+            
+            // Add click listener
+            const header = categoryItem.querySelector('.accordion-header');
+            header.addEventListener('click', () => {
+                const isActive = categoryItem.classList.contains('active');
+                
+                // Close others if we want single-open (optional)
+                // document.querySelectorAll('.accordion-item').forEach(item => item.classList.remove('active'));
+                
+                categoryItem.classList.toggle('active', !isActive);
             });
         });
+
+        if (matchCount === 0) {
+            accordionContainer.innerHTML = `
+                <div class="no-results">
+                    <i class="fas fa-search"></i>
+                    <p>No commands found matching "${filter}"</p>
+                </div>
+            `;
+        }
     }
 
-    tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            if (searchInput) searchInput.value = ''; // Clear search
-            
-            const tabId = tab.getAttribute('data-tab');
-            
-            tabs.forEach(t => t.classList.remove('active'));
-            tab.classList.add('active');
-            
-            showPanel(tabId);
-        });
-    });
+    // Initial render
+    renderCommands();
 
-    function showPanel(tabId) {
-        panels.forEach(panel => {
-            panel.classList.remove('active');
-            panel.style.display = ''; // Reset search overrides
-            if (panel.id === `tab-${tabId}`) {
-                panel.classList.add('active');
-            }
+    // Search logic
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            renderCommands(e.target.value);
         });
-        commandCards.forEach(c => c.style.display = ''); // Reset search overrides
     }
 });
 

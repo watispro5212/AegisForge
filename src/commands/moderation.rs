@@ -2,7 +2,7 @@ use crate::{Context, Error};
 use poise::serenity_prelude as serenity;
 use std::time::Duration;
 
-/// Kick a member from the server
+/// kick someone out
 #[poise::command(slash_command, prefix_command, required_permissions = "KICK_MEMBERS", guild_only)]
 pub async fn kick(
     ctx: Context<'_>,
@@ -29,7 +29,7 @@ pub async fn kick(
 
     ctx.send(poise::CreateReply::default().embed(
         serenity::CreateEmbed::new()
-            .title("🔨 AegisForge — Member Kicked")
+            .title("🔨 kicked someone")
             .description(format!("**{}** has been expelled from the forge.", user.name))
             .field("👤 Target", format!("<@{}>", user.id), true)
             .field("🛡️ Moderator", format!("<@{}>", ctx.author().id), true)
@@ -42,7 +42,7 @@ pub async fn kick(
     Ok(())
 }
 
-/// Timeout (mute) a member temporarily
+/// mute someone for a bit
 #[poise::command(slash_command, prefix_command, required_permissions = "MODERATE_MEMBERS", guild_only)]
 pub async fn timeout(
     ctx: Context<'_>,
@@ -75,7 +75,7 @@ pub async fn timeout(
 
     ctx.send(poise::CreateReply::default().embed(
         serenity::CreateEmbed::new()
-            .title("⏳ AegisForge — Member Timed Out")
+            .title("⏳ timed out someone")
             .description(format!("**{}** has been placed in temporary stasis.", user.name))
             .field("👤 Target", format!("<@{}>", user.id), true)
             .field("⏱️ Duration", format!("{} minute(s)", minutes), true)
@@ -88,7 +88,7 @@ pub async fn timeout(
     Ok(())
 }
 
-/// Ban a member from the server
+/// ban someone forever
 #[poise::command(slash_command, prefix_command, required_permissions = "BAN_MEMBERS", guild_only)]
 pub async fn ban(
     ctx: Context<'_>,

@@ -3,18 +3,18 @@ use rand::prelude::*;
 use poise::serenity_prelude as serenity;
 use crate::db::economy;
 
-/// Economy commands
+/// economy stuff
 #[poise::command(
     slash_command,
-    subcommands("balance", "daily", "work", "pay", "leaderboard", "rob", "slots", "beg", "search", "deposit", "withdraw", "gamble_info"),
-    category = "Economy",
+    subcommands("balance", "daily", "work", "pay", "leaderboard", "global_leaderboard", "rob", "slots", "beg", "search", "deposit", "withdraw", "gamble_info"),
+    category = "economy",
     guild_only
 )]
 pub async fn economy(_ctx: Context<'_>) -> Result<(), Error> {
     Ok(())
 }
 
-/// Check your or someone else's balance
+/// check your or someone else's money
 #[poise::command(slash_command, guild_only)]
 pub async fn balance(
     ctx: Context<'_>,
@@ -37,7 +37,7 @@ pub async fn balance(
     Ok(())
 }
 
-/// Claim your daily reward
+/// get your daily money
 #[poise::command(slash_command, guild_only)]
 pub async fn daily(ctx: Context<'_>) -> Result<(), Error> {
     let guild_id = ctx.guild_id().unwrap().get() as i64;
@@ -62,7 +62,7 @@ pub async fn daily(ctx: Context<'_>) -> Result<(), Error> {
     Ok(())
 }
 
-/// Work to earn some money
+/// work to get some cash
 #[poise::command(slash_command, guild_only)]
 pub async fn work(ctx: Context<'_>) -> Result<(), Error> {
     let guild_id = ctx.guild_id().unwrap().get() as i64;
@@ -78,7 +78,7 @@ pub async fn work(ctx: Context<'_>) -> Result<(), Error> {
     Ok(())
 }
 
-/// Pay another user from your wallet
+/// give someone some of your money
 #[poise::command(slash_command, guild_only)]
 pub async fn pay(
     ctx: Context<'_>,
@@ -247,18 +247,24 @@ pub async fn slots(
     
     let (won, multiplier, message) = if r1 == r2 && r2 == r3 {
         if r1 == "💎" {
-            (true, 15.0, "💎 HYPERFORGE JACKPOT! 💎")
+            (true, 25.0, "💎 HYPERFORGE JACKPOT! 💎")
         } else if r1 == "⭐" {
-            (true, 8.0, "⭐ SUPER TRIPLE! ⭐")
+            (true, 15.0, "⭐ SUPER TRIPLE! ⭐")
         } else {
-            (true, 6.0, "✨ TRIPLE MATCH! ✨")
+            (true, 10.0, "✨ TRIPLE MATCH! ✨")
         }
     } else if r1 == r2 || r2 == r3 || r1 == r3 {
-        (true, 2.5, "🍀 Double Match! 🍀")
+        (true, 5.0, "🍀 Double Match! 🍀")
     } else if has_diamond {
-        (true, 1.8, "💎 Diamond Consolation! 💎")
+        (true, 2.0, "💎 Diamond Wild! 💎")
     } else {
-        (false, 0.0, "The forge rejects your bet. Better luck next time!")
+        // Ultra-high win chance for Hyperforge release
+        let random_win = rand::thread_rng().gen_bool(0.6); // 60% chance for a random minor win
+        if random_win {
+             (true, 1.2, "🛡️ Aegis Protection Win! 🛡️")
+        } else {
+            (false, 0.0, "The forge rejects your bet. Better luck next time!")
+        }
     };
     
     let embed = if won {
@@ -286,15 +292,45 @@ pub async fn slots(
 pub async fn gamble_info(ctx: Context<'_>) -> Result<(), Error> {
     ctx.send(poise::CreateReply::default().embed(
         serenity::CreateEmbed::new()
-            .title("🎰 The AegisForge Casino — Mechanics")
-            .description("Welcome to the high-stakes sector of the Eternal Forge. Here's how our gambling systems work:")
-            .field("🎰 Slot Machine", "Roll 3 reels. Triple matches pay big, doubles pay back your bet + extra. Diamonds are wild and always pay out!", false)
-            .field("💎 Odds", "We've tuned the Hyperforge slots to have a ~82% win rate. It's almost impossible to lose if you keep playing!", false)
-            .field("🥷 Robbery", "You have a 40% chance of success. High risk, high reward. Don't get caught by the Sentinels!", false)
-            .field("💰 Economy Stability", "All bets are backed by the AegisForge Reserve. Play responsibly!", false)
-            .footer(serenity::CreateEmbedFooter::new("Forged for the bold | v3.1 Hyperforge"))
+            .title("🎰 The AegisForge Casino — Mechanics & Odds")
+            .description("Welcome to the high-stakes sector of the Eternal Forge. Our machines are calibrated for maximum interaction and player success.")
+            .field("🎰 Slot Machine Payouts", 
+                "• **3x Diamonds**: 25.0x\n• **3x Stars**: 15.0x\n• **3x Other**: 10.0x\n• **Any 2 Match**: 5.0x\n• **Single Diamond**: 2.0x\n• **Aegis Shield**: 1.2x (60% chance on loss)", false)
+            .field("💎 The Hyperforge Advantage", 
+                "AegisForge v3.1 features a proprietary 'FairForge' algorithm. Unlike other bots, our house edge is HEAVILY NEGATIVE. The more you play, the more you win. Total win probability: **~81.5%**.", false)
+            .field("💰 Bank Security", "Money in your `/economy bank` cannot be stolen by `/economy rob`. Use it to safeguard your millions!", false)
+            .footer(serenity::CreateEmbedFooter::new("Forged for the bold | v3.1.0 Hyperforge"))
             .color(0x00E5FF),
     )).await?;
+    Ok(())
+}
+
+/// View the global wealth leaderboard
+#[poise::command(slash_command, guild_only)]
+pub async fn global_leaderboard(ctx: Context<'_>) -> Result<(), Error> {
+    let pool = &ctx.data().database.pool;
+    let lb = economy::get_global_leaderboard(pool, 10).await?;
+    
+    let mut description = String::new();
+    for (i, entry) in lb.iter().enumerate() {
+        description.push_str(&format!(
+            "**{}.** <@{}> — `${}`\n",
+            i + 1, entry.user_id, entry.total_balance
+        ));
+    }
+    
+    if description.is_empty() {
+        description = "No one has forged any wealth yet!".into();
+    }
+    
+    ctx.send(poise::CreateReply::default().embed(
+        serenity::CreateEmbed::new()
+            .title("🌍 AegisForge Global Wealth Leaderboard")
+            .description(description)
+            .color(0xFFD700)
+            .footer(serenity::CreateEmbedFooter::new("Across all guilds in the Hyperforge network"))
+    )).await?;
+    
     Ok(())
 }
 
