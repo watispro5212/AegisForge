@@ -9,7 +9,7 @@ use rand::Rng;
         "coinflip", "dice", "eightball", "joke", "fact",
         "cat", "dog", "fox", "panda", "bird",
         "cookie", "hug", "pat", "kiss", "slap",
-        "meme", "ship", "rate", "mock", "reverse", "owo", "ascii",
+        "meme", "ship", "rate", "mock", "reverse", "ascii",
         "choose", "trivia", "roast", "compliment"
     ),
     category = "fun"
@@ -470,22 +470,6 @@ pub async fn reverse(
 ) -> Result<(), Error> {
     let reversed: String = text.chars().rev().collect();
     ctx.say(reversed).await?;
-    Ok(())
-}
-
-/// owoify some text
-#[poise::command(slash_command)]
-pub async fn owo(
-    ctx: Context<'_>,
-    #[description = "The text to owoify"] text: String,
-) -> Result<(), Error> {
-    let result = text
-        .replace('r', "w")
-        .replace('l', "w")
-        .replace('R', "W")
-        .replace('L', "W")
-        + " uwu";
-    ctx.say(result).await?;
     Ok(())
 }
 

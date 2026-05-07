@@ -83,7 +83,6 @@ const commandsData = [
             { name: "/fun compliment", desc: "Give a genuine compliment to a server member.", usage: "/fun compliment user:@user" },
             { name: "/fun mock", desc: "Transform text into SpOnGeBoB mOcKiNg CaSe.", usage: "/fun mock text:text" },
             { name: "/fun reverse", desc: "Reverse any text string.", usage: "/fun reverse text:text" },
-            { name: "/fun owo", desc: "Owoify any text with uwu energy.", usage: "/fun owo text:text" },
             { name: "/fun ascii", desc: "Display text as large spaced ASCII characters (max 10 chars).", usage: "/fun ascii text:text" },
             { name: "/fun meme", desc: "Get a random curated meme image.", usage: "/fun meme" },
             { name: "/fun cat", desc: "Get a random cat image.", usage: "/fun cat" },
