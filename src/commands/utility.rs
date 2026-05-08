@@ -116,7 +116,7 @@ pub async fn uptime(ctx: Context<'_>) -> Result<(), Error> {
             .field("🦀 Core", "Rust (Tokio async runtime)", true)
             .field("⚙️ Framework", "Poise v0.6", true)
             .field("🔋 Shard", "0 / 1", true)
-            .footer(serenity::CreateEmbedFooter::new("Forged with precision | AegisForge v3"))
+            .footer(serenity::CreateEmbedFooter::new("Forged with precision | AegisForge v4"))
             .timestamp(serenity::Timestamp::now())
             .color(0x00E5FF),
     ))
@@ -138,8 +138,39 @@ pub async fn stats(ctx: Context<'_>) -> Result<(), Error> {
             .field("🌐 Reach", format!("**{}** Servers\n**{}** Users", guilds, users), true)
             .field("⚙️ Resource Usage", "Tokio Runtime: Active\nDB Pool: Optimal", true)
             .field("⏱️ Session", format!("<t:{}:R>", (chrono::Utc::now() - chrono::Duration::seconds(uptime.as_secs() as i64)).timestamp()), true)
-            .footer(serenity::CreateEmbedFooter::new("Powered by Rust + Tokio | AegisForge v3"))
+            .footer(serenity::CreateEmbedFooter::new("Powered by Rust + Tokio | AegisForge v4"))
             .timestamp(serenity::Timestamp::now())
+            .color(0x00E5FF),
+    ))
+    .await?;
+    Ok(())
+}
+
+/// Detailed information about the bot
+#[poise::command(slash_command, prefix_command)]
+pub async fn botinfo(ctx: Context<'_>) -> Result<(), Error> {
+    let guilds = ctx.cache().guild_count();
+    let users = ctx.cache().user_count();
+    let uptime = ctx.data().start_time.elapsed();
+    
+    let total_commands: i64 = sqlx::query_scalar("SELECT stat_value FROM global_stats WHERE stat_key = 'total_commands_executed'")
+        .fetch_one(&ctx.data().database.pool)
+        .await
+        .unwrap_or(0);
+
+    ctx.send(poise::CreateReply::default().embed(
+        serenity::CreateEmbed::new()
+            .title("🤖 AegisForge — Advanced Telemetry")
+            .description("Internal systems and performance metrics.")
+            .field("🚀 Version", format!("v{}", env!("CARGO_PKG_VERSION")), true)
+            .field("🦀 Language", "Rust 1.75+", true)
+            .field("📡 Library", "Serenity + Poise", true)
+            .field("📊 Servers", guilds.to_string(), true)
+            .field("👥 Total Users", users.to_string(), true)
+            .field("⚡ Commands Run", total_commands.to_string(), true)
+            .field("⏱️ Uptime", format!("<t:{}:R>", (chrono::Utc::now() - chrono::Duration::seconds(uptime.as_secs() as i64)).timestamp()), true)
+            .field("🔗 Links", "[Support Server](https://discord.gg/8p5Epc8Qd8) | [Top.gg](https://top.gg/bot/1500582485367722004)", false)
+            .footer(serenity::CreateEmbedFooter::new("AegisForge v4 Core — High Performance Automation"))
             .color(0x00E5FF),
     ))
     .await?;
@@ -201,7 +232,7 @@ pub async fn help(
 
     ctx.send(poise::CreateReply::default().embed(
         serenity::CreateEmbed::new()
-            .title("🛡️ AegisForge v3 — Eternal Forge")
+            .title("🛡️ AegisForge v4 — Eternal Forge")
             .description("Welcome to the next generation of server protection. Use `/` to browse all slash commands.")
             .field("⚙️ Utility", "`ping`, `server`, `user`, `avatar`, `uptime`, `stats`, `embed`, `qr`, `math`, `worldclock`, `poll`, `timestamp`, `timer`, `help`", false)
             .field("🛡️ Moderation", "`ban`, `unban`, `kick`, `mute`, `unmute`, `timeout`, `warn`, `purge`, `slowmode`, `lock`, `unlock`", false)

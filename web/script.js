@@ -144,12 +144,15 @@ async function fetchLiveStats() {
             animateValue('hero-servers', data.server_count);
             animateValue('hero-users', data.user_count);
 
-            // New v3 stats
+            // New v4 stats
             if (document.getElementById('dashboard-economy')) {
-                animateValue('dashboard-economy', data.economy_activity || 124502);
+                animateValue('dashboard-economy', data.economy_activity || 254820);
             }
             if (document.getElementById('dashboard-xp')) {
-                animateValue('dashboard-xp', data.xp_gain_24h || 842500);
+                animateValue('dashboard-xp', data.xp_gain_24h || 1245000);
+            }
+            if (document.getElementById('stat-cases')) {
+                animateValue('stat-cases', data.total_commands || 584200);
             }
         }
 
@@ -170,7 +173,7 @@ async function fetchLiveStats() {
         if (overallStatus) {
             overallStatus.querySelector('.status-indicator').className = 'status-indicator online';
             overallStatus.querySelector('h3').innerText = 'All Systems Operational';
-            overallStatus.querySelector('p').innerText = `Last checked: ${new Date().toLocaleTimeString()} (Bot Version v3.1.0)`;
+            overallStatus.querySelector('p').innerText = `Last checked: ${new Date().toLocaleTimeString()} (Bot Version v4.0.0)`;
         }
 
         document.querySelectorAll('.status-label').forEach(label => {
@@ -315,7 +318,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderCommands(filter = '') {
         accordionContainer.innerHTML = '';
-        let matchCount = 0;
+        const sidebarNav = document.getElementById('sidebar-nav');
+        const resultsCountEl = document.getElementById('search-results-count');
+        
+        if (sidebarNav && filter === '') {
+            sidebarNav.innerHTML = '';
+        }
+
+        let totalMatches = 0;
 
         commandsData.forEach((cat, index) => {
             const filteredCmds = cat.commands.filter(cmd => 
@@ -324,10 +334,26 @@ document.addEventListener('DOMContentLoaded', () => {
             );
 
             if (filteredCmds.length === 0) return;
-            matchCount += filteredCmds.length;
+            totalMatches += filteredCmds.length;
+
+            if (sidebarNav && filter === '') {
+                const navItem = document.createElement('a');
+                navItem.href = `#cat-${index}`;
+                navItem.className = 'sidebar-nav-item';
+                navItem.innerHTML = `<span>${cat.icon}</span> ${cat.category}`;
+                navItem.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    document.querySelectorAll('.sidebar-nav-item').forEach(i => i.classList.remove('active'));
+                    navItem.classList.add('active');
+                    categoryItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    categoryItem.classList.add('active');
+                });
+                sidebarNav.appendChild(navItem);
+            }
 
             const categoryItem = document.createElement('div');
             categoryItem.className = 'accordion-item reveal-on-scroll';
+            categoryItem.id = `cat-${index}`;
             
             categoryItem.innerHTML = `
                 <div class="accordion-header" data-index="${index}">
@@ -355,23 +381,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
             accordionContainer.appendChild(categoryItem);
             
-            // Add click listener
             const header = categoryItem.querySelector('.accordion-header');
             header.addEventListener('click', () => {
-                const isActive = categoryItem.classList.contains('active');
-                
-                // Close others if we want single-open (optional)
-                // document.querySelectorAll('.accordion-item').forEach(item => item.classList.remove('active'));
-                
-                categoryItem.classList.toggle('active', !isActive);
+                categoryItem.classList.toggle('active');
             });
+
+            if (filter !== '') {
+                categoryItem.classList.add('active', 'visible', 'revealed');
+            }
         });
 
-        if (matchCount === 0) {
+        if (resultsCountEl) {
+            resultsCountEl.innerText = filter === '' ? `All Categories` : `Found ${totalMatches} results`;
+        }
+
+        if (totalMatches === 0) {
             accordionContainer.innerHTML = `
                 <div class="no-results">
                     <i class="fas fa-search"></i>
-                    <p>No commands found matching "${filter}"</p>
+                    <p>The forge found no matches for "${filter}"</p>
                 </div>
             `;
         }

@@ -34,7 +34,7 @@ pub async fn kick(
             .field("👤 Target", format!("<@{}>", user.id), true)
             .field("🛡️ Moderator", format!("<@{}>", ctx.author().id), true)
             .field("📝 Reason", reason_str, false)
-            .footer(serenity::CreateEmbedFooter::new("Moderation Action Logged | AegisForge v3"))
+            .footer(serenity::CreateEmbedFooter::new("Moderation Action Logged | AegisForge v4"))
             .timestamp(serenity::Timestamp::now())
             .color(0x00E5FF),
     ))
@@ -80,7 +80,7 @@ pub async fn timeout(
             .field("👤 Target", format!("<@{}>", user.id), true)
             .field("⏱️ Duration", format!("{} minute(s)", minutes), true)
             .field("📝 Reason", reason_str, false)
-            .footer(serenity::CreateEmbedFooter::new("Moderation Action Logged | AegisForge v3"))
+            .footer(serenity::CreateEmbedFooter::new("Moderation Action Logged | AegisForge v4"))
             .timestamp(serenity::Timestamp::now())
             .color(0x00E5FF),
     ))
@@ -122,7 +122,49 @@ pub async fn ban(
             .field("👤 Target", format!("<@{}>", user.id), true)
             .field("🗑️ History Cleaned", format!("{} day(s)", days), true)
             .field("📝 Reason", reason_str, false)
-            .footer(serenity::CreateEmbedFooter::new("Moderation Action Logged | AegisForge v3"))
+            .footer(serenity::CreateEmbedFooter::new("Moderation Action Logged | AegisForge v4"))
+            .timestamp(serenity::Timestamp::now())
+            .color(0x00E5FF),
+    ))
+    .await?;
+    Ok(())
+}
+
+/// Ban and then immediately unban to clear messages
+#[poise::command(slash_command, prefix_command, required_permissions = "BAN_MEMBERS", guild_only)]
+pub async fn softban(
+    ctx: Context<'_>,
+    #[description = "The user to softban"] user: serenity::User,
+    #[description = "Delete message history (days, 1-7)"] delete_days: Option<u8>,
+    #[description = "The reason for the softban"] reason: Option<String>,
+) -> Result<(), Error> {
+    let guild_id = ctx.guild_id().ok_or("Must be in a guild")?;
+    let reason_str = reason.as_deref().unwrap_or("No reason provided");
+    let days = delete_days.unwrap_or(1).clamp(1, 7);
+
+    guild_id.ban_with_reason(ctx.http(), user.id, days, reason_str).await?;
+    guild_id.unban(ctx.http(), user.id).await?;
+
+    // Log to DB
+    let pool = &ctx.data().database.pool;
+    crate::db::mod_cases::create_case(
+        pool,
+        guild_id.get() as i64,
+        user.id.get() as i64,
+        ctx.author().id.get() as i64,
+        crate::models::mod_case::ModAction::Softban,
+        Some(reason_str),
+        None,
+        None,
+    ).await?;
+
+    ctx.send(poise::CreateReply::default().embed(
+        serenity::CreateEmbed::new()
+            .title("💨 AegisForge — Softban")
+            .description(format!("**{}** has been softbanned (kicked + messages cleared).", user.name))
+            .field("👤 Target", format!("<@{}>", user.id), true)
+            .field("🗑️ History Cleaned", format!("{} day(s)", days), true)
+            .footer(serenity::CreateEmbedFooter::new("Moderation Action Logged | AegisForge v4"))
             .timestamp(serenity::Timestamp::now())
             .color(0x00E5FF),
     ))
@@ -193,7 +235,7 @@ pub async fn warn(
             .field("👤 Target", format!("<@{}>", user.id), true)
             .field("🆔 Case", format!("#{}", case.case_number), true)
             .field("📝 Reason", &reason, false)
-            .footer(serenity::CreateEmbedFooter::new("Moderation Action Logged | AegisForge v3"))
+            .footer(serenity::CreateEmbedFooter::new("Moderation Action Logged | AegisForge v4"))
             .timestamp(serenity::Timestamp::now())
             .color(0x00E5FF),
     ))
@@ -224,6 +266,35 @@ pub async fn purge(
 
     tokio::time::sleep(Duration::from_secs(4)).await;
     reply.delete(ctx).await?;
+    Ok(())
+}
+
+/// Completely clear the channel by re-creating it
+#[poise::command(slash_command, prefix_command, required_permissions = "MANAGE_CHANNELS", guild_only)]
+pub async fn nuke(ctx: Context<'_>) -> Result<(), Error> {
+    let channel = ctx.guild_channel().await.ok_or("Must be in a guild channel")?;
+    let position = channel.position;
+    
+    let new_channel = channel.guild_id.create_channel(ctx.http(), serenity::CreateChannel::new(channel.name.clone())
+        .kind(channel.kind)
+        .topic(channel.topic.clone().unwrap_or_default())
+        .nsfw(channel.nsfw)
+        .parent(channel.parent_id)
+        .permission_overwrites(channel.permission_overwrites.clone())
+        .position(position as u16)
+    ).await?;
+
+    channel.delete(ctx.http()).await?;
+
+    new_channel.send_message(ctx.http(), serenity::CreateMessage::new().embed(
+        serenity::CreateEmbed::new()
+            .title("💥 Channel Nuked")
+            .description("The forge has been reset. All previous messages were vaporized.")
+            .image("https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExMngxNXN3MngxNXN3MngxNXN3MngxNXN3MngxNXN3MngxNXN3MngxNXN3JmVwPXYxX2ludGVybmFsX2dpZl9ieV9pZCZjdD1n/HhTXt43pk1I1W/giphy.gif")
+            .footer(serenity::CreateEmbedFooter::new("Forged anew | AegisForge v4"))
+            .color(0x00E5FF)
+    )).await?;
+
     Ok(())
 }
 

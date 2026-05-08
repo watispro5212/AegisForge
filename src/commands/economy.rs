@@ -6,7 +6,7 @@ use crate::db::economy;
 /// economy stuff
 #[poise::command(
     slash_command,
-    subcommands("balance", "daily", "work", "pay", "leaderboard", "global_leaderboard", "rob", "slots", "beg", "search", "deposit", "withdraw", "gamble_info"),
+    subcommands("balance", "daily", "work", "pay", "leaderboard", "global_leaderboard", "rob", "slots", "beg", "search", "deposit", "withdraw", "gamble_info", "crime", "fish", "hunt"),
     category = "economy",
     guild_only
 )]
@@ -33,7 +33,8 @@ pub async fn balance(
             .field("👛 Wallet", format!("`${}`", eco.balance), true)
             .field("🏦 Bank", format!("`${}`", eco.bank), true)
             .field("📊 Net Worth", format!("`${}`", total), true)
-            .footer(serenity::CreateEmbedFooter::new("Bank funds are safe from robbery"))
+            .field("📈 Statistics", format!("Total Earned: `${}`\nTotal Spent: `${}`", eco.total_earned, eco.total_spent), false)
+            .footer(serenity::CreateEmbedFooter::new("AegisForge v4 Economy"))
             .color(0x00E5FF),
     ))
     .await?;
@@ -555,5 +556,135 @@ pub async fn rob(
         ))
         .await?;
     }
+    Ok(())
+}
+
+/// Commit a crime to earn big (high risk!)
+#[poise::command(slash_command, guild_only)]
+pub async fn crime(ctx: Context<'_>) -> Result<(), Error> {
+    let guild_id = ctx.guild_id().unwrap().get() as i64;
+    let user_id = ctx.author().id.get() as i64;
+
+    let eco = economy::get_user_economy(&ctx.data().database.pool, guild_id, user_id).await?;
+
+    if let Some(last) = eco.last_crime {
+        let diff = chrono::Utc::now().signed_duration_since(last);
+        if diff.num_minutes() < 60 {
+            return Err(format!("The heat is still on! Wait **{}m** before your next crime.", 60 - diff.num_minutes()).into());
+        }
+    }
+
+    let success = rand::random::<f64>() > 0.65;
+    if success {
+        let reward = rand::thread_rng().gen_range(500..=2000i64);
+        economy::update_balance(&ctx.data().database.pool, guild_id, user_id, reward).await?;
+        economy::set_last_crime(&ctx.data().database.pool, guild_id, user_id, chrono::Utc::now()).await?;
+        
+        ctx.send(poise::CreateReply::default().embed(
+            serenity::CreateEmbed::new()
+                .title("🥷 Crime Successful")
+                .description("You pulled off a high-stakes heist!")
+                .field("💰 Loot", format!("`+${}`", reward), true)
+                .color(0x00FF88)
+        )).await?;
+    } else {
+        let fine = 400;
+        economy::update_balance(&ctx.data().database.pool, guild_id, user_id, -fine).await?;
+        economy::set_last_crime(&ctx.data().database.pool, guild_id, user_id, chrono::Utc::now()).await?;
+
+        ctx.send(poise::CreateReply::default().embed(
+            serenity::CreateEmbed::new()
+                .title("👮 Busted!")
+                .description("You were caught by the Aegis Sentinels!")
+                .field("💸 Fine", format!("`-${}`", fine), true)
+                .color(0xFF3B3B)
+        )).await?;
+    }
+    Ok(())
+}
+
+/// Go fishing for some quick cash
+#[poise::command(slash_command, guild_only)]
+pub async fn fish(ctx: Context<'_>) -> Result<(), Error> {
+    let guild_id = ctx.guild_id().unwrap().get() as i64;
+    let user_id = ctx.author().id.get() as i64;
+
+    let eco = economy::get_user_economy(&ctx.data().database.pool, guild_id, user_id).await?;
+    if let Some(last) = eco.last_fish {
+        let diff = chrono::Utc::now().signed_duration_since(last);
+        if diff.num_minutes() < 5 {
+            return Err(format!("The fish aren't biting yet. Wait **{}m**.", 5 - diff.num_minutes()).into());
+        }
+    }
+
+    let fish_types = [
+        ("🐟 Common Carp", 20, 50),
+        ("🐠 Tropical Fish", 60, 120),
+        ("🐡 Blowfish", 150, 300),
+        ("🦈 Shark", 500, 1200),
+        ("✨ Legendary Golden Fish", 2000, 5000),
+    ];
+
+    let roll = rand::random::<f64>();
+    let (name, min, max) = if roll > 0.99 { fish_types[4] }
+    else if roll > 0.90 { fish_types[3] }
+    else if roll > 0.70 { fish_types[2] }
+    else if roll > 0.40 { fish_types[1] }
+    else { fish_types[0] };
+
+    let reward = rand::thread_rng().gen_range(min..=max);
+    economy::update_balance(&ctx.data().database.pool, guild_id, user_id, reward).await?;
+    economy::set_last_fish(&ctx.data().database.pool, guild_id, user_id, chrono::Utc::now()).await?;
+
+    ctx.send(poise::CreateReply::default().embed(
+        serenity::CreateEmbed::new()
+            .title("🎣 Fishing Results")
+            .description(format!("You cast your line and caught a **{}**!", name))
+            .field("💰 Value", format!("`+${}`", reward), true)
+            .color(0x00E5FF)
+    )).await?;
+    Ok(())
+}
+
+/// Go hunting in the wild
+#[poise::command(slash_command, guild_only)]
+pub async fn hunt(ctx: Context<'_>) -> Result<(), Error> {
+    let guild_id = ctx.guild_id().unwrap().get() as i64;
+    let user_id = ctx.author().id.get() as i64;
+
+    let eco = economy::get_user_economy(&ctx.data().database.pool, guild_id, user_id).await?;
+    if let Some(last) = eco.last_hunt {
+        let diff = chrono::Utc::now().signed_duration_since(last);
+        if diff.num_minutes() < 10 {
+            return Err(format!("The animals are hiding. Wait **{}m**.", 10 - diff.num_minutes()).into());
+        }
+    }
+
+    let animals = [
+        ("🐰 Rabbit", 30, 80),
+        ("🦊 Fox", 100, 250),
+        ("🦌 Deer", 300, 600),
+        ("🐻 Bear", 800, 1500),
+        ("🐉 Dragon (!!!)", 5000, 15000),
+    ];
+
+    let roll = rand::random::<f64>();
+    let (name, min, max) = if roll > 0.995 { animals[4] }
+    else if roll > 0.95 { animals[3] }
+    else if roll > 0.80 { animals[2] }
+    else if roll > 0.50 { animals[1] }
+    else { animals[0] };
+
+    let reward = rand::thread_rng().gen_range(min..=max);
+    economy::update_balance(&ctx.data().database.pool, guild_id, user_id, reward).await?;
+    economy::set_last_hunt(&ctx.data().database.pool, guild_id, user_id, chrono::Utc::now()).await?;
+
+    ctx.send(poise::CreateReply::default().embed(
+        serenity::CreateEmbed::new()
+            .title("🏹 Hunt Results")
+            .description(format!("You ventured into the woods and took down a **{}**!", name))
+            .field("💰 Value", format!("`+${}`", reward), true)
+            .color(0xFF5722)
+    )).await?;
     Ok(())
 }

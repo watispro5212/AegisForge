@@ -41,12 +41,28 @@ pub async fn update_balance(pool: &PgPool, guild_id: i64, user_id: i64, amount: 
     // Ensure user record exists first
     get_user_economy(pool, guild_id, user_id).await?;
 
+    if amount > 0 {
+        sqlx::query!(
+            "UPDATE users_economy SET balance = balance + $1, total_earned = total_earned + $1 WHERE guild_id = $2 AND user_id = $3",
+            amount,
+            guild_id,
+            user_id
+        ).execute(pool).await?;
+    } else {
+        sqlx::query!(
+            "UPDATE users_economy SET balance = balance + $1, total_spent = total_spent + $2 WHERE guild_id = $3 AND user_id = $4",
+            amount,
+            amount.abs(),
+            guild_id,
+            user_id
+        ).execute(pool).await?;
+    }
+
+    // Update global stat
     sqlx::query!(
-        "UPDATE users_economy SET balance = balance + $1 WHERE guild_id = $2 AND user_id = $3",
-        amount,
-        guild_id,
-        user_id
+        "UPDATE global_stats SET stat_value = stat_value + 1 WHERE stat_key = 'total_economy_transactions'"
     ).execute(pool).await?;
+
     Ok(())
 }
 
@@ -65,15 +81,56 @@ pub async fn set_last_daily(pool: &PgPool, guild_id: i64, user_id: i64, time: Da
 
 pub async fn set_last_work(pool: &PgPool, guild_id: i64, user_id: i64, time: DateTime<Utc>) -> sqlx::Result<()> {
     get_user_economy(pool, guild_id, user_id).await?;
-    // Use runtime query (not the ! macro) so no SQLX offline cache entry is needed
-    sqlx::query(
-        "UPDATE users_economy SET last_work = $1 WHERE guild_id = $2 AND user_id = $3"
-    )
-    .bind(time)
-    .bind(guild_id)
-    .bind(user_id)
-    .execute(pool)
-    .await?;
+    sqlx::query!(
+        "UPDATE users_economy SET last_work = $1 WHERE guild_id = $2 AND user_id = $3",
+        time,
+        guild_id,
+        user_id
+    ).execute(pool).await?;
+    Ok(())
+}
+
+pub async fn set_last_rob(pool: &PgPool, guild_id: i64, user_id: i64, time: DateTime<Utc>) -> sqlx::Result<()> {
+    get_user_economy(pool, guild_id, user_id).await?;
+    sqlx::query!(
+        "UPDATE users_economy SET last_rob = $1 WHERE guild_id = $2 AND user_id = $3",
+        time,
+        guild_id,
+        user_id
+    ).execute(pool).await?;
+    Ok(())
+}
+
+pub async fn set_last_crime(pool: &PgPool, guild_id: i64, user_id: i64, time: DateTime<Utc>) -> sqlx::Result<()> {
+    get_user_economy(pool, guild_id, user_id).await?;
+    sqlx::query!(
+        "UPDATE users_economy SET last_crime = $1 WHERE guild_id = $2 AND user_id = $3",
+        time,
+        guild_id,
+        user_id
+    ).execute(pool).await?;
+    Ok(())
+}
+
+pub async fn set_last_fish(pool: &PgPool, guild_id: i64, user_id: i64, time: DateTime<Utc>) -> sqlx::Result<()> {
+    get_user_economy(pool, guild_id, user_id).await?;
+    sqlx::query!(
+        "UPDATE users_economy SET last_fish = $1 WHERE guild_id = $2 AND user_id = $3",
+        time,
+        guild_id,
+        user_id
+    ).execute(pool).await?;
+    Ok(())
+}
+
+pub async fn set_last_hunt(pool: &PgPool, guild_id: i64, user_id: i64, time: DateTime<Utc>) -> sqlx::Result<()> {
+    get_user_economy(pool, guild_id, user_id).await?;
+    sqlx::query!(
+        "UPDATE users_economy SET last_hunt = $1 WHERE guild_id = $2 AND user_id = $3",
+        time,
+        guild_id,
+        user_id
+    ).execute(pool).await?;
     Ok(())
 }
 

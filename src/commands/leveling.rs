@@ -5,7 +5,7 @@ use crate::db::leveling;
 /// Leveling commands
 #[poise::command(
     slash_command,
-    subcommands("rank", "leaderboard"),
+    subcommands("rank", "leaderboard", "customize"),
     category = "Leveling"
 )]
 pub async fn leveling(_ctx: Context<'_>) -> Result<(), Error> {
@@ -33,10 +33,13 @@ pub async fn rank(
     ctx.send(poise::CreateReply::default()
         .embed(serenity::CreateEmbed::new()
             .title(format!("📈 {}'s Rank", target.name))
+            .thumbnail(target.face())
             .field("Level", format!("`{}`", lvl.level), true)
             .field("XP", format!("`{}/{}`", lvl.xp, next_level_xp), true)
             .field("Progress", format!("`{:.1}%`", percent), true)
-            .color(0x00E5FF)
+            .field("Customization", format!("Background: `{}`\nColor: `{}`", lvl.rank_card_background, lvl.rank_card_color), false)
+            .footer(serenity::CreateEmbedFooter::new("Use /leveling customize to change your rank card!"))
+            .color(u32::from_str_radix(lvl.rank_card_color.trim_start_matches('#'), 16).unwrap_or(0x00E5FF))
         )).await?;
     
     Ok(())
@@ -79,5 +82,36 @@ pub async fn leaderboard(
             .color(0x00E5FF)
         )).await?;
     
+    Ok(())
+}
+
+/// Customize your rank card
+#[poise::command(slash_command, guild_only)]
+pub async fn customize(
+    ctx: Context<'_>,
+    #[description = "Background name or URL"] background: Option<String>,
+    #[description = "Hex color (e.g. #00E5FF)"] color: Option<String>,
+    #[description = "Text color (e.g. #FFFFFF)"] text_color: Option<String>,
+) -> Result<(), Error> {
+    let guild_id = ctx.guild_id().unwrap().get() as i64;
+    let user_id = ctx.author().id.get() as i64;
+
+    leveling::update_rank_card_customization(
+        &ctx.data().database.pool,
+        guild_id,
+        user_id,
+        background,
+        color,
+        text_color,
+    ).await?;
+
+    ctx.send(poise::CreateReply::default().embed(
+        serenity::CreateEmbed::new()
+            .title("🎨 Rank Card Updated")
+            .description("Your rank card preferences have been saved successfully!")
+            .footer(serenity::CreateEmbedFooter::new("AegisForge v4 Customization"))
+            .color(0x00FF88)
+    )).await?;
+
     Ok(())
 }

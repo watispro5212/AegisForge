@@ -9,6 +9,12 @@ pub struct UserEconomy {
     pub bank: i64,
     pub last_daily: Option<DateTime<Utc>>,
     pub last_work: Option<DateTime<Utc>>,
+    pub last_rob: Option<DateTime<Utc>>,
+    pub last_crime: Option<DateTime<Utc>>,
+    pub last_fish: Option<DateTime<Utc>>,
+    pub last_hunt: Option<DateTime<Utc>>,
+    pub total_earned: i64,
+    pub total_spent: i64,
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,
 }

@@ -23,7 +23,7 @@ pub async fn get_user_leveling(pool: &PgPool, guild_id: i64, user_id: i64) -> sq
 
         // Create default
         sqlx::query!(
-            "INSERT INTO users_leveling (guild_id, user_id) VALUES ($1, $2) ON CONFLICT DO NOTHING",
+            "INSERT INTO users_leveling (guild_id, user_id, rank_card_background, rank_card_color, rank_card_text_color) VALUES ($1, $2, 'default', '#00E5FF', '#FFFFFF') ON CONFLICT DO NOTHING",
             guild_id,
             user_id
         ).execute(pool).await?;
@@ -59,6 +59,41 @@ pub async fn add_xp(pool: &PgPool, guild_id: i64, user_id: i64, amount: i64) -> 
     ).execute(pool).await?;
 
     Ok(leveled_up)
+}
+
+pub async fn update_rank_card_customization(
+    pool: &PgPool,
+    guild_id: i64,
+    user_id: i64,
+    background: Option<String>,
+    color: Option<String>,
+    text_color: Option<String>,
+) -> sqlx::Result<()> {
+    if let Some(bg) = background {
+        sqlx::query!(
+            "UPDATE users_leveling SET rank_card_background = $1 WHERE guild_id = $2 AND user_id = $3",
+            bg,
+            guild_id,
+            user_id
+        ).execute(pool).await?;
+    }
+    if let Some(c) = color {
+        sqlx::query!(
+            "UPDATE users_leveling SET rank_card_color = $1 WHERE guild_id = $2 AND user_id = $3",
+            c,
+            guild_id,
+            user_id
+        ).execute(pool).await?;
+    }
+    if let Some(tc) = text_color {
+        sqlx::query!(
+            "UPDATE users_leveling SET rank_card_text_color = $1 WHERE guild_id = $2 AND user_id = $3",
+            tc,
+            guild_id,
+            user_id
+        ).execute(pool).await?;
+    }
+    Ok(())
 }
 
 pub async fn get_leaderboard(pool: &PgPool, guild_id: i64, limit: i64) -> sqlx::Result<Vec<UserLeveling>> {

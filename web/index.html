@@ -25,10 +25,10 @@
             <a href="index.html#features">Features</a>
             <a href="commands.html">Commands</a>
             <a href="economy.html">Economy</a>
-            <a href="team.html">Team</a>
-            <a href="changelog.html">Changelog</a>
-            <a href="status.html">Status</a>
-            <a href="about.html">About</a>
+            <div class="nav-status">
+                <span class="status-dot online"></span>
+                <span class="status-text">Network Online</span>
+            </div>
             <a href="https://github.com/watispro5212/AegisForge" target="_blank" rel="noopener noreferrer" class="nav-link-code">GitHub</a>
             <a href="https://discord.com/oauth2/authorize?client_id=1500582485367722004&permissions=8&response_type=code&redirect_uri=https%3A%2F%2Fdiscord.com%2Foauth2%2Fauthorize%3Fclient_id%3D1500582485367722004&integration_type=0&scope=bot+identify+applications.commands+applications.commands.permissions.update+openid" target="_blank" rel="noopener noreferrer" class="btn-primary">Invite Bot</a>
         </div>
@@ -42,10 +42,6 @@
         <a href="index.html#features">Features</a>
         <a href="commands.html">Commands</a>
         <a href="economy.html">Economy</a>
-        <a href="team.html">Team</a>
-        <a href="changelog.html">Changelog</a>
-        <a href="status.html">Status</a>
-        <a href="about.html">About</a>
         <a href="https://github.com/watispro5212/AegisForge" target="_blank" rel="noopener noreferrer">GitHub</a>
         <a href="https://discord.com/oauth2/authorize?client_id=1500582485367722004&permissions=8&response_type=code&redirect_uri=https%3A%2F%2Fdiscord.com%2Foauth2%2Fauthorize%3Fclient_id%3D1500582485367722004&integration_type=0&scope=bot+identify+applications.commands+applications.commands.permissions.update+openid" target="_blank" rel="noopener noreferrer" class="btn-primary mobile-nav-invite">Invite Bot</a>
     </div>
@@ -54,14 +50,14 @@
     <header class="hero">
         <div class="hero-inner">
             <div class="hero-content">
-                <div class="hero-badge">⚡ v3.1 — Now Live</div>
-                <h1>The <span class="text-gradient">Forge</span> your server deserves.</h1>
-                <p>AegisForge is a high-performance Discord bot built in Rust — delivering blazing-fast moderation, a full economy engine, leveling, and deep server automation with zero garbage collection pauses.</p>
+                <div class="hero-badge">⚡ v4.0 — The Rust Engine, Refined</div>
+                <h1>Forged in <span class="text-gradient">Rust</span>.<br>Built for Scale.</h1>
+                <p>AegisForge v4 is a high-performance Discord powerhouse. Blazing-fast moderation, deep economic simulations, and beautiful customizable rank cards — all running on a zero-latency Rust backbone.</p>
                 <div class="hero-btns">
                     <a href="https://discord.com/oauth2/authorize?client_id=1500582485367722004&permissions=8&response_type=code&redirect_uri=https%3A%2F%2Fdiscord.com%2Foauth2%2Fauthorize%3Fclient_id%3D1500582485367722004&integration_type=0&scope=bot+identify+applications.commands+applications.commands.permissions.update+openid" target="_blank" rel="noopener noreferrer" class="btn-primary shine-effect btn-icon">
                         <i class="fa-brands fa-discord"></i>Add to Server
                     </a>
-                    <a href="commands.html" class="btn-secondary">Browse Commands →</a>
+                    <a href="#premium" class="btn-secondary">Explore Premium →</a>
                 </div>
                 <div class="hero-stats">
                     <div class="stat"><span class="stat-num" id="hero-servers">--</span><span class="stat-label">Servers</span></div>
@@ -76,14 +72,14 @@
                 <div class="discord-mockup">
                     <div class="mockup-header">
                         <div class="mockup-dots"><span></span><span></span><span></span></div>
-                        <div class="mockup-title"># general-chat &nbsp;•&nbsp; AegisForge</div>
+                        <div class="mockup-title"># global-chat &nbsp;•&nbsp; AegisForge</div>
                     </div>
                     <div class="mockup-body">
                         <div class="mockup-msg">
                             <img src="https://cdn.discordapp.com/embed/avatars/0.png" class="mockup-avatar" alt="User">
                             <div class="mockup-content">
-                                <div class="mockup-meta"><span class="mockup-name">Admin</span> <span class="mockup-time">Today at 3:14 PM</span></div>
-                                <div class="mockup-text">/ban user:@spammer reason:Phishing links</div>
+                                <div class="mockup-meta"><span class="mockup-name">watispro1</span> <span class="mockup-time">Today at 4:20 PM</span></div>
+                                <div class="mockup-text">/leveling rank</div>
                             </div>
                         </div>
                         <div class="mockup-msg bot">
@@ -92,16 +88,16 @@
                                 <div class="mockup-meta">
                                     <span class="mockup-name bot-name">AegisForge</span>
                                     <span class="bot-badge">APP</span>
-                                    <span class="mockup-time">Today at 3:14 PM</span>
+                                    <span class="mockup-time">Today at 4:20 PM</span>
                                 </div>
                                 <div class="mockup-embed">
                                     <div class="embed-sidebar success"></div>
                                     <div class="embed-inner">
-                                        <div class="embed-title">🔨 User Banned</div>
+                                        <div class="embed-title">📈 Your Leveling Stats</div>
                                         <div class="embed-desc">
-                                            <strong>Target:</strong> @spammer<br>
-                                            <strong>Reason:</strong> Phishing links<br>
-                                            <strong>Case:</strong> #1042 &nbsp;|&nbsp; <strong>By:</strong> Admin
+                                            <strong>Level:</strong> 42<br>
+                                            <strong>XP:</strong> 12,450 / 15,000<br>
+                                            <strong>Rank:</strong> #1 Global
                                         </div>
                                     </div>
                                 </div>
@@ -110,8 +106,8 @@
                         <div class="mockup-msg">
                             <img src="https://cdn.discordapp.com/embed/avatars/2.png" class="mockup-avatar" alt="User">
                             <div class="mockup-content">
-                                <div class="mockup-meta"><span class="mockup-name mockup-name-mod">Mod</span> <span class="mockup-time">Today at 3:15 PM</span></div>
-                                <div class="mockup-text">/economy slots bet:500</div>
+                                <div class="mockup-meta"><span class="mockup-name">Member</span> <span class="mockup-time">Today at 4:21 PM</span></div>
+                                <div class="mockup-text">/economy slots bet:1000</div>
                             </div>
                         </div>
                         <div class="mockup-msg bot">
@@ -120,13 +116,13 @@
                                 <div class="mockup-meta">
                                     <span class="mockup-name bot-name">AegisForge</span>
                                     <span class="bot-badge">APP</span>
-                                    <span class="mockup-time">Today at 3:15 PM</span>
+                                    <span class="mockup-time">Today at 4:21 PM</span>
                                 </div>
                                 <div class="mockup-embed">
                                     <div class="embed-sidebar success-alt"></div>
                                     <div class="embed-inner">
-                                        <div class="embed-title">🎰 Slot Machine — ⭐ SUPER TRIPLE! ⭐</div>
-                                        <div class="embed-desc">[ ⭐ | ⭐ | ⭐ ]<br>You won <strong>$7,500</strong>! (15x)</div>
+                                        <div class="embed-title">🎰 Slot Machine — WINNER!</div>
+                                        <div class="embed-desc">[ 🔔 | 🔔 | 🔔 ]<br>You won <strong>$10,000</strong>! (10x)</div>
                                     </div>
                                 </div>
                             </div>
@@ -166,139 +162,134 @@
         </div>
     </div>
 
-    <div class="banner-container">
-        <img src="assets/banner.png" alt="AegisForge Banner" class="banner-img">
-    </div>
-
-    <!-- Tech Stack -->
+    <!-- Tech Stack Spotlight -->
     <section class="stack-section">
         <div class="section-header">
-            <span class="section-tag">High Performance</span>
-            <h2>The AegisForge Engine</h2>
+            <span class="section-tag">Performance</span>
+            <h2>Built on the <span class="text-gradient">Cutting Edge</span></h2>
         </div>
         <div class="stack-grid">
             <div class="stack-card" data-reveal>
                 <div class="stack-icon">🦀</div>
-                <h3>Rust Powered</h3>
-                <p>Built with memory safety and zero-cost abstractions for unparalleled stability and performance.</p>
+                <h3>Rust Core</h3>
+                <p>Native performance with memory safety. No memory leaks, no crashes, just pure speed.</p>
             </div>
             <div class="stack-card" data-reveal>
                 <div class="stack-icon">⚡</div>
-                <h3>Zero GC Pauses</h3>
-                <p>No garbage collection means no random latency spikes. Consistent, predictable response times every time.</p>
+                <h3>Hyper-Scaling</h3>
+                <p>Built to handle millions of events per hour without slowing down. Enterprise-grade stability.</p>
             </div>
             <div class="stack-card" data-reveal>
-                <div class="stack-icon">🔒</div>
-                <h3>Stateless Design</h3>
-                <p>Distributed, serverless PostgreSQL-backed architecture ensures your data is always safe and accessible.</p>
-            </div>
-            <div class="stack-card" data-reveal>
-                <div class="stack-icon">📡</div>
-                <h3>Smart Caching</h3>
-                <p>Lock-free DashMap caching layer eliminates redundant DB hits — guild configs served from memory in nanoseconds.</p>
+                <div class="stack-icon">🛡️</div>
+                <h3>Stateless Mod</h3>
+                <p>Your moderation data is synced across nodes instantly. Never miss a log or a ban.</p>
             </div>
         </div>
     </section>
 
-    <!-- Features Section -->
+    <!-- Interactive Features -->
     <section id="features" class="features-section">
         <div class="section-header">
-            <span class="section-tag">Capabilities</span>
-            <h2>Powerful Tools for Your Community</h2>
+            <span class="section-tag">The Toolbox</span>
+            <h2>Everything you need to <span class="text-gradient">Dominate</span></h2>
         </div>
         <div class="features-grid">
             <div class="feature-card reveal-on-scroll">
                 <div class="feature-icon">🛡️</div>
-                <h3>Advanced Moderation</h3>
-                <p>Timeout, kick, ban, warn, purge — all with structured embed responses and full audit trails built for accountability.</p>
-                <ul class="feature-list">
-                    <li>Automod word filtering</li>
-                    <li>Case tracking system</li>
-                    <li>Appeal-ready mod logs</li>
-                </ul>
+                <h3>Moderation Pro</h3>
+                <p>Nuke channels, softban trolls, and track every single warning with unique case IDs. The ultimate mod toolkit.</p>
             </div>
             <div class="feature-card reveal-on-scroll">
                 <div class="feature-icon">💰</div>
-                <h3>Economy Engine</h3>
-                <p>A fully persistent server economy with a wallet, bank, daily rewards, slot machines, rob mechanics, and rich leaderboards.</p>
-                <ul class="feature-list">
-                    <li>Per-server balances</li>
-                    <li>Slot machine with 80%+ win rate</li>
-                    <li>Global wealth leaderboard</li>
-                </ul>
+                <h3>Economy 2.0</h3>
+                <p>A deep, global economy system. Fishing, hunting, crime, and high-stakes gambling built for engagement.</p>
             </div>
             <div class="feature-card reveal-on-scroll">
                 <div class="feature-icon">📈</div>
-                <h3>XP Leveling</h3>
-                <p>Reward your active members with an automatic XP system. Every message earns XP — reach level milestones to unlock roles.</p>
-                <ul class="feature-list">
-                    <li>Auto XP per message</li>
-                    <li>Level-up notifications</li>
-                    <li>Role rewards at milestones</li>
-                </ul>
-            </div>
-            <div class="feature-card reveal-on-scroll">
-                <div class="feature-icon">⚙️</div>
-                <h3>Full Configuration</h3>
-                <p>Set mod log channels, welcome messages, auto-roles, custom prefix, and more — all configurable per server.</p>
-                <ul class="feature-list">
-                    <li>Welcome & goodbye messages</li>
-                    <li>Auto-role on join</li>
-                    <li>Per-server prefix</li>
-                </ul>
-            </div>
-            <div class="feature-card reveal-on-scroll">
-                <div class="feature-icon">⚡</div>
-                <h3>Utility Commands</h3>
-                <p>Server stats, user lookups, avatar fetching, QR codes, math evaluator, world clock, polls, and bot diagnostics.</p>
-                <ul class="feature-list">
-                    <li>Server &amp; user info</li>
-                    <li>QR code generator</li>
-                    <li>Reaction polls</li>
-                </ul>
-            </div>
-            <div class="feature-card reveal-on-scroll">
-                <div class="feature-icon">🎉</div>
-                <h3>Fun Commands</h3>
-                <p>Keep your community entertained with coinflip, dice, 8-ball, trivia, ship, memes, animal pics, and 20+ more fun commands.</p>
-                <ul class="feature-list">
-                    <li>Trivia &amp; games</li>
-                    <li>Animal image gallery</li>
-                    <li>Social interaction cmds</li>
-                </ul>
+                <h3>Leveling v4</h3>
+                <p>The most customizable leveling system on Discord. Set custom rank card backgrounds and HEX colors.</p>
             </div>
         </div>
     </section>
 
-    <!-- Stats Summary -->
-    <section class="stats-section">
+    <!-- Testimonials -->
+    <section class="testimonials-section">
         <div class="section-header">
-            <span class="section-tag">Live Network</span>
-            <h2>Global Statistics</h2>
+            <span class="section-tag">Social Proof</span>
+            <h2>Trusted by <span class="text-gradient">Server Owners</span></h2>
         </div>
-        <div class="stats-container">
-            <div class="stats-card-main glow-card">
-                <div class="dashboard-stats" id="live-stats">
-                    <div class="stat-box"><span class="stat-value" id="stat-guilds">--</span><span class="stat-label">Servers</span></div>
-                    <div class="stat-box"><span class="stat-value" id="stat-users">--</span><span class="stat-label">Users</span></div>
-                    <div class="stat-box"><span class="stat-value" id="stat-uptime">--</span><span class="stat-label">Uptime</span></div>
-                    <div class="stat-box"><span class="stat-value" id="stat-cases">--</span><span class="stat-label">Commands Run</span></div>
-                </div>
+        <div class="testimonials-grid">
+            <div class="testimonial-card" data-reveal>
+                <div class="quote">"AegisForge is the only bot that doesn't lag when my server hits 10k members. The Rust backend is no joke."</div>
+                <div class="author">— Cryptic, Owner of 'Nexus Gaming'</div>
+            </div>
+            <div class="testimonial-card" data-reveal>
+                <div class="quote">"The /nuke command is a lifesaver. Cleanest moderation bot I've ever used in 5 years of community management."</div>
+                <div class="author">— Sarah J., Mod Coordinator</div>
             </div>
         </div>
     </section>
 
-    <!-- Commands Reference Teaser -->
-    <section id="commands" class="commands-section">
+    <!-- FAQ Section -->
+    <section class="faq-section">
         <div class="section-header">
-            <span class="section-tag">Interactive</span>
-            <h2>Command Registry</h2>
+            <span class="section-tag">Knowledge Base</span>
+            <h2>Frequently Asked Questions</h2>
         </div>
-        <div class="registry-teaser">
-            <p>AegisForge features a comprehensive library of 250+ commands spanning moderation, economy, leveling, utility, and fun. Explore the full interactive registry.</p>
-            <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
-                <a href="commands.html" class="btn-primary shine-effect">Browse Full Registry →</a>
-                <a href="economy.html" class="btn-secondary">Economy Guide</a>
+        <div class="faq-grid">
+            <div class="faq-item">
+                <h3>Why Rust?</h3>
+                <p>Rust allows us to process Discord events with near-zero latency and minimal memory footprint, making AegisForge faster than any Python or JS bot.</p>
+            </div>
+            <div class="faq-item">
+                <h3>Is it free?</h3>
+                <p>AegisForge is 100% free for core moderation and economy features. We offer premium tiers for advanced customization and higher limits.</p>
+            </div>
+            <div class="faq-item">
+                <h3>How do I setup logs?</h3>
+                <p>Use <code>/logs channel:#channel</code> to designate where all moderation actions should be archived.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Premium Section -->
+    <section id="premium" class="pricing-section">
+        <div class="section-header">
+            <span class="section-tag">Premium</span>
+            <h2>Unlock the <span class="text-gradient">Full Forge</span></h2>
+        </div>
+        <div class="pricing-grid">
+            <div class="pricing-card" data-reveal>
+                <h3>Free</h3>
+                <div class="price">$0<span>/mo</span></div>
+                <ul class="price-features">
+                    <li><i class="fas fa-check"></i> 250+ Base Commands</li>
+                    <li><i class="fas fa-check"></i> Standard Moderation</li>
+                    <li><i class="fas fa-check"></i> Basic Economy</li>
+                </ul>
+                <a href="#" class="btn-secondary">Invite Bot</a>
+            </div>
+            <div class="pricing-card featured" data-reveal>
+                <div class="card-badge">PRO</div>
+                <h3>Aegis Pro</h3>
+                <div class="price">$4.99<span>/mo</span></div>
+                <ul class="price-features">
+                    <li><i class="fas fa-check"></i> Everything in Free</li>
+                    <li><i class="fas fa-check"></i> Custom Rank Backgrounds</li>
+                    <li><i class="fas fa-check"></i> Advanced Automod Engine</li>
+                    <li><i class="fas fa-check"></i> Priority Processing</li>
+                </ul>
+                <a href="https://discord.gg/8p5Epc8Qd8" class="btn-primary shine-effect">Upgrade Now</a>
+            </div>
+            <div class="pricing-card" data-reveal>
+                <h3>Enterprise</h3>
+                <div class="price">$9.99<span>/mo</span></div>
+                <ul class="price-features">
+                    <li><i class="fas fa-check"></i> Everything in Pro</li>
+                    <li><i class="fas fa-check"></i> Custom Bot Branding</li>
+                    <li><i class="fas fa-check"></i> White-label Dashboard</li>
+                </ul>
+                <a href="https://discord.gg/8p5Epc8Qd8" class="btn-secondary">Contact Us</a>
             </div>
         </div>
     </section>
@@ -307,12 +298,12 @@
     <section class="cta-section">
         <div class="cta-glow"></div>
         <h2>Ready to forge <span class="text-gradient">your server</span>?</h2>
-        <p>Add AegisForge in seconds. No bloat, no noise — just clean, fast control backed by Rust.</p>
+        <p>Join thousands of servers scaling with AegisForge. Performance is just one click away.</p>
         <div class="hero-btns">
             <a href="https://discord.com/oauth2/authorize?client_id=1500582485367722004&permissions=8&response_type=code&redirect_uri=https%3A%2F%2Fdiscord.com%2Foauth2%2Fauthorize%3Fclient_id%3D1500582485367722004&integration_type=0&scope=bot+identify+applications.commands+applications.commands.permissions.update+openid" target="_blank" rel="noopener noreferrer" class="btn-primary btn-lg shine-effect btn-icon">
                 <i class="fa-brands fa-discord"></i>Invite AegisForge
             </a>
-            <a href="https://discord.com/oauth2/authorize?client_id=1500582485367722004&response_type=code&redirect_uri=https%3A%2F%2Fdiscord.com%2Foauth2%2Fauthorize%3Fclient_id%3D1500582485367722004&integration_type=1&scope=identify+applications.commands+connections" target="_blank" rel="noopener noreferrer" class="btn-secondary btn-lg">Install to User Profile</a>
+            <a href="https://discord.gg/8p5Epc8Qd8" class="btn-secondary btn-lg">Join Support Server</a>
         </div>
     </section>
 
@@ -328,17 +319,13 @@
                 <a href="commands.html">Commands</a>
                 <a href="economy.html">Economy</a>
                 <a href="team.html">Team</a>
-                <a href="changelog.html">Changelog</a>
-                <a href="status.html">Status</a>
-                <a href="about.html">About</a>
-                <a href="https://github.com/watispro5212/AegisForge" target="_blank" rel="noopener noreferrer">GitHub</a>
                 <a href="privacy.html">Privacy Policy</a>
                 <a href="terms.html">Terms of Service</a>
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2026 AegisForge. Forged with 🦀 Rust and precision.</p>
-            <p class="footer-tagline">Engineered, not improvised.</p>
+            <p>&copy; 2026 AegisForge. Built by watispro1.</p>
+            <p class="footer-tagline">Engineered for Performance.</p>
         </div>
     </footer>
 
