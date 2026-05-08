@@ -10,7 +10,7 @@ pub async fn event_handler(
 ) -> Result<(), crate::Error> {
     match event {
         serenity::FullEvent::Ready { data_about_bot } => {
-            info!("🔩 AegisForge online as {} ({})", data_about_bot.user.name, data_about_bot.user.id);
+            info!("🔩 aegisforge online as {} ({})", data_about_bot.user.name, data_about_bot.user.id);
 
             let guild_count = ctx.cache.guild_count();
             set_presence(ctx, guild_count, 0);
@@ -27,21 +27,31 @@ pub async fn event_handler(
                 }
             });
 
-            // startup webhook notification
-            if let Ok(webhook_url) = std::env::var("STATUS_WEBHOOK_URL") {
-                if let Ok(webhook) = serenity::model::webhook::Webhook::from_url(&ctx.http, &webhook_url).await {
-                    let embed = serenity::builder::CreateEmbed::new()
-                        .title("🔩 bot's online lol")
-                        .description(format!(
-                            "Bot started successfully across **{}** servers.",
-                            guild_count
-                        ))
-                        .field("Version", format!("`v{}`", env!("CARGO_PKG_VERSION")), true)
-                        .field("Servers", format!("`{}`", guild_count), true)
-                        .footer(serenity::builder::CreateEmbedFooter::new("aegisforge v4 lazy"))
-                        .color(0x00E5FF);
-                    let builder = serenity::builder::ExecuteWebhook::new().embed(embed);
-                    let _ = webhook.execute(&ctx.http, false, builder).await;
+            // startup webhook notification — only on shard 0 to avoid spam lol
+            if ctx.shard_id.0 == 0 {
+                if let Ok(webhook_url) = std::env::var("STATUS_WEBHOOK_URL") {
+                    let http = ctx.http.clone();
+                    tokio::spawn(async move {
+                        match serenity::model::webhook::Webhook::from_url(&http, &webhook_url).await {
+                            Ok(webhook) => {
+                                let embed = serenity::builder::CreateEmbed::new()
+                                    .title("🔩 bot's online lol")
+                                    .description(format!(
+                                        "bot started successfully across **{}** servers.",
+                                        guild_count
+                                    ))
+                                    .field("version", format!("`v{}`", env!("CARGO_PKG_VERSION")), true)
+                                    .field("shards", "2", true)
+                                    .footer(serenity::builder::CreateEmbedFooter::new("aegisforge v4 lazy"))
+                                    .color(0x00E5FF);
+                                let builder = serenity::builder::ExecuteWebhook::new().embed(embed);
+                                if let Err(e) = webhook.execute(&http, false, builder).await {
+                                    error!("❌ failed to send startup webhook: {:?}", e);
+                                }
+                            }
+                            Err(e) => error!("❌ failed to load status webhook: {:?}", e),
+                        }
+                    });
                 }
             }
         }
@@ -51,19 +61,26 @@ pub async fn event_handler(
             set_presence(ctx, guild_count, 0);
 
             if let Some(true) = is_new {
-                info!("📥 Joined new server: {} ({})", guild.name, guild.id);
+                info!("📥 joined new server: {} ({})", guild.name, guild.id);
                 if let Ok(webhook_url) = std::env::var("STATUS_WEBHOOK_URL") {
-                    if let Ok(webhook) = serenity::model::webhook::Webhook::from_url(&ctx.http, &webhook_url).await {
-                        let embed = serenity::builder::CreateEmbed::new()
-                            .title("📥 someone added me lol")
-                            .description(format!("**{}**", guild.name))
-                            .field("Members", format!("`{}`", guild.member_count), true)
-                            .field("Total Servers", format!("`{}`", guild_count), true)
-                            .footer(serenity::builder::CreateEmbedFooter::new(format!("guild id: {}", guild.id)))
-                            .color(0x57F287);
-                        let builder = serenity::builder::ExecuteWebhook::new().embed(embed);
-                        let _ = webhook.execute(&ctx.http, false, builder).await;
-                    }
+                    let http = ctx.http.clone();
+                    let guild_name = guild.name.clone();
+                    let member_count = guild.member_count;
+                    let guild_id = guild.id;
+                    
+                    tokio::spawn(async move {
+                        if let Ok(webhook) = serenity::model::webhook::Webhook::from_url(&http, &webhook_url).await {
+                            let embed = serenity::builder::CreateEmbed::new()
+                                .title("📥 someone added me lol")
+                                .description(format!("**{}**", guild_name))
+                                .field("members", format!("`{}`", member_count), true)
+                                .field("total servers", format!("`{}`", guild_count), true)
+                                .footer(serenity::builder::CreateEmbedFooter::new(format!("guild id: {}", guild_id)))
+                                .color(0x57F287);
+                            let builder = serenity::builder::ExecuteWebhook::new().embed(embed);
+                            let _ = webhook.execute(&http, false, builder).await;
+                        }
+                    });
                 }
             }
         }
