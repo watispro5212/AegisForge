@@ -1,12 +1,14 @@
-# fly.toml app configuration file generated for aegisforge on 2026-05-06T00:20:37Z
-#
-# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
-#
+# fly.toml app configuration file
+# See https://fly.io/docs/reference/configuration/
 
 app = 'aegisforge'
 primary_region = 'dfw'
 
 [build]
+
+[env]
+  PORT = "8080"
+  RUST_LOG = "aegisforge=info,sqlx=warn"
 
 [http_service]
   internal_port = 8080
@@ -15,6 +17,18 @@ primary_region = 'dfw'
   auto_start_machines = true
   min_machines_running = 1
   processes = ['app']
+
+  [http_service.concurrency]
+    type = "requests"
+    soft_limit = 200
+    hard_limit = 250
+
+[[http_service.checks]]
+  grace_period = "10s"
+  interval = "30s"
+  method = "GET"
+  timeout = "5s"
+  path = "/"
 
 [[vm]]
   memory = '1gb'

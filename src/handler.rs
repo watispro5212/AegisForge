@@ -1,80 +1,122 @@
 use poise::serenity_prelude as serenity;
 use tracing::info;
+use std::time::Duration;
 
 pub async fn event_handler(
-    _ctx: &serenity::Context,
+    ctx: &serenity::Context,
     event: &serenity::FullEvent,
     _framework: poise::FrameworkContext<'_, crate::Data, crate::Error>,
-    _data: &crate::Data,
+    data: &crate::Data,
 ) -> Result<(), crate::Error> {
     match event {
         serenity::FullEvent::Ready { data_about_bot } => {
-            info!("bot is up lol: {}", data_about_bot.user.name);
-            let guild_count = _ctx.cache.guild_count();
-            _ctx.set_presence(Some(serenity::ActivityData::watching(format!("over {} servers | aegisforge.com", guild_count))), serenity::OnlineStatus::Online);
-            
+            info!("🔩 AegisForge online as {} ({})", data_about_bot.user.name, data_about_bot.user.id);
+
+            let guild_count = ctx.cache.guild_count();
+            set_presence(ctx, guild_count, 0);
+
+            // Rotating presence — cycles every 60s through branded status messages
+            let ctx_clone = ctx.clone();
+            tokio::spawn(async move {
+                let mut idx: usize = 1;
+                loop {
+                    tokio::time::sleep(Duration::from_secs(60)).await;
+                    let guilds = ctx_clone.cache.guild_count();
+                    set_presence(&ctx_clone, guilds, idx);
+                    idx = (idx + 1) % 4;
+                }
+            });
+
+            // Startup webhook notification
             if let Ok(webhook_url) = std::env::var("STATUS_WEBHOOK_URL") {
-                if let Ok(webhook) = serenity::model::webhook::Webhook::from_url(&_ctx.http, &webhook_url).await {
-                    let count = _ctx.cache.guild_count();
+                if let Ok(webhook) = serenity::model::webhook::Webhook::from_url(&ctx.http, &webhook_url).await {
                     let embed = serenity::builder::CreateEmbed::new()
-                        .title("🚀 up now")
-                        .description(format!("bot is online for **{}** servers.", count))
+                        .title("🔩 AegisForge Online")
+                        .description(format!(
+                            "Bot started successfully across **{}** servers.",
+                            guild_count
+                        ))
+                        .field("Version", format!("`v{}`", env!("CARGO_PKG_VERSION")), true)
+                        .field("Servers", format!("`{}`", guild_count), true)
+                        .footer(serenity::builder::CreateEmbedFooter::new("AegisForge v3"))
                         .color(0x00E5FF);
                     let builder = serenity::builder::ExecuteWebhook::new().embed(embed);
-                    let _ = webhook.execute(&_ctx.http, false, builder).await;
+                    let _ = webhook.execute(&ctx.http, false, builder).await;
                 }
             }
         }
+
         serenity::FullEvent::GuildCreate { guild, is_new } => {
-            let guild_count = _ctx.cache.guild_count();
-            _ctx.set_presence(Some(serenity::ActivityData::watching(format!("over {} servers | aegisforge.com", guild_count))), serenity::OnlineStatus::Online);
+            let guild_count = ctx.cache.guild_count();
+            set_presence(ctx, guild_count, 0);
 
             if let Some(true) = is_new {
+                info!("📥 Joined new server: {} ({})", guild.name, guild.id);
                 if let Ok(webhook_url) = std::env::var("STATUS_WEBHOOK_URL") {
-                    if let Ok(webhook) = serenity::model::webhook::Webhook::from_url(&_ctx.http, &webhook_url).await {
-                        let member_count = guild.member_count;
+                    if let Ok(webhook) = serenity::model::webhook::Webhook::from_url(&ctx.http, &webhook_url).await {
                         let embed = serenity::builder::CreateEmbed::new()
-                            .title("📥 new server join")
-                            .description(format!("bot joined **{}**! it has **{}** people.", guild.name, member_count))
+                            .title("📥 New Server Joined")
+                            .description(format!("**{}**", guild.name))
+                            .field("Members", format!("`{}`", guild.member_count), true)
+                            .field("Total Servers", format!("`{}`", guild_count), true)
+                            .footer(serenity::builder::CreateEmbedFooter::new(format!("Guild ID: {}", guild.id)))
                             .color(0x57F287);
                         let builder = serenity::builder::ExecuteWebhook::new().embed(embed);
-                        let _ = webhook.execute(&_ctx.http, false, builder).await;
+                        let _ = webhook.execute(&ctx.http, false, builder).await;
                     }
                 }
             }
         }
+
         serenity::FullEvent::GuildDelete { incomplete, .. } => {
-            let guild_count = _ctx.cache.guild_count();
-            _ctx.set_presence(Some(serenity::ActivityData::watching(format!("over {} servers | aegisforge.com", guild_count))), serenity::OnlineStatus::Online);
+            let guild_count = ctx.cache.guild_count();
+            set_presence(ctx, guild_count, 0);
+            info!("📤 Left server: {}", incomplete.id);
         }
 
-        serenity::FullEvent::MessageDelete { channel_id, deleted_message_id, guild_id: _ } => {
-            info!("Message deleted in channel {}: {}", channel_id, deleted_message_id);
-        }
         serenity::FullEvent::GuildMemberAddition { new_member } => {
             let guild_id = new_member.guild_id.get() as i64;
-            let db = &_data.database;
-            
+            let db = &data.database;
+
             if let Ok(config) = db.get_guild_config(guild_id).await {
-                // Autorole
+                // Auto-role
                 if let Some(role_id) = config.auto_role_id {
-                    let _ = new_member.add_role(&_ctx.http, serenity::RoleId::new(role_id as u64)).await;
+                    let _ = new_member
+                        .add_role(&ctx.http, serenity::RoleId::new(role_id as u64))
+                        .await;
                 }
 
-                // welcome stuff
+                // Welcome message
                 if let Some(channel_id) = config.welcome_channel {
-                    let template = &config.welcome_message;
-                    if !template.is_empty() {
-                        let server_name = _ctx.cache.guild(new_member.guild_id).map(|g| g.name.clone()).unwrap_or_else(|| "the server".to_string());
-                        let msg = template
+                    if !config.welcome_message.is_empty() {
+                        let server_name = ctx
+                            .cache
+                            .guild(new_member.guild_id)
+                            .map(|g| g.name.clone())
+                            .unwrap_or_else(|| "the server".to_string());
+
+                        let msg = config
+                            .welcome_message
                             .replace("{user}", &format!("<@{}>", new_member.user.id))
                             .replace("{server}", &server_name);
-                        
-                        let _ = serenity::ChannelId::new(channel_id as u64).say(&_ctx.http, msg).await;
+
+                        let embed = serenity::builder::CreateEmbed::new()
+                            .title(format!("👋 Welcome to {}!", server_name))
+                            .description(&msg)
+                            .thumbnail(new_member.user.face())
+                            .footer(serenity::builder::CreateEmbedFooter::new(
+                                format!("Member #{}", ctx.cache.guild(new_member.guild_id).map(|g| g.member_count).unwrap_or(0))
+                            ))
+                            .color(0x00E5FF);
+
+                        let _ = serenity::ChannelId::new(channel_id as u64)
+                            .send_message(&ctx.http, serenity::builder::CreateMessage::new().embed(embed))
+                            .await;
                     }
                 }
             }
         }
+
         serenity::FullEvent::Message { new_message } => {
             if new_message.author.bot {
                 return Ok(());
@@ -85,7 +127,7 @@ pub async fn event_handler(
                 None => return Ok(()),
             };
 
-            let db = &_data.database;
+            let db = &data.database;
             let config = match db.get_guild_config(guild_id).await {
                 Ok(c) => c,
                 Err(_) => return Ok(()),
@@ -93,61 +135,130 @@ pub async fn event_handler(
 
             // ── Leveling ────────────────────────────────────────────
             if config.leveling_enabled {
-                match crate::db::leveling::add_xp(&db.pool, guild_id, new_message.author.id.get() as i64, 15).await {
-                    Ok(true) => {
-                        // level up lol
-                        if let Ok(user_lvl) = crate::db::leveling::get_user_leveling(&db.pool, guild_id, new_message.author.id.get() as i64).await {
-                            let template = if config.level_up_message.is_empty() {
-                                "GG {user}, you leveled up to **Level {level}**!".to_string()
-                            } else {
-                                config.level_up_message.clone()
-                            };
-                            let msg = template
-                                .replace("{user}", &format!("<@{}>", new_message.author.id))
-                                .replace("{level}", &user_lvl.level.to_string());
-                            
-                            let _ = new_message.channel_id.say(&_ctx.http, msg).await;
+                if let Ok(true) = crate::db::leveling::add_xp(
+                    &db.pool,
+                    guild_id,
+                    new_message.author.id.get() as i64,
+                    15,
+                )
+                .await
+                {
+                    if let Ok(user_lvl) = crate::db::leveling::get_user_leveling(
+                        &db.pool,
+                        guild_id,
+                        new_message.author.id.get() as i64,
+                    )
+                    .await
+                    {
+                        let template = if config.level_up_message.is_empty() {
+                            "Congratulations {user}, you reached **Level {level}**! Keep it up. 🚀".to_string()
+                        } else {
+                            config.level_up_message.clone()
+                        };
 
-                            // Check for level roles
-                            if let Ok(roles) = crate::db::leveling::get_level_roles(&db.pool, guild_id).await {
-                                for lr in roles {
-                                    if user_lvl.level >= lr.level {
-                                        let _ = _ctx.http.add_member_role(
+                        let msg_text = template
+                            .replace("{user}", &format!("<@{}>", new_message.author.id))
+                            .replace("{level}", &user_lvl.level.to_string());
+
+                        let embed = serenity::builder::CreateEmbed::new()
+                            .title("⬆️ Level Up!")
+                            .description(&msg_text)
+                            .thumbnail(new_message.author.face())
+                            .field("New Level", format!("`{}`", user_lvl.level), true)
+                            .field("Total XP", format!("`{}`", user_lvl.xp), true)
+                            .color(0xBF5AF2);
+
+                        let _ = new_message
+                            .channel_id
+                            .send_message(
+                                &ctx.http,
+                                serenity::builder::CreateMessage::new().embed(embed),
+                            )
+                            .await;
+
+                        // Assign level roles
+                        if let Ok(roles) = crate::db::leveling::get_level_roles(&db.pool, guild_id).await {
+                            for lr in roles {
+                                if user_lvl.level >= lr.level {
+                                    let _ = ctx
+                                        .http
+                                        .add_member_role(
                                             new_message.guild_id.unwrap(),
                                             new_message.author.id,
                                             serenity::RoleId::new(lr.role_id as u64),
                                             Some("Level role reward"),
-                                        ).await;
-                                    }
+                                        )
+                                        .await;
                                 }
                             }
                         }
                     }
-                    _ => {}
                 }
             }
 
-            // ── Automod ─────────────────────────────────────────────
-            let content = new_message.content.to_lowercase();
-            
-            // get blacklist
-            let blacklisted = vec!["badword1", "badword2", "spamlink.com", "freemoney.com"];
-            if let Ok(guild_blacklist) = db.get_automod_blacklist(guild_id).await {
-                for phrase in guild_blacklist {
-                    if content.contains(&phrase.to_lowercase()) {
-                        let _ = new_message.delete(_ctx).await;
-                        let _ = new_message.channel_id.say(_ctx, format!("🛡️ **automod:** <@{}> no bad words lol.", new_message.author.id)).await;
+            // ── Automod — guild-specific blacklist only ──────────────
+            if config.automod_enabled {
+                let content = new_message.content.to_lowercase();
+
+                if let Ok(guild_blacklist) = db.get_automod_blacklist(guild_id).await {
+                    let hit = guild_blacklist
+                        .iter()
+                        .find(|phrase| content.contains(&phrase.to_lowercase()));
+
+                    if let Some(phrase) = hit {
+                        let _ = new_message.delete(ctx).await;
+
+                        let embed = serenity::builder::CreateEmbed::new()
+                            .title("🛡️ AutoMod — Message Removed")
+                            .description(format!(
+                                "<@{}>'s message was removed for containing a blacklisted phrase.",
+                                new_message.author.id
+                            ))
+                            .field("Reason", "Blacklisted phrase detected", false)
+                            .footer(serenity::builder::CreateEmbedFooter::new(
+                                "Configure your blacklist with /automod settings",
+                            ))
+                            .color(0xFF3B3B);
+
+                        let _ = new_message
+                            .channel_id
+                            .send_message(
+                                ctx,
+                                serenity::builder::CreateMessage::new().embed(embed),
+                            )
+                            .await;
+
                         return Ok(());
                     }
                 }
             }
-            
-            if blacklisted.iter().any(|word| content.contains(word)) {
-                let _ = new_message.delete(_ctx).await;
-                let _ = new_message.channel_id.say(_ctx, format!("🛡️ **Aegis Automod:** <@{}> Blacklisted word detected.", new_message.author.id)).await;
-            }
         }
+
         _ => {}
     }
+
     Ok(())
+}
+
+/// Set the bot's Discord presence. `idx` rotates through 4 branded status messages.
+fn set_presence(ctx: &serenity::Context, guild_count: usize, idx: usize) {
+    let (activity, status) = match idx % 4 {
+        0 => (
+            serenity::ActivityData::watching(format!("{} servers | /help", guild_count)),
+            serenity::OnlineStatus::Online,
+        ),
+        1 => (
+            serenity::ActivityData::playing("economy | /economy balance"),
+            serenity::OnlineStatus::Online,
+        ),
+        2 => (
+            serenity::ActivityData::watching(format!("over {} communities grow", guild_count)),
+            serenity::OnlineStatus::Online,
+        ),
+        _ => (
+            serenity::ActivityData::listening("aegisforge-vert.vercel.app"),
+            serenity::OnlineStatus::Online,
+        ),
+    };
+    ctx.set_presence(Some(activity), status);
 }
