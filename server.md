@@ -25,11 +25,9 @@ AegisForge v4 is a next-generation Discord utility designed for high-capacity se
 * **Bot Info**: Real-time stats on shard health, command usage, and cluster status.
 * **Global Leaderboards**: Competitive leveling and wealth tracking.
 
-### ⭐ Premium Forge (Pro & Enterprise)
-
-* **Customization**: Unique rank card backgrounds and personalized bot responses.
-* **Automation**: Advanced automod rules and custom welcome/leave templates.
-* **White-labeling**: Branding options for enterprise-level community servers.
+### 🛡️ Core Security
+* **Automod Engine**: Intelligent filtering for spam, mentions, and harmful links.
+* **White-label Access**: Every server gets access to full customization tools at no cost.
 
 ---
 

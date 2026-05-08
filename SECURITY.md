@@ -2,18 +2,21 @@
 
 ## Supported Versions
 
+Security updates are prioritized for the latest major version.
+
 | Version | Supported          |
 | ------- | ------------------ |
-| 3.0.x   | :white_check_mark: |
-| 2.x     | :white_check_mark: |
-| < 2.0   | :x:                |
+| v4.x    | ✅ Yes              |
+| v3.x    | ❌ No               |
+| < v3.0  | ❌ No               |
 
 ## Reporting a Vulnerability
 
-We take the security of AegisForge seriously. If you believe you have found a security vulnerability, please report it to us by following these steps:
+We take the security of AegisForge seriously. If you discover a vulnerability, please do not disclose it publicly.
 
-1. **Do not** open a public GitHub issue.
-2. Send an email to `security@aegisforge.com` (Note: Replace with your actual security contact if available).
-3. Provide a detailed description of the vulnerability, including steps to reproduce it.
+1. **Email**: Send a report to `security@aegisforge.io` (if available) or contact **watispro1** directly via the [Official Support Server](https://discord.gg/8p5Epc8Qd8).
+2. **Details**: Include a description of the issue, steps to reproduce, and potential impact.
+3. **Response**: We aim to acknowledge all reports within 48 hours and provide a fix or mitigation within 7 days.
 
-We will acknowledge your report within 48 hours and provide a timeline for a fix. Thank you for helping keep AegisForge secure!
+## Security Hardening
+AegisForge utilizes `native-tls` and strictly validated SQL queries via `sqlx` to prevent injection and DoS attacks. All data is encrypted in transit.

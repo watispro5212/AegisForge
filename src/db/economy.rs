@@ -6,7 +6,14 @@ pub async fn get_user_economy(pool: &PgPool, guild_id: i64, user_id: i64) -> sql
     let economy = sqlx::query_as!(
         UserEconomy,
         r#"
-        SELECT * FROM users_economy
+        SELECT 
+            guild_id, user_id, balance, bank, last_daily, last_work, 
+            last_rob as "last_rob?", 
+            last_crime as "last_crime?", 
+            last_fish as "last_fish?", 
+            last_hunt as "last_hunt?", 
+            total_earned, total_spent, created_at, updated_at
+        FROM users_economy
         WHERE guild_id = $1 AND user_id = $2
         "#,
         guild_id,
@@ -30,7 +37,7 @@ pub async fn get_user_economy(pool: &PgPool, guild_id: i64, user_id: i64) -> sql
 
         Ok(sqlx::query_as!(
             UserEconomy,
-            "SELECT * FROM users_economy WHERE guild_id = $1 AND user_id = $2",
+            "SELECT guild_id, user_id, balance, bank, last_daily, last_work, last_rob as \"last_rob?\", last_crime as \"last_crime?\", last_fish as \"last_fish?\", last_hunt as \"last_hunt?\", total_earned, total_spent, created_at, updated_at FROM users_economy WHERE guild_id = $1 AND user_id = $2",
             guild_id,
             user_id
         ).fetch_one(pool).await?)
@@ -137,7 +144,7 @@ pub async fn set_last_hunt(pool: &PgPool, guild_id: i64, user_id: i64, time: Dat
 pub async fn get_leaderboard(pool: &PgPool, guild_id: i64, limit: i64) -> sqlx::Result<Vec<UserEconomy>> {
     sqlx::query_as!(
         UserEconomy,
-        "SELECT * FROM users_economy WHERE guild_id = $1 ORDER BY (balance + bank) DESC LIMIT $2",
+        "SELECT guild_id, user_id, balance, bank, last_daily, last_work, last_rob as \"last_rob?\", last_crime as \"last_crime?\", last_fish as \"last_fish?\", last_hunt as \"last_hunt?\", total_earned, total_spent, created_at, updated_at FROM users_economy WHERE guild_id = $1 ORDER BY (balance + bank) DESC LIMIT $2",
         guild_id,
         limit
     ).fetch_all(pool).await

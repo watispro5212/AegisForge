@@ -30,6 +30,7 @@ pub enum ModAction {
     Mute,
     Unmute,
     TempBan,
+    Softban,
 }
 
 impl ModAction {
@@ -45,6 +46,7 @@ impl ModAction {
             Self::Mute     => "mute",
             Self::Unmute   => "unmute",
             Self::TempBan  => "tempban",
+            Self::Softban  => "softban",
         }
     }
 
@@ -60,6 +62,7 @@ impl ModAction {
             Self::Mute     => "🔇 Muted",
             Self::Unmute   => "🔊 Unmuted",
             Self::TempBan  => "⏳ Temp-Banned",
+            Self::Softban  => "💨 Soft-Banned",
         }
     }
 }

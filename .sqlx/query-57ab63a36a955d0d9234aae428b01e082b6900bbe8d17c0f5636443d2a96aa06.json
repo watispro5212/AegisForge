@@ -1,0 +1,16 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "UPDATE users_economy SET last_hunt = $1 WHERE guild_id = $2 AND user_id = $3",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Timestamptz",
+        "Int8",
+        "Int8"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "57ab63a36a955d0d9234aae428b01e082b6900bbe8d17c0f5636443d2a96aa06"
+}

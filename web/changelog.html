@@ -8,18 +8,24 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
 
     <!-- Navigation -->
     <nav id="navbar">
         <div class="logo-container">
+            <div class="nav-status">
+                <div class="status-dot-pulse"></div>
+                <span class="status-text">Network Online</span>
+            </div>
             <img src="assets/logo.jpg" alt="AegisForge Logo" class="nav-logo-img">
             <a href="index.html" class="logo-link"><span class="logo-text">AEGIS<span class="logo-accent">FORGE</span></span></a>
         </div>
         <div class="nav-links">
             <a href="index.html#features">Features</a>
             <a href="commands.html">Commands</a>
+            <a href="economy.html">Economy</a>
             <a href="team.html">Team</a>
             <a href="changelog.html">Changelog</a>
             <a href="status.html">Status</a>
@@ -33,6 +39,18 @@
     <main class="page-content">
         <h1>Recent <span class="text-gradient">Updates</span></h1>
         
+        <div class="changelog-item">
+            <div class="changelog-date">May 8, 2026</div>
+            <div class="changelog-title">v4.0.0 — The Community Engine</div>
+            <ul class="changelog-list">
+                <li><span class="badge badge-free">POLISH</span> Transitioned to a 100% free community-driven model.</li>
+                <li><span class="badge badge-fix">BACKEND</span> Hardened Rust core with zero-latency moderation and economy handlers.</li>
+                <li><span class="badge badge-new">LEVELS</span> Added custom rank card background and color support for all users.</li>
+                <li><span class="badge badge-new">UI</span> Injected universal Network Status indicators across the entire web ecosystem.</li>
+                <li><span class="badge badge-polish">DOCS</span> Fully standardized README, SECURITY, and CONTRIBUTING policies.</li>
+            </ul>
+        </div>
+
         <div class="changelog-item">
             <div class="changelog-date">May 6, 2026</div>
             <div class="changelog-title">v3.1.0 - Hyperforge</div>
@@ -91,6 +109,10 @@
     <footer>
         <div class="footer-top">
             <div class="logo-container">
+                <div class="nav-status">
+                    <div class="status-dot-pulse"></div>
+                    <span class="status-text">Network Online</span>
+                </div>
                 <img src="assets/logo.jpg" alt="AegisForge Logo" class="nav-logo-img">
                 <span class="logo-text">AEGIS<span class="logo-accent">FORGE</span></span>
             </div>
@@ -110,5 +132,7 @@
             <p>&copy; 2026 AegisForge. Forged with 🦀 Rust and precision.</p>
         </div>
     </footer>
+
+    <script src="script.js"></script>
 </body>
 </html>

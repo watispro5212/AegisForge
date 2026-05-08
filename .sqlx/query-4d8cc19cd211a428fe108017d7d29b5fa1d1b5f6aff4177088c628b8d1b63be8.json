@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        SELECT * FROM users_leveling\n        WHERE guild_id = $1 AND user_id = $2\n        ",
+  "query": "SELECT guild_id, user_id, xp, level, last_msg, rank_card_background as \"rank_card_background!\", rank_card_color as \"rank_card_color!\", rank_card_text_color as \"rank_card_text_color!\", created_at, updated_at FROM users_leveling WHERE guild_id = $1 AND user_id = $2",
   "describe": {
     "columns": [
       {
@@ -30,11 +30,26 @@
       },
       {
         "ordinal": 5,
+        "name": "rank_card_background!",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 6,
+        "name": "rank_card_color!",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 7,
+        "name": "rank_card_text_color!",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 8,
         "name": "created_at",
         "type_info": "Timestamptz"
       },
       {
-        "ordinal": 6,
+        "ordinal": 9,
         "name": "updated_at",
         "type_info": "Timestamptz"
       }
@@ -51,9 +66,12 @@
       false,
       false,
       false,
+      true,
+      true,
+      true,
       false,
       false
     ]
   },
-  "hash": "524b10856860b2cc5a9a8cb283b95f41404b225d9168ea68f0ed9608bb757490"
+  "hash": "4d8cc19cd211a428fe108017d7d29b5fa1d1b5f6aff4177088c628b8d1b63be8"
 }

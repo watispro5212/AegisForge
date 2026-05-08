@@ -6,7 +6,13 @@ pub async fn get_user_leveling(pool: &PgPool, guild_id: i64, user_id: i64) -> sq
     let leveling = sqlx::query_as!(
         UserLeveling,
         r#"
-        SELECT * FROM users_leveling
+        SELECT 
+            guild_id, user_id, xp, level, last_msg, 
+            rank_card_background as "rank_card_background!", 
+            rank_card_color as "rank_card_color!", 
+            rank_card_text_color as "rank_card_text_color!", 
+            created_at, updated_at
+        FROM users_leveling
         WHERE guild_id = $1 AND user_id = $2
         "#,
         guild_id,
@@ -30,7 +36,7 @@ pub async fn get_user_leveling(pool: &PgPool, guild_id: i64, user_id: i64) -> sq
 
         Ok(sqlx::query_as!(
             UserLeveling,
-            "SELECT * FROM users_leveling WHERE guild_id = $1 AND user_id = $2",
+            "SELECT guild_id, user_id, xp, level, last_msg, rank_card_background as \"rank_card_background!\", rank_card_color as \"rank_card_color!\", rank_card_text_color as \"rank_card_text_color!\", created_at, updated_at FROM users_leveling WHERE guild_id = $1 AND user_id = $2",
             guild_id,
             user_id
         ).fetch_one(pool).await?)
@@ -99,7 +105,7 @@ pub async fn update_rank_card_customization(
 pub async fn get_leaderboard(pool: &PgPool, guild_id: i64, limit: i64) -> sqlx::Result<Vec<UserLeveling>> {
     sqlx::query_as!(
         UserLeveling,
-        "SELECT * FROM users_leveling WHERE guild_id = $1 ORDER BY xp DESC LIMIT $2",
+        "SELECT guild_id, user_id, xp, level, last_msg, rank_card_background as \"rank_card_background!\", rank_card_color as \"rank_card_color!\", rank_card_text_color as \"rank_card_text_color!\", created_at, updated_at FROM users_leveling WHERE guild_id = $1 ORDER BY xp DESC LIMIT $2",
         guild_id,
         limit
     ).fetch_all(pool).await

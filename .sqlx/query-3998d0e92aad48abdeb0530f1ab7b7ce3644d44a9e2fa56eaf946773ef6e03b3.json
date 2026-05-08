@@ -1,0 +1,15 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "INSERT INTO users_leveling (guild_id, user_id, rank_card_background, rank_card_color, rank_card_text_color) VALUES ($1, $2, 'default', '#00E5FF', '#FFFFFF') ON CONFLICT DO NOTHING",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Int8"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "3998d0e92aad48abdeb0530f1ab7b7ce3644d44a9e2fa56eaf946773ef6e03b3"
+}

@@ -275,14 +275,18 @@ pub async fn nuke(ctx: Context<'_>) -> Result<(), Error> {
     let channel = ctx.guild_channel().await.ok_or("Must be in a guild channel")?;
     let position = channel.position;
     
-    let new_channel = channel.guild_id.create_channel(ctx.http(), serenity::CreateChannel::new(channel.name.clone())
+    let mut builder = serenity::CreateChannel::new(channel.name.clone())
         .kind(channel.kind)
         .topic(channel.topic.clone().unwrap_or_default())
         .nsfw(channel.nsfw)
-        .parent(channel.parent_id)
-        .permission_overwrites(channel.permission_overwrites.clone())
-        .position(position as u16)
-    ).await?;
+        .permissions(channel.permission_overwrites.clone())
+        .position(position as u16);
+
+    if let Some(parent) = channel.parent_id {
+        builder = builder.category(parent);
+    }
+
+    let new_channel = channel.guild_id.create_channel(ctx.http(), builder).await?;
 
     channel.delete(ctx.http()).await?;
 
