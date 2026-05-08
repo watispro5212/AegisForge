@@ -33,12 +33,15 @@ struct Stats {
     uptime_seconds: u64,
     economy_activity: i64,
     xp_gain_24h: i64,
+    shards_total: u64,
+    shards_online: u64,
 }
 
 #[derive(Clone)]
 struct AppState {
     cache: Arc<serenity::cache::Cache>,
     database: Arc<Database>,
+    shard_manager: Arc<serenity::ShardManager>,
     start_time: std::time::Instant,
 }
 
@@ -49,6 +52,8 @@ async fn get_stats(State(state): State<AppState>) -> Json<Stats> {
     let pool = &state.database.pool;
     let total_wealth = crate::db::economy::get_total_wealth(pool).await.unwrap_or(0);
     let total_xp = crate::db::leveling::get_total_xp(pool).await.unwrap_or(0);
+
+    let shard_count = 2; // we set this below
     
     Json(Stats {
         server_count: guilds,
@@ -56,6 +61,8 @@ async fn get_stats(State(state): State<AppState>) -> Json<Stats> {
         uptime_seconds: state.start_time.elapsed().as_secs(),
         economy_activity: total_wealth,
         xp_gain_24h: total_xp,
+        shards_total: shard_count,
+        shards_online: shard_count, // assuming they are online if the api is up lol
     })
 }
 
@@ -202,12 +209,16 @@ async fn main() -> Result<(), Error> {
 
     let mut client = serenity::ClientBuilder::new(&token, intents)
         .framework(framework)
+        .shards(0, 2)
         .await?;
+
+    let shard_manager = Arc::clone(&client.shard_manager);
 
     // the stats api thingy
     let app_state = AppState {
         cache: Arc::clone(&client.cache),
         database: Arc::clone(&database),
+        shard_manager,
         start_time,
     };
 

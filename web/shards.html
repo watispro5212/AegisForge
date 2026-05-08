@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>shards & status | aegisforge</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="grid-bg"></div>
+    <div class="ambient-glow"></div>
+
+    <nav id="navbar">
+        <div class="logo-container">
+            <img src="assets/logo.jpg" alt="aegisforge logo" class="nav-logo-img">
+            <a href="index.html" class="logo-link"><span class="logo-text">aegis<span class="logo-accent">forge</span></span></a>
+        </div>
+        <div class="nav-links">
+            <a href="index.html#features">features</a>
+            <a href="commands.html">commands</a>
+            <a href="economy.html">economy</a>
+            <a href="team.html">team</a>
+            <a href="changelog.html">changelog</a>
+            <a href="shards.html">status</a>
+            <a href="about.html">about</a>
+            <a href="https://github.com/watispro5212/aegisforge" target="_blank" rel="noopener noreferrer" class="nav-link-code">github</a>
+            <a href="https://discord.com/oauth2/authorize?client_id=1500582485367722004&permissions=8&scope=bot+applications.commands" target="_blank" rel="noopener noreferrer" class="btn-primary">invite bot</a>
+        </div>
+    </nav>
+
+    <main class="page-content">
+        <header class="status-header-section reveal-on-scroll">
+            <h1>system <span class="text-gradient">status</span></h1>
+            <p>tracking the forge's vitals so you don't have to.</p>
+        </header>
+        
+        <div class="status-container">
+            <!-- Overall Status -->
+            <div class="status-card overall-status reveal-on-scroll" id="overall-status">
+                <div class="status-indicator online"></div>
+                <div class="status-info">
+                    <h3>Checking Systems...</h3>
+                    <p>Synchronizing with the bot core...</p>
+                </div>
+            </div>
+
+            <!-- Global Metrics -->
+            <div class="live-metrics-status reveal-on-scroll">
+                <div class="metric-mini">
+                    <span class="metric-label">guilds</span>
+                    <span class="metric-value" id="stat-guilds-status">...</span>
+                </div>
+                <div class="metric-mini">
+                    <span class="metric-label">users</span>
+                    <span class="metric-value" id="stat-users-status">...</span>
+                </div>
+                <div class="metric-mini">
+                    <span class="metric-label">uptime</span>
+                    <span class="metric-value" id="stat-uptime-status">...</span>
+                </div>
+            </div>
+
+            <!-- Shard Map -->
+            <section class="shard-section reveal-on-scroll">
+                <h2>shard <span class="text-gradient">telemetry</span></h2>
+                <div class="shard-grid">
+                    <div class="shard-card active">
+                        <div class="shard-header">
+                            <span class="shard-id">#00</span>
+                            <span class="shard-status online">Online</span>
+                        </div>
+                        <div class="shard-body">
+                            <div class="shard-stat"><span>Latency</span> <span>24ms</span></div>
+                            <div class="shard-stat"><span>Servers</span> <span>711</span></div>
+                        </div>
+                    </div>
+                    <div class="shard-card active">
+                        <div class="shard-header">
+                            <span class="shard-id">#01</span>
+                            <span class="shard-status online">Online</span>
+                        </div>
+                        <div class="shard-body">
+                            <div class="shard-stat"><span>Latency</span> <span>31ms</span></div>
+                            <div class="shard-stat"><span>Servers</span> <span>711</span></div>
+                        </div>
+                    </div>
+                    <div class="shard-card placeholder">
+                        <div class="shard-header">
+                            <span class="shard-id">#--</span>
+                            <span class="shard-status pending">Scaling</span>
+                        </div>
+                        <div class="shard-body">
+                            <p>next shard spinning up soon or whatever.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Detailed Components -->
+            <div class="status-grid reveal-on-scroll">
+                <div class="status-item">
+                    <div class="status-header">
+                        <span>Bot Core (Rust)</span>
+                        <span class="status-label online">Operational</span>
+                    </div>
+                    <div class="uptime-bar"></div>
+                </div>
+
+                <div class="status-item">
+                    <div class="status-header">
+                        <span>Database (Neon)</span>
+                        <span class="status-label online">Operational</span>
+                    </div>
+                    <div class="uptime-bar"></div>
+                </div>
+
+                <div class="status-item">
+                    <div class="status-header">
+                        <span>API Gateway</span>
+                        <span class="status-label online">Operational</span>
+                    </div>
+                    <div class="uptime-bar"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-bottom">
+            <p>&copy; 2026 aegisforge. forged with 🦀 rust and vibes.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

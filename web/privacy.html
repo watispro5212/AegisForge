@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Privacy Policy | AegisForge</title>
+    <title>privacy policy | aegisforge</title>
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,22 +11,78 @@
 </head>
 <body>
     <div class="grid-bg"></div>
-    <main class="page-content">
-        <h1>Privacy <span class="text-gradient">Policy</span></h1>
-        <p>AegisForge respects your privacy. We only collect data necessary for bot functionality (Guild IDs, User IDs for economy/leveling).</p>
-        <h2>Data Collection</h2>
-        <ul>
-            <li>Message content for Automod (not stored).</li>
-            <li>User IDs for economy balances.</li>
-            <li>Guild configuration settings.</li>
-        </ul>
-        <a href="index.html">Back to Home</a>
+    <div class="ambient-glow"></div>
+
+    <nav id="navbar">
+        <div class="logo-container">
+            <img src="assets/logo.jpg" alt="aegisforge logo" class="nav-logo-img">
+            <a href="index.html" class="logo-link"><span class="logo-text">aegis<span class="logo-accent">forge</span></span></a>
+        </div>
+        <div class="nav-links">
+            <a href="index.html#features">features</a>
+            <a href="commands.html">commands</a>
+            <a href="economy.html">economy</a>
+            <a href="team.html">team</a>
+            <a href="changelog.html">changelog</a>
+            <a href="shards.html">status</a>
+            <a href="about.html">about</a>
+            <a href="https://github.com/watispro5212/aegisforge" target="_blank" rel="noopener noreferrer" class="nav-link-code">github</a>
+            <a href="https://discord.com/oauth2/authorize?client_id=1500582485367722004&permissions=8&scope=bot+applications.commands" target="_blank" rel="noopener noreferrer" class="btn-primary">invite bot</a>
+        </div>
+    </nav>
+
+    <main class="page-content reveal-on-scroll">
+        <div class="legal-hero">
+            <h1>privacy <span class="text-gradient">policy</span></h1>
+            <p class="subtitle">basically how i handle your data (i don't really want it anyway)</p>
+        </div>
+
+        <section class="legal-section">
+            <h2><span class="text-gradient">01.</span> what i collect</h2>
+            <p>i only save stuff that the bot actually needs to work. if i don't need it, i don't touch it. simple as that.</p>
+            <div class="legal-grid">
+                <div class="legal-card">
+                    <h3>user data</h3>
+                    <p>your discord user id, username, and whatever economy/leveling stats you have. this is so you don't lose your fake money.</p>
+                </div>
+                <div class="legal-card">
+                    <h3>guild data</h3>
+                    <p>server ids and your custom settings (prefixes, logging channels, etc). i need this so the bot knows how to behave in your server.</p>
+                </div>
+                <div class="legal-card">
+                    <h3>message content</h3>
+                    <p>i only look at messages to check for bad words (automod) or commands. i don't store your private chats because that's weird and too much work.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="legal-section">
+            <h2><span class="text-gradient">02.</span> why i collect it</h2>
+            <p>mostly so the bot functions. economy needs balances, leveling needs xp, and moderation needs to know who to ban. i'm not selling this to anyone, i don't even know how to do that lol.</p>
+        </section>
+
+        <section class="legal-section">
+            <h2><span class="text-gradient">03.</span> third parties</h2>
+            <p>the bot runs on some services like <b>neon (database)</b> and <b>discord</b> obviously. they might see some technical stuff but they have their own policies. go read those if you're bored.</p>
+        </section>
+
+        <section class="legal-section">
+            <h2><span class="text-gradient">04.</span> data deletion</h2>
+            <p>if you want your data gone, just kick the bot or join the support server and ask. i'll probably do it whenever i wake up from my nap.</p>
+        </section>
+
+        <div class="cta-box">
+            <p>got questions? just join the <a href="https://discord.gg/8p5Epc8Qd8" class="text-gradient">support server</a> or whatever.</p>
+            <a href="index.html" class="btn-secondary">back to home</a>
+        </div>
     </main>
+
+    <footer>
+        <div class="footer-bottom">
+            <p>&copy; 2026 aegisforge. it works i guess.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
 </body>
 </html>
-
-
-
-
-
-

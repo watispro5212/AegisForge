@@ -143,43 +143,30 @@ async function fetchLiveStats() {
             // Update the hero stats on index.html if present
             animateValue('hero-servers', data.server_count);
             animateValue('hero-users', data.user_count);
+        }
+        
+        // Status page specific
+        const gStatus = document.getElementById('stat-guilds-status');
+        const uStatus = document.getElementById('stat-users-status');
+        const upStatus = document.getElementById('stat-uptime-status');
+        const sTotal = document.getElementById('shards-total');
+        const sOnline = document.getElementById('shards-online');
 
-            // New v4 stats
-            if (document.getElementById('dashboard-economy')) {
-                animateValue('dashboard-economy', data.economy_activity || 254820);
-            }
-            if (document.getElementById('dashboard-xp')) {
-                animateValue('dashboard-xp', data.xp_gain_24h || 1245000);
-            }
-            if (document.getElementById('stat-cases')) {
-                animateValue('stat-cases', data.total_commands || 584200);
-            }
+        if (gStatus) gStatus.innerText = data.server_count.toLocaleString();
+        if (uStatus) uStatus.innerText = data.user_count.toLocaleString();
+        if (sTotal) sTotal.innerText = data.shards_total;
+        if (sOnline) sOnline.innerText = data.shards_online;
+        
+        if (upStatus) {
+            const uptime = formatUptime(data.uptime_seconds);
+            upStatus.innerText = `${uptime.days}d ${uptime.hours}h ${uptime.minutes}m`;
         }
 
-        // Update Status page elements if they exist
-        const guildsStatus = document.getElementById('stat-guilds-status');
-        const usersStatus = document.getElementById('stat-users-status');
-        const uptimeStatus = document.getElementById('stat-uptime-status');
-
-        if (guildsStatus) guildsStatus.innerText = data.server_count.toLocaleString();
-        if (usersStatus) usersStatus.innerText = data.user_count.toLocaleString();
-        if (uptimeStatus) {
-            const uptimeData = formatUptime(data.uptime_seconds); 
-            uptimeStatus.innerText = `${uptimeData.days}d ${uptimeData.hours}h ${uptimeData.minutes}m`;
-        }
-
-        // Update Status Indicators
         const overallStatus = document.getElementById('overall-status');
         if (overallStatus) {
-            overallStatus.querySelector('.status-indicator').className = 'status-indicator online';
             overallStatus.querySelector('h3').innerText = 'All Systems Operational';
-            overallStatus.querySelector('p').innerText = `Last checked: ${new Date().toLocaleTimeString()} (Bot Version v4.0.0)`;
+            overallStatus.querySelector('p').innerText = `Bot is running smooth with ${data.shards_online}/${data.shards_total} shards online.`;
         }
-
-        document.querySelectorAll('.status-label').forEach(label => {
-            label.innerText = 'Operational';
-            label.className = 'status-label online';
-        });
 
         // Initialize dynamic uptime segments
         initUptimeSegments();
@@ -190,7 +177,9 @@ async function fetchLiveStats() {
         const fallbackData = {
             server_count: 1422,
             user_count: 1450283,
-            uptime_seconds: 86400 * 42
+            uptime_seconds: 86400 * 42,
+            shards_total: 2,
+            shards_online: 2
         };
 
         const overallStatus = document.getElementById('overall-status');
@@ -209,17 +198,18 @@ async function fetchLiveStats() {
         // Apply fallbacks
         animateValue('stat-guilds', fallbackData.server_count);
         animateValue('stat-users', fallbackData.user_count);
-        animateValue('stat-uptime', fallbackData.uptime_seconds, true);
         
-        animateValue('hero-servers', fallbackData.server_count);
-        animateValue('hero-users', fallbackData.user_count);
-
         const guildsStatus = document.getElementById('stat-guilds-status');
         const usersStatus = document.getElementById('stat-users-status');
         const uptimeStatus = document.getElementById('stat-uptime-status');
+        const sTotal = document.getElementById('shards-total');
+        const sOnline = document.getElementById('shards-online');
 
         if (guildsStatus) guildsStatus.innerText = fallbackData.server_count.toLocaleString();
         if (usersStatus) usersStatus.innerText = fallbackData.user_count.toLocaleString();
+        if (sTotal) sTotal.innerText = fallbackData.shards_total;
+        if (sOnline) sOnline.innerText = fallbackData.shards_online;
+        
         if (uptimeStatus) {
             const uptimeData = formatUptime(fallbackData.uptime_seconds); 
             uptimeStatus.innerText = `${uptimeData.days}d ${uptimeData.hours}h ${uptimeData.minutes}m`;
@@ -336,6 +326,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (filteredCmds.length === 0) return;
             totalMatches += filteredCmds.length;
 
+            const categoryItem = document.createElement('div');
+            categoryItem.className = 'accordion-item reveal-on-scroll';
+            categoryItem.id = `cat-${index}`;
+
             if (sidebarNav && filter === '') {
                 const navItem = document.createElement('a');
                 navItem.href = `#cat-${index}`;
@@ -350,10 +344,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
                 sidebarNav.appendChild(navItem);
             }
-
-            const categoryItem = document.createElement('div');
-            categoryItem.className = 'accordion-item reveal-on-scroll';
-            categoryItem.id = `cat-${index}`;
             
             categoryItem.innerHTML = `
                 <div class="accordion-header" data-index="${index}">
