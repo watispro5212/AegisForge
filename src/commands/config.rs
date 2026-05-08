@@ -1,7 +1,7 @@
 use crate::{Context, Error};
 use poise::serenity_prelude as serenity;
 
-/// Set the moderation log channel
+/// set the moderation log channel
 #[poise::command(slash_command, prefix_command, required_permissions = "MANAGE_GUILD", guild_only)]
 pub async fn logs(
     ctx: Context<'_>,
@@ -14,7 +14,7 @@ pub async fn logs(
     Ok(())
 }
 
-/// Set the welcome message channel
+/// set the welcome message channel
 #[poise::command(slash_command, prefix_command, required_permissions = "MANAGE_GUILD", guild_only)]
 pub async fn welcome(
     ctx: Context<'_>,
@@ -29,7 +29,7 @@ pub async fn welcome(
     Ok(())
 }
 
-/// Set the auto-role assigned to new members
+/// set the auto-role assigned to new members
 #[poise::command(slash_command, prefix_command, required_permissions = "MANAGE_GUILD", guild_only)]
 pub async fn autorole(
     ctx: Context<'_>,
@@ -41,7 +41,7 @@ pub async fn autorole(
     Ok(())
 }
 
-/// Set the bot's command prefix
+/// set the bot's command prefix
 #[poise::command(slash_command, prefix_command, required_permissions = "MANAGE_GUILD", guild_only)]
 pub async fn prefix(
     ctx: Context<'_>,
@@ -67,7 +67,7 @@ pub async fn prefix(
     Ok(())
 }
 
-/// View all current server configurations
+/// view all current server configurations
 #[poise::command(slash_command, prefix_command, required_permissions = "MANAGE_GUILD", guild_only)]
 pub async fn settings(ctx: Context<'_>) -> Result<(), Error> {
     let guild_id = ctx.guild_id().unwrap().get() as i64;
@@ -86,3 +86,5 @@ pub async fn settings(ctx: Context<'_>) -> Result<(), Error> {
         )).await?;
     Ok(())
 }
+
+

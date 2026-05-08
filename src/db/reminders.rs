@@ -2,7 +2,7 @@ use sqlx::PgPool;
 use chrono::{DateTime, Utc};
 use crate::models::reminder::Reminder;
 
-/// Create a new reminder.
+/// create a new reminder.
 pub async fn create(
     pool: &PgPool,
     user_id: i64,
@@ -28,8 +28,8 @@ pub async fn create(
     .await
 }
 
-/// Fetch all pending (unfired) reminders due at or before `now`.
-/// Called by the background polling task every ~5 seconds.
+/// fetch all pending (unfired) reminders due at or before `now`.
+/// called by the background polling task every ~5 seconds.
 pub async fn get_pending(pool: &PgPool) -> sqlx::Result<Vec<Reminder>> {
     sqlx::query_as!(
         Reminder,
@@ -44,7 +44,7 @@ pub async fn get_pending(pool: &PgPool) -> sqlx::Result<Vec<Reminder>> {
     .await
 }
 
-/// Mark a reminder as fired.
+/// mark a reminder as fired.
 pub async fn mark_fired(pool: &PgPool, reminder_id: i64) -> sqlx::Result<()> {
     sqlx::query!(
         "UPDATE reminders SET fired = TRUE WHERE id = $1",
@@ -55,7 +55,7 @@ pub async fn mark_fired(pool: &PgPool, reminder_id: i64) -> sqlx::Result<()> {
     Ok(())
 }
 
-/// Fetch all reminders for a specific user (for a list command).
+/// fetch all reminders for a specific user (for a list command).
 pub async fn get_for_user(pool: &PgPool, user_id: i64) -> sqlx::Result<Vec<Reminder>> {
     sqlx::query_as!(
         Reminder,
@@ -70,7 +70,7 @@ pub async fn get_for_user(pool: &PgPool, user_id: i64) -> sqlx::Result<Vec<Remin
     .await
 }
 
-/// Cancel (delete) a specific reminder — only if it belongs to the user.
+/// cancel (delete) a specific reminder — only if it belongs to the user.
 pub async fn delete(pool: &PgPool, reminder_id: i64, user_id: i64) -> sqlx::Result<bool> {
     let result = sqlx::query!(
         "DELETE FROM reminders WHERE id = $1 AND user_id = $2 AND fired = FALSE",
@@ -81,3 +81,4 @@ pub async fn delete(pool: &PgPool, reminder_id: i64, user_id: i64) -> sqlx::Resu
     .await?;
     Ok(result.rows_affected() > 0)
 }
+

@@ -1,7 +1,7 @@
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 
-/// Maps to the `reminders` table.
+/// maps to the `reminders` table.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Reminder {
     pub id: i64,
@@ -13,3 +13,4 @@ pub struct Reminder {
     pub fired: bool,
     pub created_at: DateTime<Utc>,
 }
+

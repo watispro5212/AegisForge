@@ -2,7 +2,7 @@ use crate::{Context, Error};
 use poise::serenity_prelude as serenity;
 use chrono::Utc;
 
-/// Create a reminder for yourself
+/// create a reminder for yourself
 #[poise::command(slash_command, prefix_command)]
 pub async fn create(
     ctx: Context<'_>,
@@ -25,7 +25,7 @@ pub async fn create(
     ))
     .await?;
 
-    // Spawn a background task — fires even if the command context is dropped
+    // spawn a background task — fires even if the command context is dropped
     tokio::spawn(async move {
         tokio::time::sleep(tokio::time::Duration::from_secs(minutes * 60)).await;
         let _ = channel
@@ -42,3 +42,5 @@ pub async fn create(
 
     Ok(())
 }
+
+

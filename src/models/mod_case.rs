@@ -1,7 +1,7 @@
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 
-/// Maps to the `mod_cases` table.
+/// maps to the `mod_cases` table.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ModCase {
     pub id: i64,
@@ -17,7 +17,7 @@ pub struct ModCase {
     pub created_at: DateTime<Utc>,
 }
 
-/// Typed enum for all supported moderation actions.
+/// typed enum for all supported moderation actions.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ModAction {
     Ban,
@@ -66,3 +66,4 @@ impl ModAction {
         }
     }
 }
+

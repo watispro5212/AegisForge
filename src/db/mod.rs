@@ -18,6 +18,8 @@ pub struct Database {
     /// stuff we saved in memory.
     /// dashmap is fast and safe.
     cache: Arc<DashMap<i64, GuildConfig>>,
+    /// cache for automod phrases
+    automod_cache: Arc<DashMap<i64, Vec<String>>>,
 }
 
 impl Database {
@@ -25,6 +27,7 @@ impl Database {
         Self {
             pool,
             cache: Arc::new(DashMap::new()),
+            automod_cache: Arc::new(DashMap::new()),
         }
     }
 
@@ -41,23 +44,33 @@ impl Database {
         Ok(config)
     }
 
-    /// Invalidate a guild's cached config (call after any config update).
+    /// invalidate a guild's cached config (call after any config update).
     pub fn invalidate_cache(&self, guild_id: i64) {
         self.cache.remove(&guild_id);
+        self.automod_cache.remove(&guild_id);
     }
 
-    /// Returns the number of guild configs currently cached.
+    /// returns the number of guild configs currently cached.
     pub fn cache_size(&self) -> usize {
         self.cache.len()
     }
 
-    /// Fetch the list of blacklisted phrases for a guild.
+    /// fetch the list of blacklisted phrases for a guild.
     pub async fn get_automod_blacklist(&self, guild_id: i64) -> sqlx::Result<Vec<String>> {
+        // fast way
+        if let Some(list) = self.automod_cache.get(&guild_id) {
+            return Ok(list.clone());
+        }
+
+        // slow way
         let rows = sqlx::query!(
             "SELECT phrase FROM automod_blacklist WHERE guild_id = $1",
             guild_id
         ).fetch_all(&self.pool).await?;
         
-        Ok(rows.into_iter().map(|r| r.phrase).collect())
+        let list: Vec<String> = rows.into_iter().map(|r| r.phrase).collect();
+        self.automod_cache.insert(guild_id, list.clone());
+        Ok(list)
     }
 }
+

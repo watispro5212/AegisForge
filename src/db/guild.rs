@@ -1,10 +1,10 @@
 use sqlx::PgPool;
 use crate::models::config::GuildConfig;
 
-/// Fetch the guild config, or INSERT a default row if one doesn't exist yet.
-/// Uses ON CONFLICT DO NOTHING so concurrent first-interactions are safe.
+/// fetch the guild config, or INSERT a default row if one doesn't exist yet.
+/// uses ON CONFLICT DO NOTHING so concurrent first-interactions are safe.
 pub async fn get_or_create(pool: &PgPool, guild_id: i64) -> sqlx::Result<GuildConfig> {
-    // Ensure a row exists (idempotent — safe under concurrency)
+    // ensure a row exists (idempotent — safe under concurrency)
     sqlx::query!(
         r#"
         INSERT INTO guild_configs (guild_id)
@@ -16,7 +16,7 @@ pub async fn get_or_create(pool: &PgPool, guild_id: i64) -> sqlx::Result<GuildCo
     .execute(pool)
     .await?;
 
-    // Also ensure the case counter row exists
+    // also ensure the case counter row exists
     sqlx::query!(
         r#"
         INSERT INTO guild_case_counters (guild_id)
@@ -62,7 +62,7 @@ pub async fn get_or_create(pool: &PgPool, guild_id: i64) -> sqlx::Result<GuildCo
     Ok(config)
 }
 
-/// Update a specific field in guild_configs, then the caller should
+/// update a specific field in guild_configs, then the caller should
 /// invalidate the cache via `Database::invalidate_cache`.
 pub async fn set_mod_log_channel(pool: &PgPool, guild_id: i64, channel_id: i64) -> sqlx::Result<()> {
     sqlx::query!(
@@ -108,3 +108,4 @@ pub async fn set_prefix(pool: &PgPool, guild_id: i64, prefix: &str) -> sqlx::Res
     .await?;
     Ok(())
 }
+

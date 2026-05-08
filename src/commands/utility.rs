@@ -31,7 +31,7 @@ pub async fn serverinfo(ctx: Context<'_>) -> Result<(), Error> {
     ctx.send(poise::CreateReply::default().embed(
         serenity::CreateEmbed::new()
             .title(format!("🔷 AegisForge — {}", guild.name))
-            .description(format!("Comprehensive overview of the **{}** forge.", guild.name))
+            .description(format!("it's a server.", guild.name))
             .thumbnail(icon)
             .field("👑 Owner", format!("<@{}>", guild.owner_id), true)
             .field("👥 Members", guild.member_count.to_string(), true)
@@ -39,7 +39,7 @@ pub async fn serverinfo(ctx: Context<'_>) -> Result<(), Error> {
             .field("📜 Roles", guild.roles.len().to_string(), true)
             .field("🚀 Boost Level", boost_tier, true)
             .field("📅 Created", format!("<t:{}:F>", guild.id.created_at().unix_timestamp()), true)
-            .footer(serenity::CreateEmbedFooter::new(format!("ID: {} | Forged with precision", guild.id)))
+            .footer(serenity::CreateEmbedFooter::new(format!("ID: {} | it works i guess", guild.id)))
             .timestamp(serenity::Timestamp::now())
             .color(0x00E5FF),
     ))
@@ -58,13 +58,13 @@ pub async fn whois(
     ctx.send(poise::CreateReply::default().embed(
         serenity::CreateEmbed::new()
             .title(format!("👤 AegisForge — Profile"))
-            .description(format!("Identity data for **{}**.", target.name))
+            .description(format!("it's a user.", target.name))
             .thumbnail(target.face())
             .field("📝 Username", format!("**{}**", target.name), true)
             .field("🆔 User ID", target.id.to_string(), true)
             .field("🤖 Entity Type", if target.bot { "Service Bot" } else { "Human User" }, true)
             .field("📅 Account Created", format!("<t:{}:F>", target.id.created_at().unix_timestamp()), false)
-            .footer(serenity::CreateEmbedFooter::new("Forged with precision | v3 Core"))
+            .footer(serenity::CreateEmbedFooter::new("it works i guess | v4 lazy"))
             .timestamp(serenity::Timestamp::now())
             .color(0x00E5FF),
     ))
@@ -84,7 +84,7 @@ pub async fn avatar(
     ctx.send(poise::CreateReply::default().embed(
         serenity::CreateEmbed::new()
             .title(format!("🖼️ AegisForge — Visual Identity"))
-            .description(format!("Avatar asset for **{}**.", target.name))
+            .description(format!("here is the avatar lol.", target.name))
             .image(&avatar_url)
             .footer(serenity::CreateEmbedFooter::new(format!("Requested by {}", ctx.author().name)))
             .timestamp(serenity::Timestamp::now())
@@ -116,7 +116,7 @@ pub async fn uptime(ctx: Context<'_>) -> Result<(), Error> {
             .field("🦀 Core", "Rust (Tokio async runtime)", true)
             .field("⚙️ Framework", "Poise v0.6", true)
             .field("🔋 Shard", "0 / 1", true)
-            .footer(serenity::CreateEmbedFooter::new("Forged with precision | AegisForge v4"))
+            .footer(serenity::CreateEmbedFooter::new("it works i guess | AegisForge v4"))
             .timestamp(serenity::Timestamp::now())
             .color(0x00E5FF),
     ))
@@ -146,7 +146,7 @@ pub async fn stats(ctx: Context<'_>) -> Result<(), Error> {
     Ok(())
 }
 
-/// Detailed information about the bot
+/// detailed information about the bot
 #[poise::command(slash_command, prefix_command)]
 pub async fn botinfo(ctx: Context<'_>) -> Result<(), Error> {
     let guilds = ctx.cache().guild_count();
@@ -177,7 +177,7 @@ pub async fn botinfo(ctx: Context<'_>) -> Result<(), Error> {
     Ok(())
 }
 
-/// Send a custom embed to the current channel
+/// send a custom embed to the current channel
 #[poise::command(slash_command, prefix_command)]
 pub async fn embed(
     ctx: Context<'_>,
@@ -199,7 +199,7 @@ pub async fn embed(
     Ok(())
 }
 
-/// Generate a Discord timestamp for a given UNIX timestamp
+/// generate a Discord timestamp for a given UNIX timestamp
 #[poise::command(slash_command, prefix_command)]
 pub async fn timestamp(
     ctx: Context<'_>,
@@ -213,7 +213,7 @@ pub async fn timestamp(
     Ok(())
 }
 
-/// Displays all available commands
+/// displays all available commands
 #[poise::command(slash_command, prefix_command)]
 pub async fn help(
     ctx: Context<'_>,
@@ -242,7 +242,7 @@ pub async fn help(
             .field("🔧 Config", "`logs`, `welcome`, `autorole`, `prefix`, `settings`", false)
             .field("👤 Roles", "`role add`, `role remove`, `role list`", false)
             .field("🔗 Links", "[Website](https://aegisforge-vert.vercel.app) | [Invite](https://discord.com/oauth2/authorize?client_id=1500582485367722004&permissions=8&scope=bot+applications.commands)", false)
-            .footer(serenity::CreateEmbedFooter::new("Forged with precision | Type /help <command> for details"))
+            .footer(serenity::CreateEmbedFooter::new("it works i guess | Type /help <command> for details"))
             .timestamp(serenity::Timestamp::now())
             .color(0x00E5FF),
     )).await?;
@@ -250,7 +250,7 @@ pub async fn help(
     Ok(())
 }
 
-/// Evaluate a mathematical expression
+/// evaluate a mathematical expression
 #[poise::command(slash_command)]
 pub async fn math(
     ctx: Context<'_>,
@@ -266,13 +266,13 @@ pub async fn math(
             .title("🔢 AegisForge — Calculator")
             .field("Expression", format!("`{}`", expression), false)
             .field("Result", format!("**{}**", result), false)
-            .footer(serenity::CreateEmbedFooter::new("Forged with precision via evalexpr"))
+            .footer(serenity::CreateEmbedFooter::new("it works i guess via evalexpr"))
             .color(0x00E5FF),
     )).await?;
     Ok(())
 }
 
-/// Generate a QR code from text or URL
+/// generate a QR code from text or URL
 #[poise::command(slash_command)]
 pub async fn qr(
     ctx: Context<'_>,
@@ -290,7 +290,7 @@ pub async fn qr(
     Ok(())
 }
 
-/// Look up the price of a cryptocurrency
+/// look up the price of a cryptocurrency
 #[poise::command(slash_command)]
 pub async fn crypto(
     ctx: Context<'_>,
@@ -309,7 +309,7 @@ pub async fn crypto(
 }
 
 
-/// Translate text between languages (requires API key — contact server admin)
+/// translate text between languages (requires API key — contact server admin)
 #[poise::command(slash_command, prefix_command)]
 pub async fn translate(
     ctx: Context<'_>,
@@ -328,7 +328,7 @@ pub async fn translate(
     Ok(())
 }
 
-/// Start a timer
+/// start a timer
 #[poise::command(slash_command, prefix_command)]
 pub async fn timer(
     ctx: Context<'_>,
@@ -336,12 +336,12 @@ pub async fn timer(
 ) -> Result<(), Error> {
     ctx.say(format!("⏲️ Timer set for **{}** minutes. I'll remind you when it's up!", minutes)).await?;
     
-    // In a real app, we'd use a background task. 
-    // For this implementation, we'll just acknowledge it.
+    // in a real app, we'd use a background task. 
+    // for this implementation, we'll just acknowledge it.
     Ok(())
 }
 
-/// Look up a word definition
+/// look up a word definition
 #[poise::command(slash_command, prefix_command)]
 pub async fn dictionary(
     ctx: Context<'_>,
@@ -362,7 +362,7 @@ pub async fn dictionary(
     Ok(())
 }
 
-/// View current time in major world cities
+/// view current time in major world cities
 #[poise::command(slash_command, prefix_command)]
 pub async fn worldclock(ctx: Context<'_>) -> Result<(), Error> {
     let now = chrono::Utc::now();
@@ -372,13 +372,13 @@ pub async fn worldclock(ctx: Context<'_>) -> Result<(), Error> {
             .field("London (GMT)", now.format("%H:%M").to_string(), true)
             .field("New York (EST)", (now - chrono::Duration::hours(5)).format("%H:%M").to_string(), true)
             .field("Tokyo (JST)", (now + chrono::Duration::hours(9)).format("%H:%M").to_string(), true)
-            .footer(serenity::CreateEmbedFooter::new("Time is relative | Forged with precision"))
+            .footer(serenity::CreateEmbedFooter::new("Time is relative | it works i guess"))
             .color(0x00E5FF),
     )).await?;
     Ok(())
 }
 
-/// Create a simple reaction poll
+/// create a simple reaction poll
 #[poise::command(slash_command, prefix_command)]
 pub async fn poll(
     ctx: Context<'_>,
@@ -396,3 +396,5 @@ pub async fn poll(
     message.react(ctx, serenity::ReactionType::Unicode("❌".to_string())).await?;
     Ok(())
 }
+
+

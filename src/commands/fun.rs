@@ -173,7 +173,7 @@ pub async fn cat(ctx: Context<'_>) -> Result<(), Error> {
 /// send a cute dog picture
 #[poise::command(slash_command)]
 pub async fn dog(ctx: Context<'_>) -> Result<(), Error> {
-    // Curated list of dog image URLs from dog.ceo (stable breed images)
+    // curated list of dog image URLs from dog.ceo (stable breed images)
     let dogs = [
         "https://images.dog.ceo/breeds/retriever-golden/n02099601_7771.jpg",
         "https://images.dog.ceo/breeds/husky/n02110185_1469.jpg",
@@ -243,7 +243,7 @@ pub async fn bird(ctx: Context<'_>) -> Result<(), Error> {
         "https://upload.wikimedia.org/wikipedia/commons/4/45/A_small_cup_of_coffee.JPG",
         "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Culinary_fruits_front_view.jpg/1200px-Culinary_fruits_front_view.jpg",
     ];
-    // Use Wikimedia bird images
+    // use Wikimedia bird images
     let bird_imgs = [
         "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Eopsaltria_australis_-_Mogo_Campground.jpg/800px-Eopsaltria_australis_-_Mogo_Campground.jpg",
         "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/European_robin_aka.jpg/800px-European_robin_aka.jpg",
@@ -356,7 +356,7 @@ pub async fn slap(
 /// get a random meme image
 #[poise::command(slash_command)]
 pub async fn meme(ctx: Context<'_>) -> Result<(), Error> {
-    // Curated stable meme image URLs
+    // curated stable meme image URLs
     let memes = [
         ("This Is Fine", "https://i.kym-cdn.com/entries/icons/original/000/018/012/this_is_fine.jpeg"),
         ("Drake Approves", "https://i.kym-cdn.com/entries/icons/original/000/019/490/dd2.jpg"),
@@ -631,3 +631,5 @@ pub async fn compliment(
     .await?;
     Ok(())
 }
+
+

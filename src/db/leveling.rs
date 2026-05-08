@@ -24,10 +24,10 @@ pub async fn get_user_leveling(pool: &PgPool, guild_id: i64, user_id: i64) -> sq
     if let Some(lvl) = leveling {
         Ok(lvl)
     } else {
-        // Ensure guild exists first to satisfy foreign key
+        // ensure guild exists first to satisfy foreign key
         crate::db::guild::get_or_create(pool, guild_id).await?;
 
-        // Create default
+        // create default
         sqlx::query!(
             "INSERT INTO users_leveling (guild_id, user_id, rank_card_background, rank_card_color, rank_card_text_color) VALUES ($1, $2, 'default', '#00E5FF', '#FFFFFF') ON CONFLICT DO NOTHING",
             guild_id,
@@ -52,7 +52,7 @@ pub async fn add_xp(pool: &PgPool, guild_id: i64, user_id: i64, amount: i64) -> 
     }
 
     leveling.xp += amount;
-    let new_level = (leveling.xp as f64).sqrt() as i32 / 5; // Simple formula
+    let new_level = (leveling.xp as f64).sqrt() as i32 / 5; // simple formula
     let leveled_up = new_level > leveling.level;
     leveling.level = new_level;
 
@@ -140,3 +140,4 @@ pub async fn get_level_roles(pool: &PgPool, guild_id: i64) -> sqlx::Result<Vec<L
         guild_id
     ).fetch_all(pool).await
 }
+

@@ -2,7 +2,7 @@ use crate::{Context, Error};
 use poise::serenity_prelude as serenity;
 use crate::db::leveling;
 
-/// Leveling commands
+/// leveling commands
 #[poise::command(
     slash_command,
     subcommands("rank", "leaderboard", "customize"),
@@ -12,7 +12,7 @@ pub async fn leveling(_ctx: Context<'_>) -> Result<(), Error> {
     Ok(())
 }
 
-/// Check your or someone else's rank
+/// check your or someone else's rank
 #[poise::command(slash_command, guild_only)]
 pub async fn rank(
     ctx: Context<'_>,
@@ -23,7 +23,7 @@ pub async fn rank(
     
     let lvl = leveling::get_user_leveling(&ctx.data().database.pool, guild_id, target.id.get() as i64).await?;
     
-    // Calculate progress to next level
+    // calculate progress to next level
     let current_level_xp = (lvl.level as f64 * 5.0).powi(2) as i64;
     let next_level_xp = ((lvl.level + 1) as f64 * 5.0).powi(2) as i64;
     let progress = lvl.xp - current_level_xp;
@@ -45,7 +45,7 @@ pub async fn rank(
     Ok(())
 }
 
-/// View the most active users
+/// view the most active users
 #[poise::command(slash_command, guild_only)]
 pub async fn leaderboard(
     ctx: Context<'_>,
@@ -85,7 +85,7 @@ pub async fn leaderboard(
     Ok(())
 }
 
-/// Customize your rank card
+/// customize your rank card
 #[poise::command(slash_command, guild_only)]
 pub async fn customize(
     ctx: Context<'_>,
@@ -115,3 +115,5 @@ pub async fn customize(
 
     Ok(())
 }
+
+

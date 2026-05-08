@@ -382,7 +382,7 @@ pub async fn slots(
     }
 
     let emojis = ["🍒", "🍋", "🍇", "💎", "⭐"];
-    // Compute all random values inside a block so ThreadRng is dropped before any await
+    // compute all random values inside a block so ThreadRng is dropped before any await
     let (r1, r2, r3, protection_win) = {
         let mut rng = rand::thread_rng();
         (
@@ -523,7 +523,7 @@ pub async fn rob(
         ).into());
     }
 
-    // Drop ThreadRng before any await — ThreadRng is !Send
+    // drop ThreadRng before any await — ThreadRng is !Send
     let (success, stolen_fraction) = {
         let mut rng = rand::thread_rng();
         (rng.gen_bool(0.4), rng.gen_range(0.1_f64..0.5))
@@ -559,7 +559,7 @@ pub async fn rob(
     Ok(())
 }
 
-/// Commit a crime to earn big (high risk!)
+/// commit a crime to earn big (high risk!)
 #[poise::command(slash_command, guild_only)]
 pub async fn crime(ctx: Context<'_>) -> Result<(), Error> {
     let guild_id = ctx.guild_id().unwrap().get() as i64;
@@ -603,7 +603,7 @@ pub async fn crime(ctx: Context<'_>) -> Result<(), Error> {
     Ok(())
 }
 
-/// Go fishing for some quick cash
+/// go fishing for some quick cash
 #[poise::command(slash_command, guild_only)]
 pub async fn fish(ctx: Context<'_>) -> Result<(), Error> {
     let guild_id = ctx.guild_id().unwrap().get() as i64;
@@ -646,7 +646,7 @@ pub async fn fish(ctx: Context<'_>) -> Result<(), Error> {
     Ok(())
 }
 
-/// Go hunting in the wild
+/// go hunting in the wild
 #[poise::command(slash_command, guild_only)]
 pub async fn hunt(ctx: Context<'_>) -> Result<(), Error> {
     let guild_id = ctx.guild_id().unwrap().get() as i64;
@@ -688,3 +688,5 @@ pub async fn hunt(ctx: Context<'_>) -> Result<(), Error> {
     )).await?;
     Ok(())
 }
+
+

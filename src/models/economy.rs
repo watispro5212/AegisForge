@@ -18,3 +18,4 @@ pub struct UserEconomy {
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,
 }
+

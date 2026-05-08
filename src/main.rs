@@ -73,7 +73,7 @@ async fn main() -> Result<(), Error> {
     let direct_url = env::var("DATABASE_URL").map_err(|_| "Missing DATABASE_URL environment variable")?;
     let pool_url = env::var("DATABASE_POOL_URL").unwrap_or_else(|_| direct_url.clone());
     
-    // ── migrate db ──────────────────────────────────────────
+    // doing the migrations lol
     info!("doing migrations lol...");
     let migrate_pool = PgPoolOptions::new()
         .max_connections(2)
@@ -83,9 +83,9 @@ async fn main() -> Result<(), Error> {
     sqlx::migrate!("./migrations").run(&migrate_pool).await?;
     migrate_pool.close().await;
 
-    // ── bot db ────────────────────────────────────────────────
+    // connecting the bot to the db
     let pool = PgPoolOptions::new()
-        .max_connections(5)
+        .max_connections(20)
         .connect(&pool_url)
         .await
         .map_err(|e| format!("Failed to connect to application database: {}", e))?;
@@ -94,11 +94,11 @@ async fn main() -> Result<(), Error> {
     let token = env::var("DISCORD_TOKEN").map_err(|_| "Missing DISCORD_TOKEN environment variable")?;
     let start_time = std::time::Instant::now();
 
-    // ── commands setup ─────────────────────────────────────────
+    // setting up the commands
     let framework = poise::Framework::builder()
         .options(poise::FrameworkOptions {
             commands: vec![
-                // Utility
+                // utility
                 commands::utility::help(),
                 commands::utility::ping(),
                 commands::utility::avatar(),
@@ -116,13 +116,13 @@ async fn main() -> Result<(), Error> {
                 commands::utility::dictionary(),
                 commands::utility::worldclock(),
                 commands::utility::poll(),
-                // Fun
+                // fun
                 commands::fun::fun(),
-                // Economy
+                // economy
                 commands::economy::economy(),
-                // Leveling
+                // leveling
                 commands::leveling::leveling(),
-                // Moderation
+                // moderation
                 commands::moderation::ban(),
                 commands::moderation::unban(),
                 commands::moderation::kick(),
@@ -134,17 +134,17 @@ async fn main() -> Result<(), Error> {
                 commands::moderation::unmute(),
                 commands::moderation::warn(),
                 commands::moderation::purge(),
-                // Role management
+                // role management
                 commands::role::add(),
                 commands::role::remove(),
                 commands::role::list(),
-                // Config
+                // config
                 commands::config::logs(),
                 commands::config::welcome(),
                 commands::config::autorole(),
                 commands::config::prefix(),
                 commands::config::settings(),
-                // Reminders
+                // reminders
                 commands::remind::create(),
             ],
             on_error: |error| {
@@ -204,7 +204,7 @@ async fn main() -> Result<(), Error> {
         .framework(framework)
         .await?;
 
-    // ── Stats Server (Axum) ─────────────────────────────────────
+    // the stats api thingy
     let app_state = AppState {
         cache: Arc::clone(&client.cache),
         database: Arc::clone(&database),
@@ -232,8 +232,9 @@ async fn main() -> Result<(), Error> {
         }
     });
 
-    // ── Start Bot ───────────────────────────────────────────────
+    // start the bot i guess
     client.start().await?;
 
     Ok(())
 }
+

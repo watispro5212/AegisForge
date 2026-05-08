@@ -2,8 +2,8 @@ use sqlx::PgPool;
 use chrono::{DateTime, Utc};
 use crate::models::mod_case::{ModCase, ModAction};
 
-/// Atomically increment the guild case counter and return the new case number.
-/// Uses `FOR UPDATE` to prevent duplicate case numbers under concurrent mods.
+/// atomically increment the guild case counter and return the new case number.
+/// uses `FOR UPDATE` to prevent duplicate case numbers under concurrent mods.
 pub async fn next_case_number(pool: &PgPool, guild_id: i64) -> sqlx::Result<i32> {
     let row = sqlx::query!(
         r#"
@@ -20,7 +20,7 @@ pub async fn next_case_number(pool: &PgPool, guild_id: i64) -> sqlx::Result<i32>
     Ok(row.case_number)
 }
 
-/// Insert a new moderation case and return it.
+/// insert a new moderation case and return it.
 pub async fn create_case(
     pool: &PgPool,
     guild_id: i64,
@@ -58,7 +58,7 @@ pub async fn create_case(
     Ok(case)
 }
 
-/// Fetch all mod cases for a specific user in a guild.
+/// fetch all mod cases for a specific user in a guild.
 pub async fn get_cases_for_user(
     pool: &PgPool,
     guild_id: i64,
@@ -78,7 +78,7 @@ pub async fn get_cases_for_user(
     .await
 }
 
-/// Fetch a single case by its guild-scoped case number.
+/// fetch a single case by its guild-scoped case number.
 pub async fn get_case(
     pool: &PgPool,
     guild_id: i64,
@@ -94,8 +94,8 @@ pub async fn get_case(
     .await
 }
 
-/// Fetch all cases that have expired and are still marked active.
-/// Used by the background expiry worker to lift timed bans/mutes.
+/// fetch all cases that have expired and are still marked active.
+/// used by the background expiry worker to lift timed bans/mutes.
 pub async fn get_expired_cases(pool: &PgPool) -> sqlx::Result<Vec<ModCase>> {
     sqlx::query_as!(
         ModCase,
@@ -112,7 +112,7 @@ pub async fn get_expired_cases(pool: &PgPool) -> sqlx::Result<Vec<ModCase>> {
     .await
 }
 
-/// Mark a case as no longer active (e.g. after an unban or untimeout).
+/// mark a case as no longer active (e.g. after an unban or untimeout).
 pub async fn deactivate_case(pool: &PgPool, case_id: i64) -> sqlx::Result<()> {
     sqlx::query!(
         "UPDATE mod_cases SET active = FALSE WHERE id = $1",
@@ -122,3 +122,4 @@ pub async fn deactivate_case(pool: &PgPool, case_id: i64) -> sqlx::Result<()> {
     .await?;
     Ok(())
 }
+

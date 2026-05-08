@@ -25,10 +25,10 @@ pub async fn get_user_economy(pool: &PgPool, guild_id: i64, user_id: i64) -> sql
     if let Some(eco) = economy {
         Ok(eco)
     } else {
-        // Ensure guild exists first to satisfy foreign key
+        // ensure guild exists first to satisfy foreign key
         crate::db::guild::get_or_create(pool, guild_id).await?;
 
-        // Create default
+        // create default
         sqlx::query!(
             "INSERT INTO users_economy (guild_id, user_id) VALUES ($1, $2) ON CONFLICT DO NOTHING",
             guild_id,
@@ -45,7 +45,7 @@ pub async fn get_user_economy(pool: &PgPool, guild_id: i64, user_id: i64) -> sql
 }
 
 pub async fn update_balance(pool: &PgPool, guild_id: i64, user_id: i64, amount: i64) -> sqlx::Result<()> {
-    // Ensure user record exists first
+    // ensure user record exists first
     get_user_economy(pool, guild_id, user_id).await?;
 
     if amount > 0 {
@@ -65,7 +65,7 @@ pub async fn update_balance(pool: &PgPool, guild_id: i64, user_id: i64, amount: 
         ).execute(pool).await?;
     }
 
-    // Update global stat
+    // update global stat
     sqlx::query!(
         "UPDATE global_stats SET stat_value = stat_value + 1 WHERE stat_key = 'total_economy_transactions'"
     ).execute(pool).await?;
@@ -74,7 +74,7 @@ pub async fn update_balance(pool: &PgPool, guild_id: i64, user_id: i64, amount: 
 }
 
 pub async fn set_last_daily(pool: &PgPool, guild_id: i64, user_id: i64, time: DateTime<Utc>) -> sqlx::Result<()> {
-    // Ensure user record exists first
+    // ensure user record exists first
     get_user_economy(pool, guild_id, user_id).await?;
 
     sqlx::query!(
@@ -193,3 +193,4 @@ pub async fn transfer_to_bank(pool: &PgPool, guild_id: i64, user_id: i64, amount
     ).execute(pool).await?;
     Ok(())
 }
+

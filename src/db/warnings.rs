@@ -1,7 +1,7 @@
 use sqlx::PgPool;
 use crate::models::warning::Warning;
 
-/// Insert a warning (assumes the matching mod_case is already created).
+/// insert a warning (assumes the matching mod_case is already created).
 pub async fn create(
     pool: &PgPool,
     guild_id: i64,
@@ -27,7 +27,7 @@ pub async fn create(
     .await
 }
 
-/// Count active (non-pardoned) warnings for a user in a guild.
+/// count active (non-pardoned) warnings for a user in a guild.
 pub async fn count(pool: &PgPool, guild_id: i64, user_id: i64) -> sqlx::Result<i64> {
     let row = sqlx::query!(
         r#"
@@ -43,7 +43,7 @@ pub async fn count(pool: &PgPool, guild_id: i64, user_id: i64) -> sqlx::Result<i
     Ok(row.count)
 }
 
-/// Fetch all warnings for a user in a guild.
+/// fetch all warnings for a user in a guild.
 pub async fn get_for_user(
     pool: &PgPool,
     guild_id: i64,
@@ -63,7 +63,7 @@ pub async fn get_for_user(
     .await
 }
 
-/// Pardon (soft-delete) a specific warning by ID.
+/// pardon (soft-delete) a specific warning by ID.
 pub async fn pardon(pool: &PgPool, warning_id: i64, guild_id: i64) -> sqlx::Result<bool> {
     let result = sqlx::query!(
         "UPDATE warnings SET pardoned = TRUE WHERE id = $1 AND guild_id = $2 AND pardoned = FALSE",
@@ -74,3 +74,4 @@ pub async fn pardon(pool: &PgPool, warning_id: i64, guild_id: i64) -> sqlx::Resu
     .await?;
     Ok(result.rows_affected() > 0)
 }
+

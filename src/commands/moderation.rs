@@ -14,7 +14,7 @@ pub async fn kick(
 
     guild_id.kick_with_reason(ctx.http(), user.id, reason_str).await?;
     
-    // Log to DB
+    // log to DB
     let pool = &ctx.data().database.pool;
     crate::db::mod_cases::create_case(
         pool,
@@ -60,7 +60,7 @@ pub async fn timeout(
     let mut member = guild_id.member(ctx.http(), user.id).await?;
     member.disable_communication_until_datetime(ctx.http(), until).await?;
 
-    // Log to DB
+    // log to DB
     let pool = &ctx.data().database.pool;
     crate::db::mod_cases::create_case(
         pool,
@@ -102,7 +102,7 @@ pub async fn ban(
 
     guild_id.ban_with_reason(ctx.http(), user.id, days, reason_str).await?;
 
-    // Log to DB
+    // log to DB
     let pool = &ctx.data().database.pool;
     crate::db::mod_cases::create_case(
         pool,
@@ -130,7 +130,7 @@ pub async fn ban(
     Ok(())
 }
 
-/// Ban and then immediately unban to clear messages
+/// ban and then immediately unban to clear messages
 #[poise::command(slash_command, prefix_command, required_permissions = "BAN_MEMBERS", guild_only)]
 pub async fn softban(
     ctx: Context<'_>,
@@ -145,7 +145,7 @@ pub async fn softban(
     guild_id.ban_with_reason(ctx.http(), user.id, days, reason_str).await?;
     guild_id.unban(ctx.http(), user.id).await?;
 
-    // Log to DB
+    // log to DB
     let pool = &ctx.data().database.pool;
     crate::db::mod_cases::create_case(
         pool,
@@ -172,7 +172,7 @@ pub async fn softban(
     Ok(())
 }
 
-/// Unban a user by ID
+/// unban a user by ID
 #[poise::command(slash_command, prefix_command, required_permissions = "BAN_MEMBERS", guild_only)]
 pub async fn unban(
     ctx: Context<'_>,
@@ -181,7 +181,7 @@ pub async fn unban(
     let guild_id = ctx.guild_id().ok_or("Must be in a guild")?;
     guild_id.unban(ctx.http(), user_id).await?;
 
-    // Log to DB
+    // log to DB
     let pool = &ctx.data().database.pool;
     crate::db::mod_cases::create_case(
         pool,
@@ -198,14 +198,14 @@ pub async fn unban(
     Ok(())
 }
 
-/// Warn a member and log the infraction
+/// warn a member and log the infraction
 #[poise::command(slash_command, prefix_command, required_permissions = "MANAGE_MESSAGES", guild_only)]
 pub async fn warn(
     ctx: Context<'_>,
     #[description = "The user to warn"] user: serenity::User,
     #[description = "The reason for the warning"] reason: String,
 ) -> Result<(), Error> {
-    // Log to DB
+    // log to DB
     let pool = &ctx.data().database.pool;
     let guild_id = ctx.guild_id().unwrap().get() as i64;
     let case = crate::db::mod_cases::create_case(
@@ -243,7 +243,7 @@ pub async fn warn(
     Ok(())
 }
 
-/// Purge a number of messages from this channel
+/// purge a number of messages from this channel
 #[poise::command(slash_command, prefix_command, required_permissions = "MANAGE_MESSAGES", guild_only)]
 pub async fn purge(
     ctx: Context<'_>,
@@ -269,7 +269,7 @@ pub async fn purge(
     Ok(())
 }
 
-/// Completely clear the channel by re-creating it
+/// completely clear the channel by re-creating it
 #[poise::command(slash_command, prefix_command, required_permissions = "MANAGE_CHANNELS", guild_only)]
 pub async fn nuke(ctx: Context<'_>) -> Result<(), Error> {
     let channel = ctx.guild_channel().await.ok_or("Must be in a guild channel")?;
@@ -302,7 +302,7 @@ pub async fn nuke(ctx: Context<'_>) -> Result<(), Error> {
     Ok(())
 }
 
-/// Set the slowmode for the current channel
+/// set the slowmode for the current channel
 #[poise::command(slash_command, prefix_command, required_permissions = "MANAGE_CHANNELS", guild_only)]
 pub async fn slowmode(
     ctx: Context<'_>,
@@ -310,7 +310,7 @@ pub async fn slowmode(
 ) -> Result<(), Error> {
     let channel_id = ctx.channel_id();
     
-    // We use edit_channel to update rate_limit_per_user
+    // we use edit_channel to update rate_limit_per_user
     channel_id.edit(ctx.http(), serenity::EditChannel::default().rate_limit_per_user(seconds as u16)).await?;
 
     if seconds == 0 {
@@ -322,7 +322,7 @@ pub async fn slowmode(
     Ok(())
 }
 
-/// Lock the current channel (denies @everyone SEND_MESSAGES)
+/// lock the current channel (denies @everyone SEND_MESSAGES)
 #[poise::command(slash_command, prefix_command, required_permissions = "MANAGE_CHANNELS", guild_only)]
 pub async fn lock(ctx: Context<'_>) -> Result<(), Error> {
     let channel_id = ctx.channel_id();
@@ -347,7 +347,7 @@ pub async fn lock(ctx: Context<'_>) -> Result<(), Error> {
     Ok(())
 }
 
-/// Unlock the current channel (removes @everyone SEND_MESSAGES deny)
+/// unlock the current channel (removes @everyone SEND_MESSAGES deny)
 #[poise::command(slash_command, prefix_command, required_permissions = "MANAGE_CHANNELS", guild_only)]
 pub async fn unlock(ctx: Context<'_>) -> Result<(), Error> {
     let channel_id = ctx.channel_id();
@@ -366,7 +366,7 @@ pub async fn unlock(ctx: Context<'_>) -> Result<(), Error> {
     Ok(())
 }
 
-/// Mute a member (alias for timeout with 1 hour default)
+/// mute a member (alias for timeout with 1 hour default)
 #[poise::command(slash_command, prefix_command, required_permissions = "MODERATE_MEMBERS", guild_only)]
 pub async fn mute(
     ctx: Context<'_>,
@@ -385,7 +385,7 @@ pub async fn mute(
     let mut member = guild_id.member(ctx.http(), user.id).await?;
     member.disable_communication_until_datetime(ctx.http(), until).await?;
 
-    // Log to DB
+    // log to DB
     let pool = &ctx.data().database.pool;
     crate::db::mod_cases::create_case(
         pool,
@@ -410,7 +410,7 @@ pub async fn mute(
 }
 
 
-/// Unmute a member (removes timeout)
+/// unmute a member (removes timeout)
 #[poise::command(slash_command, prefix_command, required_permissions = "MODERATE_MEMBERS", guild_only)]
 pub async fn unmute(
     ctx: Context<'_>,
@@ -423,7 +423,7 @@ pub async fn unmute(
     let mut member = guild_id.member(ctx.http(), user.id).await?;
     member.enable_communication(ctx.http()).await?;
 
-    // Log to DB
+    // log to DB
     let pool = &ctx.data().database.pool;
     crate::db::mod_cases::create_case(
         pool,
@@ -446,5 +446,7 @@ pub async fn unmute(
     .await?;
     Ok(())
 }
+
+
 
 

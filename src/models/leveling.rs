@@ -21,3 +21,4 @@ pub struct LevelRole {
     pub level: i32,
     pub role_id: i64,
 }
+

@@ -1,7 +1,7 @@
 use crate::{Context, Error};
 use poise::serenity_prelude as serenity;
 
-/// Add a role to a member
+/// add a role to a member
 #[poise::command(slash_command, prefix_command, required_permissions = "MANAGE_ROLES", guild_only)]
 pub async fn add(
     ctx: Context<'_>,
@@ -21,7 +21,7 @@ pub async fn add(
     Ok(())
 }
 
-/// Remove a role from a member
+/// remove a role from a member
 #[poise::command(slash_command, prefix_command, required_permissions = "MANAGE_ROLES", guild_only)]
 pub async fn remove(
     ctx: Context<'_>,
@@ -41,7 +41,7 @@ pub async fn remove(
     Ok(())
 }
 
-/// List all roles in the server
+/// list all roles in the server
 #[poise::command(slash_command, prefix_command, guild_only)]
 pub async fn list(ctx: Context<'_>) -> Result<(), Error> {
     let guild = ctx.guild().ok_or("Must be in a guild")?.clone();
@@ -64,3 +64,5 @@ pub async fn list(ctx: Context<'_>) -> Result<(), Error> {
     .await?;
     Ok(())
 }
+
+

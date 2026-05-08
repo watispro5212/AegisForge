@@ -15,7 +15,7 @@ pub async fn event_handler(
             let guild_count = ctx.cache.guild_count();
             set_presence(ctx, guild_count, 0);
 
-            // Rotating presence — cycles every 60s through branded status messages
+            // rotating presence — cycles every 60s through branded status messages
             let ctx_clone = ctx.clone();
             tokio::spawn(async move {
                 let mut idx: usize = 1;
@@ -27,18 +27,18 @@ pub async fn event_handler(
                 }
             });
 
-            // Startup webhook notification
+            // startup webhook notification
             if let Ok(webhook_url) = std::env::var("STATUS_WEBHOOK_URL") {
                 if let Ok(webhook) = serenity::model::webhook::Webhook::from_url(&ctx.http, &webhook_url).await {
                     let embed = serenity::builder::CreateEmbed::new()
-                        .title("🔩 AegisForge Online")
+                        .title("🔩 bot's online lol")
                         .description(format!(
                             "Bot started successfully across **{}** servers.",
                             guild_count
                         ))
                         .field("Version", format!("`v{}`", env!("CARGO_PKG_VERSION")), true)
                         .field("Servers", format!("`{}`", guild_count), true)
-                        .footer(serenity::builder::CreateEmbedFooter::new("AegisForge v3"))
+                        .footer(serenity::builder::CreateEmbedFooter::new("aegisforge v4 lazy"))
                         .color(0x00E5FF);
                     let builder = serenity::builder::ExecuteWebhook::new().embed(embed);
                     let _ = webhook.execute(&ctx.http, false, builder).await;
@@ -55,11 +55,11 @@ pub async fn event_handler(
                 if let Ok(webhook_url) = std::env::var("STATUS_WEBHOOK_URL") {
                     if let Ok(webhook) = serenity::model::webhook::Webhook::from_url(&ctx.http, &webhook_url).await {
                         let embed = serenity::builder::CreateEmbed::new()
-                            .title("📥 New Server Joined")
+                            .title("📥 someone added me lol")
                             .description(format!("**{}**", guild.name))
                             .field("Members", format!("`{}`", guild.member_count), true)
                             .field("Total Servers", format!("`{}`", guild_count), true)
-                            .footer(serenity::builder::CreateEmbedFooter::new(format!("Guild ID: {}", guild.id)))
+                            .footer(serenity::builder::CreateEmbedFooter::new(format!("guild id: {}", guild.id)))
                             .color(0x57F287);
                         let builder = serenity::builder::ExecuteWebhook::new().embed(embed);
                         let _ = webhook.execute(&ctx.http, false, builder).await;
@@ -79,14 +79,14 @@ pub async fn event_handler(
             let db = &data.database;
 
             if let Ok(config) = db.get_guild_config(guild_id).await {
-                // Auto-role
+                // auto-role
                 if let Some(role_id) = config.auto_role_id {
                     let _ = new_member
                         .add_role(&ctx.http, serenity::RoleId::new(role_id as u64))
                         .await;
                 }
 
-                // Welcome message
+                // welcome message
                 if let Some(channel_id) = config.welcome_channel {
                     if !config.welcome_message.is_empty() {
                         let server_name = ctx
@@ -176,7 +176,7 @@ pub async fn event_handler(
                             )
                             .await;
 
-                        // Assign level roles
+                        // assign level roles
                         if let Ok(roles) = crate::db::leveling::get_level_roles(&db.pool, guild_id).await {
                             for lr in roles {
                                 if user_lvl.level >= lr.level {
@@ -240,7 +240,7 @@ pub async fn event_handler(
     Ok(())
 }
 
-/// Set the bot's Discord presence. `idx` rotates through 4 branded status messages.
+/// set the bot's Discord presence. `idx` rotates through 4 branded status messages.
 fn set_presence(ctx: &serenity::Context, guild_count: usize, idx: usize) {
     let (activity, status) = match idx % 4 {
         0 => (
@@ -262,3 +262,4 @@ fn set_presence(ctx: &serenity::Context, guild_count: usize, idx: usize) {
     };
     ctx.set_presence(Some(activity), status);
 }
+

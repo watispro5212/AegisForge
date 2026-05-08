@@ -1,7 +1,7 @@
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 
-/// Maps to the `warnings` table.
+/// maps to the `warnings` table.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Warning {
     pub id: i64,
@@ -13,3 +13,4 @@ pub struct Warning {
     pub pardoned: bool,
     pub created_at: DateTime<Utc>,
 }
+
