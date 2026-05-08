@@ -209,7 +209,6 @@ async fn main() -> Result<(), Error> {
 
     let mut client = serenity::ClientBuilder::new(&token, intents)
         .framework(framework)
-        .shards(0, 2)
         .await?;
 
     let shard_manager = Arc::clone(&client.shard_manager);

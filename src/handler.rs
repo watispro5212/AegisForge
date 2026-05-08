@@ -1,5 +1,5 @@
 use poise::serenity_prelude as serenity;
-use tracing::info;
+use tracing::{info, error};
 use std::time::Duration;
 
 pub async fn event_handler(

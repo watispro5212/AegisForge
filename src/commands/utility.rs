@@ -31,7 +31,7 @@ pub async fn serverinfo(ctx: Context<'_>) -> Result<(), Error> {
     ctx.send(poise::CreateReply::default().embed(
         serenity::CreateEmbed::new()
             .title(format!("🔷 AegisForge — {}", guild.name))
-            .description(format!("it's a server.", guild.name))
+            .description(format!("it's a server: **{}**", guild.name))
             .thumbnail(icon)
             .field("👑 Owner", format!("<@{}>", guild.owner_id), true)
             .field("👥 Members", guild.member_count.to_string(), true)
@@ -58,7 +58,7 @@ pub async fn whois(
     ctx.send(poise::CreateReply::default().embed(
         serenity::CreateEmbed::new()
             .title(format!("👤 AegisForge — Profile"))
-            .description(format!("it's a user.", target.name))
+            .description(format!("it's a user: **{}**", target.name))
             .thumbnail(target.face())
             .field("📝 Username", format!("**{}**", target.name), true)
             .field("🆔 User ID", target.id.to_string(), true)
@@ -84,7 +84,7 @@ pub async fn avatar(
     ctx.send(poise::CreateReply::default().embed(
         serenity::CreateEmbed::new()
             .title(format!("🖼️ AegisForge — Visual Identity"))
-            .description(format!("here is the avatar lol.", target.name))
+            .description(format!("here is the avatar for **{}** lol.", target.name))
             .image(&avatar_url)
             .footer(serenity::CreateEmbedFooter::new(format!("Requested by {}", ctx.author().name)))
             .timestamp(serenity::Timestamp::now())
