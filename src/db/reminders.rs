@@ -1,6 +1,6 @@
-use sqlx::PgPool;
-use chrono::{DateTime, Utc};
 use crate::models::reminder::Reminder;
+use chrono::{DateTime, Utc};
+use sqlx::PgPool;
 
 /// create a new reminder.
 pub async fn create(
@@ -81,4 +81,3 @@ pub async fn delete(pool: &PgPool, reminder_id: i64, user_id: i64) -> sqlx::Resu
     .await?;
     Ok(result.rows_affected() > 0)
 }
-

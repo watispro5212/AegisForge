@@ -1,5 +1,5 @@
-use sqlx::PgPool;
 use crate::models::config::GuildConfig;
+use sqlx::PgPool;
 
 /// fetch the guild config, or INSERT a default row if one doesn't exist yet.
 /// uses ON CONFLICT DO NOTHING so concurrent first-interactions are safe.
@@ -64,7 +64,11 @@ pub async fn get_or_create(pool: &PgPool, guild_id: i64) -> sqlx::Result<GuildCo
 
 /// update a specific field in guild_configs, then the caller should
 /// invalidate the cache via `Database::invalidate_cache`.
-pub async fn set_mod_log_channel(pool: &PgPool, guild_id: i64, channel_id: i64) -> sqlx::Result<()> {
+pub async fn set_mod_log_channel(
+    pool: &PgPool,
+    guild_id: i64,
+    channel_id: i64,
+) -> sqlx::Result<()> {
     sqlx::query!(
         "UPDATE guild_configs SET mod_log_channel = $1 WHERE guild_id = $2",
         channel_id,
@@ -75,7 +79,12 @@ pub async fn set_mod_log_channel(pool: &PgPool, guild_id: i64, channel_id: i64) 
     Ok(())
 }
 
-pub async fn set_welcome_channel(pool: &PgPool, guild_id: i64, channel_id: i64, message: &str) -> sqlx::Result<()> {
+pub async fn set_welcome_channel(
+    pool: &PgPool,
+    guild_id: i64,
+    channel_id: i64,
+    message: &str,
+) -> sqlx::Result<()> {
     sqlx::query!(
         "UPDATE guild_configs SET welcome_channel = $1, welcome_message = $2 WHERE guild_id = $3",
         channel_id,
@@ -108,4 +117,3 @@ pub async fn set_prefix(pool: &PgPool, guild_id: i64, prefix: &str) -> sqlx::Res
     .await?;
     Ok(())
 }
-

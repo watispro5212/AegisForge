@@ -233,7 +233,7 @@ async function fetchLiveStats() {
                         <span class="shard-status pending">Scaling</span>
                     </div>
                     <div class="shard-body">
-                        <p>next shard spinning up soon or whatever.</p>
+                        <p>Next shard will appear here when it comes online.</p>
                     </div>
                  `;
                  shardGrid.appendChild(placeholder);

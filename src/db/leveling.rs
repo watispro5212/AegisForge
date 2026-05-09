@@ -1,8 +1,12 @@
+use crate::models::leveling::{LevelRole, UserLeveling};
+use chrono::Utc;
 use sqlx::PgPool;
-use crate::models::leveling::{UserLeveling, LevelRole};
-use chrono::{DateTime, Utc};
 
-pub async fn get_user_leveling(pool: &PgPool, guild_id: i64, user_id: i64) -> sqlx::Result<UserLeveling> {
+pub async fn get_user_leveling(
+    pool: &PgPool,
+    guild_id: i64,
+    user_id: i64,
+) -> sqlx::Result<UserLeveling> {
     let leveling = sqlx::query_as!(
         UserLeveling,
         r#"
@@ -45,9 +49,13 @@ pub async fn get_user_leveling(pool: &PgPool, guild_id: i64, user_id: i64) -> sq
 
 pub async fn add_xp(pool: &PgPool, guild_id: i64, user_id: i64, amount: i64) -> sqlx::Result<bool> {
     let mut leveling = get_user_leveling(pool, guild_id, user_id).await?;
-    
+
     // 1 minute cooldown for XP gain to prevent spam
-    if Utc::now().signed_duration_since(leveling.last_msg).num_seconds() < 60 {
+    if Utc::now()
+        .signed_duration_since(leveling.last_msg)
+        .num_seconds()
+        < 60
+    {
         return Ok(false);
     }
 
@@ -89,7 +97,9 @@ pub async fn update_rank_card_customization(
             c,
             guild_id,
             user_id
-        ).execute(pool).await?;
+        )
+        .execute(pool)
+        .await?;
     }
     if let Some(tc) = text_color {
         sqlx::query!(
@@ -102,7 +112,11 @@ pub async fn update_rank_card_customization(
     Ok(())
 }
 
-pub async fn get_leaderboard(pool: &PgPool, guild_id: i64, limit: i64) -> sqlx::Result<Vec<UserLeveling>> {
+pub async fn get_leaderboard(
+    pool: &PgPool,
+    guild_id: i64,
+    limit: i64,
+) -> sqlx::Result<Vec<UserLeveling>> {
     sqlx::query_as!(
         UserLeveling,
         "SELECT guild_id, user_id, xp, level, last_msg, rank_card_background as \"rank_card_background!\", rank_card_color as \"rank_card_color!\", rank_card_text_color as \"rank_card_text_color!\", created_at, updated_at FROM users_leveling WHERE guild_id = $1 ORDER BY xp DESC LIMIT $2",
@@ -116,7 +130,10 @@ pub struct GlobalLevelingEntry {
     pub total_xp: i64,
 }
 
-pub async fn get_global_leaderboard(pool: &PgPool, limit: i64) -> Result<Vec<GlobalLevelingEntry>, sqlx::Error> {
+pub async fn get_global_leaderboard(
+    pool: &PgPool,
+    limit: i64,
+) -> Result<Vec<GlobalLevelingEntry>, sqlx::Error> {
     sqlx::query_as!(
         GlobalLevelingEntry,
         "SELECT user_id, SUM(xp)::BIGINT as \"total_xp!\" FROM users_leveling GROUP BY user_id ORDER BY SUM(xp) DESC LIMIT $1",
@@ -138,6 +155,7 @@ pub async fn get_level_roles(pool: &PgPool, guild_id: i64) -> sqlx::Result<Vec<L
         LevelRole,
         "SELECT * FROM level_roles WHERE guild_id = $1 ORDER BY level ASC",
         guild_id
-    ).fetch_all(pool).await
+    )
+    .fetch_all(pool)
+    .await
 }
-

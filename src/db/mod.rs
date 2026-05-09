@@ -1,14 +1,14 @@
+pub mod economy;
 pub mod guild;
+pub mod leveling;
 pub mod mod_cases;
 pub mod reminders;
 pub mod warnings;
-pub mod economy;
-pub mod leveling;
 
+use crate::models::config::GuildConfig;
 use dashmap::DashMap;
 use sqlx::PgPool;
 use std::sync::Arc;
-use crate::models::config::GuildConfig;
 
 /// db stuff
 /// its just a pool and a cache so its fast.
@@ -66,11 +66,12 @@ impl Database {
         let rows = sqlx::query!(
             "SELECT phrase FROM automod_blacklist WHERE guild_id = $1",
             guild_id
-        ).fetch_all(&self.pool).await?;
-        
+        )
+        .fetch_all(&self.pool)
+        .await?;
+
         let list: Vec<String> = rows.into_iter().map(|r| r.phrase).collect();
         self.automod_cache.insert(guild_id, list.clone());
         Ok(list)
     }
 }
-

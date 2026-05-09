@@ -1,6 +1,6 @@
-use sqlx::PgPool;
+use crate::models::mod_case::{ModAction, ModCase};
 use chrono::{DateTime, Utc};
-use crate::models::mod_case::{ModCase, ModAction};
+use sqlx::PgPool;
 
 /// atomically increment the guild case counter and return the new case number.
 /// uses `FOR UPDATE` to prevent duplicate case numbers under concurrent mods.
@@ -114,12 +114,8 @@ pub async fn get_expired_cases(pool: &PgPool) -> sqlx::Result<Vec<ModCase>> {
 
 /// mark a case as no longer active (e.g. after an unban or untimeout).
 pub async fn deactivate_case(pool: &PgPool, case_id: i64) -> sqlx::Result<()> {
-    sqlx::query!(
-        "UPDATE mod_cases SET active = FALSE WHERE id = $1",
-        case_id
-    )
-    .execute(pool)
-    .await?;
+    sqlx::query!("UPDATE mod_cases SET active = FALSE WHERE id = $1", case_id)
+        .execute(pool)
+        .await?;
     Ok(())
 }
-

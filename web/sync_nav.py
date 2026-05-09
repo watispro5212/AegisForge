@@ -55,7 +55,7 @@ for file_path in html_files:
     
     # Final cleanup
     content = content.replace('AegisForge', 'aegisforge')
-    content = content.replace('Forged with 🦀 Rust and precision', 'it works i guess.')
+    content = content.replace('Forged with 🦀 Rust and precision', 'Fast moderation, economy, leveling, and utilities.')
 
     with open(file_path, 'w', encoding='utf-8') as f:
         f.write(content)

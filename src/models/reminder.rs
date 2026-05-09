@@ -13,4 +13,3 @@ pub struct Reminder {
     pub fired: bool,
     pub created_at: DateTime<Utc>,
 }
-

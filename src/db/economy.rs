@@ -1,8 +1,12 @@
-use sqlx::PgPool;
 use crate::models::economy::UserEconomy;
 use chrono::{DateTime, Utc};
+use sqlx::PgPool;
 
-pub async fn get_user_economy(pool: &PgPool, guild_id: i64, user_id: i64) -> sqlx::Result<UserEconomy> {
+pub async fn get_user_economy(
+    pool: &PgPool,
+    guild_id: i64,
+    user_id: i64,
+) -> sqlx::Result<UserEconomy> {
     let economy = sqlx::query_as!(
         UserEconomy,
         r#"
@@ -33,7 +37,9 @@ pub async fn get_user_economy(pool: &PgPool, guild_id: i64, user_id: i64) -> sql
             "INSERT INTO users_economy (guild_id, user_id) VALUES ($1, $2) ON CONFLICT DO NOTHING",
             guild_id,
             user_id
-        ).execute(pool).await?;
+        )
+        .execute(pool)
+        .await?;
 
         Ok(sqlx::query_as!(
             UserEconomy,
@@ -44,7 +50,12 @@ pub async fn get_user_economy(pool: &PgPool, guild_id: i64, user_id: i64) -> sql
     }
 }
 
-pub async fn update_balance(pool: &PgPool, guild_id: i64, user_id: i64, amount: i64) -> sqlx::Result<()> {
+pub async fn update_balance(
+    pool: &PgPool,
+    guild_id: i64,
+    user_id: i64,
+    amount: i64,
+) -> sqlx::Result<()> {
     // ensure user record exists first
     get_user_economy(pool, guild_id, user_id).await?;
 
@@ -73,7 +84,12 @@ pub async fn update_balance(pool: &PgPool, guild_id: i64, user_id: i64, amount: 
     Ok(())
 }
 
-pub async fn set_last_daily(pool: &PgPool, guild_id: i64, user_id: i64, time: DateTime<Utc>) -> sqlx::Result<()> {
+pub async fn set_last_daily(
+    pool: &PgPool,
+    guild_id: i64,
+    user_id: i64,
+    time: DateTime<Utc>,
+) -> sqlx::Result<()> {
     // ensure user record exists first
     get_user_economy(pool, guild_id, user_id).await?;
 
@@ -82,66 +98,107 @@ pub async fn set_last_daily(pool: &PgPool, guild_id: i64, user_id: i64, time: Da
         time,
         guild_id,
         user_id
-    ).execute(pool).await?;
+    )
+    .execute(pool)
+    .await?;
     Ok(())
 }
 
-pub async fn set_last_work(pool: &PgPool, guild_id: i64, user_id: i64, time: DateTime<Utc>) -> sqlx::Result<()> {
+pub async fn set_last_work(
+    pool: &PgPool,
+    guild_id: i64,
+    user_id: i64,
+    time: DateTime<Utc>,
+) -> sqlx::Result<()> {
     get_user_economy(pool, guild_id, user_id).await?;
     sqlx::query!(
         "UPDATE users_economy SET last_work = $1 WHERE guild_id = $2 AND user_id = $3",
         time,
         guild_id,
         user_id
-    ).execute(pool).await?;
+    )
+    .execute(pool)
+    .await?;
     Ok(())
 }
 
-pub async fn set_last_rob(pool: &PgPool, guild_id: i64, user_id: i64, time: DateTime<Utc>) -> sqlx::Result<()> {
+pub async fn set_last_rob(
+    pool: &PgPool,
+    guild_id: i64,
+    user_id: i64,
+    time: DateTime<Utc>,
+) -> sqlx::Result<()> {
     get_user_economy(pool, guild_id, user_id).await?;
     sqlx::query!(
         "UPDATE users_economy SET last_rob = $1 WHERE guild_id = $2 AND user_id = $3",
         time,
         guild_id,
         user_id
-    ).execute(pool).await?;
+    )
+    .execute(pool)
+    .await?;
     Ok(())
 }
 
-pub async fn set_last_crime(pool: &PgPool, guild_id: i64, user_id: i64, time: DateTime<Utc>) -> sqlx::Result<()> {
+pub async fn set_last_crime(
+    pool: &PgPool,
+    guild_id: i64,
+    user_id: i64,
+    time: DateTime<Utc>,
+) -> sqlx::Result<()> {
     get_user_economy(pool, guild_id, user_id).await?;
     sqlx::query!(
         "UPDATE users_economy SET last_crime = $1 WHERE guild_id = $2 AND user_id = $3",
         time,
         guild_id,
         user_id
-    ).execute(pool).await?;
+    )
+    .execute(pool)
+    .await?;
     Ok(())
 }
 
-pub async fn set_last_fish(pool: &PgPool, guild_id: i64, user_id: i64, time: DateTime<Utc>) -> sqlx::Result<()> {
+pub async fn set_last_fish(
+    pool: &PgPool,
+    guild_id: i64,
+    user_id: i64,
+    time: DateTime<Utc>,
+) -> sqlx::Result<()> {
     get_user_economy(pool, guild_id, user_id).await?;
     sqlx::query!(
         "UPDATE users_economy SET last_fish = $1 WHERE guild_id = $2 AND user_id = $3",
         time,
         guild_id,
         user_id
-    ).execute(pool).await?;
+    )
+    .execute(pool)
+    .await?;
     Ok(())
 }
 
-pub async fn set_last_hunt(pool: &PgPool, guild_id: i64, user_id: i64, time: DateTime<Utc>) -> sqlx::Result<()> {
+pub async fn set_last_hunt(
+    pool: &PgPool,
+    guild_id: i64,
+    user_id: i64,
+    time: DateTime<Utc>,
+) -> sqlx::Result<()> {
     get_user_economy(pool, guild_id, user_id).await?;
     sqlx::query!(
         "UPDATE users_economy SET last_hunt = $1 WHERE guild_id = $2 AND user_id = $3",
         time,
         guild_id,
         user_id
-    ).execute(pool).await?;
+    )
+    .execute(pool)
+    .await?;
     Ok(())
 }
 
-pub async fn get_leaderboard(pool: &PgPool, guild_id: i64, limit: i64) -> sqlx::Result<Vec<UserEconomy>> {
+pub async fn get_leaderboard(
+    pool: &PgPool,
+    guild_id: i64,
+    limit: i64,
+) -> sqlx::Result<Vec<UserEconomy>> {
     sqlx::query_as!(
         UserEconomy,
         "SELECT guild_id, user_id, balance, bank, last_daily, last_work, last_rob as \"last_rob?\", last_crime as \"last_crime?\", last_fish as \"last_fish?\", last_hunt as \"last_hunt?\", total_earned, total_spent, created_at, updated_at FROM users_economy WHERE guild_id = $1 ORDER BY (balance + bank) DESC LIMIT $2",
@@ -155,7 +212,10 @@ pub struct GlobalLeaderboardEntry {
     pub total_balance: i64,
 }
 
-pub async fn get_global_leaderboard(pool: &PgPool, limit: i64) -> Result<Vec<GlobalLeaderboardEntry>, sqlx::Error> {
+pub async fn get_global_leaderboard(
+    pool: &PgPool,
+    limit: i64,
+) -> Result<Vec<GlobalLeaderboardEntry>, sqlx::Error> {
     sqlx::query_as!(
         GlobalLeaderboardEntry,
         "SELECT user_id, SUM(balance + bank)::BIGINT as \"total_balance!\" FROM users_economy GROUP BY user_id ORDER BY SUM(balance + bank) DESC LIMIT $1",
@@ -172,18 +232,30 @@ pub async fn get_total_wealth(pool: &PgPool) -> Result<i64, sqlx::Error> {
     Ok(row.total)
 }
 
-pub async fn update_bank(pool: &PgPool, guild_id: i64, user_id: i64, amount: i64) -> sqlx::Result<()> {
+pub async fn update_bank(
+    pool: &PgPool,
+    guild_id: i64,
+    user_id: i64,
+    amount: i64,
+) -> sqlx::Result<()> {
     get_user_economy(pool, guild_id, user_id).await?;
     sqlx::query!(
         "UPDATE users_economy SET bank = bank + $1 WHERE guild_id = $2 AND user_id = $3",
         amount,
         guild_id,
         user_id
-    ).execute(pool).await?;
+    )
+    .execute(pool)
+    .await?;
     Ok(())
 }
 
-pub async fn transfer_to_bank(pool: &PgPool, guild_id: i64, user_id: i64, amount: i64) -> sqlx::Result<()> {
+pub async fn transfer_to_bank(
+    pool: &PgPool,
+    guild_id: i64,
+    user_id: i64,
+    amount: i64,
+) -> sqlx::Result<()> {
     get_user_economy(pool, guild_id, user_id).await?;
     sqlx::query!(
         "UPDATE users_economy SET balance = balance - $1, bank = bank + $1 WHERE guild_id = $2 AND user_id = $3",
@@ -193,4 +265,3 @@ pub async fn transfer_to_bank(pool: &PgPool, guild_id: i64, user_id: i64, amount
     ).execute(pool).await?;
     Ok(())
 }
-

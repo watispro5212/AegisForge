@@ -1,12 +1,29 @@
-use crate::{Context, Error};
-use rand::prelude::*;
-use poise::serenity_prelude as serenity;
 use crate::db::economy;
+use crate::{Context, Error};
+use poise::serenity_prelude as serenity;
+use rand::prelude::*;
 
 /// economy stuff
 #[poise::command(
     slash_command,
-    subcommands("balance", "daily", "work", "pay", "leaderboard", "global_leaderboard", "rob", "slots", "beg", "search", "deposit", "withdraw", "gamble_info", "crime", "fish", "hunt"),
+    subcommands(
+        "balance",
+        "daily",
+        "work",
+        "pay",
+        "leaderboard",
+        "global_leaderboard",
+        "rob",
+        "slots",
+        "beg",
+        "search",
+        "deposit",
+        "withdraw",
+        "gamble_info",
+        "crime",
+        "fish",
+        "hunt"
+    ),
     category = "economy",
     guild_only
 )]
@@ -23,20 +40,31 @@ pub async fn balance(
     let target = user.as_ref().unwrap_or(ctx.author());
     let guild_id = ctx.guild_id().unwrap().get() as i64;
 
-    let eco = economy::get_user_economy(&ctx.data().database.pool, guild_id, target.id.get() as i64).await?;
+    let eco =
+        economy::get_user_economy(&ctx.data().database.pool, guild_id, target.id.get() as i64)
+            .await?;
     let total = eco.balance + eco.bank;
 
-    ctx.send(poise::CreateReply::default().embed(
-        serenity::CreateEmbed::new()
-            .title(format!("💰 {}'s Balance", target.name))
-            .thumbnail(target.face())
-            .field("👛 Wallet", format!("`${}`", eco.balance), true)
-            .field("🏦 Bank", format!("`${}`", eco.bank), true)
-            .field("📊 Net Worth", format!("`${}`", total), true)
-            .field("📈 Statistics", format!("Total Earned: `${}`\nTotal Spent: `${}`", eco.total_earned, eco.total_spent), false)
-            .footer(serenity::CreateEmbedFooter::new("AegisForge v4 Economy"))
-            .color(0x00E5FF),
-    ))
+    ctx.send(
+        poise::CreateReply::default().embed(
+            serenity::CreateEmbed::new()
+                .title(format!("💰 {}'s Balance", target.name))
+                .thumbnail(target.face())
+                .field("👛 Wallet", format!("`${}`", eco.balance), true)
+                .field("🏦 Bank", format!("`${}`", eco.bank), true)
+                .field("📊 Net Worth", format!("`${}`", total), true)
+                .field(
+                    "📈 Statistics",
+                    format!(
+                        "Total Earned: `${}`\nTotal Spent: `${}`",
+                        eco.total_earned, eco.total_spent
+                    ),
+                    false,
+                )
+                .footer(serenity::CreateEmbedFooter::new("AegisForge v4 Economy"))
+                .color(0x00E5FF),
+        ),
+    )
     .await?;
     Ok(())
 }
@@ -58,32 +86,41 @@ pub async fn daily(ctx: Context<'_>) -> Result<(), Error> {
             return Err(format!(
                 "Daily already claimed! Come back in **{}h {}m**.",
                 hours, mins
-            ).into());
+            )
+            .into());
         }
     }
 
     let reward: i64 = 500;
     economy::update_balance(&ctx.data().database.pool, guild_id, user_id, reward).await?;
-    economy::set_last_daily(&ctx.data().database.pool, guild_id, user_id, chrono::Utc::now()).await?;
+    economy::set_last_daily(
+        &ctx.data().database.pool,
+        guild_id,
+        user_id,
+        chrono::Utc::now(),
+    )
+    .await?;
 
     let new_total = eco.balance + reward;
 
-    ctx.send(poise::CreateReply::default().embed(
-        serenity::CreateEmbed::new()
-            .title("✨ Daily Reward Claimed!")
-            .description(format!(
-                "You claimed your daily reward of **${}**!",
-                reward
-            ))
-            .field("💰 Earned", format!("`+${}`", reward), true)
-            .field("👛 New Wallet", format!("`${}`", new_total), true)
-            .field("⏰ Next Daily", "<t:{}:R>".replace(
-                "{}",
-                &(chrono::Utc::now().timestamp() + 86400).to_string()
-            ), true)
-            .footer(serenity::CreateEmbedFooter::new("Come back every 24h — don't miss a streak!"))
-            .color(0x00FF88),
-    ))
+    ctx.send(
+        poise::CreateReply::default().embed(
+            serenity::CreateEmbed::new()
+                .title("✨ Daily Reward Claimed!")
+                .description(format!("You claimed your daily reward of **${}**!", reward))
+                .field("💰 Earned", format!("`+${}`", reward), true)
+                .field("👛 New Wallet", format!("`${}`", new_total), true)
+                .field(
+                    "⏰ Next Daily",
+                    "<t:{}:R>".replace("{}", &(chrono::Utc::now().timestamp() + 86400).to_string()),
+                    true,
+                )
+                .footer(serenity::CreateEmbedFooter::new(
+                    "Come back every 24h — don't miss a streak!",
+                ))
+                .color(0x00FF88),
+        ),
+    )
     .await?;
     Ok(())
 }
@@ -103,35 +140,70 @@ pub async fn work(ctx: Context<'_>) -> Result<(), Error> {
             return Err(format!(
                 "You're still tired from last time! Come back in **{}m**.",
                 remaining
-            ).into());
+            )
+            .into());
         }
     }
 
     let jobs = [
-        ("🔧 Fixed a production bug", "Saved the day — client didn't even notice."),
-        ("🚚 Delivered packages", "Your back hurts but the tips were worth it."),
-        ("🍕 Delivered pizzas", "Three cold calls and one generous tipper."),
-        ("💻 Freelanced a website", "Client wanted it \"simple\" — 47 revisions later..."),
-        ("🔨 Fixed plumbing", "Charged extra for the 2am emergency call."),
-        ("🎨 Designed a logo", "They said the first one was perfect, then changed it."),
-        ("📦 Worked at the warehouse", "Hit the quota, earned the bonus."),
-        ("🛡️ Forged armor for the realm", "The guild appreciated your craftsmanship."),
+        (
+            "🔧 Fixed a production bug",
+            "Saved the day — client didn't even notice.",
+        ),
+        (
+            "🚚 Delivered packages",
+            "Your back hurts but the tips were worth it.",
+        ),
+        (
+            "🍕 Delivered pizzas",
+            "Three cold calls and one generous tipper.",
+        ),
+        (
+            "💻 Freelanced a website",
+            "Client wanted it \"simple\" — 47 revisions later...",
+        ),
+        (
+            "🔨 Fixed plumbing",
+            "Charged extra for the 2am emergency call.",
+        ),
+        (
+            "🎨 Designed a logo",
+            "They said the first one was perfect, then changed it.",
+        ),
+        (
+            "📦 Worked at the warehouse",
+            "Hit the quota, earned the bonus.",
+        ),
+        (
+            "🛡️ Forged armor for the realm",
+            "The guild appreciated your craftsmanship.",
+        ),
     ];
     let (job, flavor) = jobs[rand::thread_rng().gen_range(0..jobs.len())];
     let reward = rand::thread_rng().gen_range(50..=200i64);
 
     economy::update_balance(&ctx.data().database.pool, guild_id, user_id, reward).await?;
-    economy::set_last_work(&ctx.data().database.pool, guild_id, user_id, chrono::Utc::now()).await?;
+    economy::set_last_work(
+        &ctx.data().database.pool,
+        guild_id,
+        user_id,
+        chrono::Utc::now(),
+    )
+    .await?;
 
-    ctx.send(poise::CreateReply::default().embed(
-        serenity::CreateEmbed::new()
-            .title(format!("🔨 Work Complete — {}", job))
-            .description(flavor)
-            .field("💵 Earned", format!("`+${}`", reward), true)
-            .field("⏰ Next Shift", "In 30 minutes", true)
-            .footer(serenity::CreateEmbedFooter::new("Work smarter, gamble harder"))
-            .color(0x00E5FF),
-    ))
+    ctx.send(
+        poise::CreateReply::default().embed(
+            serenity::CreateEmbed::new()
+                .title(format!("🔨 Work Complete — {}", job))
+                .description(flavor)
+                .field("💵 Earned", format!("`+${}`", reward), true)
+                .field("⏰ Next Shift", "In 30 minutes", true)
+                .footer(serenity::CreateEmbedFooter::new(
+                    "Work smarter, gamble harder",
+                ))
+                .color(0x00E5FF),
+        ),
+    )
     .await?;
     Ok(())
 }
@@ -153,26 +225,42 @@ pub async fn pay(
     let guild_id = ctx.guild_id().unwrap().get() as i64;
     let author_id = ctx.author().id.get() as i64;
 
-    let author_eco = economy::get_user_economy(&ctx.data().database.pool, guild_id, author_id).await?;
+    let author_eco =
+        economy::get_user_economy(&ctx.data().database.pool, guild_id, author_id).await?;
     if author_eco.balance < amount {
         return Err(format!(
             "Insufficient funds. You only have `${}` in your wallet.",
             author_eco.balance
-        ).into());
+        )
+        .into());
     }
 
     economy::update_balance(&ctx.data().database.pool, guild_id, author_id, -amount).await?;
-    economy::update_balance(&ctx.data().database.pool, guild_id, user.id.get() as i64, amount).await?;
+    economy::update_balance(
+        &ctx.data().database.pool,
+        guild_id,
+        user.id.get() as i64,
+        amount,
+    )
+    .await?;
 
-    ctx.send(poise::CreateReply::default().embed(
-        serenity::CreateEmbed::new()
-            .title("💸 Transfer Successful")
-            .field("Recipient", format!("**{}**", user.name), true)
-            .field("Amount", format!("`${}` sent", amount), true)
-            .field("Your Balance", format!("`${}`", author_eco.balance - amount), true)
-            .footer(serenity::CreateEmbedFooter::new("Wallet-to-wallet transfer"))
-            .color(0x00FF88),
-    ))
+    ctx.send(
+        poise::CreateReply::default().embed(
+            serenity::CreateEmbed::new()
+                .title("💸 Transfer Successful")
+                .field("Recipient", format!("**{}**", user.name), true)
+                .field("Amount", format!("`${}` sent", amount), true)
+                .field(
+                    "Your Balance",
+                    format!("`${}`", author_eco.balance - amount),
+                    true,
+                )
+                .footer(serenity::CreateEmbedFooter::new(
+                    "Wallet-to-wallet transfer",
+                ))
+                .color(0x00FF88),
+        ),
+    )
     .await?;
     Ok(())
 }
@@ -191,9 +279,14 @@ pub async fn leaderboard(
         let medals = ["🥇", "🥈", "🥉"];
         for (i, entry) in lb.iter().enumerate() {
             let prefix = medals.get(i).copied().unwrap_or("🏅");
-            desc.push_str(&format!("{} <@{}> — `${}`\n", prefix, entry.user_id, entry.total_balance));
+            desc.push_str(&format!(
+                "{} <@{}> — `${}`\n",
+                prefix, entry.user_id, entry.total_balance
+            ));
         }
-        if desc.is_empty() { desc = "_No data yet — start earning!_".to_string(); }
+        if desc.is_empty() {
+            desc = "_No data yet — start earning!_".to_string();
+        }
         (
             "🌍 Global Wealth Leaderboard",
             "Top 10 across all servers in the AegisForge network",
@@ -206,9 +299,16 @@ pub async fn leaderboard(
         let medals = ["🥇", "🥈", "🥉"];
         for (i, eco) in lb.iter().enumerate() {
             let prefix = medals.get(i).copied().unwrap_or("🏅");
-            desc.push_str(&format!("{} <@{}> — `${}`\n", prefix, eco.user_id, eco.balance + eco.bank));
+            desc.push_str(&format!(
+                "{} <@{}> — `${}`\n",
+                prefix,
+                eco.user_id,
+                eco.balance + eco.bank
+            ));
         }
-        if desc.is_empty() { desc = "_No data yet — start earning!_".to_string(); }
+        if desc.is_empty() {
+            desc = "_No data yet — start earning!_".to_string();
+        }
         (
             "🏆 Server Wealth Leaderboard",
             "Top 10 wealthiest in this server",
@@ -216,14 +316,16 @@ pub async fn leaderboard(
         )
     };
 
-    ctx.send(poise::CreateReply::default().embed(
-        serenity::CreateEmbed::new()
-            .title(title)
-            .description(content)
-            .footer(serenity::CreateEmbedFooter::new(footer))
-            .timestamp(serenity::Timestamp::now())
-            .color(0xFFD700),
-    ))
+    ctx.send(
+        poise::CreateReply::default().embed(
+            serenity::CreateEmbed::new()
+                .title(title)
+                .description(content)
+                .footer(serenity::CreateEmbedFooter::new(footer))
+                .timestamp(serenity::Timestamp::now())
+                .color(0xFFD700),
+        ),
+    )
     .await?;
     Ok(())
 }
@@ -242,22 +344,27 @@ pub async fn deposit(
 
     let eco = economy::get_user_economy(&ctx.data().database.pool, guild_id, user_id).await?;
     if amount > eco.balance {
-        return Err(format!(
-            "You only have `${}` in your wallet.",
-            eco.balance
-        ).into());
+        return Err(format!("You only have `${}` in your wallet.", eco.balance).into());
     }
 
     economy::transfer_to_bank(&ctx.data().database.pool, guild_id, user_id, amount).await?;
 
-    ctx.send(poise::CreateReply::default().embed(
-        serenity::CreateEmbed::new()
-            .title("🏦 Deposit Successful")
-            .field("💰 Deposited", format!("`${}` → Bank", amount), true)
-            .field("👛 Wallet Remaining", format!("`${}`", eco.balance - amount), true)
-            .footer(serenity::CreateEmbedFooter::new("Banked funds are safe from robbery"))
-            .color(0x00E5FF),
-    ))
+    ctx.send(
+        poise::CreateReply::default().embed(
+            serenity::CreateEmbed::new()
+                .title("🏦 Deposit Successful")
+                .field("💰 Deposited", format!("`${}` → Bank", amount), true)
+                .field(
+                    "👛 Wallet Remaining",
+                    format!("`${}`", eco.balance - amount),
+                    true,
+                )
+                .footer(serenity::CreateEmbedFooter::new(
+                    "Banked funds are safe from robbery",
+                ))
+                .color(0x00E5FF),
+        ),
+    )
     .await?;
     Ok(())
 }
@@ -276,22 +383,27 @@ pub async fn withdraw(
 
     let eco = economy::get_user_economy(&ctx.data().database.pool, guild_id, user_id).await?;
     if amount > eco.bank {
-        return Err(format!(
-            "You only have `${}` in your bank.",
-            eco.bank
-        ).into());
+        return Err(format!("You only have `${}` in your bank.", eco.bank).into());
     }
 
     economy::transfer_to_bank(&ctx.data().database.pool, guild_id, user_id, -amount).await?;
 
-    ctx.send(poise::CreateReply::default().embed(
-        serenity::CreateEmbed::new()
-            .title("💰 Withdrawal Successful")
-            .field("💵 Withdrawn", format!("`${}` → Wallet", amount), true)
-            .field("🏦 Bank Remaining", format!("`${}`", eco.bank - amount), true)
-            .footer(serenity::CreateEmbedFooter::new("Be careful — wallet funds can be robbed"))
-            .color(0x00E5FF),
-    ))
+    ctx.send(
+        poise::CreateReply::default().embed(
+            serenity::CreateEmbed::new()
+                .title("💰 Withdrawal Successful")
+                .field("💵 Withdrawn", format!("`${}` → Wallet", amount), true)
+                .field(
+                    "🏦 Bank Remaining",
+                    format!("`${}`", eco.bank - amount),
+                    true,
+                )
+                .footer(serenity::CreateEmbedFooter::new(
+                    "Be careful — wallet funds can be robbed",
+                ))
+                .color(0x00E5FF),
+        ),
+    )
     .await?;
     Ok(())
 }
@@ -302,7 +414,13 @@ pub async fn beg(ctx: Context<'_>) -> Result<(), Error> {
     let guild_id = ctx.guild_id().unwrap().get() as i64;
     let user_id = ctx.author().id.get() as i64;
 
-    let givers = ["A kind stranger", "A passing merchant", "An old wizard", "A generous guild member", "A cloaked figure"];
+    let givers = [
+        "A kind stranger",
+        "A passing merchant",
+        "An old wizard",
+        "A generous guild member",
+        "A cloaked figure",
+    ];
     let giver = givers[rand::thread_rng().gen_range(0..givers.len())];
     let reward = rand::thread_rng().gen_range(0i64..=50);
 
@@ -315,14 +433,19 @@ pub async fn beg(ctx: Context<'_>) -> Result<(), Error> {
         economy::update_balance(&ctx.data().database.pool, guild_id, user_id, reward).await?;
         serenity::CreateEmbed::new()
             .title("🤲 Begging Results")
-            .description(format!("**{}** took pity and tossed you some coins!", giver))
+            .description(format!(
+                "**{}** took pity and tossed you some coins!",
+                giver
+            ))
             .field("💰 Received", format!("`+${}`", reward), true)
             .color(0x00E5FF)
     };
 
-    ctx.send(poise::CreateReply::default().embed(
-        embed.footer(serenity::CreateEmbedFooter::new("Consider working for a living")),
-    ))
+    ctx.send(
+        poise::CreateReply::default().embed(embed.footer(serenity::CreateEmbedFooter::new(
+            "Consider working for a living",
+        ))),
+    )
     .await?;
     Ok(())
 }
@@ -348,14 +471,16 @@ pub async fn search(ctx: Context<'_>) -> Result<(), Error> {
 
     economy::update_balance(&ctx.data().database.pool, guild_id, user_id, reward).await?;
 
-    ctx.send(poise::CreateReply::default().embed(
-        serenity::CreateEmbed::new()
-            .title(format!("{} Search Results", emoji))
-            .description(format!("You rummaged around **{}**...", location))
-            .field("💰 Found", format!("`+${}`", reward), true)
-            .footer(serenity::CreateEmbedFooter::new("Finders keepers"))
-            .color(0x00E5FF),
-    ))
+    ctx.send(
+        poise::CreateReply::default().embed(
+            serenity::CreateEmbed::new()
+                .title(format!("{} Search Results", emoji))
+                .description(format!("You rummaged around **{}**...", location))
+                .field("💰 Found", format!("`+${}`", reward), true)
+                .footer(serenity::CreateEmbedFooter::new("Finders keepers"))
+                .color(0x00E5FF),
+        ),
+    )
     .await?;
     Ok(())
 }
@@ -378,7 +503,8 @@ pub async fn slots(
         return Err(format!(
             "Insufficient funds. You only have `${}` in your wallet.",
             eco.balance
-        ).into());
+        )
+        .into());
     }
 
     let emojis = ["🍒", "🍋", "🍇", "💎", "⭐"];
@@ -417,27 +543,36 @@ pub async fn slots(
         let prize = (bet as f64 * multiplier) as i64;
         let profit = prize - bet;
         economy::update_balance(&ctx.data().database.pool, guild_id, user_id, profit).await?;
-        ctx.send(poise::CreateReply::default().embed(
-            serenity::CreateEmbed::new()
-                .title(format!("🎰 {}", label))
-                .description(format!("> {}", slot_display))
-                .field("🎯 Bet", format!("`${}`", bet), true)
-                .field("💰 Won", format!("`${}`", prize), true)
-                .field("📈 Profit", format!("`+${}`", profit), true)
-                .footer(serenity::CreateEmbedFooter::new(format!("{}x multiplier | FairForge™ algorithm", multiplier)))
-                .color(0x00FF88),
-        ))
+        ctx.send(
+            poise::CreateReply::default().embed(
+                serenity::CreateEmbed::new()
+                    .title(format!("🎰 {}", label))
+                    .description(format!("> {}", slot_display))
+                    .field("🎯 Bet", format!("`${}`", bet), true)
+                    .field("💰 Won", format!("`${}`", prize), true)
+                    .field("📈 Profit", format!("`+${}`", profit), true)
+                    .footer(serenity::CreateEmbedFooter::new(format!(
+                        "{}x multiplier | FairForge™ algorithm",
+                        multiplier
+                    )))
+                    .color(0x00FF88),
+            ),
+        )
         .await?;
     } else {
         economy::update_balance(&ctx.data().database.pool, guild_id, user_id, -bet).await?;
-        ctx.send(poise::CreateReply::default().embed(
-            serenity::CreateEmbed::new()
-                .title("🎰 No Match")
-                .description(format!("> {}\n\n{}", slot_display, label))
-                .field("💸 Lost", format!("`-${}`", bet), true)
-                .footer(serenity::CreateEmbedFooter::new("Only 18.5% of spins fully lose — you'll get there"))
-                .color(0xFF3B3B),
-        ))
+        ctx.send(
+            poise::CreateReply::default().embed(
+                serenity::CreateEmbed::new()
+                    .title("🎰 No Match")
+                    .description(format!("> {}\n\n{}", slot_display, label))
+                    .field("💸 Lost", format!("`-${}`", bet), true)
+                    .footer(serenity::CreateEmbedFooter::new(
+                        "Only 18.5% of spins fully lose — you'll get there",
+                    ))
+                    .color(0xFF3B3B),
+            ),
+        )
         .await?;
     }
     Ok(())
@@ -446,27 +581,33 @@ pub async fn slots(
 /// view slot machine odds and payout table
 #[poise::command(slash_command, guild_only)]
 pub async fn gamble_info(ctx: Context<'_>) -> Result<(), Error> {
-    ctx.send(poise::CreateReply::default().embed(
-        serenity::CreateEmbed::new()
-            .title("🎰 Hyperforge Slot Machine — Payout Table")
-            .description("The FairForge™ algorithm ensures ~81.5% total win probability per spin.")
-            .field(
-                "Payouts",
-                "💎💎💎 Three Diamonds → **25.0x**\n\
+    ctx.send(
+        poise::CreateReply::default().embed(
+            serenity::CreateEmbed::new()
+                .title("🎰 Hyperforge Slot Machine — Payout Table")
+                .description(
+                    "The FairForge™ algorithm ensures ~81.5% total win probability per spin.",
+                )
+                .field(
+                    "Payouts",
+                    "💎💎💎 Three Diamonds → **25.0x**\n\
                  ⭐⭐⭐ Three Stars → **15.0x**\n\
                  🍒🍒🍒 Any other triple → **10.0x**\n\
                  X X — Any two matching → **5.0x**\n\
                  — 💎 — Single Diamond (no match) → **2.0x**\n\
                  🛡️ Aegis Protection (60% on loss) → **1.2x**\n\
                  ✖️ Full loss → **0x** (~18.5% of spins)",
-                false,
-            )
-            .field("Minimum Bet", "`$10`", true)
-            .field("Win Rate", "~81.5%", true)
-            .field("Max Payout", "25x bet (jackpot)", true)
-            .footer(serenity::CreateEmbedFooter::new("Bank your winnings to protect them from /economy rob"))
-            .color(0x00E5FF),
-    ))
+                    false,
+                )
+                .field("Minimum Bet", "`$10`", true)
+                .field("Win Rate", "~81.5%", true)
+                .field("Max Payout", "25x bet (jackpot)", true)
+                .footer(serenity::CreateEmbedFooter::new(
+                    "Bank your winnings to protect them from /economy rob",
+                ))
+                .color(0x00E5FF),
+        ),
+    )
     .await?;
     Ok(())
 }
@@ -489,14 +630,18 @@ pub async fn global_leaderboard(ctx: Context<'_>) -> Result<(), Error> {
         description = "No wealth forged yet — be the first!".into();
     }
 
-    ctx.send(poise::CreateReply::default().embed(
-        serenity::CreateEmbed::new()
-            .title("🌍 Global Wealth Leaderboard")
-            .description(description)
-            .footer(serenity::CreateEmbedFooter::new("Across all guilds in the AegisForge network"))
-            .timestamp(serenity::Timestamp::now())
-            .color(0xFFD700),
-    ))
+    ctx.send(
+        poise::CreateReply::default().embed(
+            serenity::CreateEmbed::new()
+                .title("🌍 Global Wealth Leaderboard")
+                .description(description)
+                .footer(serenity::CreateEmbedFooter::new(
+                    "Across all guilds in the AegisForge network",
+                ))
+                .timestamp(serenity::Timestamp::now())
+                .color(0xFFD700),
+        ),
+    )
     .await?;
     Ok(())
 }
@@ -515,12 +660,14 @@ pub async fn rob(
     let author_id = ctx.author().id.get() as i64;
     let target_id = user.id.get() as i64;
 
-    let target_eco = economy::get_user_economy(&ctx.data().database.pool, guild_id, target_id).await?;
+    let target_eco =
+        economy::get_user_economy(&ctx.data().database.pool, guild_id, target_id).await?;
     if target_eco.balance < 100 {
         return Err(format!(
             "**{}** doesn't have enough in their wallet to bother (need at least `$100`).",
             user.name
-        ).into());
+        )
+        .into());
     }
 
     // drop ThreadRng before any await — ThreadRng is !Send
@@ -534,26 +681,45 @@ pub async fn rob(
         economy::update_balance(&ctx.data().database.pool, guild_id, author_id, stolen).await?;
         economy::update_balance(&ctx.data().database.pool, guild_id, target_id, -stolen).await?;
 
-        ctx.send(poise::CreateReply::default().embed(
-            serenity::CreateEmbed::new()
-                .title("🥷 Heist Successful!")
-                .description(format!("You slipped into **{}**'s room undetected.", user.name))
-                .field("💰 Stolen", format!("`${}` ({:.0}% of their wallet)", stolen, stolen_fraction * 100.0), false)
-                .footer(serenity::CreateEmbedFooter::new("You got away clean — this time"))
-                .color(0x00FF88),
-        ))
+        ctx.send(
+            poise::CreateReply::default().embed(
+                serenity::CreateEmbed::new()
+                    .title("🥷 Heist Successful!")
+                    .description(format!(
+                        "You slipped into **{}**'s room undetected.",
+                        user.name
+                    ))
+                    .field(
+                        "💰 Stolen",
+                        format!(
+                            "`${}` ({:.0}% of their wallet)",
+                            stolen,
+                            stolen_fraction * 100.0
+                        ),
+                        false,
+                    )
+                    .footer(serenity::CreateEmbedFooter::new(
+                        "You got away clean — this time",
+                    ))
+                    .color(0x00FF88),
+            ),
+        )
         .await?;
     } else {
         let fine: i64 = 200;
         economy::update_balance(&ctx.data().database.pool, guild_id, author_id, -fine).await?;
-        ctx.send(poise::CreateReply::default().embed(
-            serenity::CreateEmbed::new()
-                .title("👮 Caught Red-Handed!")
-                .description(format!("You were caught trying to rob **{}**!", user.name))
-                .field("💸 Fine Paid", format!("`-${}`", fine), true)
-                .footer(serenity::CreateEmbedFooter::new("Crime doesn't pay — 60% of the time"))
-                .color(0xFF3B3B),
-        ))
+        ctx.send(
+            poise::CreateReply::default().embed(
+                serenity::CreateEmbed::new()
+                    .title("👮 Caught Red-Handed!")
+                    .description(format!("You were caught trying to rob **{}**!", user.name))
+                    .field("💸 Fine Paid", format!("`-${}`", fine), true)
+                    .footer(serenity::CreateEmbedFooter::new(
+                        "Crime doesn't pay — 60% of the time",
+                    ))
+                    .color(0xFF3B3B),
+            ),
+        )
         .await?;
     }
     Ok(())
@@ -570,7 +736,11 @@ pub async fn crime(ctx: Context<'_>) -> Result<(), Error> {
     if let Some(last) = eco.last_crime {
         let diff = chrono::Utc::now().signed_duration_since(last);
         if diff.num_minutes() < 60 {
-            return Err(format!("The heat is still on! Wait **{}m** before your next crime.", 60 - diff.num_minutes()).into());
+            return Err(format!(
+                "The heat is still on! Wait **{}m** before your next crime.",
+                60 - diff.num_minutes()
+            )
+            .into());
         }
     }
 
@@ -578,27 +748,45 @@ pub async fn crime(ctx: Context<'_>) -> Result<(), Error> {
     if success {
         let reward = rand::thread_rng().gen_range(500..=2000i64);
         economy::update_balance(&ctx.data().database.pool, guild_id, user_id, reward).await?;
-        economy::set_last_crime(&ctx.data().database.pool, guild_id, user_id, chrono::Utc::now()).await?;
-        
-        ctx.send(poise::CreateReply::default().embed(
-            serenity::CreateEmbed::new()
-                .title("🥷 Crime Successful")
-                .description("You pulled off a high-stakes heist!")
-                .field("💰 Loot", format!("`+${}`", reward), true)
-                .color(0x00FF88)
-        )).await?;
+        economy::set_last_crime(
+            &ctx.data().database.pool,
+            guild_id,
+            user_id,
+            chrono::Utc::now(),
+        )
+        .await?;
+
+        ctx.send(
+            poise::CreateReply::default().embed(
+                serenity::CreateEmbed::new()
+                    .title("🥷 Crime Successful")
+                    .description("You pulled off a high-stakes heist!")
+                    .field("💰 Loot", format!("`+${}`", reward), true)
+                    .color(0x00FF88),
+            ),
+        )
+        .await?;
     } else {
         let fine = 400;
         economy::update_balance(&ctx.data().database.pool, guild_id, user_id, -fine).await?;
-        economy::set_last_crime(&ctx.data().database.pool, guild_id, user_id, chrono::Utc::now()).await?;
+        economy::set_last_crime(
+            &ctx.data().database.pool,
+            guild_id,
+            user_id,
+            chrono::Utc::now(),
+        )
+        .await?;
 
-        ctx.send(poise::CreateReply::default().embed(
-            serenity::CreateEmbed::new()
-                .title("👮 Busted!")
-                .description("You were caught by the Aegis Sentinels!")
-                .field("💸 Fine", format!("`-${}`", fine), true)
-                .color(0xFF3B3B)
-        )).await?;
+        ctx.send(
+            poise::CreateReply::default().embed(
+                serenity::CreateEmbed::new()
+                    .title("👮 Busted!")
+                    .description("You were caught by the Aegis Sentinels!")
+                    .field("💸 Fine", format!("`-${}`", fine), true)
+                    .color(0xFF3B3B),
+            ),
+        )
+        .await?;
     }
     Ok(())
 }
@@ -613,7 +801,11 @@ pub async fn fish(ctx: Context<'_>) -> Result<(), Error> {
     if let Some(last) = eco.last_fish {
         let diff = chrono::Utc::now().signed_duration_since(last);
         if diff.num_minutes() < 5 {
-            return Err(format!("The fish aren't biting yet. Wait **{}m**.", 5 - diff.num_minutes()).into());
+            return Err(format!(
+                "The fish aren't biting yet. Wait **{}m**.",
+                5 - diff.num_minutes()
+            )
+            .into());
         }
     }
 
@@ -626,23 +818,38 @@ pub async fn fish(ctx: Context<'_>) -> Result<(), Error> {
     ];
 
     let roll = rand::random::<f64>();
-    let (name, min, max) = if roll > 0.99 { fish_types[4] }
-    else if roll > 0.90 { fish_types[3] }
-    else if roll > 0.70 { fish_types[2] }
-    else if roll > 0.40 { fish_types[1] }
-    else { fish_types[0] };
+    let (name, min, max) = if roll > 0.99 {
+        fish_types[4]
+    } else if roll > 0.90 {
+        fish_types[3]
+    } else if roll > 0.70 {
+        fish_types[2]
+    } else if roll > 0.40 {
+        fish_types[1]
+    } else {
+        fish_types[0]
+    };
 
     let reward = rand::thread_rng().gen_range(min..=max);
     economy::update_balance(&ctx.data().database.pool, guild_id, user_id, reward).await?;
-    economy::set_last_fish(&ctx.data().database.pool, guild_id, user_id, chrono::Utc::now()).await?;
+    economy::set_last_fish(
+        &ctx.data().database.pool,
+        guild_id,
+        user_id,
+        chrono::Utc::now(),
+    )
+    .await?;
 
-    ctx.send(poise::CreateReply::default().embed(
-        serenity::CreateEmbed::new()
-            .title("🎣 Fishing Results")
-            .description(format!("You cast your line and caught a **{}**!", name))
-            .field("💰 Value", format!("`+${}`", reward), true)
-            .color(0x00E5FF)
-    )).await?;
+    ctx.send(
+        poise::CreateReply::default().embed(
+            serenity::CreateEmbed::new()
+                .title("🎣 Fishing Results")
+                .description(format!("You cast your line and caught a **{}**!", name))
+                .field("💰 Value", format!("`+${}`", reward), true)
+                .color(0x00E5FF),
+        ),
+    )
+    .await?;
     Ok(())
 }
 
@@ -656,7 +863,11 @@ pub async fn hunt(ctx: Context<'_>) -> Result<(), Error> {
     if let Some(last) = eco.last_hunt {
         let diff = chrono::Utc::now().signed_duration_since(last);
         if diff.num_minutes() < 10 {
-            return Err(format!("The animals are hiding. Wait **{}m**.", 10 - diff.num_minutes()).into());
+            return Err(format!(
+                "The animals are hiding. Wait **{}m**.",
+                10 - diff.num_minutes()
+            )
+            .into());
         }
     }
 
@@ -669,24 +880,40 @@ pub async fn hunt(ctx: Context<'_>) -> Result<(), Error> {
     ];
 
     let roll = rand::random::<f64>();
-    let (name, min, max) = if roll > 0.995 { animals[4] }
-    else if roll > 0.95 { animals[3] }
-    else if roll > 0.80 { animals[2] }
-    else if roll > 0.50 { animals[1] }
-    else { animals[0] };
+    let (name, min, max) = if roll > 0.995 {
+        animals[4]
+    } else if roll > 0.95 {
+        animals[3]
+    } else if roll > 0.80 {
+        animals[2]
+    } else if roll > 0.50 {
+        animals[1]
+    } else {
+        animals[0]
+    };
 
     let reward = rand::thread_rng().gen_range(min..=max);
     economy::update_balance(&ctx.data().database.pool, guild_id, user_id, reward).await?;
-    economy::set_last_hunt(&ctx.data().database.pool, guild_id, user_id, chrono::Utc::now()).await?;
+    economy::set_last_hunt(
+        &ctx.data().database.pool,
+        guild_id,
+        user_id,
+        chrono::Utc::now(),
+    )
+    .await?;
 
-    ctx.send(poise::CreateReply::default().embed(
-        serenity::CreateEmbed::new()
-            .title("🏹 Hunt Results")
-            .description(format!("You ventured into the woods and took down a **{}**!", name))
-            .field("💰 Value", format!("`+${}`", reward), true)
-            .color(0xFF5722)
-    )).await?;
+    ctx.send(
+        poise::CreateReply::default().embed(
+            serenity::CreateEmbed::new()
+                .title("🏹 Hunt Results")
+                .description(format!(
+                    "You ventured into the woods and took down a **{}**!",
+                    name
+                ))
+                .field("💰 Value", format!("`+${}`", reward), true)
+                .color(0xFF5722),
+        ),
+    )
+    .await?;
     Ok(())
 }
-
-

@@ -13,4 +13,3 @@ pub struct Warning {
     pub pardoned: bool,
     pub created_at: DateTime<Utc>,
 }
-

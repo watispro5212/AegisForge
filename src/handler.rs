@@ -1,6 +1,6 @@
 use poise::serenity_prelude as serenity;
-use tracing::{info, error};
 use std::time::Duration;
+use tracing::{error, info};
 
 pub async fn event_handler(
     ctx: &serenity::Context,
@@ -10,7 +10,10 @@ pub async fn event_handler(
 ) -> Result<(), crate::Error> {
     match event {
         serenity::FullEvent::Ready { data_about_bot } => {
-            info!("🔩 aegisforge online as {} ({})", data_about_bot.user.name, data_about_bot.user.id);
+            info!(
+                "🔩 aegisforge online as {} ({})",
+                data_about_bot.user.name, data_about_bot.user.id
+            );
 
             let guild_count = ctx.cache.guild_count();
             set_presence(ctx, guild_count, 0);
@@ -32,7 +35,8 @@ pub async fn event_handler(
                 if let Ok(webhook_url) = std::env::var("STATUS_WEBHOOK_URL") {
                     let http = ctx.http.clone();
                     tokio::spawn(async move {
-                        match serenity::model::webhook::Webhook::from_url(&http, &webhook_url).await {
+                        match serenity::model::webhook::Webhook::from_url(&http, &webhook_url).await
+                        {
                             Ok(webhook) => {
                                 let embed = serenity::builder::CreateEmbed::new()
                                     .title("✅ AegisForge Online")
@@ -40,10 +44,16 @@ pub async fn event_handler(
                                         "Bot initialized successfully across **{}** guild(s).",
                                         guild_count
                                     ))
-                                    .field("Version", format!("`v{}`", env!("CARGO_PKG_VERSION")), true)
+                                    .field(
+                                        "Version",
+                                        format!("`v{}`", env!("CARGO_PKG_VERSION")),
+                                        true,
+                                    )
                                     .field("Language", "`Rust`", true)
                                     .field("Status", "🟢 Operational", true)
-                                    .footer(serenity::builder::CreateEmbedFooter::new("AegisForge v4 — High-Performance Discord Automation"))
+                                    .footer(serenity::builder::CreateEmbedFooter::new(
+                                        "AegisForge v4 — High-Performance Discord Automation",
+                                    ))
                                     .timestamp(serenity::Timestamp::now())
                                     .color(0x57F287);
                                 let builder = serenity::builder::ExecuteWebhook::new().embed(embed);
@@ -69,16 +79,20 @@ pub async fn event_handler(
                     let guild_name = guild.name.clone();
                     let member_count = guild.member_count;
                     let guild_id = guild.id;
-                    
+
                     tokio::spawn(async move {
-                        if let Ok(webhook) = serenity::model::webhook::Webhook::from_url(&http, &webhook_url).await {
+                        if let Ok(webhook) =
+                            serenity::model::webhook::Webhook::from_url(&http, &webhook_url).await
+                        {
                             let embed = serenity::builder::CreateEmbed::new()
                                 .title("📥 New Server Joined")
                                 .description(format!("AegisForge was added to **{}**.", guild_name))
                                 .field("Members", format!("`{}`", member_count), true)
                                 .field("Total Servers", format!("`{}`", guild_count), true)
                                 .field("Server ID", format!("`{}`", guild_id), true)
-                                .footer(serenity::builder::CreateEmbedFooter::new("AegisForge v4 — Guild Join Event"))
+                                .footer(serenity::builder::CreateEmbedFooter::new(
+                                    "AegisForge v4 — Guild Join Event",
+                                ))
                                 .timestamp(serenity::Timestamp::now())
                                 .color(0x57F287);
                             let builder = serenity::builder::ExecuteWebhook::new().embed(embed);
@@ -125,13 +139,20 @@ pub async fn event_handler(
                             .title(format!("👋 Welcome to {}!", server_name))
                             .description(&msg)
                             .thumbnail(new_member.user.face())
-                            .footer(serenity::builder::CreateEmbedFooter::new(
-                                format!("Member #{}", ctx.cache.guild(new_member.guild_id).map(|g| g.member_count).unwrap_or(0))
-                            ))
+                            .footer(serenity::builder::CreateEmbedFooter::new(format!(
+                                "Member #{}",
+                                ctx.cache
+                                    .guild(new_member.guild_id)
+                                    .map(|g| g.member_count)
+                                    .unwrap_or(0)
+                            )))
                             .color(0x00E5FF);
 
                         let _ = serenity::ChannelId::new(channel_id as u64)
-                            .send_message(&ctx.http, serenity::builder::CreateMessage::new().embed(embed))
+                            .send_message(
+                                &ctx.http,
+                                serenity::builder::CreateMessage::new().embed(embed),
+                            )
                             .await;
                     }
                 }
@@ -172,7 +193,8 @@ pub async fn event_handler(
                     .await
                     {
                         let template = if config.level_up_message.is_empty() {
-                            "Congratulations {user}, you reached **Level {level}**! Keep it up. 🚀".to_string()
+                            "Congratulations {user}, you reached **Level {level}**! Keep it up. 🚀"
+                                .to_string()
                         } else {
                             config.level_up_message.clone()
                         };
@@ -198,7 +220,9 @@ pub async fn event_handler(
                             .await;
 
                         // assign level roles
-                        if let Ok(roles) = crate::db::leveling::get_level_roles(&db.pool, guild_id).await {
+                        if let Ok(roles) =
+                            crate::db::leveling::get_level_roles(&db.pool, guild_id).await
+                        {
                             for lr in roles {
                                 if user_lvl.level >= lr.level {
                                     let _ = ctx
@@ -226,7 +250,7 @@ pub async fn event_handler(
                         .iter()
                         .find(|phrase| content.contains(&phrase.to_lowercase()));
 
-                    if let Some(phrase) = hit {
+                    if let Some(_phrase) = hit {
                         let _ = new_message.delete(ctx).await;
 
                         let embed = serenity::builder::CreateEmbed::new()
@@ -243,10 +267,7 @@ pub async fn event_handler(
 
                         let _ = new_message
                             .channel_id
-                            .send_message(
-                                ctx,
-                                serenity::builder::CreateMessage::new().embed(embed),
-                            )
+                            .send_message(ctx, serenity::builder::CreateMessage::new().embed(embed))
                             .await;
 
                         return Ok(());
@@ -283,4 +304,3 @@ fn set_presence(ctx: &serenity::Context, guild_count: usize, idx: usize) {
     };
     ctx.set_presence(Some(activity), status);
 }
-

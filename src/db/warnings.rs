@@ -1,5 +1,5 @@
-use sqlx::PgPool;
 use crate::models::warning::Warning;
+use sqlx::PgPool;
 
 /// insert a warning (assumes the matching mod_case is already created).
 pub async fn create(
@@ -74,4 +74,3 @@ pub async fn pardon(pool: &PgPool, warning_id: i64, guild_id: i64) -> sqlx::Resu
     .await?;
     Ok(result.rows_affected() > 0)
 }
-

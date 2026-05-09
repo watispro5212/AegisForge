@@ -33,4 +33,3 @@ pub struct GuildConfig {
     pub leveling_enabled: bool,
     pub level_up_message: String,
 }
-

@@ -1,5 +1,5 @@
-use serde::{Deserialize, Serialize};
 use chrono::{DateTime, Utc};
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct UserLeveling {
@@ -21,4 +21,3 @@ pub struct LevelRole {
     pub level: i32,
     pub role_id: i64,
 }
-

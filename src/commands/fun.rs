@@ -6,11 +6,31 @@ use rand::Rng;
 #[poise::command(
     slash_command,
     subcommands(
-        "coinflip", "dice", "eightball", "joke", "fact",
-        "cat", "dog", "fox", "panda", "bird",
-        "cookie", "hug", "pat", "kiss", "slap",
-        "meme", "ship", "rate", "mock", "reverse", "ascii",
-        "choose", "trivia", "roast", "compliment"
+        "coinflip",
+        "dice",
+        "eightball",
+        "joke",
+        "fact",
+        "cat",
+        "dog",
+        "fox",
+        "panda",
+        "bird",
+        "cookie",
+        "hug",
+        "pat",
+        "kiss",
+        "slap",
+        "meme",
+        "ship",
+        "rate",
+        "mock",
+        "reverse",
+        "ascii",
+        "choose",
+        "trivia",
+        "roast",
+        "compliment"
     ),
     category = "fun"
 )]
@@ -26,13 +46,17 @@ pub async fn coinflip(ctx: Context<'_>) -> Result<(), Error> {
     } else {
         ("Tails", "🥈")
     };
-    ctx.send(poise::CreateReply::default().embed(
-        serenity::CreateEmbed::new()
-            .title(format!("{} Coin Flip", emoji))
-            .description(format!("The coin landed on **{}**!", result))
-            .footer(serenity::CreateEmbedFooter::new("50/50 odds, no house edge"))
-            .color(0x00E5FF),
-    ))
+    ctx.send(
+        poise::CreateReply::default().embed(
+            serenity::CreateEmbed::new()
+                .title(format!("{} Coin Flip", emoji))
+                .description(format!("The coin landed on **{}**!", result))
+                .footer(serenity::CreateEmbedFooter::new(
+                    "50/50 odds, no house edge",
+                ))
+                .color(0x00E5FF),
+        ),
+    )
     .await?;
     Ok(())
 }
@@ -45,13 +69,18 @@ pub async fn dice(
 ) -> Result<(), Error> {
     let sides = sides.unwrap_or(6).max(2);
     let result = rand::thread_rng().gen_range(1..=sides);
-    ctx.send(poise::CreateReply::default().embed(
-        serenity::CreateEmbed::new()
-            .title("🎲 Dice Roll")
-            .description(format!("You rolled a **{}** on a d{}", result, sides))
-            .footer(serenity::CreateEmbedFooter::new(format!("Range: 1–{}", sides)))
-            .color(0x00E5FF),
-    ))
+    ctx.send(
+        poise::CreateReply::default().embed(
+            serenity::CreateEmbed::new()
+                .title("🎲 Dice Roll")
+                .description(format!("You rolled a **{}** on a d{}", result, sides))
+                .footer(serenity::CreateEmbedFooter::new(format!(
+                    "Range: 1–{}",
+                    sides
+                )))
+                .color(0x00E5FF),
+        ),
+    )
     .await?;
     Ok(())
 }
@@ -86,14 +115,16 @@ pub async fn eightball(
     ];
     let (answer, color) = responses[rand::thread_rng().gen_range(0..responses.len())];
 
-    ctx.send(poise::CreateReply::default().embed(
-        serenity::CreateEmbed::new()
-            .title("🎱 Magic 8-Ball")
-            .field("Question", &question, false)
-            .field("Answer", answer, false)
-            .footer(serenity::CreateEmbedFooter::new("The oracle has spoken"))
-            .color(color),
-    ))
+    ctx.send(
+        poise::CreateReply::default().embed(
+            serenity::CreateEmbed::new()
+                .title("🎱 Magic 8-Ball")
+                .field("Question", &question, false)
+                .field("Answer", answer, false)
+                .footer(serenity::CreateEmbedFooter::new("The oracle has spoken"))
+                .color(color),
+        ),
+    )
     .await?;
     Ok(())
 }
@@ -125,13 +156,17 @@ pub async fn joke(ctx: Context<'_>) -> Result<(), Error> {
     ];
     let joke = jokes[rand::thread_rng().gen_range(0..jokes.len())];
 
-    ctx.send(poise::CreateReply::default().embed(
-        serenity::CreateEmbed::new()
-            .title("😂 Programming Joke")
-            .description(joke)
-            .footer(serenity::CreateEmbedFooter::new("Powered by AegisForge Humor Engine v4"))
-            .color(0x00E5FF),
-    ))
+    ctx.send(
+        poise::CreateReply::default().embed(
+            serenity::CreateEmbed::new()
+                .title("😂 Programming Joke")
+                .description(joke)
+                .footer(serenity::CreateEmbedFooter::new(
+                    "Powered by AegisForge Humor Engine v4",
+                ))
+                .color(0x00E5FF),
+        ),
+    )
     .await?;
     Ok(())
 }
@@ -163,13 +198,17 @@ pub async fn fact(ctx: Context<'_>) -> Result<(), Error> {
     ];
     let f = facts[rand::thread_rng().gen_range(0..facts.len())];
 
-    ctx.send(poise::CreateReply::default().embed(
-        serenity::CreateEmbed::new()
-            .title("💡 Random Fact")
-            .description(f)
-            .footer(serenity::CreateEmbedFooter::new("AegisForge Knowledge Core"))
-            .color(0x00E5FF),
-    ))
+    ctx.send(
+        poise::CreateReply::default().embed(
+            serenity::CreateEmbed::new()
+                .title("💡 Random Fact")
+                .description(f)
+                .footer(serenity::CreateEmbedFooter::new(
+                    "AegisForge Knowledge Core",
+                ))
+                .color(0x00E5FF),
+        ),
+    )
     .await?;
     Ok(())
 }
@@ -178,24 +217,35 @@ pub async fn fact(ctx: Context<'_>) -> Result<(), Error> {
 #[poise::command(slash_command)]
 pub async fn cat(ctx: Context<'_>) -> Result<(), Error> {
     #[derive(serde::Deserialize)]
-    struct AnimalResponse { image: String, fact: String }
+    struct AnimalResponse {
+        image: String,
+        fact: String,
+    }
 
-    let res = ctx.data().http_client
+    let res = ctx
+        .data()
+        .http_client
         .get("https://some-random-api.com/animal/cat")
-        .send().await
+        .send()
+        .await
         .and_then(|r| r.error_for_status())
         .map_err(|e| format!("Couldn't reach the cat API: {}", e))?
-        .json::<AnimalResponse>().await
+        .json::<AnimalResponse>()
+        .await
         .map_err(|e| format!("Couldn't parse the cat response: {}", e))?;
 
-    ctx.send(poise::CreateReply::default().embed(
-        serenity::CreateEmbed::new()
-            .title("🐱 Meow!")
-            .image(res.image)
-            .description(res.fact)
-            .footer(serenity::CreateEmbedFooter::new("Powered by some-random-api.com"))
-            .color(0x00E5FF),
-    ))
+    ctx.send(
+        poise::CreateReply::default().embed(
+            serenity::CreateEmbed::new()
+                .title("🐱 Meow!")
+                .image(res.image)
+                .description(res.fact)
+                .footer(serenity::CreateEmbedFooter::new(
+                    "Powered by some-random-api.com",
+                ))
+                .color(0x00E5FF),
+        ),
+    )
     .await?;
     Ok(())
 }
@@ -217,13 +267,15 @@ pub async fn dog(ctx: Context<'_>) -> Result<(), Error> {
         "https://images.dog.ceo/breeds/retriever-golden/n02099601_3004.jpg",
     ];
     let url = dogs[rand::thread_rng().gen_range(0..dogs.len())];
-    ctx.send(poise::CreateReply::default().embed(
-        serenity::CreateEmbed::new()
-            .title("🐶 Woof!")
-            .image(url)
-            .footer(serenity::CreateEmbedFooter::new("Powered by dog.ceo"))
-            .color(0xD2691E),
-    ))
+    ctx.send(
+        poise::CreateReply::default().embed(
+            serenity::CreateEmbed::new()
+                .title("🐶 Woof!")
+                .image(url)
+                .footer(serenity::CreateEmbedFooter::new("Powered by dog.ceo"))
+                .color(0xD2691E),
+        ),
+    )
     .await?;
     Ok(())
 }
@@ -234,13 +286,15 @@ pub async fn fox(ctx: Context<'_>) -> Result<(), Error> {
     // randomfox.ca hosts 123 numbered fox images
     let n = rand::thread_rng().gen_range(1..=123u32);
     let url = format!("https://randomfox.ca/images/{}.jpg", n);
-    ctx.send(poise::CreateReply::default().embed(
-        serenity::CreateEmbed::new()
-            .title("🦊 What does the fox say?")
-            .image(url)
-            .footer(serenity::CreateEmbedFooter::new("Powered by randomfox.ca"))
-            .color(0xFF5722),
-    ))
+    ctx.send(
+        poise::CreateReply::default().embed(
+            serenity::CreateEmbed::new()
+                .title("🦊 What does the fox say?")
+                .image(url)
+                .footer(serenity::CreateEmbedFooter::new("Powered by randomfox.ca"))
+                .color(0xFF5722),
+        ),
+    )
     .await?;
     Ok(())
 }
@@ -249,24 +303,35 @@ pub async fn fox(ctx: Context<'_>) -> Result<(), Error> {
 #[poise::command(slash_command)]
 pub async fn panda(ctx: Context<'_>) -> Result<(), Error> {
     #[derive(serde::Deserialize)]
-    struct AnimalResponse { image: String, fact: String }
+    struct AnimalResponse {
+        image: String,
+        fact: String,
+    }
 
-    let res = ctx.data().http_client
+    let res = ctx
+        .data()
+        .http_client
         .get("https://some-random-api.com/animal/panda")
-        .send().await
+        .send()
+        .await
         .and_then(|r| r.error_for_status())
         .map_err(|e| format!("Couldn't reach the panda API: {}", e))?
-        .json::<AnimalResponse>().await
+        .json::<AnimalResponse>()
+        .await
         .map_err(|e| format!("Couldn't parse the panda response: {}", e))?;
 
-    ctx.send(poise::CreateReply::default().embed(
-        serenity::CreateEmbed::new()
-            .title("🐼 Panda Time!")
-            .image(res.image)
-            .description(res.fact)
-            .footer(serenity::CreateEmbedFooter::new("Powered by some-random-api.com"))
-            .color(0x111111),
-    ))
+    ctx.send(
+        poise::CreateReply::default().embed(
+            serenity::CreateEmbed::new()
+                .title("🐼 Panda Time!")
+                .image(res.image)
+                .description(res.fact)
+                .footer(serenity::CreateEmbedFooter::new(
+                    "Powered by some-random-api.com",
+                ))
+                .color(0x111111),
+        ),
+    )
     .await?;
     Ok(())
 }
@@ -275,24 +340,35 @@ pub async fn panda(ctx: Context<'_>) -> Result<(), Error> {
 #[poise::command(slash_command)]
 pub async fn bird(ctx: Context<'_>) -> Result<(), Error> {
     #[derive(serde::Deserialize)]
-    struct AnimalResponse { image: String, fact: String }
+    struct AnimalResponse {
+        image: String,
+        fact: String,
+    }
 
-    let res = ctx.data().http_client
+    let res = ctx
+        .data()
+        .http_client
         .get("https://some-random-api.com/animal/bird")
-        .send().await
+        .send()
+        .await
         .and_then(|r| r.error_for_status())
         .map_err(|e| format!("Couldn't reach the bird API: {}", e))?
-        .json::<AnimalResponse>().await
+        .json::<AnimalResponse>()
+        .await
         .map_err(|e| format!("Couldn't parse the bird response: {}", e))?;
 
-    ctx.send(poise::CreateReply::default().embed(
-        serenity::CreateEmbed::new()
-            .title("🐦 Chirp!")
-            .image(res.image)
-            .description(res.fact)
-            .footer(serenity::CreateEmbedFooter::new("Powered by some-random-api.com"))
-            .color(0x00E5FF),
-    ))
+    ctx.send(
+        poise::CreateReply::default().embed(
+            serenity::CreateEmbed::new()
+                .title("🐦 Chirp!")
+                .image(res.image)
+                .description(res.fact)
+                .footer(serenity::CreateEmbedFooter::new(
+                    "Powered by some-random-api.com",
+                ))
+                .color(0x00E5FF),
+        ),
+    )
     .await?;
     Ok(())
 }
@@ -303,15 +379,18 @@ pub async fn cookie(
     ctx: Context<'_>,
     #[description = "The user to give a cookie to"] user: serenity::User,
 ) -> Result<(), Error> {
-    ctx.send(poise::CreateReply::default().embed(
-        serenity::CreateEmbed::new()
-            .title("🍪 Cookie Delivery!")
-            .description(format!(
-                "**{}** slid a warm cookie across the table to **{}**! 🍪",
-                ctx.author().name, user.name
-            ))
-            .color(0xD2691E),
-    ))
+    ctx.send(
+        poise::CreateReply::default().embed(
+            serenity::CreateEmbed::new()
+                .title("🍪 Cookie Delivery!")
+                .description(format!(
+                    "**{}** slid a warm cookie across the table to **{}**! 🍪",
+                    ctx.author().name,
+                    user.name
+                ))
+                .color(0xD2691E),
+        ),
+    )
     .await?;
     Ok(())
 }
@@ -322,14 +401,17 @@ pub async fn hug(
     ctx: Context<'_>,
     #[description = "The user to hug"] user: serenity::User,
 ) -> Result<(), Error> {
-    ctx.send(poise::CreateReply::default().embed(
-        serenity::CreateEmbed::new()
-            .description(format!(
-                "🤗 **{}** wrapped **{}** in a big warm hug!",
-                ctx.author().name, user.name
-            ))
-            .color(0xFF69B4),
-    ))
+    ctx.send(
+        poise::CreateReply::default().embed(
+            serenity::CreateEmbed::new()
+                .description(format!(
+                    "🤗 **{}** wrapped **{}** in a big warm hug!",
+                    ctx.author().name,
+                    user.name
+                ))
+                .color(0xFF69B4),
+        ),
+    )
     .await?;
     Ok(())
 }
@@ -340,14 +422,17 @@ pub async fn pat(
     ctx: Context<'_>,
     #[description = "The user to pat"] user: serenity::User,
 ) -> Result<(), Error> {
-    ctx.send(poise::CreateReply::default().embed(
-        serenity::CreateEmbed::new()
-            .description(format!(
-                "🖐️ **{}** gave **{}** a gentle head pat!",
-                ctx.author().name, user.name
-            ))
-            .color(0x00E5FF),
-    ))
+    ctx.send(
+        poise::CreateReply::default().embed(
+            serenity::CreateEmbed::new()
+                .description(format!(
+                    "🖐️ **{}** gave **{}** a gentle head pat!",
+                    ctx.author().name,
+                    user.name
+                ))
+                .color(0x00E5FF),
+        ),
+    )
     .await?;
     Ok(())
 }
@@ -358,14 +443,17 @@ pub async fn kiss(
     ctx: Context<'_>,
     #[description = "The user to kiss"] user: serenity::User,
 ) -> Result<(), Error> {
-    ctx.send(poise::CreateReply::default().embed(
-        serenity::CreateEmbed::new()
-            .description(format!(
-                "💋 **{}** gave **{}** a sweet kiss! 💕",
-                ctx.author().name, user.name
-            ))
-            .color(0xFF0000),
-    ))
+    ctx.send(
+        poise::CreateReply::default().embed(
+            serenity::CreateEmbed::new()
+                .description(format!(
+                    "💋 **{}** gave **{}** a sweet kiss! 💕",
+                    ctx.author().name,
+                    user.name
+                ))
+                .color(0xFF0000),
+        ),
+    )
     .await?;
     Ok(())
 }
@@ -376,14 +464,17 @@ pub async fn slap(
     ctx: Context<'_>,
     #[description = "The user to slap"] user: serenity::User,
 ) -> Result<(), Error> {
-    ctx.send(poise::CreateReply::default().embed(
-        serenity::CreateEmbed::new()
-            .description(format!(
-                "💥 **{}** slapped **{}** with full force! OUCH.",
-                ctx.author().name, user.name
-            ))
-            .color(0xFF5722),
-    ))
+    ctx.send(
+        poise::CreateReply::default().embed(
+            serenity::CreateEmbed::new()
+                .description(format!(
+                    "💥 **{}** slapped **{}** with full force! OUCH.",
+                    ctx.author().name,
+                    user.name
+                ))
+                .color(0xFF5722),
+        ),
+    )
     .await?;
     Ok(())
 }
@@ -393,22 +484,47 @@ pub async fn slap(
 pub async fn meme(ctx: Context<'_>) -> Result<(), Error> {
     // curated stable meme image URLs
     let memes = [
-        ("This Is Fine", "https://i.kym-cdn.com/entries/icons/original/000/018/012/this_is_fine.jpeg"),
-        ("Drake Approves", "https://i.kym-cdn.com/entries/icons/original/000/019/490/dd2.jpg"),
-        ("Distracted Boyfriend", "https://i.kym-cdn.com/photos/images/newsfeed/001/525/547/0b3.jpg"),
-        ("Expanding Brain", "https://i.kym-cdn.com/photos/images/newsfeed/001/035/474/04a.jpg"),
-        ("Surprised Pikachu", "https://i.kym-cdn.com/photos/images/newsfeed/001/480/179/07e.jpg"),
-        ("Woman Yelling at Cat", "https://i.kym-cdn.com/photos/images/newsfeed/001/536/075/c40.jpg"),
-        ("Two Buttons", "https://i.kym-cdn.com/photos/images/newsfeed/001/070/617/bec.jpg"),
+        (
+            "This Is Fine",
+            "https://i.kym-cdn.com/entries/icons/original/000/018/012/this_is_fine.jpeg",
+        ),
+        (
+            "Drake Approves",
+            "https://i.kym-cdn.com/entries/icons/original/000/019/490/dd2.jpg",
+        ),
+        (
+            "Distracted Boyfriend",
+            "https://i.kym-cdn.com/photos/images/newsfeed/001/525/547/0b3.jpg",
+        ),
+        (
+            "Expanding Brain",
+            "https://i.kym-cdn.com/photos/images/newsfeed/001/035/474/04a.jpg",
+        ),
+        (
+            "Surprised Pikachu",
+            "https://i.kym-cdn.com/photos/images/newsfeed/001/480/179/07e.jpg",
+        ),
+        (
+            "Woman Yelling at Cat",
+            "https://i.kym-cdn.com/photos/images/newsfeed/001/536/075/c40.jpg",
+        ),
+        (
+            "Two Buttons",
+            "https://i.kym-cdn.com/photos/images/newsfeed/001/070/617/bec.jpg",
+        ),
     ];
     let (title, url) = memes[rand::thread_rng().gen_range(0..memes.len())];
-    ctx.send(poise::CreateReply::default().embed(
-        serenity::CreateEmbed::new()
-            .title(format!("🎭 {}", title))
-            .image(url)
-            .footer(serenity::CreateEmbedFooter::new("Fresh from the meme vault"))
-            .color(0x00E5FF),
-    ))
+    ctx.send(
+        poise::CreateReply::default().embed(
+            serenity::CreateEmbed::new()
+                .title(format!("🎭 {}", title))
+                .image(url)
+                .footer(serenity::CreateEmbedFooter::new(
+                    "Fresh from the meme vault",
+                ))
+                .color(0x00E5FF),
+        ),
+    )
     .await?;
     Ok(())
 }
@@ -437,15 +553,22 @@ pub async fn ship(
         81..=99 => "A perfect match! ❤️",
         _ => "Soulmates for eternity! 💍",
     };
-    ctx.send(poise::CreateReply::default().embed(
-        serenity::CreateEmbed::new()
-            .title("💖 Matchmaking Forge")
-            .description(format!("Checking compatibility between **{}** and **{}**...", user1.name, u2.name))
-            .field("Compatibility", bar, false)
-            .field("Verdict", verdict, false)
-            .footer(serenity::CreateEmbedFooter::new("Results are 100% scientifically accurate"))
-            .color(0xFF69B4),
-    ))
+    ctx.send(
+        poise::CreateReply::default().embed(
+            serenity::CreateEmbed::new()
+                .title("💖 Matchmaking Forge")
+                .description(format!(
+                    "Checking compatibility between **{}** and **{}**...",
+                    user1.name, u2.name
+                ))
+                .field("Compatibility", bar, false)
+                .field("Verdict", verdict, false)
+                .footer(serenity::CreateEmbedFooter::new(
+                    "Results are 100% scientifically accurate",
+                ))
+                .color(0xFF69B4),
+        ),
+    )
     .await?;
     Ok(())
 }
@@ -465,13 +588,15 @@ pub async fn rate(
         9 => "Exceptional work. Chef's kiss.",
         _ => "A perfect 10. Genuinely flawless.",
     };
-    ctx.send(poise::CreateReply::default().embed(
-        serenity::CreateEmbed::new()
-            .title("⚖️ The Oracle's Rating")
-            .description(format!("**{}** gets a **{}/10**", thing, rating))
-            .field("Verdict", comment, false)
-            .color(0x00E5FF),
-    ))
+    ctx.send(
+        poise::CreateReply::default().embed(
+            serenity::CreateEmbed::new()
+                .title("⚖️ The Oracle's Rating")
+                .description(format!("**{}** gets a **{}/10**", thing, rating))
+                .field("Verdict", comment, false)
+                .color(0x00E5FF),
+        ),
+    )
     .await?;
     Ok(())
 }
@@ -546,14 +671,21 @@ pub async fn choose(
 
     let chosen = choices[rand::thread_rng().gen_range(0..choices.len())];
 
-    ctx.send(poise::CreateReply::default().embed(
-        serenity::CreateEmbed::new()
-            .title("🎯 AegisForge Decides")
-            .description(format!("Out of **{}** options, the forge chose:", choices.len()))
-            .field("Winner", format!("**{}**", chosen), false)
-            .footer(serenity::CreateEmbedFooter::new("Cryptographically random™"))
-            .color(0x00E5FF),
-    ))
+    ctx.send(
+        poise::CreateReply::default().embed(
+            serenity::CreateEmbed::new()
+                .title("🎯 AegisForge Decides")
+                .description(format!(
+                    "Out of **{}** options, the forge chose:",
+                    choices.len()
+                ))
+                .field("Winner", format!("**{}**", chosen), false)
+                .footer(serenity::CreateEmbedFooter::new(
+                    "Cryptographically random™",
+                ))
+                .color(0x00E5FF),
+        ),
+    )
     .await?;
     Ok(())
 }
@@ -562,29 +694,118 @@ pub async fn choose(
 #[poise::command(slash_command)]
 pub async fn trivia(ctx: Context<'_>) -> Result<(), Error> {
     let questions = [
-        ("What is the capital of Australia?", "Canberra", vec!["Sydney", "Melbourne", "Brisbane"]),
+        (
+            "What is the capital of Australia?",
+            "Canberra",
+            vec!["Sydney", "Melbourne", "Brisbane"],
+        ),
         ("How many bits are in a byte?", "8", vec!["4", "16", "32"]),
-        ("Which planet is closest to the Sun?", "Mercury", vec!["Venus", "Earth", "Mars"]),
-        ("What year was the first iPhone released?", "2007", vec!["2005", "2008", "2010"]),
-        ("What programming language is Rust's borrow checker written in?", "Rust", vec!["C++", "Haskell", "Python"]),
-        ("What does HTML stand for?", "HyperText Markup Language", vec!["High-Tech Modern Language", "HyperText Modeling Language", "Home Tool Markup Language"]),
-        ("How many colors are in a rainbow?", "7", vec!["5", "6", "8"]),
-        ("What is the chemical symbol for gold?", "Au", vec!["Go", "Gd", "Ag"]),
-        ("Which country invented the Internet?", "United States", vec!["United Kingdom", "Germany", "Japan"]),
+        (
+            "Which planet is closest to the Sun?",
+            "Mercury",
+            vec!["Venus", "Earth", "Mars"],
+        ),
+        (
+            "What year was the first iPhone released?",
+            "2007",
+            vec!["2005", "2008", "2010"],
+        ),
+        (
+            "What programming language is Rust's borrow checker written in?",
+            "Rust",
+            vec!["C++", "Haskell", "Python"],
+        ),
+        (
+            "What does HTML stand for?",
+            "HyperText Markup Language",
+            vec![
+                "High-Tech Modern Language",
+                "HyperText Modeling Language",
+                "Home Tool Markup Language",
+            ],
+        ),
+        (
+            "How many colors are in a rainbow?",
+            "7",
+            vec!["5", "6", "8"],
+        ),
+        (
+            "What is the chemical symbol for gold?",
+            "Au",
+            vec!["Go", "Gd", "Ag"],
+        ),
+        (
+            "Which country invented the Internet?",
+            "United States",
+            vec!["United Kingdom", "Germany", "Japan"],
+        ),
         ("What is 7 × 8?", "56", vec!["54", "58", "48"]),
-        ("Which company created the Rust programming language?", "Mozilla", vec!["Google", "Microsoft", "Apple"]),
-        ("What does SQL stand for?", "Structured Query Language", vec!["Simple Query Language", "Sequential Query Logic", "Standard Query List"]),
-        ("How many planets are in the Solar System?", "8", vec!["7", "9", "10"]),
-        ("What is the largest ocean on Earth?", "Pacific", vec!["Atlantic", "Indian", "Arctic"]),
-        ("In which year did the Berlin Wall fall?", "1989", vec!["1987", "1991", "1993"]),
-        ("What does RAM stand for?", "Random Access Memory", vec!["Read-only Access Memory", "Rapid Array Module", "Runtime Address Map"]),
-        ("Which gas do plants absorb from the atmosphere?", "Carbon dioxide", vec!["Oxygen", "Nitrogen", "Hydrogen"]),
-        ("What is the smallest prime number?", "2", vec!["0", "1", "3"]),
-        ("Who wrote the Harry Potter series?", "J.K. Rowling", vec!["J.R.R. Tolkien", "C.S. Lewis", "Stephen King"]),
-        ("What does HTTP stand for?", "HyperText Transfer Protocol", vec!["High-Throughput Transfer Protocol", "HyperText Transport Process", "Hyperlink Text Transfer Protocol"]),
+        (
+            "Which company created the Rust programming language?",
+            "Mozilla",
+            vec!["Google", "Microsoft", "Apple"],
+        ),
+        (
+            "What does SQL stand for?",
+            "Structured Query Language",
+            vec![
+                "Simple Query Language",
+                "Sequential Query Logic",
+                "Standard Query List",
+            ],
+        ),
+        (
+            "How many planets are in the Solar System?",
+            "8",
+            vec!["7", "9", "10"],
+        ),
+        (
+            "What is the largest ocean on Earth?",
+            "Pacific",
+            vec!["Atlantic", "Indian", "Arctic"],
+        ),
+        (
+            "In which year did the Berlin Wall fall?",
+            "1989",
+            vec!["1987", "1991", "1993"],
+        ),
+        (
+            "What does RAM stand for?",
+            "Random Access Memory",
+            vec![
+                "Read-only Access Memory",
+                "Rapid Array Module",
+                "Runtime Address Map",
+            ],
+        ),
+        (
+            "Which gas do plants absorb from the atmosphere?",
+            "Carbon dioxide",
+            vec!["Oxygen", "Nitrogen", "Hydrogen"],
+        ),
+        (
+            "What is the smallest prime number?",
+            "2",
+            vec!["0", "1", "3"],
+        ),
+        (
+            "Who wrote the Harry Potter series?",
+            "J.K. Rowling",
+            vec!["J.R.R. Tolkien", "C.S. Lewis", "Stephen King"],
+        ),
+        (
+            "What does HTTP stand for?",
+            "HyperText Transfer Protocol",
+            vec![
+                "High-Throughput Transfer Protocol",
+                "HyperText Transport Process",
+                "Hyperlink Text Transfer Protocol",
+            ],
+        ),
     ];
 
-    let (question, answer, mut wrong) = questions[rand::thread_rng().gen_range(0..questions.len())].clone();
+    let (question, answer, mut wrong) =
+        questions[rand::thread_rng().gen_range(0..questions.len())].clone();
 
     let mut all: Vec<&str> = vec![answer];
     all.append(&mut wrong);
@@ -602,15 +823,19 @@ pub async fn trivia(ctx: Context<'_>) -> Result<(), Error> {
         .collect::<Vec<_>>()
         .join("\n");
 
-    ctx.send(poise::CreateReply::default().embed(
-        serenity::CreateEmbed::new()
-            .title("🧠 AegisForge Trivia")
-            .description(format!("**{}**", question))
-            .field("Options", &options_display, false)
-            .field("Answer", format!("||{}||", answer), false)
-            .footer(serenity::CreateEmbedFooter::new("Answer is hidden — click to reveal!"))
-            .color(0xBF5AF2),
-    ))
+    ctx.send(
+        poise::CreateReply::default().embed(
+            serenity::CreateEmbed::new()
+                .title("🧠 AegisForge Trivia")
+                .description(format!("**{}**", question))
+                .field("Options", &options_display, false)
+                .field("Answer", format!("||{}||", answer), false)
+                .footer(serenity::CreateEmbedFooter::new(
+                    "Answer is hidden — click to reveal!",
+                ))
+                .color(0xBF5AF2),
+        ),
+    )
     .await?;
     Ok(())
 }
@@ -635,13 +860,17 @@ pub async fn roast(
     ];
     let roast = roasts[rand::thread_rng().gen_range(0..roasts.len())];
 
-    ctx.send(poise::CreateReply::default().embed(
-        serenity::CreateEmbed::new()
-            .title("🔥 Roast Session")
-            .description(format!("**{}** {}", user.name, roast))
-            .footer(serenity::CreateEmbedFooter::new("Requested by the forge • All in good fun"))
-            .color(0xFF5722),
-    ))
+    ctx.send(
+        poise::CreateReply::default().embed(
+            serenity::CreateEmbed::new()
+                .title("🔥 Roast Session")
+                .description(format!("**{}** {}", user.name, roast))
+                .footer(serenity::CreateEmbedFooter::new(
+                    "Requested by the forge • All in good fun",
+                ))
+                .color(0xFF5722),
+        ),
+    )
     .await?;
     Ok(())
 }
@@ -666,15 +895,17 @@ pub async fn compliment(
     ];
     let compliment = compliments[rand::thread_rng().gen_range(0..compliments.len())];
 
-    ctx.send(poise::CreateReply::default().embed(
-        serenity::CreateEmbed::new()
-            .title("💙 A Genuine Compliment")
-            .description(format!("**{}** {}", user.name, compliment))
-            .footer(serenity::CreateEmbedFooter::new("Spread positivity • AegisForge"))
-            .color(0x00FF88),
-    ))
+    ctx.send(
+        poise::CreateReply::default().embed(
+            serenity::CreateEmbed::new()
+                .title("💙 A Genuine Compliment")
+                .description(format!("**{}** {}", user.name, compliment))
+                .footer(serenity::CreateEmbedFooter::new(
+                    "Spread positivity • AegisForge",
+                ))
+                .color(0x00FF88),
+        ),
+    )
     .await?;
     Ok(())
 }
-
-

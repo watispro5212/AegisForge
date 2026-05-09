@@ -36,34 +36,33 @@ pub enum ModAction {
 impl ModAction {
     pub fn as_str(self) -> &'static str {
         match self {
-            Self::Ban      => "ban",
-            Self::Unban    => "unban",
-            Self::Kick     => "kick",
-            Self::Timeout  => "timeout",
-            Self::Untimeout=> "untimeout",
-            Self::Warn     => "warn",
-            Self::Note     => "note",
-            Self::Mute     => "mute",
-            Self::Unmute   => "unmute",
-            Self::TempBan  => "tempban",
-            Self::Softban  => "softban",
+            Self::Ban => "ban",
+            Self::Unban => "unban",
+            Self::Kick => "kick",
+            Self::Timeout => "timeout",
+            Self::Untimeout => "untimeout",
+            Self::Warn => "warn",
+            Self::Note => "note",
+            Self::Mute => "mute",
+            Self::Unmute => "unmute",
+            Self::TempBan => "tempban",
+            Self::Softban => "softban",
         }
     }
 
     pub fn display_name(self) -> &'static str {
         match self {
-            Self::Ban      => "🔨 Banned",
-            Self::Unban    => "🔓 Unbanned",
-            Self::Kick     => "👢 Kicked",
-            Self::Timeout  => "🔇 Timed Out",
-            Self::Untimeout=> "🔊 Timeout Removed",
-            Self::Warn     => "⚠️ Warned",
-            Self::Note     => "📝 Note Added",
-            Self::Mute     => "🔇 Muted",
-            Self::Unmute   => "🔊 Unmuted",
-            Self::TempBan  => "⏳ Temp-Banned",
-            Self::Softban  => "💨 Soft-Banned",
+            Self::Ban => "🔨 Banned",
+            Self::Unban => "🔓 Unbanned",
+            Self::Kick => "👢 Kicked",
+            Self::Timeout => "🔇 Timed Out",
+            Self::Untimeout => "🔊 Timeout Removed",
+            Self::Warn => "⚠️ Warned",
+            Self::Note => "📝 Note Added",
+            Self::Mute => "🔇 Muted",
+            Self::Unmute => "🔊 Unmuted",
+            Self::TempBan => "⏳ Temp-Banned",
+            Self::Softban => "💨 Soft-Banned",
         }
     }
 }
-
