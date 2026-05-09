@@ -162,10 +162,50 @@ async function fetchLiveStats() {
             upStatus.innerText = `${uptime.days}d ${uptime.hours}h ${uptime.minutes}m`;
         }
 
-        const overallStatus = document.getElementById('overall-status');
         if (overallStatus) {
             overallStatus.querySelector('h3').innerText = 'All Systems Operational';
             overallStatus.querySelector('p').innerText = `Bot is running smooth with ${data.shards_online}/${data.shards_total} shards online.`;
+        }
+
+        // Render individual shards
+        const shardGrid = document.getElementById('shards-grid');
+        if (shardGrid && data.shards) {
+            shardGrid.innerHTML = '';
+            data.shards.forEach(shard => {
+                const shardCard = document.createElement('div');
+                const isOnline = shard.status === 'Connected' || shard.status === 'Connected'; // Handle potential variations
+                shardCard.className = `shard-card active reveal-on-scroll`;
+                shardCard.innerHTML = `
+                    <div class="shard-header">
+                        <span class="shard-id">#${shard.id.toString().padStart(2, '0')}</span>
+                        <span class="shard-status ${isOnline ? 'online' : 'offline'}">${shard.status}</span>
+                    </div>
+                    <div class="shard-body">
+                        <div class="shard-stat"><span>Latency</span> <span>${shard.latency_ms}ms</span></div>
+                        <div class="shard-stat"><span>Status</span> <span class="status-badge ${isOnline ? 'online' : 'offline'}">${shard.status}</span></div>
+                    </div>
+                `;
+                shardGrid.appendChild(shardCard);
+            });
+            
+            // Add a "Scaling" placeholder if there are only a few shards
+            if (data.shards.length < 4) {
+                 const placeholder = document.createElement('div');
+                 placeholder.className = 'shard-card placeholder reveal-on-scroll';
+                 placeholder.innerHTML = `
+                    <div class="shard-header">
+                        <span class="shard-id">#--</span>
+                        <span class="shard-status pending">Scaling</span>
+                    </div>
+                    <div class="shard-body">
+                        <p>next shard spinning up soon or whatever.</p>
+                    </div>
+                 `;
+                 shardGrid.appendChild(placeholder);
+            }
+            
+            // Re-initialize reveals for new elements
+            initReveals();
         }
 
         // Initialize dynamic uptime segments
@@ -260,7 +300,7 @@ if (statsSection) {
 // This is now handled in initReveals()
 
 // 2. 3D Tilt Effect for Cards
-const tiltCards = document.querySelectorAll('.tilt-card, .feature-card, .dashboard-card, .stack-card, .pricing-card');
+const tiltCards = document.querySelectorAll('.tilt-card, .feature-card, .dashboard-card, .stack-card');
 
 tiltCards.forEach(card => {
     // Ensure styles are set correctly

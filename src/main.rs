@@ -27,6 +27,13 @@ pub struct Data {
 }
 
 #[derive(Serialize)]
+struct ShardStatus {
+    id: u32,
+    latency_ms: u64,
+    status: String,
+}
+
+#[derive(Serialize)]
 struct Stats {
     server_count: usize,
     user_count: usize,
@@ -35,6 +42,7 @@ struct Stats {
     xp_gain_24h: i64,
     shards_total: u64,
     shards_online: u64,
+    shards: Vec<ShardStatus>,
 }
 
 #[derive(Clone)]
@@ -53,7 +61,19 @@ async fn get_stats(State(state): State<AppState>) -> Json<Stats> {
     let total_wealth = crate::db::economy::get_total_wealth(pool).await.unwrap_or(0);
     let total_xp = crate::db::leveling::get_total_xp(pool).await.unwrap_or(0);
 
-    let shard_count = 2; // we set this below
+    let mut shard_statuses = Vec::new();
+    let runners = state.shard_manager.runners.lock().await;
+    
+    for (id, runner) in runners.iter() {
+        shard_statuses.push(ShardStatus {
+            id: id.0,
+            latency_ms: runner.latency.map(|d| d.as_millis() as u64).unwrap_or(0),
+            status: format!("{:?}", runner.stage),
+        });
+    }
+
+    let shards_total = shard_statuses.len() as u64;
+    let shards_online = shard_statuses.iter().filter(|s| s.status == "Connected").count() as u64;
     
     Json(Stats {
         server_count: guilds,
@@ -61,8 +81,9 @@ async fn get_stats(State(state): State<AppState>) -> Json<Stats> {
         uptime_seconds: state.start_time.elapsed().as_secs(),
         economy_activity: total_wealth,
         xp_gain_24h: total_xp,
-        shards_total: shard_count,
-        shards_online: shard_count, // assuming they are online if the api is up lol
+        shards_total,
+        shards_online,
+        shards: shard_statuses,
     })
 }
 

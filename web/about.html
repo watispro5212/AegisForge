@@ -5,183 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About | aegisforge</title>
     <meta name="description" content="Learn about aegisforge — a high-performance Rust-powered Discord bot built for speed, stability, and clean server control.">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="core.css">
+    <link rel="stylesheet" href="components.css">
+    <link rel="stylesheet" href="animations.css">
+    <link rel="stylesheet" href="pages.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <style>
-        .about-hero {
-            padding: 160px 5% 80px;
-            text-align: center;
-            max-width: 900px;
-            margin: 0 auto;
-        }
-        .about-hero h1 {
-            font-size: clamp(2.5rem, 5vw, 4rem);
-            font-weight: 800;
-            letter-spacing: -0.03em;
-            margin-bottom: 1.5rem;
-        }
-        .about-hero p {
-            font-size: 1.15rem;
-            color: var(--text-dim);
-            line-height: 1.8;
-            max-width: 700px;
-            margin: 0 auto;
-        }
-        .about-content {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 0 5% 100px;
-        }
-        .about-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 6rem;
-        }
-        .about-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 2.5rem 2rem;
-            transition: var(--transition);
-        }
-        .about-card:hover {
-            border-color: rgba(0, 242, 255, 0.3);
-            transform: translateY(-4px);
-        }
-        .about-card-icon {
-            font-size: 2rem;
-            margin-bottom: 1.25rem;
-            display: block;
-        }
-        .about-card h3 {
-            font-size: 1.2rem;
-            font-weight: 700;
-            margin-bottom: 0.75rem;
-        }
-        .about-card p {
-            color: var(--text-dim);
-            font-size: 0.95rem;
-            line-height: 1.7;
-        }
-        .about-section-title {
-            font-size: clamp(1.6rem, 3vw, 2.2rem);
-            font-weight: 800;
-            letter-spacing: -0.02em;
-            margin-bottom: 2rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid var(--border);
-        }
-        .tech-stack-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 1rem;
-            margin-bottom: 6rem;
-        }
-        .tech-item {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 1.25rem 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            transition: var(--transition);
-        }
-        .tech-item:hover {
-            border-color: rgba(0, 242, 255, 0.25);
-        }
-        .tech-label {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.9rem;
-            color: var(--cyan);
-            font-weight: 700;
-            min-width: 90px;
-        }
-        .tech-desc {
-            color: var(--text-dim);
-            font-size: 0.88rem;
-        }
-        .mission-block {
-            background: linear-gradient(135deg, rgba(0,242,255,0.04), rgba(191,90,242,0.04));
-            border: 1px solid rgba(0, 242, 255, 0.15);
-            border-radius: var(--radius);
-            padding: 3rem;
-            margin-bottom: 6rem;
-            position: relative;
-            overflow: hidden;
-        }
-        .mission-block::before {
-            content: '';
-            position: absolute;
-            top: -1px; left: -1px; right: -1px;
-            height: 2px;
-            background: linear-gradient(90deg, var(--cyan), var(--purple), var(--cyan));
-        }
-        .mission-block p {
-            font-size: 1.1rem;
-            line-height: 1.85;
-            color: var(--text-dim);
-        }
-        .mission-block p + p {
-            margin-top: 1.25rem;
-        }
-        .mission-block strong {
-            color: var(--text);
-        }
-        .stat-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 6rem;
-        }
-        .stat-pill {
-            text-align: center;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 2rem 1rem;
-        }
-        .stat-pill .value {
-            font-size: 2rem;
-            font-weight: 800;
-            font-family: 'JetBrains Mono', monospace;
-            color: var(--cyan);
-            display: block;
-            margin-bottom: 0.5rem;
-        }
-        .stat-pill .label {
-            font-size: 0.8rem;
-            color: var(--text-dim);
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-        }
-        .banner-about {
-            width: 100%;
-            height: auto;
-            border-radius: var(--radius);
-            border: 1px solid var(--border);
-            margin-bottom: 5rem;
-        }
-        .about-cta {
-            text-align: center;
-            padding: 2rem 0 4rem;
-        }
-        .about-cta-title {
-            font-size: 2rem;
-            font-weight: 800;
-            margin-bottom: 1rem;
-        }
-        .about-cta-sub {
-            color: var(--text-dim);
-            margin-bottom: 2rem;
-            font-size: 1.05rem;
-        }
-        .nav-active { color: var(--cyan) !important; }
-    </style>
 </head>
 <body>
     <div class="grid-bg"></div>
@@ -208,9 +39,9 @@
 
     <!-- Hero -->
     <div class="about-hero">
-        <span class="section-tag">The Project</span>
+        <span class="section-tag">the project</span>
         <h1>about <span class="text-gradient">aegisforge</span></h1>
-        <p>A high-performance Discord bot engineered from the ground up in Rust — purpose-built for speed, reliability, and deep server control without the bloat.</p>
+        <p>a high-performance discord bot engineered from the ground up in rust — purpose-built for speed, reliability, and deep server control without the bloat. it works i guess.</p>
     </div>
 
     <div class="about-content">
@@ -220,9 +51,9 @@
 
         <!-- Mission -->
         <div class="mission-block reveal-on-scroll">
-            <p><strong>aegisforge was built out of frustration.</strong> Most Discord bots are slow, crash under load, lose your data, or bury useful features under layers of premium paywalls. We wanted something different — a bot that just works, at any scale, without compromise.</p>
-            <p>By choosing <strong>Rust</strong> as our foundation, we eliminated the garbage collection pauses and memory safety issues that plague Node.js and Python bots. Every command is processed with zero-copy data handling backed by a <strong>lock-free DashMap cache</strong> and a serverless <strong>Neon PostgreSQL</strong> cluster — your guild configurations load from memory in nanoseconds.</p>
-            <p>Whether you're running a small friend group or a large community, aegisforge scales effortlessly. The stateless architecture means no single point of failure — your data is always safe, always in sync.</p>
+            <p><strong>aegisforge was built because i was bored.</strong> most discord bots are slow, crash under load, lose your data, or bury useful features under layers of premium paywalls. i wanted something different — a bot that just works, at any scale, without compromise.</p>
+            <p>by choosing <strong>rust</strong> as our foundation, i eliminated the garbage collection pauses and memory safety issues that plague node.js and python bots. every command is processed with zero-copy data handling backed by a <strong>lock-free dashmap cache</strong> and a serverless <strong>neon postgresql</strong> cluster — your guild configurations load from memory in nanoseconds.</p>
+            <p>whether you're running a small friend group or a large community, aegisforge scales effortlessly. the stateless architecture means no single point of failure — your data is always safe, always in sync. whatever.</p>
         </div>
 
         <!-- Key Stats -->

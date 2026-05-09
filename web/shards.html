@@ -4,7 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>shards & status | aegisforge</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="core.css">
+    <link rel="stylesheet" href="components.css">
+    <link rel="stylesheet" href="animations.css">
+    <link rel="stylesheet" href="pages.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -66,56 +69,8 @@
             <!-- Shard Map -->
             <section class="shard-section reveal-on-scroll">
                 <h2>shard <span class="text-gradient">telemetry</span></h2>
-                <div class="shards-telemetry-grid">
-                    <div class="shard-card active">
-                        <div class="shard-header">
-                            <span class="shard-id">#00</span>
-                            <span class="shard-status online">Online</span>
-                        </div>
-                        <div class="shard-body">
-                            <div class="shard-stat"><span>Latency</span> <span>24ms</span></div>
-                            <div class="shard-stat"><span>Servers</span> <span>711</span></div>
-                        </div>
-                    </div>
-                    <div class="shard-card active">
-                        <div class="shard-header">
-                            <span class="shard-id">#01</span>
-                            <span class="shard-status online">Online</span>
-                        </div>
-                        <div class="shard-body">
-                            <div class="shard-stat"><span>Latency</span> <span>31ms</span></div>
-                            <div class="shard-stat"><span>Servers</span> <span>684</span></div>
-                        </div>
-                    </div>
-                    <div class="shard-card active">
-                        <div class="shard-header">
-                            <span class="shard-id">#02</span>
-                            <span class="shard-status online">Online</span>
-                        </div>
-                        <div class="shard-body">
-                            <div class="shard-stat"><span>Latency</span> <span>28ms</span></div>
-                            <div class="shard-stat"><span>Servers</span> <span>702</span></div>
-                        </div>
-                    </div>
-                    <div class="shard-card active">
-                        <div class="shard-header">
-                            <span class="shard-id">#03</span>
-                            <span class="shard-status online">Online</span>
-                        </div>
-                        <div class="shard-body">
-                            <div class="shard-stat"><span>Latency</span> <span>42ms</span></div>
-                            <div class="shard-stat"><span>Servers</span> <span>691</span></div>
-                        </div>
-                    </div>
-                    <div class="shard-card placeholder">
-                        <div class="shard-header">
-                            <span class="shard-id">#--</span>
-                            <span class="shard-status pending">Scaling</span>
-                        </div>
-                        <div class="shard-body">
-                            <p>next shard spinning up soon or whatever.</p>
-                        </div>
-                    </div>
+                <div class="shards-telemetry-grid" id="shards-grid">
+                    <div class="loading-shards">synchronizing with the forge...</div>
                 </div>
             </section>
 
