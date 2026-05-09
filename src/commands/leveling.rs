@@ -30,9 +30,7 @@ pub async fn rank(
     let next_level_xp = ((lvl.level + 1) as f64 * 5.0).powi(2) as i64;
     let progress = lvl.xp - current_level_xp;
     let total_needed = next_level_xp - current_level_xp;
-    let percent = (progress as f64 / total_needed as f64 * 100.0)
-        .max(0.0)
-        .min(100.0);
+    let percent = (progress as f64 / total_needed as f64 * 100.0).clamp(0.0, 100.0);
 
     ctx.send(
         poise::CreateReply::default().embed(

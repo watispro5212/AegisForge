@@ -51,12 +51,10 @@ pub async fn event_handler(
                                     )
                                     .field("Language", "`Rust`", true)
                                     .field("Status", "🟢 Operational", true)
-                                    .footer(serenity::builder::CreateEmbedFooter::new(
-                                        format!(
-                                            "AegisForge v{} - High-Performance Discord Automation",
-                                            env!("CARGO_PKG_VERSION")
-                                        ),
-                                    ))
+                                    .footer(serenity::builder::CreateEmbedFooter::new(format!(
+                                        "AegisForge v{} - High-Performance Discord Automation",
+                                        env!("CARGO_PKG_VERSION")
+                                    )))
                                     .timestamp(serenity::Timestamp::now())
                                     .color(0x57F287);
                                 let builder = serenity::builder::ExecuteWebhook::new().embed(embed);
@@ -93,12 +91,10 @@ pub async fn event_handler(
                                 .field("Members", format!("`{}`", member_count), true)
                                 .field("Total Servers", format!("`{}`", guild_count), true)
                                 .field("Server ID", format!("`{}`", guild_id), true)
-                                .footer(serenity::builder::CreateEmbedFooter::new(
-                                    format!(
-                                        "AegisForge v{} - Guild Join Event",
-                                        env!("CARGO_PKG_VERSION")
-                                    ),
-                                ))
+                                .footer(serenity::builder::CreateEmbedFooter::new(format!(
+                                    "AegisForge v{} - Guild Join Event",
+                                    env!("CARGO_PKG_VERSION")
+                                )))
                                 .timestamp(serenity::Timestamp::now())
                                 .color(0x57F287);
                             let builder = serenity::builder::ExecuteWebhook::new().embed(embed);

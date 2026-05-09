@@ -1,3 +1,4 @@
+use crate::db::mod_cases::NewModCase;
 use crate::{Context, Error};
 use poise::serenity_prelude as serenity;
 use std::time::Duration;
@@ -25,13 +26,15 @@ pub async fn kick(
     let pool = &ctx.data().database.pool;
     crate::db::mod_cases::create_case(
         pool,
-        guild_id.get() as i64,
-        user.id.get() as i64,
-        ctx.author().id.get() as i64,
-        crate::models::mod_case::ModAction::Kick,
-        Some(reason_str),
-        None,
-        None,
+        NewModCase {
+            guild_id: guild_id.get() as i64,
+            target_id: user.id.get() as i64,
+            moderator_id: ctx.author().id.get() as i64,
+            action: crate::models::mod_case::ModAction::Kick,
+            reason: Some(reason_str),
+            duration_secs: None,
+            expires_at: None,
+        },
     )
     .await?;
 
@@ -86,17 +89,19 @@ pub async fn timeout(
     let pool = &ctx.data().database.pool;
     crate::db::mod_cases::create_case(
         pool,
-        guild_id.get() as i64,
-        user.id.get() as i64,
-        ctx.author().id.get() as i64,
-        crate::models::mod_case::ModAction::Timeout,
-        Some(reason_str),
-        Some(minutes as i64 * 60),
-        Some(
-            chrono::DateTime::from_timestamp(until.unix_timestamp(), 0)
-                .unwrap()
-                .with_timezone(&chrono::Utc),
-        ),
+        NewModCase {
+            guild_id: guild_id.get() as i64,
+            target_id: user.id.get() as i64,
+            moderator_id: ctx.author().id.get() as i64,
+            action: crate::models::mod_case::ModAction::Timeout,
+            reason: Some(reason_str),
+            duration_secs: Some(minutes as i64 * 60),
+            expires_at: Some(
+                chrono::DateTime::from_timestamp(until.unix_timestamp(), 0)
+                    .unwrap()
+                    .with_timezone(&chrono::Utc),
+            ),
+        },
     )
     .await?;
 
@@ -147,13 +152,15 @@ pub async fn ban(
     let pool = &ctx.data().database.pool;
     crate::db::mod_cases::create_case(
         pool,
-        guild_id.get() as i64,
-        user.id.get() as i64,
-        ctx.author().id.get() as i64,
-        crate::models::mod_case::ModAction::Ban,
-        Some(reason_str),
-        None,
-        None,
+        NewModCase {
+            guild_id: guild_id.get() as i64,
+            target_id: user.id.get() as i64,
+            moderator_id: ctx.author().id.get() as i64,
+            action: crate::models::mod_case::ModAction::Ban,
+            reason: Some(reason_str),
+            duration_secs: None,
+            expires_at: None,
+        },
     )
     .await?;
 
@@ -205,13 +212,15 @@ pub async fn softban(
     let pool = &ctx.data().database.pool;
     crate::db::mod_cases::create_case(
         pool,
-        guild_id.get() as i64,
-        user.id.get() as i64,
-        ctx.author().id.get() as i64,
-        crate::models::mod_case::ModAction::Softban,
-        Some(reason_str),
-        None,
-        None,
+        NewModCase {
+            guild_id: guild_id.get() as i64,
+            target_id: user.id.get() as i64,
+            moderator_id: ctx.author().id.get() as i64,
+            action: crate::models::mod_case::ModAction::Softban,
+            reason: Some(reason_str),
+            duration_secs: None,
+            expires_at: None,
+        },
     )
     .await?;
 
@@ -255,13 +264,15 @@ pub async fn unban(
     let pool = &ctx.data().database.pool;
     crate::db::mod_cases::create_case(
         pool,
-        guild_id.get() as i64,
-        user_id.get() as i64,
-        ctx.author().id.get() as i64,
-        crate::models::mod_case::ModAction::Unban,
-        None,
-        None,
-        None,
+        NewModCase {
+            guild_id: guild_id.get() as i64,
+            target_id: user_id.get() as i64,
+            moderator_id: ctx.author().id.get() as i64,
+            action: crate::models::mod_case::ModAction::Unban,
+            reason: None,
+            duration_secs: None,
+            expires_at: None,
+        },
     )
     .await?;
 
@@ -302,13 +313,15 @@ pub async fn warn(
     let guild_id = ctx.guild_id().unwrap().get() as i64;
     let case = crate::db::mod_cases::create_case(
         pool,
-        guild_id,
-        user.id.get() as i64,
-        ctx.author().id.get() as i64,
-        crate::models::mod_case::ModAction::Warn,
-        Some(&reason),
-        None,
-        None,
+        NewModCase {
+            guild_id,
+            target_id: user.id.get() as i64,
+            moderator_id: ctx.author().id.get() as i64,
+            action: crate::models::mod_case::ModAction::Warn,
+            reason: Some(&reason),
+            duration_secs: None,
+            expires_at: None,
+        },
     )
     .await?;
 
@@ -543,17 +556,19 @@ pub async fn mute(
     let pool = &ctx.data().database.pool;
     crate::db::mod_cases::create_case(
         pool,
-        guild_id.get() as i64,
-        user.id.get() as i64,
-        ctx.author().id.get() as i64,
-        crate::models::mod_case::ModAction::Mute,
-        Some(reason_str),
-        Some(m as i64 * 60),
-        Some(
-            chrono::DateTime::from_timestamp(until.unix_timestamp(), 0)
-                .unwrap()
-                .with_timezone(&chrono::Utc),
-        ),
+        NewModCase {
+            guild_id: guild_id.get() as i64,
+            target_id: user.id.get() as i64,
+            moderator_id: ctx.author().id.get() as i64,
+            action: crate::models::mod_case::ModAction::Mute,
+            reason: Some(reason_str),
+            duration_secs: Some(m as i64 * 60),
+            expires_at: Some(
+                chrono::DateTime::from_timestamp(until.unix_timestamp(), 0)
+                    .unwrap()
+                    .with_timezone(&chrono::Utc),
+            ),
+        },
     )
     .await?;
 
@@ -601,13 +616,15 @@ pub async fn unmute(
     let pool = &ctx.data().database.pool;
     crate::db::mod_cases::create_case(
         pool,
-        guild_id.get() as i64,
-        user.id.get() as i64,
-        ctx.author().id.get() as i64,
-        crate::models::mod_case::ModAction::Unmute,
-        Some(reason_str),
-        None,
-        None,
+        NewModCase {
+            guild_id: guild_id.get() as i64,
+            target_id: user.id.get() as i64,
+            moderator_id: ctx.author().id.get() as i64,
+            action: crate::models::mod_case::ModAction::Unmute,
+            reason: Some(reason_str),
+            duration_secs: None,
+            expires_at: None,
+        },
     )
     .await?;
 

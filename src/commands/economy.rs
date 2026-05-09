@@ -357,13 +357,7 @@ pub async fn buy(
         .into());
     }
 
-    economy::update_balance(
-        &ctx.data().database.pool,
-        guild_id,
-        user_id,
-        -total_price,
-    )
-    .await?;
+    economy::update_balance(&ctx.data().database.pool, guild_id, user_id, -total_price).await?;
 
     sqlx::query(
         r#"
@@ -394,7 +388,11 @@ pub async fn buy(
                 ))
                 .field("Category", item.category, true)
                 .field("Rarity", item.rarity, true)
-                .field("Total Cost", format!("`{}`", format_money(total_price)), true)
+                .field(
+                    "Total Cost",
+                    format!("`{}`", format_money(total_price)),
+                    true,
+                )
                 .field(
                     "Wallet Remaining",
                     format!("`${}`", eco.balance - total_price),
@@ -447,7 +445,10 @@ pub async fn inventory(
                 let rarity = find_shop_item(&item_id)
                     .map(|item| item.rarity)
                     .unwrap_or("Legacy");
-                format!("**{}** x{} (`{}`) - {}", item_name, quantity, item_id, rarity)
+                format!(
+                    "**{}** x{} (`{}`) - {}",
+                    item_name, quantity, item_id, rarity
+                )
             })
             .collect::<Vec<_>>()
             .join("\n")

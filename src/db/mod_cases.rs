@@ -21,18 +21,19 @@ pub async fn next_case_number(pool: &PgPool, guild_id: i64) -> sqlx::Result<i32>
 }
 
 /// insert a new moderation case and return it.
-pub async fn create_case(
-    pool: &PgPool,
-    guild_id: i64,
-    target_id: i64,
-    moderator_id: i64,
-    action: ModAction,
-    reason: Option<&str>,
-    duration_secs: Option<i64>,
-    expires_at: Option<DateTime<Utc>>,
-) -> sqlx::Result<ModCase> {
-    let case_number = next_case_number(pool, guild_id).await?;
-    let action_str = action.as_str();
+pub struct NewModCase<'a> {
+    pub guild_id: i64,
+    pub target_id: i64,
+    pub moderator_id: i64,
+    pub action: ModAction,
+    pub reason: Option<&'a str>,
+    pub duration_secs: Option<i64>,
+    pub expires_at: Option<DateTime<Utc>>,
+}
+
+pub async fn create_case(pool: &PgPool, new_case: NewModCase<'_>) -> sqlx::Result<ModCase> {
+    let case_number = next_case_number(pool, new_case.guild_id).await?;
+    let action_str = new_case.action.as_str();
 
     let case = sqlx::query_as!(
         ModCase,
@@ -43,14 +44,14 @@ pub async fn create_case(
             ($1, $2, $3, $4, $5, $6, $7, $8)
         RETURNING *
         "#,
-        guild_id,
+        new_case.guild_id,
         case_number,
-        target_id,
-        moderator_id,
+        new_case.target_id,
+        new_case.moderator_id,
         action_str,
-        reason,
-        duration_secs,
-        expires_at
+        new_case.reason,
+        new_case.duration_secs,
+        new_case.expires_at
     )
     .fetch_one(pool)
     .await?;

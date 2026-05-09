@@ -113,6 +113,92 @@ async function fetchLiveStats() {
         const minutes = Math.floor((seconds % 3600) / 60);
         return { days, hours, minutes };
     };
+
+    const toNumber = (value, fallback = 0) => {
+        const number = Number(value);
+        return Number.isFinite(number) ? number : fallback;
+    };
+
+    const isShardOnline = (status = '') => {
+        const normalized = status.toString().trim().toLowerCase();
+        return ['connected', 'online', 'ready', 'operational'].includes(normalized);
+    };
+
+    const normalizeStats = (stats = {}) => {
+        const shards = Array.isArray(stats.shards) ? stats.shards : [];
+        const fallbackOnlineCount = shards.filter(shard => isShardOnline(shard.status)).length;
+
+        return {
+            server_count: toNumber(stats.server_count),
+            user_count: toNumber(stats.user_count),
+            uptime_seconds: toNumber(stats.uptime_seconds),
+            economy_activity: toNumber(stats.economy_activity),
+            xp_gain_24h: toNumber(stats.xp_gain_24h),
+            total_commands_executed: toNumber(stats.total_commands_executed),
+            total_economy_transactions: toNumber(stats.total_economy_transactions),
+            inventory_items: toNumber(stats.inventory_items),
+            shards_total: toNumber(stats.shards_total, shards.length),
+            shards_online: toNumber(stats.shards_online, fallbackOnlineCount),
+            shards,
+            version: stats.version || '4.1.0',
+            source: stats.source || 'unknown'
+        };
+    };
+
+    const renderShardGrid = (stats, isFallback = false) => {
+        const shardGrid = document.getElementById('shards-grid');
+        if (!shardGrid) return;
+
+        shardGrid.innerHTML = '';
+
+        const shards = stats.shards.length > 0
+            ? stats.shards
+            : Array.from({ length: Math.max(stats.shards_total, 1) }, (_, index) => ({
+                id: index,
+                status: isFallback ? 'Cached' : 'Unavailable',
+                latency_ms: null
+            }));
+
+        shards.forEach(shard => {
+            const shardCard = document.createElement('div');
+            const online = isShardOnline(shard.status) || shard.status === 'Cached';
+            const statusClass = online ? 'online' : 'offline';
+            const hasLatency = shard.latency_ms !== null && shard.latency_ms !== undefined && shard.latency_ms !== '';
+            const latency = hasLatency && Number.isFinite(Number(shard.latency_ms))
+                ? `${Number(shard.latency_ms).toLocaleString()}ms`
+                : 'n/a';
+
+            shardCard.className = `shard-card active reveal-on-scroll ${isFallback ? 'placeholder' : ''}`;
+            shardCard.innerHTML = `
+                <div class="shard-header">
+                    <span class="shard-id">#${toNumber(shard.id).toString().padStart(2, '0')}</span>
+                    <span class="shard-status ${statusClass}">${shard.status || 'Unknown'}</span>
+                </div>
+                <div class="shard-body">
+                    <div class="shard-stat"><span>Latency</span> <span>${latency}</span></div>
+                    <div class="shard-stat"><span>Status</span> <span class="status-badge ${statusClass}">${shard.status || 'Unknown'}</span></div>
+                </div>
+            `;
+            shardGrid.appendChild(shardCard);
+        });
+
+        if (!isFallback && stats.shards.length > 0 && stats.shards.length < 4) {
+            const placeholder = document.createElement('div');
+            placeholder.className = 'shard-card placeholder reveal-on-scroll';
+            placeholder.innerHTML = `
+                <div class="shard-header">
+                    <span class="shard-id">#--</span>
+                    <span class="shard-status pending">Standby</span>
+                </div>
+                <div class="shard-body">
+                    <p>Additional shards appear here as capacity scales.</p>
+                </div>
+            `;
+            shardGrid.appendChild(placeholder);
+        }
+
+        initReveals();
+    };
     
     const animateValue = (id, end, isTime = false) => {
         const obj = document.getElementById(id);
@@ -150,7 +236,7 @@ async function fetchLiveStats() {
     try {
         const response = await fetch(API_URL);
         if (!response.ok) throw new Error('API Unreachable');
-        const data = await response.json();
+        const data = normalizeStats(await response.json());
         
         if (data.server_count !== undefined) {
             animateValue('stat-guilds', data.server_count);
@@ -207,49 +293,12 @@ async function fetchLiveStats() {
 
         if (overallStatus) {
             overallStatus.querySelector('h3').innerText = 'All Systems Operational';
-            overallStatus.querySelector('p').innerText = `Bot is running smooth with ${data.shards_online}/${data.shards_total} shards online.`;
+            overallStatus.querySelector('p').innerText = data.shards_total > 0
+                ? `Bot is running smooth with ${data.shards_online}/${data.shards_total} shards online.`
+                : 'Bot services are reporting, but shard counts are not available yet.';
         }
 
-        // Render individual shards
-        const shardGrid = document.getElementById('shards-grid');
-        if (shardGrid && data.shards) {
-            shardGrid.innerHTML = '';
-            data.shards.forEach(shard => {
-                const shardCard = document.createElement('div');
-                const isOnline = shard.status === 'Connected' || shard.status === 'Connected'; // Handle potential variations
-                shardCard.className = `shard-card active reveal-on-scroll`;
-                shardCard.innerHTML = `
-                    <div class="shard-header">
-                        <span class="shard-id">#${shard.id.toString().padStart(2, '0')}</span>
-                        <span class="shard-status ${isOnline ? 'online' : 'offline'}">${shard.status}</span>
-                    </div>
-                    <div class="shard-body">
-                        <div class="shard-stat"><span>Latency</span> <span>${shard.latency_ms}ms</span></div>
-                        <div class="shard-stat"><span>Status</span> <span class="status-badge ${isOnline ? 'online' : 'offline'}">${shard.status}</span></div>
-                    </div>
-                `;
-                shardGrid.appendChild(shardCard);
-            });
-            
-            // Add a "Scaling" placeholder if there are only a few shards
-            if (data.shards.length < 4) {
-                 const placeholder = document.createElement('div');
-                 placeholder.className = 'shard-card placeholder reveal-on-scroll';
-                 placeholder.innerHTML = `
-                    <div class="shard-header">
-                        <span class="shard-id">#--</span>
-                        <span class="shard-status pending">Scaling</span>
-                    </div>
-                    <div class="shard-body">
-                        <p>Next shard will appear here when it comes online.</p>
-                    </div>
-                 `;
-                 shardGrid.appendChild(placeholder);
-            }
-            
-            // Re-initialize reveals for new elements
-            initReveals();
-        }
+        renderShardGrid(data);
 
         // Initialize dynamic uptime segments
         initUptimeSegments();
@@ -257,16 +306,23 @@ async function fetchLiveStats() {
     } catch (err) {
         console.warn('Status API unreachable, using cached/fallback data:', err.message);
         
-        const fallbackData = {
+        const fallbackData = normalizeStats({
             server_count: 1422,
             user_count: 1450283,
             uptime_seconds: 86400 * 42,
+            economy_activity: 0,
+            xp_gain_24h: 0,
             shards_total: 2,
             shards_online: 2,
             total_commands_executed: 0,
             inventory_items: 0,
-            version: '4.1.0'
-        };
+            version: '4.1.0',
+            source: 'fallback',
+            shards: [
+                { id: 0, status: 'Cached', latency_ms: null },
+                { id: 1, status: 'Cached', latency_ms: null }
+            ]
+        });
 
         const overallStatus = document.getElementById('overall-status');
         if (overallStatus) {
@@ -293,11 +349,15 @@ async function fetchLiveStats() {
         const commandsStatus = document.getElementById('stat-commands-status');
         const inventoryStatus = document.getElementById('stat-inventory-status');
         const versionStatus = document.getElementById('stat-version-status');
+        const wealthStatus = document.getElementById('stat-wealth-status');
+        const xpStatus = document.getElementById('stat-xp-status');
 
         if (guildsStatus) guildsStatus.innerText = fallbackData.server_count.toLocaleString();
         if (usersStatus) usersStatus.innerText = fallbackData.user_count.toLocaleString();
         if (sTotal) sTotal.innerText = fallbackData.shards_total;
         if (sOnline) sOnline.innerText = fallbackData.shards_online;
+        if (wealthStatus) wealthStatus.innerText = `$${fallbackData.economy_activity.toLocaleString()}`;
+        if (xpStatus) xpStatus.innerText = fallbackData.xp_gain_24h.toLocaleString();
         if (commandsStatus) commandsStatus.innerText = fallbackData.total_commands_executed.toLocaleString();
         if (inventoryStatus) inventoryStatus.innerText = fallbackData.inventory_items.toLocaleString();
         if (versionStatus) versionStatus.innerText = `v${fallbackData.version}`;
@@ -307,6 +367,7 @@ async function fetchLiveStats() {
             uptimeStatus.innerText = `${uptimeData.days}d ${uptimeData.hours}h ${uptimeData.minutes}m`;
         }
         
+        renderShardGrid(fallbackData, true);
         initUptimeSegments(true); 
     }
 }

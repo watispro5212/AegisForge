@@ -1,5 +1,6 @@
 use crate::{Context, Error};
 use poise::serenity_prelude as serenity;
+use std::cmp::Reverse;
 
 /// add a role to a member
 #[poise::command(
@@ -63,7 +64,7 @@ pub async fn remove(
 pub async fn list(ctx: Context<'_>) -> Result<(), Error> {
     let guild = ctx.guild().ok_or("Must be in a guild")?.clone();
     let mut roles: Vec<_> = guild.roles.values().collect();
-    roles.sort_by(|a, b| b.position.cmp(&a.position));
+    roles.sort_by_key(|role| Reverse(role.position));
 
     let role_list: String = roles
         .iter()

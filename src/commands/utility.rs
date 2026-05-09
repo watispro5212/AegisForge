@@ -70,7 +70,7 @@ pub async fn whois(
     ctx.send(
         poise::CreateReply::default().embed(
             serenity::CreateEmbed::new()
-                .title(format!("👤 AegisForge — Profile"))
+                .title("👤 AegisForge — Profile")
                 .description(format!("Identity data for **{}**.", target.name))
                 .thumbnail(target.face())
                 .field("📝 Username", format!("**{}**", target.name), true)
@@ -110,7 +110,7 @@ pub async fn avatar(
     ctx.send(
         poise::CreateReply::default().embed(
             serenity::CreateEmbed::new()
-                .title(format!("🖼️ AegisForge — Visual Identity"))
+                .title("🖼️ AegisForge — Visual Identity")
                 .description(format!("Avatar asset for **{}**.", target.name))
                 .image(&avatar_url)
                 .footer(serenity::CreateEmbedFooter::new(format!(
@@ -225,12 +225,11 @@ pub async fn botinfo(ctx: Context<'_>) -> Result<(), Error> {
     .fetch_one(&ctx.data().database.pool)
     .await
     .unwrap_or(0);
-    let inventory_items: i64 = sqlx::query_scalar(
-        "SELECT COALESCE(SUM(quantity), 0)::BIGINT FROM economy_inventory",
-    )
-    .fetch_one(&ctx.data().database.pool)
-    .await
-    .unwrap_or(0);
+    let inventory_items: i64 =
+        sqlx::query_scalar("SELECT COALESCE(SUM(quantity), 0)::BIGINT FROM economy_inventory")
+            .fetch_one(&ctx.data().database.pool)
+            .await
+            .unwrap_or(0);
 
     ctx.send(poise::CreateReply::default().embed(
         serenity::CreateEmbed::new()
@@ -598,7 +597,7 @@ pub async fn worldclock(ctx: Context<'_>) -> Result<(), Error> {
                 .field("🇬🇧 London (UTC)", fmt(0), true)
                 .field("🇺🇸 New York (EST)", fmt(-5 * 3600), true)
                 .field("🇺🇸 Los Angeles (PST)", fmt(-8 * 3600), true)
-                .field("🇩🇪 Berlin (CET)", fmt(1 * 3600), true)
+                .field("🇩🇪 Berlin (CET)", fmt(3600), true)
                 .field("🇮🇳 Mumbai (IST)", fmt(19800), true) // +5:30
                 .field("🇯🇵 Tokyo (JST)", fmt(9 * 3600), true)
                 .field("🇦🇺 Sydney (AEST)", fmt(10 * 3600), true)
@@ -644,4 +643,3 @@ pub async fn poll(
         .await?;
     Ok(())
 }
-

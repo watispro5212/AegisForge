@@ -130,8 +130,8 @@ pub async fn settings(ctx: Context<'_>) -> Result<(), Error> {
                 .field("Prefix", format!("`{}`", config.prefix), true)
                 .field(
                     "Mod Logs",
-                    if config.mod_log_channel.is_some() {
-                        format!("<#{}>", config.mod_log_channel.unwrap())
+                    if let Some(channel_id) = config.mod_log_channel {
+                        format!("<#{}>", channel_id)
                     } else {
                         "_Not Set_".to_string()
                     },
@@ -139,8 +139,8 @@ pub async fn settings(ctx: Context<'_>) -> Result<(), Error> {
                 )
                 .field(
                     "Auto-Role",
-                    if config.auto_role_id.is_some() {
-                        format!("<@&{}>", config.auto_role_id.unwrap())
+                    if let Some(role_id) = config.auto_role_id {
+                        format!("<@&{}>", role_id)
                     } else {
                         "_Not Set_".to_string()
                     },
@@ -148,8 +148,8 @@ pub async fn settings(ctx: Context<'_>) -> Result<(), Error> {
                 )
                 .field(
                     "Welcome Channel",
-                    if config.welcome_channel.is_some() {
-                        format!("<#{}>", config.welcome_channel.unwrap())
+                    if let Some(channel_id) = config.welcome_channel {
+                        format!("<#{}>", channel_id)
                     } else {
                         "_Not Set_".to_string()
                     },
