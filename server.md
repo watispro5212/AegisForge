@@ -18,7 +18,7 @@ The server should feel like the command center for AegisForge:
 **Server name:** `AegisForge Support`  
 **Short description:** `Support, updates, testing, and feedback for the AegisForge Discord bot.`  
 **Website:** `https://aegisforge-vert.vercel.app`  
-**Support invite:** `https://discord.gg/8p5Epc8Qd8`  
+**Support invite:** `https://discord.gg/HbmafcgjNa`  
 **Tone:** Clean, helpful, confident, practical, and SFW.
 
 Suggested welcome blurb:
@@ -362,7 +362,7 @@ Recommended staff workflow:
 - **Website:** https://aegisforge-vert.vercel.app
 - **GitHub:** https://github.com/watispro5212/AegisForge
 - **Top.gg:** https://top.gg/bot/1500582485367722004
-- **Support Server:** https://discord.gg/8p5Epc8Qd8
+- **Support Server:** https://discord.gg/HbmafcgjNa
 
 ## ✅ Launch Checklist
 

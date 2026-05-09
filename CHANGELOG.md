@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.1.0] - 2026-05-09
+
+### Added
+
+- **Hyperforge Market**: Added `/economy shop`, `/economy buy`, and `/economy inventory`.
+- **Global Shop Catalog**: The shop is rendered from a single global catalog so new items appear automatically after deployment.
+- **Persistent Inventory**: Added `economy_inventory` table for purchased item quantities per server economy.
+- **Shop Categories**: Added Profile, Cosmetic, Collectible, Boost, Utility, Community, and Limited item groups.
+- **Website Sync**: Updated the website command registry and economy guide for the v4.1 shop/inventory flow.
+
+### Changed
+
+- Bumped project version to `4.1.0`.
+- Updated public docs and site copy to present v4.1 as the current release.
+
 ## [3.1.0] - 2026-05-06
 
 ### Added

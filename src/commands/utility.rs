@@ -231,8 +231,11 @@ pub async fn botinfo(ctx: Context<'_>) -> Result<(), Error> {
             .field("👥 Total Users", users.to_string(), true)
             .field("⚡ Commands Run", total_commands.to_string(), true)
             .field("⏱️ Uptime", format!("<t:{}:R>", (chrono::Utc::now() - chrono::Duration::seconds(uptime.as_secs() as i64)).timestamp()), true)
-            .field("🔗 Links", "[Support Server](https://discord.gg/8p5Epc8Qd8) | [Top.gg](https://top.gg/bot/1500582485367722004)", false)
-            .footer(serenity::CreateEmbedFooter::new("AegisForge v4 Core — High Performance Automation"))
+            .field("🔗 Links", "[Support Server](https://discord.gg/HbmafcgjNa) | [Top.gg](https://top.gg/bot/1500582485367722004)", false)
+            .footer(serenity::CreateEmbedFooter::new(format!(
+                "AegisForge v{} Core - High Performance Automation",
+                env!("CARGO_PKG_VERSION")
+            )))
             .color(0x00E5FF),
     ))
     .await?;
@@ -302,11 +305,11 @@ pub async fn help(
 
     ctx.send(poise::CreateReply::default().embed(
         serenity::CreateEmbed::new()
-            .title("🛡️ AegisForge v4 — Eternal Forge")
-            .description("Welcome to the next generation of server protection. Use `/` to browse all slash commands.")
+            .title("🛡️ AegisForge v4.1 — Hyperforge Market")
+            .description("Server protection, economy, leveling, utilities, and the new global shop inventory system. Use `/` to browse all slash commands.")
             .field("⚙️ Utility", "`ping`, `server`, `user`, `avatar`, `uptime`, `stats`, `embed`, `qr`, `math`, `worldclock`, `poll`, `timestamp`, `timer`, `help`", false)
             .field("🛡️ Moderation", "`ban`, `softban`, `unban`, `kick`, `mute`, `unmute`, `timeout`, `warn`, `purge`, `nuke`, `slowmode`, `lock`, `unlock`", false)
-            .field("💰 Economy", "`balance`, `daily`, `work`, `pay`, `deposit`, `withdraw`, `beg`, `search`, `slots`, `shop`, `rob`, `crime`, `fish`, `hunt`, `leaderboard`, `global_leaderboard`, `gamble_info`", false)
+            .field("💰 Economy", "`balance`, `daily`, `work`, `pay`, `deposit`, `withdraw`, `beg`, `search`, `slots`, `shop`, `buy`, `inventory`, `rob`, `crime`, `fish`, `hunt`, `leaderboard`, `global_leaderboard`, `gamble_info`", false)
             .field("📈 Leveling", "`rank`, `leaderboard`", false)
             .field("🎮 Fun", "`coinflip`, `dice`, `eightball`, `joke`, `fact`, `ship`, `rate`, `mock`, `reverse`, `ascii`, `choose`, `trivia`, `roast`, `compliment`, `meme`, animal pics + more`", false)
             .field("🔧 Config", "`logs`, `welcome`, `autorole`, `prefix`, `settings`", false)

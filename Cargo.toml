@@ -1,9 +1,9 @@
 [package]
 name = "aegisforge"
-version = "4.0.0"
+version = "4.1.0"
 edition = "2021"
 authors = ["Watispro"]
-description = "AegisForge v4 Hyperforge - High-performance Discord automation."
+description = "AegisForge v4.1 - High-performance Discord automation, economy, and server operations."
 
 [dependencies]
 # Discord

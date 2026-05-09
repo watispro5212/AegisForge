@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Economy Guide | aegisforge</title>
-    <meta name="description" content="Master the aegisforge economy system — wallets, banking, daily rewards, slot machines, rob mechanics, and leaderboards.">
+    <title>Economy Guide | AegisForge v4.1</title>
+    <meta name="description" content="Master the AegisForge v4.1 economy system: wallets, banking, shop purchases, inventory, daily rewards, slots, rob mechanics, and leaderboards.">
     <link rel="stylesheet" href="core.css">
     <link rel="stylesheet" href="components.css">
     <link rel="stylesheet" href="animations.css">
@@ -84,9 +84,9 @@
     </div>
 
     <div class="eco-hero reveal-on-scroll">
-        <span class="section-tag">Economy System</span>
+        <span class="section-tag">Economy System v4.1</span>
         <h1>the <span class="text-gradient">economy engine</span></h1>
-        <p>A full server economy with wallets, banking, gambling, fishing, hunting, and crime. Earn, bank, and climb the leaderboard — your progress is saved per guild.</p>
+        <p>A full server economy with wallets, banking, shop purchases, inventory, gambling, fishing, hunting, and crime. Earn, buy, collect, bank, and climb the leaderboard.</p>
     </div>
 
     <div class="eco-content">
@@ -202,7 +202,7 @@
 
         <div class="eco-section reveal-on-scroll">
             <h2 class="eco-section-title">🛒 Global Shop</h2>
-            <p class="eco-section-sub">The AegisForge shop is a global catalog shared across every server. It is auto-rendered from the bot's current shop list, so new profile items, collectibles, boosts, utility items, community tags, and limited drops appear in one place.</p>
+            <p class="eco-section-sub">The AegisForge v4.1 shop is a global catalog shared across every server. It is auto-rendered from the bot's current shop list, so new profile items, collectibles, boosts, utility items, community tags, and limited drops appear in one place.</p>
             <div class="cmd-grid-eco">
                 <div class="cmd-eco-card">
                     <div class="cmd-eco-name">/economy shop</div>
@@ -210,12 +210,20 @@
                 </div>
                 <div class="cmd-eco-card">
                     <div class="cmd-eco-name">/economy shop category:limited</div>
-                    <div class="cmd-eco-desc">Filter the catalog by category when the list gets large. The command is read-only for now; purchase and inventory hooks can be connected later.</div>
+                    <div class="cmd-eco-desc">Filter the catalog by category when the list gets large.</div>
+                </div>
+                <div class="cmd-eco-card">
+                    <div class="cmd-eco-name">/economy buy &lt;item&gt; &lt;quantity&gt;</div>
+                    <div class="cmd-eco-desc">Buy items from the global catalog using wallet funds. Item IDs like <code>hyperforge_core</code> and exact item names both work.</div>
+                </div>
+                <div class="cmd-eco-card">
+                    <div class="cmd-eco-name">/economy inventory</div>
+                    <div class="cmd-eco-desc">View purchased shop items, quantities, item IDs, and rarity labels for yourself or another user.</div>
                 </div>
             </div>
             <div class="tip-box">
                 <span class="tip-icon">🧾</span>
-                <span class="tip-text"><strong>Catalog note:</strong> The command is global, not per-server. Staff can add new shop entries in the bot's catalog list and the command will automatically display the updated inventory after deployment.</span>
+                <span class="tip-text"><strong>Catalog note:</strong> The catalog is global, while inventories are saved per server economy. Staff can add new shop entries in the bot's catalog list and the command will automatically display the updated inventory after deployment.</span>
             </div>
         </div>
 

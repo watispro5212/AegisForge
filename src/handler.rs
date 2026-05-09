@@ -52,7 +52,10 @@ pub async fn event_handler(
                                     .field("Language", "`Rust`", true)
                                     .field("Status", "🟢 Operational", true)
                                     .footer(serenity::builder::CreateEmbedFooter::new(
-                                        "AegisForge v4 — High-Performance Discord Automation",
+                                        format!(
+                                            "AegisForge v{} - High-Performance Discord Automation",
+                                            env!("CARGO_PKG_VERSION")
+                                        ),
                                     ))
                                     .timestamp(serenity::Timestamp::now())
                                     .color(0x57F287);
@@ -91,7 +94,10 @@ pub async fn event_handler(
                                 .field("Total Servers", format!("`{}`", guild_count), true)
                                 .field("Server ID", format!("`{}`", guild_id), true)
                                 .footer(serenity::builder::CreateEmbedFooter::new(
-                                    "AegisForge v4 — Guild Join Event",
+                                    format!(
+                                        "AegisForge v{} - Guild Join Event",
+                                        env!("CARGO_PKG_VERSION")
+                                    ),
                                 ))
                                 .timestamp(serenity::Timestamp::now())
                                 .color(0x57F287);

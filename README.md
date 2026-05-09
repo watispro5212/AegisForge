@@ -1,13 +1,13 @@
 # AegisForge
 
-AegisForge is a high-performance Discord bot built in Rust for moderation, economy, leveling, server configuration, utility commands, and live status telemetry.
+AegisForge v4.1 is a high-performance Discord bot built in Rust for moderation, economy, shop inventory, leveling, server configuration, utility commands, and live status telemetry.
 
 It is designed for communities that need practical tools without a slow or fragile runtime: Serenity and Poise handle Discord, Tokio powers async work, SQLx persists data in PostgreSQL, and Axum exposes a lightweight stats API for the website.
 
 ## Features
 
 - Moderation: ban, softban, unban, kick, timeout, mute, unmute, warn, purge, nuke, slowmode, lock, and unlock.
-- Economy: wallet, bank, daily rewards, work, fishing, hunting, crime, slots, robbery, payments, and leaderboards.
+- Economy: wallet, bank, daily rewards, work, fishing, hunting, crime, slots, robbery, payments, global shop purchases, inventory, and leaderboards.
 - Leveling: message XP, rank lookup, local/global leaderboards, and rank card customization.
 - Configuration: logs, welcome messages, autorole, prefixes, and guild settings.
 - Utility: ping, stats, bot info, server/user lookup, avatars, embeds, timestamps, math, QR codes, dictionary lookup, timers, polls, and world clock.
@@ -64,7 +64,7 @@ SQLX_OFFLINE=true cargo check
 ## Useful Links
 
 - Website: https://aegisforge-vert.vercel.app
-- Support Server: https://discord.gg/8p5Epc8Qd8
+- Support Server: https://discord.gg/HbmafcgjNa
 - Top.gg: https://top.gg/bot/1500582485367722004
 
 ## Contributing

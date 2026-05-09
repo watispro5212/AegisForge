@@ -27,6 +27,6 @@ We expect all contributors to follow our Code of Conduct:
 *   **Testing**: Add unit tests for new features.
 
 ## 💬 Community & Support
-If you have questions or need help, join our [Discord Support Server](https://discord.gg/8p5Epc8Qd8).
+If you have questions or need help, join our [Discord Support Server](https://discord.gg/HbmafcgjNa).
 
 *Forged by the community. Maintained by watispro1.*

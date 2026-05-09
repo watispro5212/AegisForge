@@ -14,7 +14,7 @@ Security updates are prioritized for the latest major version.
 
 We take the security of AegisForge seriously. If you discover a vulnerability, please do not disclose it publicly.
 
-1. **Email**: Send a report to `security@aegisforge.io` (if available) or contact **watispro1** directly via the [Official Support Server](https://discord.gg/8p5Epc8Qd8).
+1. **Email**: Send a report to `security@aegisforge.io` (if available) or contact **watispro1** directly via the [Official Support Server](https://discord.gg/HbmafcgjNa).
 2. **Details**: Include a description of the issue, steps to reproduce, and potential impact.
 3. **Response**: We aim to acknowledge all reports within 48 hours and provide a fix or mitigation within 7 days.
 

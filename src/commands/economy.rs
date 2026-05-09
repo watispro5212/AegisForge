@@ -2,6 +2,7 @@ use crate::db::economy;
 use crate::{Context, Error};
 use poise::serenity_prelude as serenity;
 use rand::prelude::*;
+use sqlx::Row;
 
 /// economy stuff
 #[poise::command(
@@ -21,6 +22,8 @@ use rand::prelude::*;
         "withdraw",
         "gamble_info",
         "shop",
+        "buy",
+        "inventory",
         "crime",
         "fish",
         "hunt"
@@ -34,6 +37,7 @@ pub async fn economy(_ctx: Context<'_>) -> Result<(), Error> {
 
 #[derive(Clone, Copy)]
 struct ShopItem {
+    id: &'static str,
     name: &'static str,
     category: &'static str,
     price: i64,
@@ -44,6 +48,7 @@ struct ShopItem {
 fn global_shop_items() -> &'static [ShopItem] {
     &[
         ShopItem {
+            id: "copper_badge",
             name: "Copper Badge",
             category: "Profile",
             price: 250,
@@ -51,6 +56,7 @@ fn global_shop_items() -> &'static [ShopItem] {
             description: "Starter profile badge for fresh economy players.",
         },
         ShopItem {
+            id: "silver_badge",
             name: "Silver Badge",
             category: "Profile",
             price: 1_000,
@@ -58,6 +64,7 @@ fn global_shop_items() -> &'static [ShopItem] {
             description: "Clean profile flex for consistent grinders.",
         },
         ShopItem {
+            id: "gold_badge",
             name: "Gold Badge",
             category: "Profile",
             price: 5_000,
@@ -65,6 +72,7 @@ fn global_shop_items() -> &'static [ShopItem] {
             description: "Premium-looking badge for leaderboard climbers.",
         },
         ShopItem {
+            id: "diamond_badge",
             name: "Diamond Badge",
             category: "Profile",
             price: 25_000,
@@ -72,6 +80,7 @@ fn global_shop_items() -> &'static [ShopItem] {
             description: "High-end badge for economy veterans.",
         },
         ShopItem {
+            id: "forge_crown",
             name: "Forge Crown",
             category: "Profile",
             price: 100_000,
@@ -79,6 +88,7 @@ fn global_shop_items() -> &'static [ShopItem] {
             description: "A crown for users with dangerous amounts of money.",
         },
         ShopItem {
+            id: "neon_nameplate",
             name: "Neon Nameplate",
             category: "Cosmetic",
             price: 7_500,
@@ -86,6 +96,7 @@ fn global_shop_items() -> &'static [ShopItem] {
             description: "Bright profile styling for rank and economy displays.",
         },
         ShopItem {
+            id: "carbon_nameplate",
             name: "Carbon Nameplate",
             category: "Cosmetic",
             price: 9_000,
@@ -93,6 +104,7 @@ fn global_shop_items() -> &'static [ShopItem] {
             description: "Dark brushed-metal profile styling.",
         },
         ShopItem {
+            id: "aurora_frame",
             name: "Aurora Frame",
             category: "Cosmetic",
             price: 18_000,
@@ -100,6 +112,7 @@ fn global_shop_items() -> &'static [ShopItem] {
             description: "Animated-feeling profile frame for top users.",
         },
         ShopItem {
+            id: "obsidian_frame",
             name: "Obsidian Frame",
             category: "Cosmetic",
             price: 30_000,
@@ -107,6 +120,7 @@ fn global_shop_items() -> &'static [ShopItem] {
             description: "Stealth profile frame with sharp forge styling.",
         },
         ShopItem {
+            id: "founders_sigil",
             name: "Founder's Sigil",
             category: "Collectible",
             price: 50_000,
@@ -114,6 +128,7 @@ fn global_shop_items() -> &'static [ShopItem] {
             description: "Permanent collectible for early supporters.",
         },
         ShopItem {
+            id: "rustacean_relic",
             name: "Rustacean Relic",
             category: "Collectible",
             price: 75_000,
@@ -121,6 +136,7 @@ fn global_shop_items() -> &'static [ShopItem] {
             description: "A rare relic honoring the Rust core.",
         },
         ShopItem {
+            id: "lucky_charm",
             name: "Lucky Charm",
             category: "Boost",
             price: 2_500,
@@ -128,6 +144,7 @@ fn global_shop_items() -> &'static [ShopItem] {
             description: "Cosmetic luck token for gamblers.",
         },
         ShopItem {
+            id: "work_permit",
             name: "Work Permit",
             category: "Boost",
             price: 4_000,
@@ -135,6 +152,7 @@ fn global_shop_items() -> &'static [ShopItem] {
             description: "Roleplay item for dedicated workers.",
         },
         ShopItem {
+            id: "fishing_rod",
             name: "Fishing Rod",
             category: "Boost",
             price: 6_000,
@@ -142,6 +160,7 @@ fn global_shop_items() -> &'static [ShopItem] {
             description: "Fishing-themed collectible for lake regulars.",
         },
         ShopItem {
+            id: "hunters_kit",
             name: "Hunter's Kit",
             category: "Boost",
             price: 8_000,
@@ -149,6 +168,7 @@ fn global_shop_items() -> &'static [ShopItem] {
             description: "Hunting-themed collectible for wilderness grinders.",
         },
         ShopItem {
+            id: "vault_pass",
             name: "Vault Pass",
             category: "Utility",
             price: 12_000,
@@ -156,6 +176,7 @@ fn global_shop_items() -> &'static [ShopItem] {
             description: "Banking-themed flex item for cautious players.",
         },
         ShopItem {
+            id: "anti_heist_tag",
             name: "Anti-Heist Tag",
             category: "Utility",
             price: 15_000,
@@ -163,6 +184,7 @@ fn global_shop_items() -> &'static [ShopItem] {
             description: "A warning label for anyone thinking about robbing you.",
         },
         ShopItem {
+            id: "market_pass",
             name: "Market Pass",
             category: "Utility",
             price: 20_000,
@@ -170,6 +192,7 @@ fn global_shop_items() -> &'static [ShopItem] {
             description: "Collector pass for future marketplace features.",
         },
         ShopItem {
+            id: "beta_tester_tag",
             name: "Beta Tester Tag",
             category: "Community",
             price: 3_000,
@@ -177,6 +200,7 @@ fn global_shop_items() -> &'static [ShopItem] {
             description: "Show that you helped test AegisForge builds.",
         },
         ShopItem {
+            id: "bug_hunter_tag",
             name: "Bug Hunter Tag",
             category: "Community",
             price: 6_500,
@@ -184,6 +208,7 @@ fn global_shop_items() -> &'static [ShopItem] {
             description: "For people who find bugs before production does.",
         },
         ShopItem {
+            id: "support_hero_tag",
             name: "Support Hero Tag",
             category: "Community",
             price: 10_000,
@@ -191,6 +216,7 @@ fn global_shop_items() -> &'static [ShopItem] {
             description: "Recognition for helpful support-server regulars.",
         },
         ShopItem {
+            id: "patch_notes_enjoyer",
             name: "Patch Notes Enjoyer",
             category: "Community",
             price: 1_500,
@@ -198,6 +224,7 @@ fn global_shop_items() -> &'static [ShopItem] {
             description: "For the brave souls who actually read changelogs.",
         },
         ShopItem {
+            id: "season_token",
             name: "Season Token",
             category: "Limited",
             price: 35_000,
@@ -205,6 +232,7 @@ fn global_shop_items() -> &'static [ShopItem] {
             description: "Rotating seasonal collectible slot.",
         },
         ShopItem {
+            id: "hyperforge_core",
             name: "Hyperforge Core",
             category: "Limited",
             price: 250_000,
@@ -212,6 +240,19 @@ fn global_shop_items() -> &'static [ShopItem] {
             description: "Ultra-expensive global chase item.",
         },
     ]
+}
+
+fn format_money(amount: i64) -> String {
+    format!("${}", amount)
+}
+
+fn find_shop_item(query: &str) -> Option<ShopItem> {
+    let needle = query.trim().to_lowercase().replace(' ', "_");
+    global_shop_items().iter().copied().find(|item| {
+        item.id.eq_ignore_ascii_case(&needle)
+            || item.name.eq_ignore_ascii_case(query.trim())
+            || item.name.to_lowercase().replace(' ', "_") == needle
+    })
 }
 
 /// view the global AegisForge shop catalog
@@ -258,7 +299,7 @@ pub async fn shop(
                 .unwrap_or_default()
         ))
         .footer(serenity::CreateEmbedFooter::new(
-            "Purchasing/inventory hooks are next; this command always shows the latest global catalog.",
+            "Use /economy buy <item_id> to purchase and /economy inventory to view owned items.",
         ))
         .timestamp(serenity::Timestamp::now())
         .color(0xFFD700);
@@ -269,8 +310,12 @@ pub async fn shop(
             .filter(|item| item.category == category_name)
             .map(|item| {
                 format!(
-                    "**{}** - `${}` [{}]\n{}",
-                    item.name, item.price, item.rarity, item.description
+                    "**{}** (`{}`) - `{}` [{}]\n{}",
+                    item.name,
+                    item.id,
+                    format_money(item.price),
+                    item.rarity,
+                    item.description
                 )
             })
             .collect();
@@ -281,6 +326,146 @@ pub async fn shop(
     }
 
     ctx.send(poise::CreateReply::default().embed(embed)).await?;
+    Ok(())
+}
+
+/// buy an item from the global shop
+#[poise::command(slash_command, guild_only)]
+pub async fn buy(
+    ctx: Context<'_>,
+    #[description = "Shop item id or exact item name"] item: String,
+    #[description = "Quantity to buy (defaults to 1)"] quantity: Option<i64>,
+) -> Result<(), Error> {
+    let item = find_shop_item(&item).ok_or_else(|| {
+        "Unknown shop item. Use `/economy shop` to view valid item ids.".to_string()
+    })?;
+    let quantity = quantity.unwrap_or(1).clamp(1, 25);
+    let total_price = item.price * quantity;
+    let guild_id = ctx.guild_id().unwrap().get() as i64;
+    let user_id = ctx.author().id.get() as i64;
+
+    let eco = economy::get_user_economy(&ctx.data().database.pool, guild_id, user_id).await?;
+    if eco.balance < total_price {
+        return Err(format!(
+            "You need `{}` in your wallet to buy **{}x {}**, but you only have `${}`.",
+            format_money(total_price),
+            quantity,
+            item.name,
+            eco.balance
+        )
+        .into());
+    }
+
+    economy::update_balance(
+        &ctx.data().database.pool,
+        guild_id,
+        user_id,
+        -total_price,
+    )
+    .await?;
+
+    sqlx::query(
+        r#"
+        INSERT INTO economy_inventory (guild_id, user_id, item_id, item_name, quantity)
+        VALUES ($1, $2, $3, $4, $5)
+        ON CONFLICT (guild_id, user_id, item_id)
+        DO UPDATE SET
+            quantity = economy_inventory.quantity + EXCLUDED.quantity,
+            item_name = EXCLUDED.item_name,
+            last_purchased_at = NOW()
+        "#,
+    )
+    .bind(guild_id)
+    .bind(user_id)
+    .bind(item.id)
+    .bind(item.name)
+    .bind(quantity)
+    .execute(&ctx.data().database.pool)
+    .await?;
+
+    ctx.send(
+        poise::CreateReply::default().embed(
+            serenity::CreateEmbed::new()
+                .title("Shop Purchase Complete")
+                .description(format!(
+                    "You bought **{}x {}** from the global shop.",
+                    quantity, item.name
+                ))
+                .field("Category", item.category, true)
+                .field("Rarity", item.rarity, true)
+                .field("Total Cost", format!("`{}`", format_money(total_price)), true)
+                .field(
+                    "Wallet Remaining",
+                    format!("`${}`", eco.balance - total_price),
+                    true,
+                )
+                .footer(serenity::CreateEmbedFooter::new(
+                    "Use /economy inventory to view your items.",
+                ))
+                .color(0x00FF88),
+        ),
+    )
+    .await?;
+
+    Ok(())
+}
+
+/// view your purchased shop items
+#[poise::command(slash_command, guild_only)]
+pub async fn inventory(
+    ctx: Context<'_>,
+    #[description = "User to inspect (defaults to you)"] user: Option<serenity::User>,
+) -> Result<(), Error> {
+    let target = user.as_ref().unwrap_or(ctx.author());
+    let guild_id = ctx.guild_id().unwrap().get() as i64;
+    let target_id = target.id.get() as i64;
+
+    economy::get_user_economy(&ctx.data().database.pool, guild_id, target_id).await?;
+
+    let rows = sqlx::query(
+        r#"
+        SELECT item_id, item_name, quantity
+        FROM economy_inventory
+        WHERE guild_id = $1 AND user_id = $2
+        ORDER BY item_name ASC
+        "#,
+    )
+    .bind(guild_id)
+    .bind(target_id)
+    .fetch_all(&ctx.data().database.pool)
+    .await?;
+
+    let description = if rows.is_empty() {
+        "_No items yet. Browse `/economy shop` and buy something shiny._".to_string()
+    } else {
+        rows.iter()
+            .map(|row| {
+                let item_id: String = row.get("item_id");
+                let item_name: String = row.get("item_name");
+                let quantity: i64 = row.get("quantity");
+                let rarity = find_shop_item(&item_id)
+                    .map(|item| item.rarity)
+                    .unwrap_or("Legacy");
+                format!("**{}** x{} (`{}`) - {}", item_name, quantity, item_id, rarity)
+            })
+            .collect::<Vec<_>>()
+            .join("\n")
+    };
+
+    ctx.send(
+        poise::CreateReply::default().embed(
+            serenity::CreateEmbed::new()
+                .title(format!("{}'s Inventory", target.name))
+                .description(description)
+                .thumbnail(target.face())
+                .footer(serenity::CreateEmbedFooter::new(
+                    "Inventory is stored per server economy.",
+                ))
+                .color(0xBF5AF2),
+        ),
+    )
+    .await?;
+
     Ok(())
 }
 
@@ -314,7 +499,7 @@ pub async fn balance(
                     ),
                     false,
                 )
-                .footer(serenity::CreateEmbedFooter::new("AegisForge v4 Economy"))
+                .footer(serenity::CreateEmbedFooter::new("AegisForge v4.1 Economy"))
                 .color(0x00E5FF),
         ),
     )
