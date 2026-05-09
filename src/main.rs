@@ -72,9 +72,12 @@ async fn handle_vote(
             let http = serenity::http::Http::new(""); 
             if let Ok(webhook) = serenity::model::webhook::Webhook::from_url(&http, &webhook_url).await {
                 let embed = serenity::builder::CreateEmbed::new()
-                    .title("🗳️ New Vote on Top.gg!")
-                    .description(format!("<@{}> just voted for AegisForge and received **${}**!", payload.user, bonus))
-                    .field("Weekend Bonus", if payload.is_weekend { "✅ Enabled (2x)" } else { "❌ Disabled" }, true)
+                    .title("🗳️ New Vote — Top.gg")
+                    .description(format!("<@{}> voted for AegisForge and received **${}**.", payload.user, bonus))
+                    .field("Bonus", format!("`${}`", bonus), true)
+                    .field("Weekend Multiplier", if payload.is_weekend { "✅ 2x Active" } else { "❌ Standard" }, true)
+                    .footer(serenity::builder::CreateEmbedFooter::new("AegisForge v4 — Vote Reward System"))
+                    .timestamp(serenity::Timestamp::now())
                     .color(0x00FF88);
                 let builder = serenity::builder::ExecuteWebhook::new().embed(embed);
                 let _ = webhook.execute(&http, false, builder).await;

@@ -4,38 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Terms of Service | aegisforge</title>
-    <link rel="stylesheet" href="core.css"><link rel="stylesheet" href="components.css"><link rel="stylesheet" href="animations.css"><link rel="stylesheet" href="pages.css">
+    <link rel="stylesheet" href="core.css">
+    <link rel="stylesheet" href="components.css">
+    <link rel="stylesheet" href="animations.css">
+    <link rel="stylesheet" href="pages.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        .legal-content {
-            max-width: 800px;
-            margin: 150px auto 100px;
-            padding: 0 5%;
-        }
-        .legal-content h1 {
-            color: var(--cyan);
-            margin-bottom: 1rem;
-        }
-        .legal-content h2 {
-            margin-top: 2.5rem;
-            margin-bottom: 1rem;
-            color: #fff;
-        }
-        .legal-content p, .legal-content li {
-            color: var(--text-dim);
-            margin-bottom: 1rem;
-            line-height: 1.8;
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
+    <div class="grid-bg"></div>
+    <div class="ambient-glow"></div>
 
-    <!-- Navigation -->
     <nav id="navbar">
         <div class="logo-container">
-        </div>
             <img src="assets/logo.jpg" alt="aegisforge Logo" class="nav-logo-img">
             <a href="index.html" class="logo-link"><span class="logo-text">aegis<span class="logo-accent">forge</span></span></a>
         </div>
@@ -50,35 +33,68 @@
             <a href="https://github.com/watispro5212/aegisforge" target="_blank" rel="noopener noreferrer" class="nav-link-code">github</a>
             <a href="https://discord.com/oauth2/authorize?client_id=1500582485367722004&permissions=8&scope=bot+applications.commands" target="_blank" rel="noopener noreferrer" class="btn-primary">invite bot</a>
         </div>
+        <button type="button" class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle navigation" aria-expanded="false">
+            <span></span><span></span><span></span>
+        </button>
     </nav>
 
-    <!-- Content -->
-    <main class="legal-content">
-        <h1>Terms of Service</h1>
-        <p>Last updated: May 2026</p>
-        
-        <h2>1. Acceptance of Terms</h2>
-        <p>By inviting aegisforge to your Discord server or utilizing its features, you agree to these Terms of Service. If you disagree with any part of these terms, you may not use the bot.</p>
+    <div class="mobile-nav" id="mobileNav">
+        <a href="index.html#features">features</a>
+        <a href="commands.html">commands</a>
+        <a href="economy.html">economy</a>
+        <a href="team.html">team</a>
+        <a href="changelog.html">changelog</a>
+        <a href="shards.html">status</a>
+        <a href="about.html">about</a>
+        <a href="https://github.com/watispro5212/aegisforge" target="_blank" rel="noopener noreferrer">github</a>
+        <a href="https://discord.com/oauth2/authorize?client_id=1500582485367722004&permissions=8&scope=bot+applications.commands" target="_blank" rel="noopener noreferrer" class="btn-primary">invite bot</a>
+    </div>
 
-        <h2>2. Usage Restrictions</h2>
-        <p>aegisforge is designed to assist with moderation and server utilities. You agree not to:</p>
-        <ul>
-            <li>Use the bot to violate Discord's Terms of Service or Community Guidelines.</li>
-            <li>Spam commands or attempt to overload the bot's infrastructure.</li>
-            <li>Exploit bugs or vulnerabilities without responsibly disclosing them to our team.</li>
-        </ul>
+    <main class="page-content">
+        <div class="legal-hero reveal-on-scroll">
+            <span class="section-tag">legal</span>
+            <h1>terms of <span class="text-gradient">service</span></h1>
+            <p class="subtitle">Last updated: May 2026</p>
+        </div>
 
-        <h2>3. Availability & Warranties</h2>
-        <p>aegisforge is provided "as is" without any warranties. While we strive for 99.9% uptime and zero-cost abstraction speed, we are not responsible for any damage or loss of data caused by bot downtime or misconfiguration.</p>
+        <section class="legal-section reveal-on-scroll">
+            <h2><span class="text-gradient">01.</span> Acceptance of Terms</h2>
+            <p>By inviting aegisforge to your Discord server or using any of its features, you agree to these Terms of Service. If you disagree with any part of these terms, you may not use the bot.</p>
+        </section>
 
-        <h2>4. Changes to Terms</h2>
-        <p>We reserve the right to modify these terms at any time. Continued use of aegisforge constitutes acceptance of the new terms.</p>
+        <section class="legal-section reveal-on-scroll">
+            <h2><span class="text-gradient">02.</span> Usage Restrictions</h2>
+            <p>aegisforge is designed to assist with server moderation, economy, and utilities. You agree not to:</p>
+            <ul>
+                <li>Use the bot to violate Discord's Terms of Service or Community Guidelines.</li>
+                <li>Spam commands or attempt to overload the bot's infrastructure.</li>
+                <li>Exploit bugs or vulnerabilities without responsibly disclosing them to the development team.</li>
+                <li>Use the bot to harass, bully, or harm other users.</li>
+            </ul>
+        </section>
+
+        <section class="legal-section reveal-on-scroll">
+            <h2><span class="text-gradient">03.</span> Availability &amp; Warranties</h2>
+            <p>aegisforge is provided "as is" without any warranties. While we strive for maximum uptime and reliability, we are not responsible for any damage, data loss, or service interruptions caused by bot downtime, API outages, or misconfiguration.</p>
+        </section>
+
+        <section class="legal-section reveal-on-scroll">
+            <h2><span class="text-gradient">04.</span> Changes to Terms</h2>
+            <p>We reserve the right to modify these terms at any time. Continued use of aegisforge after changes are posted constitutes acceptance of the updated terms. Major changes will be announced in the support server.</p>
+        </section>
+
+        <div class="cta-box reveal-on-scroll">
+            <p>Questions? Join the <a href="https://discord.gg/8p5Epc8Qd8" class="text-gradient">support server</a>.</p>
+            <a href="privacy.html" class="btn-secondary">Privacy Policy</a>
+        </div>
     </main>
 
-    <!-- Footer -->
     <footer>
         <div class="footer-top">
-            <div class="logo-container"><img src="assets/logo.jpg" alt="aegisforge Logo" class="nav-logo-img"><span class="logo-text">aegis<span class="logo-accent">forge</span></span></div>
+            <div class="logo-container">
+                <img src="assets/logo.jpg" alt="aegisforge Logo" class="nav-logo-img">
+                <span class="logo-text">aegis<span class="logo-accent">forge</span></span>
+            </div>
             <div class="footer-links">
                 <a href="index.html#features">features</a>
                 <a href="commands.html">commands</a>
@@ -92,14 +108,11 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2026 aegisforge. it works i guess..</p>
+            <p>&copy; 2026 aegisforge. Forged with 🦀 Rust and precision.</p>
+            <p class="footer-tagline">it works i guess.</p>
         </div>
     </footer>
+
+    <script src="script.js"></script>
 </body>
 </html>
-
-
-
-
-
-

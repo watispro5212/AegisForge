@@ -4,18 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Changelog | aegisforge</title>
-    <link rel="stylesheet" href="core.css"><link rel="stylesheet" href="components.css"><link rel="stylesheet" href="animations.css"><link rel="stylesheet" href="pages.css">
+    <meta name="description" content="aegisforge version history — every update, fix, and improvement to the Rust Discord bot.">
+    <link rel="stylesheet" href="core.css">
+    <link rel="stylesheet" href="components.css">
+    <link rel="stylesheet" href="animations.css">
+    <link rel="stylesheet" href="pages.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
+    <div class="grid-bg"></div>
+    <div class="ambient-glow"></div>
 
-    <!-- Navigation -->
     <nav id="navbar">
         <div class="logo-container">
-            </div>
             <img src="assets/logo.jpg" alt="aegisforge Logo" class="nav-logo-img">
             <a href="index.html" class="logo-link"><span class="logo-text">aegis<span class="logo-accent">forge</span></span></a>
         </div>
@@ -30,83 +34,129 @@
             <a href="https://github.com/watispro5212/aegisforge" target="_blank" rel="noopener noreferrer" class="nav-link-code">github</a>
             <a href="https://discord.com/oauth2/authorize?client_id=1500582485367722004&permissions=8&scope=bot+applications.commands" target="_blank" rel="noopener noreferrer" class="btn-primary">invite bot</a>
         </div>
+        <button type="button" class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle navigation" aria-expanded="false">
+            <span></span><span></span><span></span>
+        </button>
     </nav>
 
-    <!-- Content -->
-    <main class="page-content">
-        <h1>Recent <span class="text-gradient">Updates</span></h1>
-        
-        <div class="changelog-item">
-            <div class="changelog-date">May 9, 2026</div>
-            <div class="changelog-title">v4.0.0 — the lazy overhaul i guess</div>
-            <ul class="changelog-list">
-                <li><span class="badge badge-polish">TONE</span> made everything lowercase and lazy because why not.</li>
-                <li><span class="badge badge-fix">CLEANUP</span> removed the annoying network status banner stuff.</li>
-                <li><span class="badge badge-new">SHARDS</span> added actual shard telemetry so you can see if the bot is dying or not.</li>
-                <li><span class="badge badge-fix">WEBHOOK</span> fixed the webhook so it actually logs things now.</li>
-                <li><span class="badge badge-polish">UI</span> fixed overlapping stuff on the commands page for mobile users.</li>
-            </ul>
-        </div>
+    <div class="mobile-nav" id="mobileNav">
+        <a href="index.html#features">features</a>
+        <a href="commands.html">commands</a>
+        <a href="economy.html">economy</a>
+        <a href="team.html">team</a>
+        <a href="changelog.html">changelog</a>
+        <a href="shards.html">status</a>
+        <a href="about.html">about</a>
+        <a href="https://github.com/watispro5212/aegisforge" target="_blank" rel="noopener noreferrer">github</a>
+        <a href="https://discord.com/oauth2/authorize?client_id=1500582485367722004&permissions=8&scope=bot+applications.commands" target="_blank" rel="noopener noreferrer" class="btn-primary">invite bot</a>
+    </div>
 
-        <div class="changelog-item">
-            <div class="changelog-date">May 6, 2026</div>
-            <div class="changelog-title">v3.1.0 - Hyperforge</div>
-            <ul class="changelog-list">
-                <li>**Massive Command Expansion**: Added over 20+ new commands across all categories.</li>
-                <li>**Advanced Economy**: New high-stakes `rob`, `slots`, and `search` modules.</li>
-                <li>**Banking Suite**: Implemented secure `deposit` and `withdraw` credit storage.</li>
-                <li>**Productivity Tools**: New `math`, `qr`, and `crypto` commands for instant information.</li>
-                <li>**Social Expansion**: Added matchmaking `/fun ship` and expanded animal commands (`fox`, `panda`, `bird`).</li>
-                <li>**Performance**: Synchronized database cache for lightning-fast command response times.</li>
-                <li>**UI Refinement**: Updated the Team page and command registry for better accessibility.</li>
-            </ul>
-        </div>
-        
-        <div class="changelog-item">
-            <div class="changelog-date">May 6, 2026</div>
-            <div class="changelog-title">v3.0.0 - Eternal Forge</div>
-            <ul class="changelog-list">
-                <li>Major backend overhaul and transition to full production stability.</li>
-                <li>Launched the **Economy System** with work, daily, and transaction mechanics.</li>
-                <li>Implemented the **Leveling Framework** with XP-based ranks and role rewards.</li>
-                <li>Added **Moderation Audit Logs** with permanent database storage and unique Case IDs.</li>
-                <li>Introduced **Custom Prefix** support for traditional message commands.</li>
-                <li>Hardened Fly.io production deployment with persistent connection optimization.</li>
-                <li>**Security Hardening**: Migrated to 
-ative-tls` to resolve High-severity DoS vulnerabilities in `rustls-webpki`.</li>
-                <li>Upgraded to **SQLx v0.8.6** to patch critical binary protocol misinterpretation flaws.</li>
-            </ul>
-        </div>
-        
-        <div class="changelog-item">
-            <div class="changelog-date">May 3, 2026</div>
-            <div class="changelog-title">v2.0.0 - The Expansion Update</div>
-            <ul class="changelog-list">
-                <li>Set a custom status for aegisforge ("Watching over aegisforge HQ | v2.0").</li>
-                <li>Added brand new `/8ball`, `/joke`, and `/embed` commands.</li>
-                <li>Rebranded to official aegisforge assets and transitioned to a fully free-to-use model.</li>
-                <li>Updated site navigation and expanded server.md roles/channels.</li>
-            </ul>
-        </div>
-        
-        <div class="changelog-item">
-            <div class="changelog-date">May 2026</div>
-            <div class="changelog-title">v0.1.0 - The Genesis Update</div>
-            <ul class="changelog-list">
-                <li>Initial release of aegisforge, written in Rust.</li>
-                <li>Implemented core moderation tools: Ban, Kick, Timeout, Warn, and Purge.</li>
-                <li>Added utility commands: Avatar, Ping, Uptime, Coinflip, Dice, and Poll.</li>
-                <li>Integrated Neon Serverless Postgres for blazing-fast database interactions.</li>
-                <li>Launched the official dashboard and community website.</li>
-                <li>Implemented auto-moderation event listeners for server protection.</li>
-            </ul>
+    <main class="page-content">
+        <div class="changelog-page">
+
+            <div class="changelog-page-hero reveal-on-scroll">
+                <span class="section-tag">version history</span>
+                <h1>What's <span class="text-gradient">Changed</span></h1>
+                <p>Every update, fix, and improvement — tracked and documented.</p>
+            </div>
+
+            <div class="changelog-timeline">
+
+                <div class="changelog-item reveal-on-scroll">
+                    <div class="changelog-date">May 8, 2026</div>
+                    <div class="changelog-title">v4.0.0 — The Hyperforge Reboot</div>
+                    <ul class="changelog-list">
+                        <li><span class="badge badge-new">NEW</span> Registered 6 previously-invisible commands: <code>/softban</code>, <code>/nuke</code>, <code>/botinfo</code>, <code>/embed</code>, <code>/timestamp</code>, <code>/math</code>.</li>
+                        <li><span class="badge badge-new">NEW</span> Added <code>reqwest</code> HTTP client — bot can now call external APIs from commands.</li>
+                        <li><span class="badge badge-new">NEW</span> <code>/bird</code>, <code>/cat</code>, <code>/panda</code> now fetch live images + facts from some-random-api.com instead of broken hardcoded URLs.</li>
+                        <li><span class="badge badge-new">NEW</span> <code>/timer</code> actually works — DMs you when the countdown ends.</li>
+                        <li><span class="badge badge-new">NEW</span> <code>/dictionary</code> calls the Free Dictionary API and shows real definitions.</li>
+                        <li><span class="badge badge-new">NEW</span> <code>/worldclock</code> expanded from 3 to 9 cities with proper timezone offsets.</li>
+                        <li><span class="badge badge-fix">FIX</span> Removed per-command webhook spam — every command was firing a webhook HTTP call.</li>
+                        <li><span class="badge badge-fix">FIX</span> <code>/botinfo</code> commands counter now actually increments via <code>post_command</code> hook.</li>
+                        <li><span class="badge badge-fix">FIX</span> <code>/unban</code> now uses a proper embed instead of a plain text response.</li>
+                        <li><span class="badge badge-polish">UI</span> Standardized all moderation embed colors — red for bans, yellow for mutes, green for reversals.</li>
+                        <li><span class="badge badge-polish">UI</span> Doubled joke, fact, and trivia question pools.</li>
+                        <li><span class="badge badge-perf">PERF</span> Shared reqwest client in Data struct — one connection pool for all commands.</li>
+                    </ul>
+                </div>
+
+                <div class="changelog-item reveal-on-scroll">
+                    <div class="changelog-date">May 9, 2026</div>
+                    <div class="changelog-title">v3.1.1 — Web Overhaul</div>
+                    <ul class="changelog-list">
+                        <li><span class="badge badge-new">NEW</span> Added mobile hamburger menu with slide animation across all pages.</li>
+                        <li><span class="badge badge-new">NEW</span> Active nav link highlighting based on current page.</li>
+                        <li><span class="badge badge-fix">FIX</span> Fixed accordion on commands page — categories were always open with no toggle behavior.</li>
+                        <li><span class="badge badge-fix">FIX</span> Fixed privacy policy — second section had completely broken HTML structure.</li>
+                        <li><span class="badge badge-fix">FIX</span> Added missing background elements to commands page.</li>
+                        <li><span class="badge badge-fix">FIX</span> Upgraded Font Awesome 6.0 → 6.5 on commands and changelog pages.</li>
+                        <li><span class="badge badge-polish">UI</span> Added proper styles for ~50 previously-unstyled CSS classes across all pages.</li>
+                    </ul>
+                </div>
+
+                <div class="changelog-item reveal-on-scroll">
+                    <div class="changelog-date">May 6, 2026</div>
+                    <div class="changelog-title">v3.1.0 — Hyperforge</div>
+                    <ul class="changelog-list">
+                        <li><span class="badge badge-new">NEW</span> Added 20+ new commands across all categories.</li>
+                        <li><span class="badge badge-new">NEW</span> Advanced economy: <code>/rob</code>, <code>/slots</code>, <code>/search</code> modules with full risk mechanics.</li>
+                        <li><span class="badge badge-new">NEW</span> Banking suite: <code>/deposit</code> and <code>/withdraw</code> with separate wallet/bank security model.</li>
+                        <li><span class="badge badge-new">NEW</span> Productivity tools: <code>/math</code>, <code>/qrcode</code>, <code>/dictionary</code>.</li>
+                        <li><span class="badge badge-new">NEW</span> Social expansion: <code>/fun ship</code> and animal commands (<code>/fox</code>, <code>/panda</code>, <code>/bird</code>).</li>
+                        <li><span class="badge badge-perf">PERF</span> Synchronized DashMap cache for sub-millisecond guild config lookups.</li>
+                        <li><span class="badge badge-polish">UI</span> Updated command registry and team page for better accessibility.</li>
+                    </ul>
+                </div>
+
+                <div class="changelog-item reveal-on-scroll">
+                    <div class="changelog-date">May 5, 2026</div>
+                    <div class="changelog-title">v3.0.0 — Eternal Forge</div>
+                    <ul class="changelog-list">
+                        <li><span class="badge badge-new">NEW</span> Full Economy System with work, daily, and transaction mechanics.</li>
+                        <li><span class="badge badge-new">NEW</span> Leveling Framework with XP-based ranks and configurable role rewards.</li>
+                        <li><span class="badge badge-new">NEW</span> Moderation Audit Logs with permanent database storage and unique Case IDs.</li>
+                        <li><span class="badge badge-new">NEW</span> Custom prefix support per guild.</li>
+                        <li><span class="badge badge-perf">PERF</span> Hardened Fly.io deployment with persistent connection pool optimization.</li>
+                        <li><span class="badge badge-fix">FIX</span> Migrated to <code>native-tls</code> to resolve a High-severity DoS vulnerability in <code>rustls-webpki</code>.</li>
+                        <li><span class="badge badge-fix">FIX</span> Upgraded to SQLx v0.8.6 to patch critical binary protocol misinterpretation flaws.</li>
+                    </ul>
+                </div>
+
+                <div class="changelog-item reveal-on-scroll">
+                    <div class="changelog-date">May 3, 2026</div>
+                    <div class="changelog-title">v2.0.0 — The Expansion</div>
+                    <ul class="changelog-list">
+                        <li><span class="badge badge-new">NEW</span> Rotating presence status cycling through 4 branded messages every 60s.</li>
+                        <li><span class="badge badge-new">NEW</span> <code>/8ball</code>, <code>/joke</code>, and <code>/embed</code> commands.</li>
+                        <li><span class="badge badge-polish">UI</span> Rebranded to official aegisforge assets with full free-to-use model.</li>
+                        <li><span class="badge badge-polish">UI</span> Updated site navigation and expanded support server structure.</li>
+                    </ul>
+                </div>
+
+                <div class="changelog-item reveal-on-scroll">
+                    <div class="changelog-date">May 2026</div>
+                    <div class="changelog-title">v0.1.0 — Genesis</div>
+                    <ul class="changelog-list">
+                        <li><span class="badge badge-new">NEW</span> Initial release of aegisforge, written entirely in Rust.</li>
+                        <li><span class="badge badge-new">NEW</span> Core moderation: Ban, Kick, Timeout, Warn, Purge.</li>
+                        <li><span class="badge badge-new">NEW</span> Utility commands: Avatar, Ping, Uptime, Coinflip, Dice, Poll.</li>
+                        <li><span class="badge badge-new">NEW</span> Integrated Neon Serverless Postgres for blazing-fast database interactions.</li>
+                        <li><span class="badge badge-new">NEW</span> Auto-moderation event listeners for server protection.</li>
+                        <li><span class="badge badge-new">NEW</span> Official dashboard website launched.</li>
+                    </ul>
+                </div>
+
+            </div>
         </div>
     </main>
 
-    <!-- Footer -->
     <footer>
         <div class="footer-top">
-            <div class="logo-container"><img src="assets/logo.jpg" alt="aegisforge Logo" class="nav-logo-img"><span class="logo-text">aegis<span class="logo-accent">forge</span></span></div>
+            <div class="logo-container">
+                <img src="assets/logo.jpg" alt="aegisforge Logo" class="nav-logo-img">
+                <span class="logo-text">aegis<span class="logo-accent">forge</span></span>
+            </div>
             <div class="footer-links">
                 <a href="index.html#features">features</a>
                 <a href="commands.html">commands</a>
@@ -120,15 +170,11 @@ ative-tls` to resolve High-severity DoS vulnerabilities in `rustls-webpki`.</li>
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2026 aegisforge. it works i guess..</p>
+            <p>&copy; 2026 aegisforge. Forged with 🦀 Rust and precision.</p>
+            <p class="footer-tagline">it works i guess.</p>
         </div>
     </footer>
 
     <script src="script.js"></script>
 </body>
 </html>
-
-
-
-
-

@@ -35,21 +35,23 @@ pub async fn event_handler(
                         match serenity::model::webhook::Webhook::from_url(&http, &webhook_url).await {
                             Ok(webhook) => {
                                 let embed = serenity::builder::CreateEmbed::new()
-                                    .title("🔩 bot's online lol")
+                                    .title("✅ AegisForge Online")
                                     .description(format!(
-                                        "bot started successfully across **{}** servers.",
+                                        "Bot initialized successfully across **{}** guild(s).",
                                         guild_count
                                     ))
-                                    .field("version", format!("`v{}`", env!("CARGO_PKG_VERSION")), true)
-                                    .field("shards", "2", true)
-                                    .footer(serenity::builder::CreateEmbedFooter::new("aegisforge v4 lazy"))
-                                    .color(0x00E5FF);
+                                    .field("Version", format!("`v{}`", env!("CARGO_PKG_VERSION")), true)
+                                    .field("Language", "`Rust`", true)
+                                    .field("Status", "🟢 Operational", true)
+                                    .footer(serenity::builder::CreateEmbedFooter::new("AegisForge v4 — High-Performance Discord Automation"))
+                                    .timestamp(serenity::Timestamp::now())
+                                    .color(0x57F287);
                                 let builder = serenity::builder::ExecuteWebhook::new().embed(embed);
                                 if let Err(e) = webhook.execute(&http, false, builder).await {
-                                    error!("❌ failed to send startup webhook: {:?}", e);
+                                    error!("Failed to send startup webhook: {:?}", e);
                                 }
                             }
-                            Err(e) => error!("❌ failed to load status webhook: {:?}", e),
+                            Err(e) => error!("Failed to load status webhook: {:?}", e),
                         }
                     });
                 }
@@ -71,11 +73,13 @@ pub async fn event_handler(
                     tokio::spawn(async move {
                         if let Ok(webhook) = serenity::model::webhook::Webhook::from_url(&http, &webhook_url).await {
                             let embed = serenity::builder::CreateEmbed::new()
-                                .title("📥 someone added me lol")
-                                .description(format!("**{}**", guild_name))
-                                .field("members", format!("`{}`", member_count), true)
-                                .field("total servers", format!("`{}`", guild_count), true)
-                                .footer(serenity::builder::CreateEmbedFooter::new(format!("guild id: {}", guild_id)))
+                                .title("📥 New Server Joined")
+                                .description(format!("AegisForge was added to **{}**.", guild_name))
+                                .field("Members", format!("`{}`", member_count), true)
+                                .field("Total Servers", format!("`{}`", guild_count), true)
+                                .field("Server ID", format!("`{}`", guild_id), true)
+                                .footer(serenity::builder::CreateEmbedFooter::new("AegisForge v4 — Guild Join Event"))
+                                .timestamp(serenity::Timestamp::now())
                                 .color(0x57F287);
                             let builder = serenity::builder::ExecuteWebhook::new().embed(embed);
                             let _ = webhook.execute(&http, false, builder).await;

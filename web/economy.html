@@ -5,128 +5,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Economy Guide | aegisforge</title>
     <meta name="description" content="Master the aegisforge economy system — wallets, banking, daily rewards, slot machines, rob mechanics, and leaderboards.">
-    <link rel="stylesheet" href="core.css"><link rel="stylesheet" href="components.css"><link rel="stylesheet" href="animations.css"><link rel="stylesheet" href="pages.css">
+    <link rel="stylesheet" href="core.css">
+    <link rel="stylesheet" href="components.css">
+    <link rel="stylesheet" href="animations.css">
+    <link rel="stylesheet" href="pages.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
-        .eco-hero {
-            padding: 160px 5% 60px;
-            text-align: center;
-            max-width: 850px;
-            margin: 0 auto;
-        }
+        .eco-hero { padding: 160px 5% 60px; text-align: center; max-width: 850px; margin: 0 auto; }
         .eco-hero h1 { font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 800; letter-spacing: -0.03em; margin-bottom: 1.25rem; }
-        .eco-hero p { font-size: 1.1rem; color: var(--text-dim); line-height: 1.8; }
-
-        .eco-content {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 0 5% 100px;
-        }
-        .eco-section {
-            margin-bottom: 5rem;
-        }
-        .eco-section-title {
-            font-size: 1.6rem;
-            font-weight: 800;
-            letter-spacing: -0.02em;
-            margin-bottom: 1rem;
-            padding-bottom: 0.75rem;
-            border-bottom: 1px solid var(--border);
-        }
-        .eco-section-sub {
-            color: var(--text-dim);
-            font-size: 1rem;
-            line-height: 1.75;
-            margin-bottom: 2rem;
-        }
-        .cmd-grid-eco {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1rem;
-        }
-        .cmd-eco-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 1.5rem;
-            transition: var(--transition);
-        }
-        .cmd-eco-card:hover { border-color: rgba(0,242,255,0.3); transform: translateY(-3px); }
-        .cmd-eco-name {
-            font-family: 'JetBrains Mono', monospace;
-            color: var(--cyan);
-            font-size: 1rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-        .cmd-eco-cooldown {
-            font-size: 0.78rem;
-            color: var(--purple);
-            font-family: 'JetBrains Mono', monospace;
-            margin-bottom: 0.6rem;
-        }
-        .cmd-eco-desc {
-            color: var(--text-dim);
-            font-size: 0.9rem;
-            line-height: 1.6;
-        }
-
+        .eco-hero p { font-size: 1.05rem; color: var(--text-dim); line-height: 1.8; }
+        .eco-content { max-width: 1100px; margin: 0 auto; padding: 0 5% 100px; }
+        .eco-section { margin-bottom: 5rem; }
+        .eco-section-title { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border); }
+        .eco-section-sub { color: var(--text-dim); font-size: 0.95rem; line-height: 1.75; margin-bottom: 2rem; }
+        .cmd-grid-eco { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
+        .cmd-eco-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 1.5rem; transition: var(--transition); }
+        .cmd-eco-card:hover { border-color: rgba(0,242,255,0.3); transform: translateY(-3px); background: var(--bg-card-hover); }
+        .cmd-eco-name { font-family: 'JetBrains Mono', monospace; color: var(--cyan); font-size: 0.9rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .cmd-eco-cooldown { font-size: 0.75rem; color: var(--purple); font-family: 'JetBrains Mono', monospace; margin-bottom: 0.6rem; }
+        .cmd-eco-desc { color: var(--text-dim); font-size: 0.875rem; line-height: 1.6; }
         .slots-table-wrapper { overflow-x: auto; }
-        .slots-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.95rem;
-        }
-        .slots-table th {
-            text-align: left;
-            padding: 0.9rem 1.25rem;
-            color: var(--cyan);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.8rem;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            border-bottom: 1px solid var(--border);
-        }
-        .slots-table td {
-            padding: 0.9rem 1.25rem;
-            border-bottom: 1px solid rgba(255,255,255,0.03);
-            color: var(--text-dim);
-        }
+        .slots-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+        .slots-table th { text-align: left; padding: 0.9rem 1.25rem; color: var(--cyan); font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase; border-bottom: 1px solid var(--border); }
+        .slots-table td { padding: 0.9rem 1.25rem; border-bottom: 1px solid rgba(255,255,255,0.03); color: var(--text-dim); }
         .slots-table td:first-child { color: var(--text); font-weight: 600; }
         .slots-table tr:hover td { background: rgba(255,255,255,0.02); }
         .slots-table .mult { color: var(--cyan); font-family: 'JetBrains Mono', monospace; font-weight: 700; }
         .slots-table .jackpot td { color: #ffd700; }
         .slots-table .jackpot .mult { color: #ffd700; }
-
-        .tip-box {
-            background: rgba(0,242,255,0.05);
-            border: 1px solid rgba(0,242,255,0.2);
-            border-radius: 12px;
-            padding: 1.25rem 1.5rem;
-            margin-top: 1.5rem;
-            display: flex;
-            gap: 1rem;
-            align-items: flex-start;
-        }
+        .tip-box { background: rgba(0,242,255,0.05); border: 1px solid rgba(0,242,255,0.2); border-radius: 12px; padding: 1.25rem 1.5rem; margin-top: 1.5rem; display: flex; gap: 1rem; align-items: flex-start; }
         .tip-icon { font-size: 1.25rem; flex-shrink: 0; margin-top: 2px; }
-        .tip-text { color: var(--text-dim); font-size: 0.92rem; line-height: 1.65; }
+        .tip-text { color: var(--text-dim); font-size: 0.875rem; line-height: 1.65; }
         .tip-text strong { color: var(--text); }
-
-        .warning-box {
-            background: rgba(255,87,34,0.05);
-            border: 1px solid rgba(255,87,34,0.2);
-            border-radius: 12px;
-            padding: 1.25rem 1.5rem;
-            margin-top: 1.5rem;
-            display: flex;
-            gap: 1rem;
-            align-items: flex-start;
-        }
+        .warning-box { background: rgba(255,87,34,0.05); border: 1px solid rgba(255,87,34,0.2); border-radius: 12px; padding: 1.25rem 1.5rem; margin-top: 1.5rem; display: flex; gap: 1rem; align-items: flex-start; }
         .warning-box .tip-text strong { color: #ff7043; }
-        .eco-nav-active { color: var(--cyan) !important; }
         .amt { color: var(--text); font-weight: 700; }
         .amt-danger { color: #ff7043; font-weight: 700; }
     </style>
@@ -135,10 +50,8 @@
     <div class="grid-bg"></div>
     <div class="ambient-glow"></div>
 
-    <!-- Navigation -->
     <nav id="navbar">
         <div class="logo-container">
-        </div>
             <img src="assets/logo.jpg" alt="aegisforge Logo" class="nav-logo-img">
             <a href="index.html" class="logo-link"><span class="logo-text">aegis<span class="logo-accent">forge</span></span></a>
         </div>
@@ -153,36 +66,64 @@
             <a href="https://github.com/watispro5212/aegisforge" target="_blank" rel="noopener noreferrer" class="nav-link-code">github</a>
             <a href="https://discord.com/oauth2/authorize?client_id=1500582485367722004&permissions=8&scope=bot+applications.commands" target="_blank" rel="noopener noreferrer" class="btn-primary">invite bot</a>
         </div>
+        <button type="button" class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle navigation" aria-expanded="false">
+            <span></span><span></span><span></span>
+        </button>
     </nav>
 
-    <!-- Hero -->
-    <div class="eco-hero">
+    <div class="mobile-nav" id="mobileNav">
+        <a href="index.html#features">features</a>
+        <a href="commands.html">commands</a>
+        <a href="economy.html">economy</a>
+        <a href="team.html">team</a>
+        <a href="changelog.html">changelog</a>
+        <a href="shards.html">status</a>
+        <a href="about.html">about</a>
+        <a href="https://github.com/watispro5212/aegisforge" target="_blank" rel="noopener noreferrer">github</a>
+        <a href="https://discord.com/oauth2/authorize?client_id=1500582485367722004&permissions=8&scope=bot+applications.commands" target="_blank" rel="noopener noreferrer" class="btn-primary">invite bot</a>
+    </div>
+
+    <div class="eco-hero reveal-on-scroll">
         <span class="section-tag">Economy System</span>
         <h1>the <span class="text-gradient">economy engine</span></h1>
-        <p>it's a fake economy lol. earn coins and gamble them away i guess. Earn, bank, gamble, and climb the leaderboard — your progress is saved across every session.</p>
+        <p>A full server economy with wallets, banking, gambling, fishing, hunting, and crime. Earn, bank, and climb the leaderboard — your progress is saved per guild.</p>
     </div>
 
     <div class="eco-content">
 
-        <!-- Income Commands -->
         <div class="eco-section reveal-on-scroll">
             <h2 class="eco-section-title">💵 Earning Money</h2>
-            <p class="eco-section-sub">get some coins here or whatever. Balances are isolated per server — every guild has its own economy.</p>
+            <p class="eco-section-sub">Multiple income streams with different cooldowns and risk levels. Balances are isolated per server — every guild has its own economy.</p>
             <div class="cmd-grid-eco">
                 <div class="cmd-eco-card">
                     <div class="cmd-eco-name">/economy daily</div>
                     <div class="cmd-eco-cooldown">⏱ 24h cooldown</div>
-                    <div class="cmd-eco-desc">Claim your daily reward of <strong class="amt">$500</strong>. Miss a day and the streak resets, so check in every 24 hours.</div>
+                    <div class="cmd-eco-desc">Claim your daily reward of <strong class="amt">$500</strong>. Resets every 24 hours — check in daily to stay competitive.</div>
                 </div>
                 <div class="cmd-eco-card">
                     <div class="cmd-eco-name">/economy work</div>
                     <div class="cmd-eco-cooldown">⏱ 30min cooldown</div>
-                    <div class="cmd-eco-desc">Put in the hours for a random payout of <strong class="amt">$50–$200</strong>. The most reliable grind in the Forge.</div>
+                    <div class="cmd-eco-desc">Put in the hours for a random payout of <strong class="amt">$50–$200</strong>. The most reliable grind in the forge.</div>
+                </div>
+                <div class="cmd-eco-card">
+                    <div class="cmd-eco-name">/economy fish</div>
+                    <div class="cmd-eco-cooldown">⏱ 5min cooldown</div>
+                    <div class="cmd-eco-desc">Cast your line in the Forge Lake. Catch anything from a <strong class="amt">$20 carp</strong> to a <strong class="amt">$5,000 legendary golden fish</strong>.</div>
+                </div>
+                <div class="cmd-eco-card">
+                    <div class="cmd-eco-name">/economy hunt</div>
+                    <div class="cmd-eco-cooldown">⏱ 10min cooldown</div>
+                    <div class="cmd-eco-desc">Venture into the wild. Track prey from a <strong class="amt">$30 rabbit</strong> all the way to a <strong class="amt">$15,000 dragon</strong> (0.5% chance).</div>
+                </div>
+                <div class="cmd-eco-card">
+                    <div class="cmd-eco-name">/economy crime</div>
+                    <div class="cmd-eco-cooldown">⏱ 1h cooldown</div>
+                    <div class="cmd-eco-desc">High-risk, high-reward. Earn <strong class="amt">$500–$2,000</strong> on success — or pay a <strong class="amt-danger">$400 fine</strong> if you get caught.</div>
                 </div>
                 <div class="cmd-eco-card">
                     <div class="cmd-eco-name">/economy beg</div>
                     <div class="cmd-eco-cooldown">No cooldown</div>
-                    <div class="cmd-eco-desc">Ask a stranger for spare change. Earns <strong class="amt">$0–$50</strong> — sometimes nothing. A last resort for the truly broke.</div>
+                    <div class="cmd-eco-desc">Ask a stranger for spare change. Earns <strong class="amt">$0–$50</strong> — sometimes nothing. Last resort for the truly broke.</div>
                 </div>
                 <div class="cmd-eco-card">
                     <div class="cmd-eco-name">/economy search</div>
@@ -192,7 +133,6 @@
             </div>
         </div>
 
-        <!-- Wallet & Bank -->
         <div class="eco-section reveal-on-scroll">
             <h2 class="eco-section-title">🏦 Wallet &amp; Bank</h2>
             <p class="eco-section-sub">Your money lives in two places: your <strong>wallet</strong> (spendable, robbable) and your <strong>bank</strong> (safe, locked away). Move funds between them at any time.</p>
@@ -220,89 +160,46 @@
             </div>
         </div>
 
-        <!-- Gambling -->
         <div class="eco-section reveal-on-scroll">
             <h2 class="eco-section-title">🎰 The Hyperforge Slots</h2>
-            <p class="eco-section-sub">Place a bet and spin the Hyperforge Slot Machine. The FairForge algorithm is calibrated for high player win rates — with a total win probability of approximately <strong>~81.5%</strong> per spin.</p>
+            <p class="eco-section-sub">Place a bet and spin the Hyperforge Slot Machine. The FairForge algorithm is calibrated for high player win rates — approximately <strong>~81.5%</strong> total win probability per spin.</p>
             <div class="slots-table-wrapper">
                 <table class="slots-table">
                     <thead>
-                        <tr>
-                            <th>Result</th>
-                            <th>Condition</th>
-                            <th>Multiplier</th>
-                            <th>Notes</th>
-                        </tr>
+                        <tr><th>Result</th><th>Condition</th><th>Multiplier</th><th>Notes</th></tr>
                     </thead>
                     <tbody>
-                        <tr class="jackpot">
-                            <td>💎 💎 💎</td>
-                            <td>Three Diamonds</td>
-                            <td class="mult">25.0x</td>
-                            <td>HYPERFORGE JACKPOT — the ultimate win</td>
-                        </tr>
-                        <tr>
-                            <td>⭐ ⭐ ⭐</td>
-                            <td>Three Stars</td>
-                            <td class="mult">15.0x</td>
-                            <td>SUPER TRIPLE — massive payout</td>
-                        </tr>
-                        <tr>
-                            <td>🍒 🍒 🍒</td>
-                            <td>Any other triple</td>
-                            <td class="mult">10.0x</td>
-                            <td>TRIPLE MATCH — applies to 🍋 🍇 too</td>
-                        </tr>
-                        <tr>
-                            <td>X X —</td>
-                            <td>Any two matching</td>
-                            <td class="mult">5.0x</td>
-                            <td>Double Match — two of any symbol</td>
-                        </tr>
-                        <tr>
-                            <td>— 💎 —</td>
-                            <td>One Diamond (no match)</td>
-                            <td class="mult">2.0x</td>
-                            <td>Diamond Wild — diamond acts as booster</td>
-                        </tr>
-                        <tr>
-                            <td>🛡️ — —</td>
-                            <td>No match, no diamond</td>
-                            <td class="mult">1.2x</td>
-                            <td>Aegis Protection — 60% chance on otherwise-loss spins</td>
-                        </tr>
-                        <tr>
-                            <td>— — —</td>
-                            <td>Full loss</td>
-                            <td class="mult">0x</td>
-                            <td>Only ~18.5% of spins — the forge rarely rejects you</td>
-                        </tr>
+                        <tr class="jackpot"><td>💎 💎 💎</td><td>Three Diamonds</td><td class="mult">25.0x</td><td>HYPERFORGE JACKPOT</td></tr>
+                        <tr><td>⭐ ⭐ ⭐</td><td>Three Stars</td><td class="mult">15.0x</td><td>SUPER TRIPLE</td></tr>
+                        <tr><td>🍒 🍒 🍒</td><td>Any other triple</td><td class="mult">10.0x</td><td>TRIPLE MATCH</td></tr>
+                        <tr><td>X X —</td><td>Any two matching</td><td class="mult">5.0x</td><td>Double Match</td></tr>
+                        <tr><td>— 💎 —</td><td>One Diamond (no match)</td><td class="mult">2.0x</td><td>Diamond Wild</td></tr>
+                        <tr><td>🛡️ — —</td><td>No match, no diamond</td><td class="mult">1.2x</td><td>Aegis Protection — 60% chance</td></tr>
+                        <tr><td>— — —</td><td>Full loss</td><td class="mult">0x</td><td>~18.5% of spins only</td></tr>
                     </tbody>
                 </table>
             </div>
             <div class="tip-box">
                 <span class="tip-icon">🎯</span>
-                <span class="tip-text"><strong>Strategy:</strong> Minimum bet is <strong>$10</strong>. Bet conservatively to take advantage of the Aegis Protection mechanic — even "loss" spins return 1.2x 60% of the time, making aggressive back-to-back play viable.</span>
+                <span class="tip-text"><strong>Strategy:</strong> Minimum bet is <strong>$10</strong>. The Aegis Protection mechanic means even "loss" spins return 1.2x 60% of the time — making back-to-back play viable.</span>
             </div>
         </div>
 
-        <!-- Rob -->
         <div class="eco-section reveal-on-scroll">
             <h2 class="eco-section-title">🥷 Robbery</h2>
             <p class="eco-section-sub">Take a risk and attempt to steal from another user's wallet. Success and failure both have consequences.</p>
             <div class="cmd-grid-eco">
                 <div class="cmd-eco-card">
                     <div class="cmd-eco-name">/economy rob &lt;user&gt;</div>
-                    <div class="cmd-eco-desc">Attempt to steal 10%–50% of a user's wallet balance. You need a <strong class="amt">40% success rate</strong> — get caught and pay a <strong class="amt-danger">$200 fine</strong>. Target must have at least $100 in their wallet.</div>
+                    <div class="cmd-eco-desc">Attempt to steal 10%–50% of a user's wallet. <strong class="amt">40% success rate</strong> — get caught and pay a <strong class="amt-danger">$200 fine</strong>. Target needs at least $100.</div>
                 </div>
             </div>
             <div class="warning-box">
                 <span class="tip-icon">⚠️</span>
-                <span class="tip-text"><strong>Risk warning:</strong> Failed robberies cost you $200 directly from your wallet. Bank your money before getting robbed — only wallet funds are at risk.</span>
+                <span class="tip-text"><strong>Risk warning:</strong> Failed robberies cost you $200 from your wallet. Bank your money first — only wallet funds are at risk.</span>
             </div>
         </div>
 
-        <!-- Leaderboard -->
         <div class="eco-section reveal-on-scroll">
             <h2 class="eco-section-title">🏆 Leaderboards</h2>
             <p class="eco-section-sub">Track the wealthiest players in your server or across the entire aegisforge network.</p>
@@ -317,17 +214,19 @@
                 </div>
                 <div class="cmd-eco-card">
                     <div class="cmd-eco-name">/economy gamble_info</div>
-                    <div class="cmd-eco-desc">View detailed breakdown of slot machine payouts, multipliers, and the FairForge probability model.</div>
+                    <div class="cmd-eco-desc">Full breakdown of slot machine payouts, multipliers, and the FairForge probability model.</div>
                 </div>
             </div>
         </div>
 
     </div>
 
-    <!-- Footer -->
     <footer>
         <div class="footer-top">
-            <div class="logo-container"><img src="assets/logo.jpg" alt="aegisforge Logo" class="nav-logo-img"><span class="logo-text">aegis<span class="logo-accent">forge</span></span></div>
+            <div class="logo-container">
+                <img src="assets/logo.jpg" alt="aegisforge Logo" class="nav-logo-img">
+                <span class="logo-text">aegis<span class="logo-accent">forge</span></span>
+            </div>
             <div class="footer-links">
                 <a href="index.html#features">features</a>
                 <a href="commands.html">commands</a>
@@ -341,7 +240,7 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2026 aegisforge. it works i guess..</p>
+            <p>&copy; 2026 aegisforge. Forged with 🦀 Rust and precision.</p>
             <p class="footer-tagline">it works i guess.</p>
         </div>
     </footer>
@@ -349,9 +248,3 @@
     <script src="script.js"></script>
 </body>
 </html>
-
-
-
-
-
-
