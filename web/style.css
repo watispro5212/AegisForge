@@ -1456,12 +1456,99 @@ footer { border-top: 1px solid var(--border); padding: 3rem 5%; }
     color: var(--text);
 }
 
-.shard-grid {
+.shard-status-dots {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 8px;
     margin: 1.5rem auto;
     width: 60px;
+}
+
+.shards-telemetry-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0;
+}
+
+.shard-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.5rem;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.shard-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 4px;
+    background: var(--border);
+    transition: var(--transition);
+}
+
+.shard-card.active::before {
+    background: var(--cyan);
+    box-shadow: 0 0 10px var(--cyan);
+}
+
+.shard-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(0, 242, 255, 0.3);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.shard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.shard-id {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #ffffff;
+}
+
+.shard-status {
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.shard-status.online {
+    color: #00ff88;
+    background: rgba(0, 255, 136, 0.1);
+}
+
+.shard-status.pending {
+    color: var(--purple);
+    background: rgba(191, 90, 242, 0.1);
+}
+
+.shard-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.shard-stat {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    color: var(--text-dim);
+}
+
+.shard-stat span:last-child {
+    color: #ffffff;
+    font-weight: 600;
 }
 
 .shard {
@@ -2767,12 +2854,13 @@ footer { border-top: 1px solid var(--border); padding: 3rem 5%; }
         margin-bottom: 2rem;
     }
     .sidebar-nav {
-        flex-direction: row;
-        overflow-x: auto;
-        padding-bottom: 1rem;
+        display: none; /* User requested removal as it covers stuff on mobile */
     }
-    .sidebar-nav-item {
-        white-space: nowrap;
+    .commands-sidebar h3 {
+        display: none;
+    }
+    .commands-sidebar {
+        margin-bottom: 0;
     }
 }
 

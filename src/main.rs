@@ -19,7 +19,7 @@ mod models;
 
 use db::Database;
 
-/// bot data stuff
+// bot data stuff i guess
 #[derive(Debug)]
 pub struct Data {
     pub database: Arc<Database>,
@@ -154,6 +154,25 @@ async fn main() -> Result<(), Error> {
                 // reminders
                 commands::remind::create(),
             ],
+            post_command: |ctx| {
+                Box::pin(async move {
+                    if let Ok(webhook_url) = std::env::var("STATUS_WEBHOOK_URL") {
+                        let http = &ctx.serenity_context().http;
+                        let command_name = ctx.command().name.clone();
+                        let user_name = ctx.author().name.clone();
+                        let guild_name = ctx.guild().map(|g| g.name.clone()).unwrap_or_else(|| "DMs".to_string());
+
+                        if let Ok(webhook) = serenity::model::webhook::Webhook::from_url(http, &webhook_url).await {
+                            let embed = serenity::builder::CreateEmbed::new()
+                                .title("⚡ command used lol")
+                                .description(format!("**{}** used `/{}` in **{}**", user_name, command_name, guild_name))
+                                .color(0x00E5FF);
+                            let builder = serenity::builder::ExecuteWebhook::new().embed(embed);
+                            let _ = webhook.execute(http, false, builder).await;
+                        }
+                    }
+                })
+            },
             on_error: |error| {
                 Box::pin(async move {
                     match error {
