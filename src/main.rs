@@ -8,9 +8,24 @@ use tracing::{error, info, Level};
 use std::{env, sync::Arc};
 use dotenvy::dotenv;
 use serenity::prelude::*;
-use axum::{routing::get, Json, Router, extract::State};
-use tower_http::cors::{CorsLayer, Any};
-use serde::Serialize;
+use axum::{
+    routing::get,
+    routing::post,
+    extract::{State, Json},
+    Router,
+};
+use tower_http::cors::{Any, CorsLayer};
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Deserialize)]
+struct VotePayload {
+    user: String,
+    bot: String,
+    #[serde(rename = "type")]
+    kind: String,
+    #[serde(rename = "isWeekend")]
+    is_weekend: bool,
+}
 
 mod commands;
 mod db;
@@ -31,6 +46,47 @@ struct ShardStatus {
     id: u32,
     latency_ms: u64,
     status: String,
+}
+
+async fn handle_vote(
+    State(state): State<AppState>,
+    Json(payload): Json<VotePayload>,
+) -> impl axum::response::IntoResponse {
+    info!("🗳️ Received vote from user {}!", payload.user);
+
+    let user_id: i64 = payload.user.parse().unwrap_or(0);
+    if user_id == 0 { return axum::http::StatusCode::BAD_REQUEST; }
+
+    // give bonus
+    let bonus = if payload.is_weekend { 2000 } else { 1000 };
+    let pool = &state.database.pool;
+    
+    // update all records for this user across all guilds
+    let _ = sqlx::query(
+        "UPDATE users_economy SET balance = balance + $1, total_earned = total_earned + $1 WHERE user_id = $2"
+    )
+    .bind(bonus)
+    .bind(user_id)
+    .execute(pool)
+    .await;
+
+    // notify webhook
+    if let Ok(webhook_url) = std::env::var("STATUS_WEBHOOK_URL") {
+        tokio::spawn(async move {
+            let http = serenity::http::Http::new(""); 
+            if let Ok(webhook) = serenity::model::webhook::Webhook::from_url(&http, &webhook_url).await {
+                let embed = serenity::builder::CreateEmbed::new()
+                    .title("🗳️ New Vote on Top.gg!")
+                    .description(format!("<@{}> just voted for AegisForge and received **${}**!", payload.user, bonus))
+                    .field("Weekend Bonus", if payload.is_weekend { "✅ Enabled (2x)" } else { "❌ Disabled" }, true)
+                    .color(0x00FF88);
+                let builder = serenity::builder::ExecuteWebhook::new().embed(embed);
+                let _ = webhook.execute(&http, false, builder).await;
+            }
+        });
+    }
+
+    axum::http::StatusCode::OK
 }
 
 #[derive(Serialize)]
@@ -132,11 +188,9 @@ async fn main() -> Result<(), Error> {
                 commands::utility::avatar(),
                 commands::utility::uptime(),
                 commands::utility::stats(),
-                commands::utility::timestamp(),
                 commands::utility::serverinfo(),
                 commands::utility::whois(),
-                commands::utility::embed(),
-                commands::utility::math(),
+                commands::utility::vote(),
                 commands::utility::qr(),
                 commands::utility::crypto(),
                 commands::utility::translate(),
@@ -175,22 +229,30 @@ async fn main() -> Result<(), Error> {
                 // reminders
                 commands::remind::create(),
             ],
+            // i guess this is what happens when someone uses a command
+            pre_command: |ctx| {
+                Box::pin(async move {
+                    info!("⚡ processing /{} for {}...", ctx.command().name, ctx.author().name);
+                })
+            },
             post_command: |ctx| {
                 Box::pin(async move {
                     if let Ok(webhook_url) = std::env::var("STATUS_WEBHOOK_URL") {
-                        let http = &ctx.serenity_context().http;
+                        let http = Arc::clone(&ctx.serenity_context().http);
                         let command_name = ctx.command().name.clone();
                         let user_name = ctx.author().name.clone();
                         let guild_name = ctx.guild().map(|g| g.name.clone()).unwrap_or_else(|| "DMs".to_string());
 
-                        if let Ok(webhook) = serenity::model::webhook::Webhook::from_url(http, &webhook_url).await {
-                            let embed = serenity::builder::CreateEmbed::new()
-                                .title("⚡ command used lol")
-                                .description(format!("**{}** used `/{}` in **{}**", user_name, command_name, guild_name))
-                                .color(0x00E5FF);
-                            let builder = serenity::builder::ExecuteWebhook::new().embed(embed);
-                            let _ = webhook.execute(http, false, builder).await;
-                        }
+                        tokio::spawn(async move {
+                            if let Ok(webhook) = serenity::model::webhook::Webhook::from_url(&http, &webhook_url).await {
+                                let embed = serenity::builder::CreateEmbed::new()
+                                    .title("⚡ command used lol")
+                                    .description(format!("**{}** used `/{}` in **{}**", user_name, command_name, guild_name))
+                                    .color(0x00E5FF);
+                                let builder = serenity::builder::ExecuteWebhook::new().embed(embed);
+                                let _ = webhook.execute(&http, false, builder).await;
+                            }
+                        });
                     }
                 })
             },
@@ -264,6 +326,7 @@ async fn main() -> Result<(), Error> {
     let app = Router::new()
         .route("/", get(|| async { "OK" }))
         .route("/api/stats", get(get_stats))
+        .route("/api/vote", post(handle_vote))
         .layer(CorsLayer::new()
             .allow_origin(Any)
             .allow_methods(Any)

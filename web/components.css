@@ -238,3 +238,80 @@
     font-size: 0.8rem;
     color: var(--purple);
 }
+
+/* --- ACCORDION BEHAVIOR ----------------------------- */
+.accordion-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.45s cubic-bezier(0.2, 0.8, 0.2, 1), padding 0.3s ease;
+    padding: 0 2rem;
+}
+
+.accordion-item.active .accordion-content {
+    max-height: 3000px;
+    padding: 0.5rem 2rem 2rem;
+}
+
+.accordion-item:hover { border-color: rgba(0, 242, 255, 0.12); }
+.accordion-item.active { border-color: rgba(0, 242, 255, 0.22); }
+.accordion-header:hover { background: rgba(255, 255, 255, 0.02); }
+
+.category-info { display: flex; align-items: center; gap: 1rem; }
+.category-icon { font-size: 1.3rem; }
+.category-info h3 { font-size: 1rem; font-weight: 700; color: var(--text); }
+
+.cmd-count {
+    font-size: 0.65rem;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--cyan);
+    background: var(--cyan-dim);
+    padding: 0.18rem 0.6rem;
+    border-radius: 100px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.toggle-icon {
+    transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+    color: var(--text-dim);
+    font-size: 0.8rem;
+    flex-shrink: 0;
+}
+.accordion-item.active .toggle-icon { transform: rotate(180deg); color: var(--cyan); }
+.accordion-header:hover .toggle-icon { color: var(--text); }
+
+/* --- COMMAND CARDS ---------------------------------- */
+.cmd-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.cmd-card {
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem;
+    transition: var(--transition);
+    display: flex;
+    flex-direction: column;
+}
+.cmd-card:hover {
+    border-color: rgba(0, 242, 255, 0.22);
+    background: rgba(0, 242, 255, 0.015);
+    transform: translateY(-3px);
+}
+.cmd-main { flex: 1; margin-bottom: 0.5rem; }
+.cmd-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--cyan);
+    display: block;
+    margin-bottom: 0.5rem;
+}
+.cmd-desc {
+    font-size: 0.825rem;
+    color: var(--text-dim);
+    line-height: 1.6;
+}

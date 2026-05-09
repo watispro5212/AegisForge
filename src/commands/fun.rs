@@ -2,7 +2,7 @@ use crate::{Context, Error};
 use poise::serenity_prelude as serenity;
 use rand::Rng;
 
-/// fun stuff
+/// fun stuff i guess
 #[poise::command(
     slash_command,
     subcommands(
@@ -18,7 +18,7 @@ pub async fn fun(_ctx: Context<'_>) -> Result<(), Error> {
     Ok(())
 }
 
-/// flip a coin
+/// flip a coin lol
 #[poise::command(slash_command)]
 pub async fn coinflip(ctx: Context<'_>) -> Result<(), Error> {
     let (result, emoji) = if rand::random::<bool>() {
@@ -37,7 +37,7 @@ pub async fn coinflip(ctx: Context<'_>) -> Result<(), Error> {
     Ok(())
 }
 
-/// roll some dice
+/// roll some dice idk
 #[poise::command(slash_command)]
 pub async fn dice(
     ctx: Context<'_>,
@@ -56,7 +56,7 @@ pub async fn dice(
     Ok(())
 }
 
-/// ask the magic 8-ball
+/// ask the ball something
 #[poise::command(slash_command)]
 pub async fn eightball(
     ctx: Context<'_>,

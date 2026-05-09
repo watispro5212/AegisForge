@@ -11,16 +11,31 @@ const mobileMenuBtn = document.getElementById('mobileMenuBtn');
 const mobileNav = document.getElementById('mobileNav');
 if (mobileMenuBtn && mobileNav) {
     mobileMenuBtn.addEventListener('click', () => {
-        mobileNav.classList.toggle('open');
-        mobileMenuBtn.setAttribute('aria-expanded', mobileNav.classList.contains('open'));
+        const isOpen = mobileNav.classList.toggle('open');
+        mobileMenuBtn.classList.toggle('active', isOpen);
+        mobileMenuBtn.setAttribute('aria-expanded', isOpen);
     });
-    // Close on outside click
     document.addEventListener('click', (e) => {
-        if (!navbar.contains(e.target) && !mobileNav.contains(e.target)) {
+        if (navbar && !navbar.contains(e.target) && !mobileNav.contains(e.target)) {
             mobileNav.classList.remove('open');
+            mobileMenuBtn.classList.remove('active');
+            mobileMenuBtn.setAttribute('aria-expanded', 'false');
         }
     });
 }
+
+// ── Active nav link highlight ─────────────────────────
+(function highlightActiveNav() {
+    const current = window.location.pathname.split('/').pop() || 'index.html';
+    document.querySelectorAll('.nav-links a').forEach(link => {
+        const href = link.getAttribute('href');
+        if (!href) return;
+        const linkPage = href.split('#')[0].split('/').pop();
+        if (linkPage === current || (current === '' && linkPage === 'index.html')) {
+            link.classList.add('nav-active');
+        }
+    });
+})();
 
 // ── Particle system ───────────────────────────────────
 const particleContainer = document.getElementById('particles');
@@ -152,15 +167,35 @@ async function fetchLiveStats() {
         const sTotal = document.getElementById('shards-total');
         const sOnline = document.getElementById('shards-online');
 
+        const wStatus = document.getElementById('stat-wealth-status');
+        const xpStatus = document.getElementById('stat-xp-status');
+        
         if (gStatus) gStatus.innerText = data.server_count.toLocaleString();
         if (uStatus) uStatus.innerText = data.user_count.toLocaleString();
         if (sTotal) sTotal.innerText = data.shards_total;
         if (sOnline) sOnline.innerText = data.shards_online;
+        if (wStatus) wStatus.innerText = `$${(data.economy_activity || 0).toLocaleString()}`;
+        if (xpStatus) xpStatus.innerText = (data.xp_gain_24h || 0).toLocaleString();
         
+        const overallStatus = document.getElementById('overall-status');
         if (upStatus) {
             const uptime = formatUptime(data.uptime_seconds);
             upStatus.innerText = `${uptime.days}d ${uptime.hours}h ${uptime.minutes}m`;
         }
+
+        // Real numbers for other things too
+        const cmdCount = typeof commandsData !== 'undefined' ? commandsData.reduce((acc, cat) => acc + cat.commands.length, 0) : 42;
+        const version = "v4.0.0-lazy";
+
+        const aboutCmds = document.getElementById('about-commands-count');
+        const aboutVersion = document.getElementById('about-version');
+        const aboutUsers = document.getElementById('about-users');
+        const searchInput = document.getElementById('cmd-search');
+
+        if (aboutCmds) aboutCmds.innerText = `${cmdCount}+`;
+        if (aboutVersion) aboutVersion.innerText = version;
+        if (aboutUsers) animateValue('about-users', data.user_count);
+        if (searchInput) searchInput.placeholder = `Search across ${cmdCount} commands (e.g. 'ban', 'xp')...`;
 
         if (overallStatus) {
             overallStatus.querySelector('h3').innerText = 'All Systems Operational';

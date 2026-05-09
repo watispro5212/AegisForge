@@ -1,7 +1,7 @@
 use crate::{Context, Error};
 use poise::serenity_prelude as serenity;
 
-/// check if the bot is laggy
+/// check if i'm alive or whatever
 #[poise::command(slash_command, prefix_command)]
 pub async fn ping(ctx: Context<'_>) -> Result<(), Error> {
     let start = std::time::Instant::now();
@@ -20,7 +20,7 @@ pub async fn ping(ctx: Context<'_>) -> Result<(), Error> {
     Ok(())
 }
 
-/// info about the server
+/// info about the server i guess
 #[poise::command(slash_command, prefix_command, guild_only, rename = "server")]
 pub async fn serverinfo(ctx: Context<'_>) -> Result<(), Error> {
     let guild = ctx.guild().ok_or("Must be in a guild")?.clone();
@@ -47,7 +47,7 @@ pub async fn serverinfo(ctx: Context<'_>) -> Result<(), Error> {
     Ok(())
 }
 
-/// info about a user
+/// info about a user idk
 #[poise::command(slash_command, prefix_command, rename = "user")]
 pub async fn whois(
     ctx: Context<'_>,
@@ -72,7 +72,7 @@ pub async fn whois(
     Ok(())
 }
 
-/// get someone's profile picture
+/// look at someone's picture i guess
 #[poise::command(slash_command, prefix_command)]
 pub async fn avatar(
     ctx: Context<'_>,
@@ -94,37 +94,41 @@ pub async fn avatar(
     Ok(())
 }
 
-/// how long the bot has been running
+/// how long i've been awake
 #[poise::command(slash_command, prefix_command)]
 pub async fn uptime(ctx: Context<'_>) -> Result<(), Error> {
     let uptime = ctx.data().start_time.elapsed();
-    let seconds = uptime.as_secs();
-    let days = seconds / 86400;
-    let hours = (seconds % 86400) / 3600;
-    let minutes = (seconds % 3600) / 60;
-    let secs = seconds % 60;
-
-    let uptime_str = format!("**{}**d **{}**h **{}**m **{}**s", days, hours, minutes, secs);
+    let days = uptime.as_secs() / 86400;
+    let hours = (uptime.as_secs() % 86400) / 3600;
+    let minutes = (uptime.as_secs() % 3600) / 60;
 
     ctx.send(poise::CreateReply::default().embed(
         serenity::CreateEmbed::new()
-            .title("🚀 AegisForge — System Status")
-            .description("Real-time telemetry from the Eternal Forge core.")
-            .field("📡 Connectivity", "Online & Stable", true)
-            .field("⏱️ Uptime", uptime_str, true)
-            .field("📦 Version", format!("v{}", env!("CARGO_PKG_VERSION")), true)
-            .field("🦀 Core", "Rust (Tokio async runtime)", true)
-            .field("⚙️ Framework", "Poise v0.6", true)
-            .field("🔋 Shard", "0 / 1", true)
-            .footer(serenity::CreateEmbedFooter::new("it works i guess | AegisForge v4"))
-            .timestamp(serenity::Timestamp::now())
+            .title("🕒 AegisForge — Uptime")
+            .description(format!("I've been working for **{}d {}h {}m** lol.", days, hours, minutes))
+            .footer(serenity::CreateEmbedFooter::new("it works i guess | v4 lazy"))
             .color(0x00E5FF),
     ))
     .await?;
     Ok(())
 }
 
-/// bot stats and stuff
+/// vote for me to get free money lol
+#[poise::command(slash_command, prefix_command)]
+pub async fn vote(ctx: Context<'_>) -> Result<(), Error> {
+    ctx.send(poise::CreateReply::default().embed(
+        serenity::CreateEmbed::new()
+            .title("🗳️ Support AegisForge")
+            .description("vote on top.gg to support the bot and get a **$1,000 bonus** ($2,000 on weekends)!")
+            .field("Link", "[Click here to vote](https://top.gg/bot/1500582485367722004/vote)", false)
+            .footer(serenity::CreateEmbedFooter::new("thanks i guess.."))
+            .color(0x00FF88),
+    ))
+    .await?;
+    Ok(())
+}
+
+/// some stats i guess
 #[poise::command(slash_command, prefix_command)]
 pub async fn stats(ctx: Context<'_>) -> Result<(), Error> {
     let guilds = ctx.cache().guild_count();
@@ -146,7 +150,7 @@ pub async fn stats(ctx: Context<'_>) -> Result<(), Error> {
     Ok(())
 }
 
-/// detailed information about the bot
+/// server info or something idk about the bot
 #[poise::command(slash_command, prefix_command)]
 pub async fn botinfo(ctx: Context<'_>) -> Result<(), Error> {
     let guilds = ctx.cache().guild_count();

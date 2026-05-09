@@ -4,10 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>privacy policy | aegisforge</title>
-    <link rel="stylesheet" href="core.css"><link rel="stylesheet" href="components.css"><link rel="stylesheet" href="animations.css"><link rel="stylesheet" href="pages.css">
+    <meta name="description" content="aegisforge privacy policy — how we handle your data (spoiler: we barely want it).">
+    <link rel="stylesheet" href="core.css">
+    <link rel="stylesheet" href="components.css">
+    <link rel="stylesheet" href="animations.css">
+    <link rel="stylesheet" href="pages.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
     <div class="grid-bg"></div>
@@ -15,7 +20,7 @@
 
     <nav id="navbar">
         <div class="logo-container">
-            <img src="assets/logo.jpg" alt="aegisforge logo" class="nav-logo-img">
+            <img src="assets/logo.jpg" alt="aegisforge Logo" class="nav-logo-img">
             <a href="index.html" class="logo-link"><span class="logo-text">aegis<span class="logo-accent">forge</span></span></a>
         </div>
         <div class="nav-links">
@@ -29,57 +34,120 @@
             <a href="https://github.com/watispro5212/aegisforge" target="_blank" rel="noopener noreferrer" class="nav-link-code">github</a>
             <a href="https://discord.com/oauth2/authorize?client_id=1500582485367722004&permissions=8&scope=bot+applications.commands" target="_blank" rel="noopener noreferrer" class="btn-primary">invite bot</a>
         </div>
+        <button type="button" class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle navigation" aria-expanded="false">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
     </nav>
 
-    <main class="page-content reveal-on-scroll">
-        <div class="legal-hero">
+    <div class="mobile-nav" id="mobileNav">
+        <a href="index.html#features">features</a>
+        <a href="commands.html">commands</a>
+        <a href="economy.html">economy</a>
+        <a href="team.html">team</a>
+        <a href="changelog.html">changelog</a>
+        <a href="shards.html">status</a>
+        <a href="about.html">about</a>
+        <a href="https://github.com/watispro5212/aegisforge" target="_blank" rel="noopener noreferrer">github</a>
+        <a href="https://discord.com/oauth2/authorize?client_id=1500582485367722004&permissions=8&scope=bot+applications.commands" target="_blank" rel="noopener noreferrer" class="btn-primary">invite bot</a>
+    </div>
+
+    <main class="page-content">
+        <div class="legal-hero reveal-on-scroll">
+            <span class="section-tag">legal</span>
             <h1>privacy <span class="text-gradient">policy</span></h1>
             <p class="subtitle">basically how i handle your data (i don't really want it anyway)</p>
         </div>
 
-        <section class="legal-section">
-            <h2><span class="text-gradient">01.</span> what i collect</h2>
+        <section class="legal-section reveal-on-scroll">
+            <h2><span class="text-gradient">01.</span> what we collect</h2>
             <p>i only save stuff that the bot actually needs to work. if i don't need it, i don't touch it. simple as that.</p>
             <div class="legal-grid">
                 <div class="legal-card">
-                    <h3>user data</h3>
-                    <p>your discord user id, username, and whatever economy/leveling stats you have. this is so you don't lose your fake money.</p>
+                    <div class="card-icon"><i class="fas fa-user"></i></div>
+                    <h3>User Data</h3>
+                    <p>Your Discord user ID, username, and economy/leveling stats. This is so you don't lose your fake money between sessions.</p>
                 </div>
                 <div class="legal-card">
-                    <h3>guild data</h3>
-                    <p>server ids and your custom settings (prefixes, logging channels, etc). i need this so the bot knows how to behave in your server.</p>
+                    <div class="card-icon"><i class="fas fa-server"></i></div>
+                    <h3>Guild Data</h3>
+                    <p>Server IDs and your custom settings (prefixes, logging channels, welcome messages, etc). The bot needs this to know how to behave in your server.</p>
                 </div>
                 <div class="legal-card">
-                    <h3>message content</h3>
-                    <p>i only look at messages to check for bad words (automod) or commands. i don't store your private chats because that's weird and too much work.</p>
+                    <div class="card-icon"><i class="fas fa-comment-dots"></i></div>
+                    <h3>Message Content</h3>
+                    <p>Only processed temporarily for leveling and moderation. We don't store your private chats because that's weird and way too much work.</p>
                 </div>
             </div>
         </section>
 
-        <section class="legal-section">
-            <h2><span class="text-gradient">02.</span> why i collect it</h2>
-            <p>mostly so the bot functions. economy needs balances, leveling needs xp, and moderation needs to know who to ban. i'm not selling this to anyone, i don't even know how to do that lol.</p>
+        <section class="legal-section reveal-on-scroll">
+            <h2><span class="text-gradient">02.</span> how we handle it</h2>
+            <p>your data is stored securely and only ever used to make the bot work. nothing shady going on here.</p>
+            <div class="legal-grid">
+                <div class="legal-card">
+                    <div class="card-icon"><i class="fas fa-database"></i></div>
+                    <h3>What We Store</h3>
+                    <p>We only store what's absolutely necessary for the bot's features to function:</p>
+                    <ul>
+                        <li><strong>User IDs</strong> — to track your economy balance, XP, and levels.</li>
+                        <li><strong>Server IDs</strong> — to store server-specific configs like prefixes and logs.</li>
+                        <li><strong>Message Content</strong> — only temporarily processed. Never logged.</li>
+                    </ul>
+                </div>
+                <div class="legal-card">
+                    <div class="card-icon"><i class="fas fa-shield-halved"></i></div>
+                    <h3>Data Security</h3>
+                    <p>Your data lives in encrypted Neon Postgres databases. Access is strictly limited to core developers. We don't sell your data because that sounds like too much work anyway.</p>
+                </div>
+                <div class="legal-card">
+                    <div class="card-icon"><i class="fas fa-user-gear"></i></div>
+                    <h3>Your Rights</h3>
+                    <p>You can request your data or ask for it to be deleted at any time. Just join the support server and ask. We'll handle it.</p>
+                    <div class="legal-cta">
+                        <a href="https://discord.gg/8p5Epc8Qd8" target="_blank" rel="noopener noreferrer" class="btn-secondary">Contact Support</a>
+                    </div>
+                </div>
+                <div class="legal-card">
+                    <div class="card-icon"><i class="fas fa-cookie-bite"></i></div>
+                    <h3>Cookies & Analytics</h3>
+                    <p>Our website uses local storage to remember your preferences. No invasive tracking cookies. We're too lazy for that and also it's kinda creepy.</p>
+                </div>
+            </div>
+
+            <div class="legal-footer-note">
+                By using AegisForge, you agree to this policy. If you don't like it, you can always kick the bot. No hard feelings.
+            </div>
         </section>
 
-        <section class="legal-section">
-            <h2><span class="text-gradient">03.</span> third parties</h2>
-            <p>the bot runs on some services like <b>neon (database)</b> and <b>discord</b> obviously. they might see some technical stuff but they have their own policies. go read those if you're bored.</p>
-        </section>
-
-        <section class="legal-section">
-            <h2><span class="text-gradient">04.</span> data deletion</h2>
-            <p>if you want your data gone, just kick the bot or join the support server and ask. i'll probably do it whenever i wake up from my nap.</p>
-        </section>
-
-        <div class="cta-box">
+        <div class="cta-box reveal-on-scroll">
             <p>got questions? just join the <a href="https://discord.gg/8p5Epc8Qd8" class="text-gradient">support server</a> or whatever.</p>
             <a href="index.html" class="btn-secondary">back to home</a>
         </div>
     </main>
 
     <footer>
+        <div class="footer-top">
+            <div class="logo-container">
+                <img src="assets/logo.jpg" alt="aegisforge Logo" class="nav-logo-img">
+                <span class="logo-text">aegis<span class="logo-accent">forge</span></span>
+            </div>
+            <div class="footer-links">
+                <a href="index.html#features">features</a>
+                <a href="commands.html">commands</a>
+                <a href="team.html">team</a>
+                <a href="changelog.html">changelog</a>
+                <a href="shards.html">status</a>
+                <a href="about.html">about</a>
+                <a href="https://github.com/watispro5212/aegisforge" target="_blank" rel="noopener noreferrer">github</a>
+                <a href="privacy.html">privacy policy</a>
+                <a href="terms.html">terms of service</a>
+            </div>
+        </div>
         <div class="footer-bottom">
             <p>&copy; 2026 aegisforge. it works i guess.</p>
+            <p class="footer-tagline">forged with 🦀 rust and vibes.</p>
         </div>
     </footer>
 

@@ -50,8 +50,11 @@ const commandsData = [
             { name: "/userinfo", desc: "Lookup information about a specific user.", usage: "/userinfo user:@user" },
             { name: "/avatar", desc: "Fetch a high-resolution version of a user's avatar.", usage: "/avatar user:@user" },
             { name: "/ping", desc: "Check the bot's heartbeat and database latency.", usage: "/ping" },
+            { name: "/vote", desc: "Support the bot and get a $1,000 bonus instantly lol.", usage: "/vote" },
+            { name: "/stats", desc: "View live global statistics across the entire Forge network.", usage: "/stats" },
             { name: "/qrcode", desc: "Generate a QR code from any text or URL instantly.", usage: "/qrcode text:string" },
-            { name: "/poll", desc: "Create an interactive reaction-based poll for your community.", usage: "/poll question:string" }
+            { name: "/poll", desc: "Create an interactive reaction-based poll for your community.", usage: "/poll question:string" },
+            { name: "/timer", desc: "Set a simple countdown timer.", usage: "/timer duration:string" }
         ]
     },
     {
@@ -63,7 +66,10 @@ const commandsData = [
             { name: "/trivia", desc: "Test your knowledge with multiple-choice trivia questions.", usage: "/trivia category:text" },
             { name: "/coinflip", desc: "Flip a coin to settle a debate.", usage: "/coinflip" },
             { name: "/8ball", desc: "Ask the magic 8-ball a question about the future.", usage: "/8ball question:text" },
-            { name: "/ship", desc: "See the compatibility between two users.", usage: "/ship user1:@user user2:@user" }
+            { name: "/ship", desc: "See the compatibility between two users.", usage: "/ship user1:@user user2:@user" },
+            { name: "/dice", desc: "Roll some dice (d2 to d100).", usage: "/dice sides:int" },
+            { name: "/cat", desc: "Random cat picture because why not.", usage: "/cat" },
+            { name: "/roast", desc: "Get a lighthearted roast.", usage: "/roast user:@user" }
         ]
     },
     {

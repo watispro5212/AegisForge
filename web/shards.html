@@ -11,6 +11,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
     <div class="grid-bg"></div>
@@ -32,7 +33,24 @@
             <a href="https://github.com/watispro5212/aegisforge" target="_blank" rel="noopener noreferrer" class="nav-link-code">github</a>
             <a href="https://discord.com/oauth2/authorize?client_id=1500582485367722004&permissions=8&scope=bot+applications.commands" target="_blank" rel="noopener noreferrer" class="btn-primary">invite bot</a>
         </div>
+        <button type="button" class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle navigation" aria-expanded="false">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
     </nav>
+
+    <div class="mobile-nav" id="mobileNav">
+        <a href="index.html#features">features</a>
+        <a href="commands.html">commands</a>
+        <a href="economy.html">economy</a>
+        <a href="team.html">team</a>
+        <a href="changelog.html">changelog</a>
+        <a href="shards.html">status</a>
+        <a href="about.html">about</a>
+        <a href="https://github.com/watispro5212/aegisforge" target="_blank" rel="noopener noreferrer">github</a>
+        <a href="https://discord.com/oauth2/authorize?client_id=1500582485367722004&permissions=8&scope=bot+applications.commands" target="_blank" rel="noopener noreferrer" class="btn-primary">invite bot</a>
+    </div>
 
     <main class="page-content">
         <header class="status-header-section reveal-on-scroll">
@@ -59,6 +77,14 @@
                 <div class="metric-mini">
                     <span class="metric-label">users</span>
                     <span class="metric-value" id="stat-users-status">...</span>
+                </div>
+                <div class="metric-mini">
+                    <span class="metric-label">wealth</span>
+                    <span class="metric-value" id="stat-wealth-status">...</span>
+                </div>
+                <div class="metric-mini">
+                    <span class="metric-label">xp processed</span>
+                    <span class="metric-value" id="stat-xp-status">...</span>
                 </div>
                 <div class="metric-mini">
                     <span class="metric-label">uptime</span>

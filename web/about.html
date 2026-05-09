@@ -35,7 +35,24 @@
             <a href="https://github.com/watispro5212/aegisforge" target="_blank" rel="noopener noreferrer" class="nav-link-code">github</a>
             <a href="https://discord.com/oauth2/authorize?client_id=1500582485367722004&permissions=8&scope=bot+applications.commands" target="_blank" rel="noopener noreferrer" class="btn-primary">invite bot</a>
         </div>
+        <button type="button" class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle navigation" aria-expanded="false">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
     </nav>
+
+    <div class="mobile-nav" id="mobileNav">
+        <a href="index.html#features">features</a>
+        <a href="commands.html">commands</a>
+        <a href="economy.html">economy</a>
+        <a href="team.html">team</a>
+        <a href="changelog.html">changelog</a>
+        <a href="shards.html">status</a>
+        <a href="about.html">about</a>
+        <a href="https://github.com/watispro5212/aegisforge" target="_blank" rel="noopener noreferrer">github</a>
+        <a href="https://discord.com/oauth2/authorize?client_id=1500582485367722004&permissions=8&scope=bot+applications.commands" target="_blank" rel="noopener noreferrer" class="btn-primary">invite bot</a>
+    </div>
 
     <!-- Hero -->
     <div class="about-hero">
@@ -60,20 +77,20 @@
         <h2 class="about-section-title">By the Numbers</h2>
         <div class="stat-row">
             <div class="stat-pill reveal-on-scroll">
-                <span class="value" id="about-guilds">--</span>
+                <span class="value" id="stat-guilds">--</span>
                 <span class="label">Active Servers</span>
             </div>
             <div class="stat-pill reveal-on-scroll">
-                <span class="value">250+</span>
+                <span class="value" id="about-commands-count">--</span>
                 <span class="label">Commands</span>
             </div>
             <div class="stat-pill reveal-on-scroll">
-                <span class="value">v3.1</span>
+                <span class="value" id="about-version">--</span>
                 <span class="label">Current Version</span>
             </div>
             <div class="stat-pill reveal-on-scroll">
-                <span class="value">100%</span>
-                <span class="label">Open Source</span>
+                <span class="value" id="about-users">--</span>
+                <span class="label">Total Users</span>
             </div>
         </div>
 
@@ -187,21 +204,6 @@
     </footer>
 
     <script src="script.js"></script>
-    <script>
-        // Pull live server count into about page stat
-        (async () => {
-            try {
-                const res = await fetch('https://aegisforge.fly.dev/api/stats');
-                if (!res.ok) throw new Error();
-                const data = await res.json();
-                const el = document.getElementById('about-guilds');
-                if (el) el.textContent = data.server_count.toLocaleString();
-            } catch {
-                const el = document.getElementById('about-guilds');
-                if (el) el.textContent = '1,400+';
-            }
-        })();
-    </script>
 </body>
 </html>
 
