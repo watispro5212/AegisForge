@@ -29,14 +29,14 @@ pub async fn kick(
 
     ctx.send(poise::CreateReply::default().embed(
         serenity::CreateEmbed::new()
-            .title("🔨 kicked someone")
+            .title("👢 Member Kicked")
             .description(format!("**{}** has been expelled from the forge.", user.name))
             .field("👤 Target", format!("<@{}>", user.id), true)
             .field("🛡️ Moderator", format!("<@{}>", ctx.author().id), true)
             .field("📝 Reason", reason_str, false)
             .footer(serenity::CreateEmbedFooter::new("Moderation Action Logged | AegisForge v4"))
             .timestamp(serenity::Timestamp::now())
-            .color(0x00E5FF),
+            .color(0xFF5722),
     ))
     .await?;
     Ok(())
@@ -75,14 +75,14 @@ pub async fn timeout(
 
     ctx.send(poise::CreateReply::default().embed(
         serenity::CreateEmbed::new()
-            .title("⏳ timed out someone")
+            .title("⏳ Member Timed Out")
             .description(format!("**{}** has been placed in temporary stasis.", user.name))
             .field("👤 Target", format!("<@{}>", user.id), true)
             .field("⏱️ Duration", format!("{} minute(s)", minutes), true)
             .field("📝 Reason", reason_str, false)
             .footer(serenity::CreateEmbedFooter::new("Moderation Action Logged | AegisForge v4"))
             .timestamp(serenity::Timestamp::now())
-            .color(0x00E5FF),
+            .color(0xFEE75C),
     ))
     .await?;
     Ok(())
@@ -117,14 +117,14 @@ pub async fn ban(
 
     ctx.send(poise::CreateReply::default().embed(
         serenity::CreateEmbed::new()
-            .title("🚫 AegisForge — Member Banned")
+            .title("🔨 Member Banned")
             .description(format!("**{}** has been permanently severed from the forge.", user.name))
             .field("👤 Target", format!("<@{}>", user.id), true)
-            .field("🗑️ History Cleaned", format!("{} day(s)", days), true)
+            .field("🗑️ History Cleared", format!("{} day(s)", days), true)
             .field("📝 Reason", reason_str, false)
             .footer(serenity::CreateEmbedFooter::new("Moderation Action Logged | AegisForge v4"))
             .timestamp(serenity::Timestamp::now())
-            .color(0x00E5FF),
+            .color(0xED4245),
     ))
     .await?;
     Ok(())
@@ -160,13 +160,14 @@ pub async fn softban(
 
     ctx.send(poise::CreateReply::default().embed(
         serenity::CreateEmbed::new()
-            .title("💨 AegisForge — Softban")
+            .title("💨 Member Softbanned")
             .description(format!("**{}** has been softbanned (kicked + messages cleared).", user.name))
             .field("👤 Target", format!("<@{}>", user.id), true)
-            .field("🗑️ History Cleaned", format!("{} day(s)", days), true)
+            .field("🗑️ History Cleared", format!("{} day(s)", days), true)
+            .field("📝 Reason", reason_str, false)
             .footer(serenity::CreateEmbedFooter::new("Moderation Action Logged | AegisForge v4"))
             .timestamp(serenity::Timestamp::now())
-            .color(0x00E5FF),
+            .color(0xFF5722),
     ))
     .await?;
     Ok(())
@@ -194,7 +195,16 @@ pub async fn unban(
         None,
     ).await?;
 
-    ctx.say(format!("Successfully unbanned user `{}`.", user_id)).await?;
+    ctx.send(poise::CreateReply::default().embed(
+        serenity::CreateEmbed::new()
+            .title("✅ Member Unbanned")
+            .description(format!("User `{}` has been unbanned from the forge.", user_id))
+            .field("🛡️ Moderator", format!("<@{}>", ctx.author().id), true)
+            .footer(serenity::CreateEmbedFooter::new("Moderation Action Logged | AegisForge v4"))
+            .timestamp(serenity::Timestamp::now())
+            .color(0x57F287),
+    ))
+    .await?;
     Ok(())
 }
 
@@ -230,14 +240,14 @@ pub async fn warn(
 
     ctx.send(poise::CreateReply::default().embed(
         serenity::CreateEmbed::new()
-            .title("⚠️ AegisForge — Warning Issued")
+            .title("⚠️ Warning Issued")
             .description(format!("**{}** has received a formal warning.", user.name))
             .field("👤 Target", format!("<@{}>", user.id), true)
             .field("🆔 Case", format!("#{}", case.case_number), true)
             .field("📝 Reason", &reason, false)
             .footer(serenity::CreateEmbedFooter::new("Moderation Action Logged | AegisForge v4"))
             .timestamp(serenity::Timestamp::now())
-            .color(0x00E5FF),
+            .color(0xFEE75C),
     ))
     .await?;
     Ok(())
@@ -341,7 +351,9 @@ pub async fn lock(ctx: Context<'_>) -> Result<(), Error> {
         serenity::CreateEmbed::new()
             .title("🔒 Channel Locked")
             .description("Public messaging has been disabled in this channel.")
-            .color(0xff0000),
+            .field("🛡️ Moderator", format!("<@{}>", ctx.author().id), true)
+            .timestamp(serenity::Timestamp::now())
+            .color(0xED4245),
     )).await?;
 
     Ok(())
@@ -360,7 +372,9 @@ pub async fn unlock(ctx: Context<'_>) -> Result<(), Error> {
         serenity::CreateEmbed::new()
             .title("🔓 Channel Unlocked")
             .description("Public messaging has been re-enabled.")
-            .color(0x00ff00),
+            .field("🛡️ Moderator", format!("<@{}>", ctx.author().id), true)
+            .timestamp(serenity::Timestamp::now())
+            .color(0x57F287),
     )).await?;
 
     Ok(())
@@ -400,10 +414,14 @@ pub async fn mute(
 
     ctx.send(poise::CreateReply::default().embed(
         serenity::CreateEmbed::new()
-            .title("Member Muted")
-            .description(format!("**{}** has been muted for **{} minute(s)**.", user.name, m))
-            .field("Reason", reason_str, false)
-            .color(0xff4500),
+            .title("🔇 Member Muted")
+            .description(format!("**{}** has been muted for **{}** minute(s).", user.name, m))
+            .field("👤 Target", format!("<@{}>", user.id), true)
+            .field("⏱️ Duration", format!("{} minute(s)", m), true)
+            .field("📝 Reason", reason_str, false)
+            .footer(serenity::CreateEmbedFooter::new("Moderation Action Logged | AegisForge v4"))
+            .timestamp(serenity::Timestamp::now())
+            .color(0xFEE75C),
     ))
     .await?;
     Ok(())
@@ -438,10 +456,13 @@ pub async fn unmute(
 
     ctx.send(poise::CreateReply::default().embed(
         serenity::CreateEmbed::new()
-            .title("Member Unmuted")
+            .title("🔊 Member Unmuted")
             .description(format!("**{}** has been unmuted.", user.name))
-            .field("Reason", reason_str, false)
-            .color(0x00ff00),
+            .field("👤 Target", format!("<@{}>", user.id), true)
+            .field("📝 Reason", reason_str, false)
+            .footer(serenity::CreateEmbedFooter::new("Moderation Action Logged | AegisForge v4"))
+            .timestamp(serenity::Timestamp::now())
+            .color(0x57F287),
     ))
     .await?;
     Ok(())

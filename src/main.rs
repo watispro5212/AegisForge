@@ -1,7 +1,3 @@
-#![allow(dead_code)]
-#![allow(unused_imports)]
-#![allow(unused_variables)]
-
 use poise::serenity_prelude as serenity;
 use sqlx::postgres::PgPoolOptions;
 use tracing::{error, info, Level};
@@ -34,11 +30,11 @@ mod models;
 
 use db::Database;
 
-// bot data stuff i guess
 #[derive(Debug)]
 pub struct Data {
     pub database: Arc<Database>,
     pub start_time: std::time::Instant,
+    pub http_client: reqwest::Client,
 }
 
 #[derive(Serialize)]
@@ -188,10 +184,14 @@ async fn main() -> Result<(), Error> {
                 commands::utility::avatar(),
                 commands::utility::uptime(),
                 commands::utility::stats(),
+                commands::utility::botinfo(),
                 commands::utility::serverinfo(),
                 commands::utility::whois(),
                 commands::utility::vote(),
                 commands::utility::qr(),
+                commands::utility::embed(),
+                commands::utility::timestamp(),
+                commands::utility::math(),
                 commands::utility::crypto(),
                 commands::utility::translate(),
                 commands::utility::timer(),
@@ -206,8 +206,10 @@ async fn main() -> Result<(), Error> {
                 commands::leveling::leveling(),
                 // moderation
                 commands::moderation::ban(),
+                commands::moderation::softban(),
                 commands::moderation::unban(),
                 commands::moderation::kick(),
+                commands::moderation::nuke(),
                 commands::moderation::slowmode(),
                 commands::moderation::lock(),
                 commands::moderation::unlock(),
@@ -237,23 +239,15 @@ async fn main() -> Result<(), Error> {
             },
             post_command: |ctx| {
                 Box::pin(async move {
-                    if let Ok(webhook_url) = std::env::var("STATUS_WEBHOOK_URL") {
-                        let http = Arc::clone(&ctx.serenity_context().http);
-                        let command_name = ctx.command().name.clone();
-                        let user_name = ctx.author().name.clone();
-                        let guild_name = ctx.guild().map(|g| g.name.clone()).unwrap_or_else(|| "DMs".to_string());
-
-                        tokio::spawn(async move {
-                            if let Ok(webhook) = serenity::model::webhook::Webhook::from_url(&http, &webhook_url).await {
-                                let embed = serenity::builder::CreateEmbed::new()
-                                    .title("⚡ command used lol")
-                                    .description(format!("**{}** used `/{}` in **{}**", user_name, command_name, guild_name))
-                                    .color(0x00E5FF);
-                                let builder = serenity::builder::ExecuteWebhook::new().embed(embed);
-                                let _ = webhook.execute(&http, false, builder).await;
-                            }
-                        });
-                    }
+                    let pool = &ctx.data().database.pool;
+                    let _ = sqlx::query(
+                        "INSERT INTO global_stats (stat_key, stat_value) \
+                         VALUES ('total_commands_executed', 1) \
+                         ON CONFLICT (stat_key) \
+                         DO UPDATE SET stat_value = global_stats.stat_value + 1"
+                    )
+                    .execute(pool)
+                    .await;
                 })
             },
             on_error: |error| {
@@ -296,9 +290,10 @@ async fn main() -> Result<(), Error> {
                 Box::pin(async move {
                     info!("🔩 AegisForge online as {}!", ready.user.name);
                     poise::builtins::register_globally(ctx, &framework.options().commands).await?;
-                    Ok(Data { 
+                    Ok(Data {
                         database: db,
                         start_time,
+                        http_client: reqwest::Client::new(),
                     })
                 })
             }

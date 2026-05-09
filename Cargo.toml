@@ -1,9 +1,9 @@
 [package]
 name = "aegisforge"
-version = "3.1.0"
+version = "4.0.0"
 edition = "2021"
 authors = ["Watispro"]
-description = "AegisForge v3.1 Hyperforge - High-performance Discord automation."
+description = "AegisForge v4 Hyperforge - High-performance Discord automation."
 
 [dependencies]
 # Discord
@@ -47,6 +47,7 @@ axum = "0.7"
 tower-http = { version = "0.5", features = ["cors"] }
 urlencoding = "2"
 evalexpr = "8.1"
+reqwest = { version = "0.12", default-features = false, features = ["json", "native-tls"] }
 
 
 [dev-dependencies]

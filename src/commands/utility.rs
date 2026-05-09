@@ -332,16 +332,43 @@ pub async fn translate(
     Ok(())
 }
 
-/// start a timer
+/// set a timer — the bot will DM you when it's done
 #[poise::command(slash_command, prefix_command)]
 pub async fn timer(
     ctx: Context<'_>,
-    #[description = "Duration in minutes"] minutes: u64,
+    #[description = "Duration in minutes (1–1440)"] minutes: u64,
 ) -> Result<(), Error> {
-    ctx.say(format!("⏲️ Timer set for **{}** minutes. I'll remind you when it's up!", minutes)).await?;
-    
-    // in a real app, we'd use a background task. 
-    // for this implementation, we'll just acknowledge it.
+    if minutes == 0 || minutes > 1440 {
+        return Err("Timer must be between 1 and 1440 minutes (24 hours).".into());
+    }
+
+    let expires_at = chrono::Utc::now().timestamp() + (minutes as i64 * 60);
+
+    ctx.send(poise::CreateReply::default().embed(
+        serenity::CreateEmbed::new()
+            .title("⏲️ Timer Set")
+            .description(format!("I'll DM you in **{}** minute(s).", minutes))
+            .field("Expires", format!("<t:{}:R>", expires_at), true)
+            .footer(serenity::CreateEmbedFooter::new("Make sure your DMs are open!"))
+            .color(0x00E5FF),
+    ))
+    .await?;
+
+    let http = ctx.serenity_context().http.clone();
+    let user_id = ctx.author().id;
+
+    tokio::spawn(async move {
+        tokio::time::sleep(tokio::time::Duration::from_secs(minutes * 60)).await;
+        if let Ok(channel) = user_id.create_dm_channel(&http).await {
+            let _ = channel.send_message(&http, serenity::CreateMessage::new().embed(
+                serenity::CreateEmbed::new()
+                    .title("⏰ Timer Done!")
+                    .description(format!("Your **{}**-minute timer has ended!", minutes))
+                    .color(0x00FF88),
+            )).await;
+        }
+    });
+
     Ok(())
 }
 
@@ -351,16 +378,48 @@ pub async fn dictionary(
     ctx: Context<'_>,
     #[description = "Word to look up"] word: String,
 ) -> Result<(), Error> {
-    let url = format!("https://en.wiktionary.org/wiki/{}", urlencoding::encode(&word));
+    #[derive(serde::Deserialize)]
+    struct Definition { definition: String, example: Option<String> }
+    #[derive(serde::Deserialize)]
+    struct Meaning { #[serde(rename = "partOfSpeech")] part_of_speech: String, definitions: Vec<Definition> }
+    #[derive(serde::Deserialize)]
+    struct DictEntry { word: String, phonetic: Option<String>, meanings: Vec<Meaning> }
+
+    let url = format!("https://api.dictionaryapi.dev/api/v2/entries/en/{}", urlencoding::encode(&word));
+
+    let response = ctx.data().http_client.get(&url).send().await
+        .map_err(|e| format!("Dictionary API unreachable: {}", e))?;
+
+    if response.status() == 404 {
+        return Err(format!("No definition found for **\"{}\"**. Check your spelling.", word).into());
+    }
+
+    let entries: Vec<DictEntry> = response.json().await
+        .map_err(|e| format!("Couldn't parse definition: {}", e))?;
+
+    let entry = entries.into_iter().next().ok_or("No entries returned.")?;
+
+    let mut body = String::new();
+    for meaning in entry.meanings.iter().take(3) {
+        if let Some(def) = meaning.definitions.first() {
+            body.push_str(&format!("**{}**\n{}", meaning.part_of_speech, def.definition));
+            if let Some(example) = &def.example {
+                body.push_str(&format!("\n> *{}*", example));
+            }
+            body.push_str("\n\n");
+        }
+    }
+
+    let title = match &entry.phonetic {
+        Some(p) if !p.is_empty() => format!("📖 {} — {}", entry.word, p),
+        _ => format!("📖 {}", entry.word),
+    };
+
     ctx.send(poise::CreateReply::default().embed(
         serenity::CreateEmbed::new()
-            .title(format!("📖 Dictionary — {}", word))
-            .description(format!(
-                "Look up **{}** on Wiktionary for a full definition, etymology, and usage examples.",
-                word
-            ))
-            .field("🔗 Wiktionary", format!("[View definition]({})", url), false)
-            .footer(serenity::CreateEmbedFooter::new("Powered by Wiktionary"))
+            .title(title)
+            .description(body.trim())
+            .footer(serenity::CreateEmbedFooter::new("Powered by Free Dictionary API"))
             .color(0x00E5FF),
     )).await?;
     Ok(())
@@ -370,13 +429,25 @@ pub async fn dictionary(
 #[poise::command(slash_command, prefix_command)]
 pub async fn worldclock(ctx: Context<'_>) -> Result<(), Error> {
     let now = chrono::Utc::now();
+    let fmt = |offset_secs: i32| -> String {
+        let tz = chrono::FixedOffset::east_opt(offset_secs).unwrap();
+        now.with_timezone(&tz).format("%H:%M — %a, %b %-d").to_string()
+    };
+
     ctx.send(poise::CreateReply::default().embed(
         serenity::CreateEmbed::new()
             .title("🌎 World Clock")
-            .field("London (GMT)", now.format("%H:%M").to_string(), true)
-            .field("New York (EST)", (now - chrono::Duration::hours(5)).format("%H:%M").to_string(), true)
-            .field("Tokyo (JST)", (now + chrono::Duration::hours(9)).format("%H:%M").to_string(), true)
-            .footer(serenity::CreateEmbedFooter::new("Time is relative | it works i guess"))
+            .field("🇬🇧 London (UTC)",        fmt(0),           true)
+            .field("🇺🇸 New York (EST)",       fmt(-5 * 3600),   true)
+            .field("🇺🇸 Los Angeles (PST)",    fmt(-8 * 3600),   true)
+            .field("🇩🇪 Berlin (CET)",         fmt(1 * 3600),    true)
+            .field("🇮🇳 Mumbai (IST)",         fmt(19800),       true)  // +5:30
+            .field("🇯🇵 Tokyo (JST)",          fmt(9 * 3600),    true)
+            .field("🇦🇺 Sydney (AEST)",        fmt(10 * 3600),   true)
+            .field("🇧🇷 São Paulo (BRT)",      fmt(-3 * 3600),   true)
+            .field("🇦🇪 Dubai (GST)",          fmt(4 * 3600),    true)
+            .footer(serenity::CreateEmbedFooter::new("Standard offsets shown — actual times may vary by DST"))
+            .timestamp(serenity::Timestamp::now())
             .color(0x00E5FF),
     )).await?;
     Ok(())

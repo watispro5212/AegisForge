@@ -112,6 +112,16 @@ pub async fn joke(ctx: Context<'_>) -> Result<(), Error> {
         "Why don't programmers like nature?\nToo many bugs and no documentation.",
         "A SQL query walks into a bar, walks up to two tables, and asks... 'Can I join you?'",
         "Why was the JavaScript developer sad?\nBecause he didn't Node how to Express himself.",
+        "Why did the developer go broke?\nBecause he used up all his cache.",
+        "What do you call a developer who doesn't comment their code?\nA sociopath.",
+        "I would tell you a UDP joke, but you might not get it.",
+        "Why was the Rust code so happy?\nBecause it had no dangling references.",
+        "What's a programmer's favorite movie?\nNull Fiction.",
+        "Why do Java developers wear glasses?\nBecause they can't C#.",
+        "How do you know a developer is an extrovert?\nThey look at YOUR shoes when talking to you.",
+        "A product manager walks into a bar and asks for a beer. Then for 2 beers. Then for 0. Then for 99999.\nThe programmer panics.",
+        "Why did the programmer get kicked out of school?\nBecause he kept breaking the class.",
+        "What do you call a snake that builds software?\nA Python developer.",
     ];
     let joke = jokes[rand::thread_rng().gen_range(0..jokes.len())];
 
@@ -119,7 +129,7 @@ pub async fn joke(ctx: Context<'_>) -> Result<(), Error> {
         serenity::CreateEmbed::new()
             .title("😂 Programming Joke")
             .description(joke)
-            .footer(serenity::CreateEmbedFooter::new("Powered by AegisForge Humor Engine v1.0"))
+            .footer(serenity::CreateEmbedFooter::new("Powered by AegisForge Humor Engine v4"))
             .color(0x00E5FF),
     ))
     .await?;
@@ -140,6 +150,16 @@ pub async fn fact(ctx: Context<'_>) -> Result<(), Error> {
         "The word 'byte' was coined in 1956 to avoid accidental confusion with 'bit'.",
         "The first 1GB hard drive (1980) weighed 550 lbs and cost $40,000.",
         "Cleopatra lived closer in time to the Moon landing than to the construction of the Great Pyramid.",
+        "Bananas are technically berries, but strawberries are not.",
+        "The dot over the letter 'i' is called a tittle.",
+        "A group of flamingos is called a flamboyance.",
+        "The first emoji was created in 1999 by Shigetaka Kurita.",
+        "Nintendo was founded in 1889 as a playing card company.",
+        "Sharks are older than trees — they've existed for about 450 million years.",
+        "A day on Venus is longer than a year on Venus.",
+        "There are more possible games of chess than atoms in the observable universe.",
+        "The 'https' in a URL stands for HyperText Transfer Protocol Secure. The 's' was added in 1994.",
+        "The average person blinks about 15–20 times per minute, but only 3–8 times per minute while reading a screen.",
     ];
     let f = facts[rand::thread_rng().gen_range(0..facts.len())];
 
@@ -157,13 +177,23 @@ pub async fn fact(ctx: Context<'_>) -> Result<(), Error> {
 /// send a cute cat picture
 #[poise::command(slash_command)]
 pub async fn cat(ctx: Context<'_>) -> Result<(), Error> {
-    let cache_bust = rand::thread_rng().gen_range(1..=10000u32);
-    let url = format!("https://cataas.com/cat?width=480&height=480&cache={}", cache_bust);
+    #[derive(serde::Deserialize)]
+    struct AnimalResponse { image: String, fact: String }
+
+    let res = ctx.data().http_client
+        .get("https://some-random-api.com/animal/cat")
+        .send().await
+        .and_then(|r| r.error_for_status())
+        .map_err(|e| format!("Couldn't reach the cat API: {}", e))?
+        .json::<AnimalResponse>().await
+        .map_err(|e| format!("Couldn't parse the cat response: {}", e))?;
+
     ctx.send(poise::CreateReply::default().embed(
         serenity::CreateEmbed::new()
             .title("🐱 Meow!")
-            .image(url)
-            .footer(serenity::CreateEmbedFooter::new("Powered by cataas.com"))
+            .image(res.image)
+            .description(res.fact)
+            .footer(serenity::CreateEmbedFooter::new("Powered by some-random-api.com"))
             .color(0x00E5FF),
     ))
     .await?;
@@ -218,17 +248,23 @@ pub async fn fox(ctx: Context<'_>) -> Result<(), Error> {
 /// send a cute panda picture
 #[poise::command(slash_command)]
 pub async fn panda(ctx: Context<'_>) -> Result<(), Error> {
-    let pandas = [
-        "https://upload.wikimedia.org/wikipedia/commons/0/0f/Grosser_Panda.JPG",
-        "https://upload.wikimedia.org/wikipedia/commons/3/3c/Giant_Panda_2004-03-2.jpg",
-        "https://upload.wikimedia.org/wikipedia/commons/1/1e/Giant_panda_at_Vienna_Zoo_edit.jpg",
-    ];
-    let url = pandas[rand::thread_rng().gen_range(0..pandas.len())];
+    #[derive(serde::Deserialize)]
+    struct AnimalResponse { image: String, fact: String }
+
+    let res = ctx.data().http_client
+        .get("https://some-random-api.com/animal/panda")
+        .send().await
+        .and_then(|r| r.error_for_status())
+        .map_err(|e| format!("Couldn't reach the panda API: {}", e))?
+        .json::<AnimalResponse>().await
+        .map_err(|e| format!("Couldn't parse the panda response: {}", e))?;
+
     ctx.send(poise::CreateReply::default().embed(
         serenity::CreateEmbed::new()
             .title("🐼 Panda Time!")
-            .image(url)
-            .footer(serenity::CreateEmbedFooter::new("Stay endangered-species-aware"))
+            .image(res.image)
+            .description(res.fact)
+            .footer(serenity::CreateEmbedFooter::new("Powered by some-random-api.com"))
             .color(0x111111),
     ))
     .await?;
@@ -238,24 +274,23 @@ pub async fn panda(ctx: Context<'_>) -> Result<(), Error> {
 /// send a cute bird picture
 #[poise::command(slash_command)]
 pub async fn bird(ctx: Context<'_>) -> Result<(), Error> {
-    let birds = [
-        "https://upload.wikimedia.org/wikipedia/commons/a/a7/Camponotus_flavomarginatus_ant.jpg",
-        "https://upload.wikimedia.org/wikipedia/commons/4/45/A_small_cup_of_coffee.JPG",
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Culinary_fruits_front_view.jpg/1200px-Culinary_fruits_front_view.jpg",
-    ];
-    // use Wikimedia bird images
-    let bird_imgs = [
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Eopsaltria_australis_-_Mogo_Campground.jpg/800px-Eopsaltria_australis_-_Mogo_Campground.jpg",
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/European_robin_aka.jpg/800px-European_robin_aka.jpg",
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Dog_Breeds.jpg/1200px-Dog_Breeds.jpg",
-    ];
-    let _ = birds; // suppress unused warning
-    let url = bird_imgs[rand::thread_rng().gen_range(0..bird_imgs.len())];
+    #[derive(serde::Deserialize)]
+    struct AnimalResponse { image: String, fact: String }
+
+    let res = ctx.data().http_client
+        .get("https://some-random-api.com/animal/bird")
+        .send().await
+        .and_then(|r| r.error_for_status())
+        .map_err(|e| format!("Couldn't reach the bird API: {}", e))?
+        .json::<AnimalResponse>().await
+        .map_err(|e| format!("Couldn't parse the bird response: {}", e))?;
+
     ctx.send(poise::CreateReply::default().embed(
         serenity::CreateEmbed::new()
             .title("🐦 Chirp!")
-            .image(url)
-            .footer(serenity::CreateEmbedFooter::new("Powered by Wikimedia Commons"))
+            .image(res.image)
+            .description(res.fact)
+            .footer(serenity::CreateEmbedFooter::new("Powered by some-random-api.com"))
             .color(0x00E5FF),
     ))
     .await?;
@@ -537,6 +572,16 @@ pub async fn trivia(ctx: Context<'_>) -> Result<(), Error> {
         ("What is the chemical symbol for gold?", "Au", vec!["Go", "Gd", "Ag"]),
         ("Which country invented the Internet?", "United States", vec!["United Kingdom", "Germany", "Japan"]),
         ("What is 7 × 8?", "56", vec!["54", "58", "48"]),
+        ("Which company created the Rust programming language?", "Mozilla", vec!["Google", "Microsoft", "Apple"]),
+        ("What does SQL stand for?", "Structured Query Language", vec!["Simple Query Language", "Sequential Query Logic", "Standard Query List"]),
+        ("How many planets are in the Solar System?", "8", vec!["7", "9", "10"]),
+        ("What is the largest ocean on Earth?", "Pacific", vec!["Atlantic", "Indian", "Arctic"]),
+        ("In which year did the Berlin Wall fall?", "1989", vec!["1987", "1991", "1993"]),
+        ("What does RAM stand for?", "Random Access Memory", vec!["Read-only Access Memory", "Rapid Array Module", "Runtime Address Map"]),
+        ("Which gas do plants absorb from the atmosphere?", "Carbon dioxide", vec!["Oxygen", "Nitrogen", "Hydrogen"]),
+        ("What is the smallest prime number?", "2", vec!["0", "1", "3"]),
+        ("Who wrote the Harry Potter series?", "J.K. Rowling", vec!["J.R.R. Tolkien", "C.S. Lewis", "Stephen King"]),
+        ("What does HTTP stand for?", "HyperText Transfer Protocol", vec!["High-Throughput Transfer Protocol", "HyperText Transport Process", "Hyperlink Text Transfer Protocol"]),
     ];
 
     let (question, answer, mut wrong) = questions[rand::thread_rng().gen_range(0..questions.len())].clone();
