@@ -20,6 +20,7 @@ use rand::prelude::*;
         "deposit",
         "withdraw",
         "gamble_info",
+        "shop",
         "crime",
         "fish",
         "hunt"
@@ -28,6 +29,258 @@ use rand::prelude::*;
     guild_only
 )]
 pub async fn economy(_ctx: Context<'_>) -> Result<(), Error> {
+    Ok(())
+}
+
+#[derive(Clone, Copy)]
+struct ShopItem {
+    name: &'static str,
+    category: &'static str,
+    price: i64,
+    description: &'static str,
+    rarity: &'static str,
+}
+
+fn global_shop_items() -> &'static [ShopItem] {
+    &[
+        ShopItem {
+            name: "Copper Badge",
+            category: "Profile",
+            price: 250,
+            rarity: "Common",
+            description: "Starter profile badge for fresh economy players.",
+        },
+        ShopItem {
+            name: "Silver Badge",
+            category: "Profile",
+            price: 1_000,
+            rarity: "Common",
+            description: "Clean profile flex for consistent grinders.",
+        },
+        ShopItem {
+            name: "Gold Badge",
+            category: "Profile",
+            price: 5_000,
+            rarity: "Rare",
+            description: "Premium-looking badge for leaderboard climbers.",
+        },
+        ShopItem {
+            name: "Diamond Badge",
+            category: "Profile",
+            price: 25_000,
+            rarity: "Epic",
+            description: "High-end badge for economy veterans.",
+        },
+        ShopItem {
+            name: "Forge Crown",
+            category: "Profile",
+            price: 100_000,
+            rarity: "Legendary",
+            description: "A crown for users with dangerous amounts of money.",
+        },
+        ShopItem {
+            name: "Neon Nameplate",
+            category: "Cosmetic",
+            price: 7_500,
+            rarity: "Rare",
+            description: "Bright profile styling for rank and economy displays.",
+        },
+        ShopItem {
+            name: "Carbon Nameplate",
+            category: "Cosmetic",
+            price: 9_000,
+            rarity: "Rare",
+            description: "Dark brushed-metal profile styling.",
+        },
+        ShopItem {
+            name: "Aurora Frame",
+            category: "Cosmetic",
+            price: 18_000,
+            rarity: "Epic",
+            description: "Animated-feeling profile frame for top users.",
+        },
+        ShopItem {
+            name: "Obsidian Frame",
+            category: "Cosmetic",
+            price: 30_000,
+            rarity: "Epic",
+            description: "Stealth profile frame with sharp forge styling.",
+        },
+        ShopItem {
+            name: "Founder's Sigil",
+            category: "Collectible",
+            price: 50_000,
+            rarity: "Legendary",
+            description: "Permanent collectible for early supporters.",
+        },
+        ShopItem {
+            name: "Rustacean Relic",
+            category: "Collectible",
+            price: 75_000,
+            rarity: "Legendary",
+            description: "A rare relic honoring the Rust core.",
+        },
+        ShopItem {
+            name: "Lucky Charm",
+            category: "Boost",
+            price: 2_500,
+            rarity: "Common",
+            description: "Cosmetic luck token for gamblers.",
+        },
+        ShopItem {
+            name: "Work Permit",
+            category: "Boost",
+            price: 4_000,
+            rarity: "Common",
+            description: "Roleplay item for dedicated workers.",
+        },
+        ShopItem {
+            name: "Fishing Rod",
+            category: "Boost",
+            price: 6_000,
+            rarity: "Rare",
+            description: "Fishing-themed collectible for lake regulars.",
+        },
+        ShopItem {
+            name: "Hunter's Kit",
+            category: "Boost",
+            price: 8_000,
+            rarity: "Rare",
+            description: "Hunting-themed collectible for wilderness grinders.",
+        },
+        ShopItem {
+            name: "Vault Pass",
+            category: "Utility",
+            price: 12_000,
+            rarity: "Rare",
+            description: "Banking-themed flex item for cautious players.",
+        },
+        ShopItem {
+            name: "Anti-Heist Tag",
+            category: "Utility",
+            price: 15_000,
+            rarity: "Epic",
+            description: "A warning label for anyone thinking about robbing you.",
+        },
+        ShopItem {
+            name: "Market Pass",
+            category: "Utility",
+            price: 20_000,
+            rarity: "Epic",
+            description: "Collector pass for future marketplace features.",
+        },
+        ShopItem {
+            name: "Beta Tester Tag",
+            category: "Community",
+            price: 3_000,
+            rarity: "Common",
+            description: "Show that you helped test AegisForge builds.",
+        },
+        ShopItem {
+            name: "Bug Hunter Tag",
+            category: "Community",
+            price: 6_500,
+            rarity: "Rare",
+            description: "For people who find bugs before production does.",
+        },
+        ShopItem {
+            name: "Support Hero Tag",
+            category: "Community",
+            price: 10_000,
+            rarity: "Rare",
+            description: "Recognition for helpful support-server regulars.",
+        },
+        ShopItem {
+            name: "Patch Notes Enjoyer",
+            category: "Community",
+            price: 1_500,
+            rarity: "Common",
+            description: "For the brave souls who actually read changelogs.",
+        },
+        ShopItem {
+            name: "Season Token",
+            category: "Limited",
+            price: 35_000,
+            rarity: "Epic",
+            description: "Rotating seasonal collectible slot.",
+        },
+        ShopItem {
+            name: "Hyperforge Core",
+            category: "Limited",
+            price: 250_000,
+            rarity: "Mythic",
+            description: "Ultra-expensive global chase item.",
+        },
+    ]
+}
+
+/// view the global AegisForge shop catalog
+#[poise::command(slash_command, guild_only)]
+pub async fn shop(
+    ctx: Context<'_>,
+    #[description = "Optional category filter: profile, cosmetic, collectible, boost, utility, community, limited"]
+    category: Option<String>,
+) -> Result<(), Error> {
+    let filter = category.as_ref().map(|c| c.to_lowercase());
+    let items: Vec<ShopItem> = global_shop_items()
+        .iter()
+        .copied()
+        .filter(|item| {
+            filter
+                .as_ref()
+                .map(|needle| item.category.to_lowercase().contains(needle))
+                .unwrap_or(true)
+        })
+        .collect();
+
+    if items.is_empty() {
+        return Err("No shop items matched that category. Try `profile`, `cosmetic`, `boost`, `utility`, `community`, or `limited`.".into());
+    }
+
+    let categories = [
+        "Profile",
+        "Cosmetic",
+        "Collectible",
+        "Boost",
+        "Utility",
+        "Community",
+        "Limited",
+    ];
+
+    let mut embed = serenity::CreateEmbed::new()
+        .title("AegisForge Global Shop")
+        .description(format!(
+            "Global catalog, auto-rendered from the current shop list. **{}** item(s) available{}.",
+            items.len(),
+            filter
+                .as_ref()
+                .map(|c| format!(" for `{}`", c))
+                .unwrap_or_default()
+        ))
+        .footer(serenity::CreateEmbedFooter::new(
+            "Purchasing/inventory hooks are next; this command always shows the latest global catalog.",
+        ))
+        .timestamp(serenity::Timestamp::now())
+        .color(0xFFD700);
+
+    for category_name in categories {
+        let lines: Vec<String> = items
+            .iter()
+            .filter(|item| item.category == category_name)
+            .map(|item| {
+                format!(
+                    "**{}** - `${}` [{}]\n{}",
+                    item.name, item.price, item.rarity, item.description
+                )
+            })
+            .collect();
+
+        if !lines.is_empty() {
+            embed = embed.field(category_name, lines.join("\n\n"), false);
+        }
+    }
+
+    ctx.send(poise::CreateReply::default().embed(embed)).await?;
     Ok(())
 }
 

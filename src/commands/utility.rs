@@ -306,7 +306,7 @@ pub async fn help(
             .description("Welcome to the next generation of server protection. Use `/` to browse all slash commands.")
             .field("⚙️ Utility", "`ping`, `server`, `user`, `avatar`, `uptime`, `stats`, `embed`, `qr`, `math`, `worldclock`, `poll`, `timestamp`, `timer`, `help`", false)
             .field("🛡️ Moderation", "`ban`, `softban`, `unban`, `kick`, `mute`, `unmute`, `timeout`, `warn`, `purge`, `nuke`, `slowmode`, `lock`, `unlock`", false)
-            .field("💰 Economy", "`balance`, `daily`, `work`, `pay`, `deposit`, `withdraw`, `beg`, `search`, `slots`, `rob`, `crime`, `fish`, `hunt`, `leaderboard`, `global_leaderboard`, `gamble_info`", false)
+            .field("💰 Economy", "`balance`, `daily`, `work`, `pay`, `deposit`, `withdraw`, `beg`, `search`, `slots`, `shop`, `rob`, `crime`, `fish`, `hunt`, `leaderboard`, `global_leaderboard`, `gamble_info`", false)
             .field("📈 Leveling", "`rank`, `leaderboard`", false)
             .field("🎮 Fun", "`coinflip`, `dice`, `eightball`, `joke`, `fact`, `ship`, `rate`, `mock`, `reverse`, `ascii`, `choose`, `trivia`, `roast`, `compliment`, `meme`, animal pics + more`", false)
             .field("🔧 Config", "`logs`, `welcome`, `autorole`, `prefix`, `settings`", false)
