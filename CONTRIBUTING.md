@@ -1,32 +1,69 @@
 # Contributing to AegisForge
 
-First off, thank you for considering contributing to AegisForge! It's people like you that make AegisForge such a great community tool.
+Thanks for helping improve AegisForge. The project is a Rust Discord bot plus a static website, so most changes should keep the bot, website, and docs in sync.
 
-## 🚀 How to Get Started
+## Getting Started
 
-1. **Fork the Project**: Create your own copy of the repository.
-2. **Clone Locally**: `git clone https://github.com/watispro5212/AegisForge.git`
-3. **Create a Branch**: `git checkout -b feature/AmazingFeature`
-4. **Install Dependencies**: Ensure you have [Rust](https://rustup.rs/) and [SQLx-CLI](https://github.com/launchbadge/sqlx) installed.
-5. **Commit Changes**: `git commit -m 'Add some AmazingFeature'`
-6. **Push to Branch**: `git push origin feature/AmazingFeature`
-7. **Open a Pull Request**: Submit your changes for review.
+1. Fork or clone the repository.
+2. Install Rust from https://rustup.rs/.
+3. Install SQLx CLI if you need to prepare query metadata or run migrations.
+4. Copy `.env.example` to `.env` and fill in local development values.
+5. Create a focused branch, for example `feature/shop-item` or `fix/live-stats`.
 
-## 📝 Code of Conduct
+## Local Checks
 
-We expect all contributors to follow our Code of Conduct:
-*   Be respectful and inclusive.
-*   Focus on constructive feedback.
-*   Avoid harassment or exclusionary behavior.
+Run the core Rust checks:
 
-## 🛠️ Development Guidelines
+```bash
+cargo fmt --check
+cargo clippy --all-targets -- -D warnings
+cargo test
+```
 
-*   **Style**: Follow the standard `rustfmt` guidelines. Run `cargo fmt` before committing.
-*   **Safety**: Avoid `unsafe` blocks unless absolutely necessary for performance.
-*   **Documentation**: Document new functions and modules using Rust docstrings (`///`).
-*   **Testing**: Add unit tests for new features.
+Run the website smoke test:
 
-## 💬 Community & Support
-If you have questions or need help, join our [Discord Support Server](https://discord.gg/HbmafcgjNa).
+```bash
+cd web
+npm test
+```
 
-*Forged by the community. Maintained by watispro1.*
+For offline SQLx builds:
+
+```bash
+SQLX_OFFLINE=true cargo check
+```
+
+## Development Guidelines
+
+- Keep pull requests focused on one feature, fix, or documentation update.
+- Run `cargo fmt` before submitting Rust changes.
+- Avoid `unsafe` unless there is a clear, documented reason.
+- Keep command behavior, `web/commands_data.js`, website copy, README, and changelog entries aligned.
+- Add or update migrations when database schema changes.
+- Keep secrets out of commits. Do not commit `.env`, tokens, database URLs, webhook URLs, or generated private credentials.
+- Prefer clear, boring code over clever code in command handlers and database access.
+
+## Website Guidelines
+
+- The website should use real stats where possible.
+- `shards.html` and `about.html` should read from the live stats path, not hardcoded counters.
+- When changing shared website JavaScript, bump the `script.js?v=...` query string in HTML files so deployed browsers receive the update.
+- Run a local static preview with:
+
+```bash
+cd web
+python -m http.server 4173
+```
+
+## Pull Request Checklist
+
+- Rust checks pass.
+- Website smoke test passes.
+- Relevant docs/changelog are updated.
+- New commands are listed in `web/commands_data.js`.
+- Database changes include migrations.
+- No unrelated formatting churn or generated build artifacts are included.
+
+## Community
+
+For questions or support, join the Discord server: https://discord.gg/HbmafcgjNa

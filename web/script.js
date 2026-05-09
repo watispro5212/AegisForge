@@ -103,9 +103,10 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 
 // ── Live Dashboard Data Fetching ────────────────────
 async function fetchLiveStats() {
-    const API_URL = window.location.protocol === 'file:'
-        ? 'https://aegisforge.fly.dev/api/stats'
-        : '/api/stats';
+    const LIVE_STATS_URL = 'https://aegisforge.fly.dev/api/stats';
+    const isLocalStatic = window.location.protocol === 'file:'
+        || ['127.0.0.1', 'localhost'].includes(window.location.hostname);
+    const API_URLS = isLocalStatic ? [LIVE_STATS_URL] : ['/api/stats', LIVE_STATS_URL];
     
     const formatUptime = (seconds) => {
         const days = Math.floor(seconds / 86400);
@@ -234,9 +235,21 @@ async function fetchLiveStats() {
     };
 
     try {
-        const response = await fetch(API_URL);
-        if (!response.ok) throw new Error('API Unreachable');
-        const data = normalizeStats(await response.json());
+        let data = null;
+        let lastError = null;
+
+        for (const apiUrl of API_URLS) {
+            try {
+                const response = await fetch(apiUrl, { headers: { accept: 'application/json' } });
+                if (!response.ok) throw new Error(`API returned ${response.status}`);
+                data = normalizeStats(await response.json());
+                break;
+            } catch (error) {
+                lastError = error;
+            }
+        }
+
+        if (!data) throw lastError || new Error('API Unreachable');
         
         if (data.server_count !== undefined) {
             animateValue('stat-guilds', data.server_count);
@@ -304,31 +317,28 @@ async function fetchLiveStats() {
         initUptimeSegments();
 
     } catch (err) {
-        console.warn('Status API unreachable, using cached/fallback data:', err.message);
+        console.warn('Status API unreachable:', err.message);
         
         const fallbackData = normalizeStats({
-            server_count: 1422,
-            user_count: 1450283,
-            uptime_seconds: 86400 * 42,
+            server_count: 0,
+            user_count: 0,
+            uptime_seconds: 0,
             economy_activity: 0,
             xp_gain_24h: 0,
-            shards_total: 2,
-            shards_online: 2,
+            shards_total: 0,
+            shards_online: 0,
             total_commands_executed: 0,
             inventory_items: 0,
             version: '4.1.0',
             source: 'fallback',
-            shards: [
-                { id: 0, status: 'Cached', latency_ms: null },
-                { id: 1, status: 'Cached', latency_ms: null }
-            ]
+            shards: []
         });
 
         const overallStatus = document.getElementById('overall-status');
         if (overallStatus) {
             overallStatus.querySelector('.status-indicator').className = 'status-indicator maintenance';
-            overallStatus.querySelector('h3').innerText = 'Partial Outage Detected';
-            overallStatus.querySelector('p').innerText = 'The Bot Core API is currently unreachable. Showing last cached metrics.';
+            overallStatus.querySelector('h3').innerText = 'Stats Unavailable';
+            overallStatus.querySelector('p').innerText = 'The live bot stats API is currently unreachable. No fabricated metrics are being shown.';
         }
 
         const botCoreLabel = document.querySelector('.status-item:first-child .status-label');
@@ -402,12 +412,15 @@ const dashObserver = new IntersectionObserver((entries) => {
 const statsSection = document.querySelector('.stats-section');
 const statusSection = document.getElementById('overall-status');
 const heroStats = document.getElementById('hero-servers');
+const aboutStats = document.getElementById('about-users');
 
 if (statsSection) {
     dashObserver.observe(statsSection);
 } else if (statusSection) {
     fetchLiveStats();
 } else if (heroStats) {
+    fetchLiveStats();
+} else if (aboutStats) {
     fetchLiveStats();
 }
 

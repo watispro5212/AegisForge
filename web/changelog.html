@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -61,6 +61,18 @@
             </div>
 
             <div class="changelog-timeline">
+
+                <div class="changelog-item reveal-on-scroll">
+                    <div class="changelog-date">May 9, 2026</div>
+                    <div class="changelog-title">v4.1.2 - Live Status Sync</div>
+                    <ul class="changelog-list">
+                        <li><span class="badge badge-fix">FIX</span> <code>shards.html</code> now reads real Discord shard, uptime, guild, user, economy, XP, command, inventory, and version stats from the live Rust API.</li>
+                        <li><span class="badge badge-fix">FIX</span> <code>about.html</code> now uses the same live stats source and real command registry count.</li>
+                        <li><span class="badge badge-fix">FIX</span> The Vercel stats route now proxies the live bot API before falling back to Neon database totals.</li>
+                        <li><span class="badge badge-polish">UI</span> Removed fabricated fallback metrics; unavailable data is now shown as unavailable instead of pretending to be live.</li>
+                        <li><span class="badge badge-polish">DOCS</span> Refreshed README, security policy, contributing guide, and license text.</li>
+                    </ul>
+                </div>
 
                 <div class="changelog-item reveal-on-scroll">
                     <div class="changelog-date">May 9, 2026</div>
@@ -190,7 +202,7 @@
         </div>
     </footer>
 
-    <script src="script.js?v=4.1.1"></script>
+    <script src="script.js?v=4.1.2"></script>
 </body>
 </html>
 
