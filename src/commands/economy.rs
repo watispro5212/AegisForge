@@ -24,6 +24,7 @@ use sqlx::Row;
         "shop",
         "buy",
         "inventory",
+        "profile",
         "crime",
         "fish",
         "hunt"
@@ -462,6 +463,67 @@ pub async fn inventory(
                     "Inventory is stored per server economy.",
                 ))
                 .color(0xBF5AF2),
+        ),
+    )
+    .await?;
+
+    Ok(())
+}
+
+/// view a compact economy profile with balances, ranks, and inventory count
+#[poise::command(slash_command, guild_only)]
+pub async fn profile(
+    ctx: Context<'_>,
+    #[description = "User to inspect (defaults to you)"] user: Option<serenity::User>,
+) -> Result<(), Error> {
+    let target = user.as_ref().unwrap_or(ctx.author());
+    let guild_id = ctx.guild_id().unwrap().get() as i64;
+    let target_id = target.id.get() as i64;
+
+    let eco = economy::get_user_economy(&ctx.data().database.pool, guild_id, target_id).await?;
+    let net_worth = eco.balance + eco.bank;
+    let local_rank = economy::get_local_rank(&ctx.data().database.pool, guild_id, target_id)
+        .await?
+        .map(|rank| format!("#{}", rank))
+        .unwrap_or_else(|| "Unranked".to_string());
+    let global_rank = economy::get_global_rank(&ctx.data().database.pool, target_id)
+        .await?
+        .map(|rank| format!("#{}", rank))
+        .unwrap_or_else(|| "Unranked".to_string());
+    let inventory_items =
+        economy::get_inventory_item_count(&ctx.data().database.pool, guild_id, target_id).await?;
+
+    let safety_ratio = if net_worth <= 0 {
+        0.0
+    } else {
+        (eco.bank as f64 / net_worth as f64 * 100.0).clamp(0.0, 100.0)
+    };
+
+    ctx.send(
+        poise::CreateReply::default().embed(
+            serenity::CreateEmbed::new()
+                .title(format!("{}'s Economy Profile", target.name))
+                .description("A v4.1 snapshot of wallet health, rankings, and owned shop items.")
+                .thumbnail(target.face())
+                .field("Wallet", format!("`${}`", eco.balance), true)
+                .field("Bank", format!("`${}`", eco.bank), true)
+                .field("Net Worth", format!("`${}`", net_worth), true)
+                .field("Server Rank", local_rank, true)
+                .field("Global Rank", global_rank, true)
+                .field("Inventory Items", format!("`{}`", inventory_items), true)
+                .field(
+                    "Lifetime Flow",
+                    format!(
+                        "Earned: `${}`\nSpent: `${}`\nBank Safety: `{:.1}%`",
+                        eco.total_earned, eco.total_spent, safety_ratio
+                    ),
+                    false,
+                )
+                .footer(serenity::CreateEmbedFooter::new(
+                    "Use /economy shop, /economy buy, and /economy inventory to build your profile.",
+                ))
+                .timestamp(serenity::Timestamp::now())
+                .color(0x00E5FF),
         ),
     )
     .await?;

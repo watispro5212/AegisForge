@@ -214,7 +214,19 @@ pub async fn botinfo(ctx: Context<'_>) -> Result<(), Error> {
     let uptime = ctx.data().start_time.elapsed();
 
     let total_commands: i64 = sqlx::query_scalar(
-        "SELECT stat_value FROM global_stats WHERE stat_key = 'total_commands_executed'",
+        "SELECT COALESCE((SELECT stat_value FROM global_stats WHERE stat_key = 'total_commands_executed'), 0)",
+    )
+    .fetch_one(&ctx.data().database.pool)
+    .await
+    .unwrap_or(0);
+    let economy_transactions: i64 = sqlx::query_scalar(
+        "SELECT COALESCE((SELECT stat_value FROM global_stats WHERE stat_key = 'total_economy_transactions'), 0)",
+    )
+    .fetch_one(&ctx.data().database.pool)
+    .await
+    .unwrap_or(0);
+    let inventory_items: i64 = sqlx::query_scalar(
+        "SELECT COALESCE(SUM(quantity), 0)::BIGINT FROM economy_inventory",
     )
     .fetch_one(&ctx.data().database.pool)
     .await
@@ -222,20 +234,23 @@ pub async fn botinfo(ctx: Context<'_>) -> Result<(), Error> {
 
     ctx.send(poise::CreateReply::default().embed(
         serenity::CreateEmbed::new()
-            .title("🤖 AegisForge — Advanced Telemetry")
-            .description("Internal systems and performance metrics.")
-            .field("🚀 Version", format!("v{}", env!("CARGO_PKG_VERSION")), true)
-            .field("🦀 Language", "Rust 1.75+", true)
-            .field("📡 Library", "Serenity + Poise", true)
-            .field("📊 Servers", guilds.to_string(), true)
-            .field("👥 Total Users", users.to_string(), true)
-            .field("⚡ Commands Run", total_commands.to_string(), true)
-            .field("⏱️ Uptime", format!("<t:{}:R>", (chrono::Utc::now() - chrono::Duration::seconds(uptime.as_secs() as i64)).timestamp()), true)
-            .field("🔗 Links", "[Support Server](https://discord.gg/HbmafcgjNa) | [Top.gg](https://top.gg/bot/1500582485367722004)", false)
+            .title("AegisForge v4.1 - Advanced Telemetry")
+            .description("Runtime, network, economy, and release telemetry for the current bot process.")
+            .field("Version", format!("v{}", env!("CARGO_PKG_VERSION")), true)
+            .field("Runtime", "Rust + Tokio", true)
+            .field("Discord Layer", "Serenity + Poise", true)
+            .field("Servers", guilds.to_string(), true)
+            .field("Cached Users", users.to_string(), true)
+            .field("Commands Run", total_commands.to_string(), true)
+            .field("Economy Transactions", economy_transactions.to_string(), true)
+            .field("Inventory Items", inventory_items.to_string(), true)
+            .field("Uptime", format!("<t:{}:R>", (chrono::Utc::now() - chrono::Duration::seconds(uptime.as_secs() as i64)).timestamp()), true)
+            .field("Links", "[Support Server](https://discord.gg/HbmafcgjNa) | [Top.gg](https://top.gg/bot/1500582485367722004)", false)
             .footer(serenity::CreateEmbedFooter::new(format!(
-                "AegisForge v{} Core - High Performance Automation",
+                "AegisForge v{} Hyperforge Core",
                 env!("CARGO_PKG_VERSION")
             )))
+            .timestamp(serenity::Timestamp::now())
             .color(0x00E5FF),
     ))
     .await?;
@@ -629,3 +644,4 @@ pub async fn poll(
         .await?;
     Ok(())
 }
+

@@ -225,6 +225,63 @@ pub async fn get_global_leaderboard(
     .await
 }
 
+pub async fn get_local_rank(
+    pool: &PgPool,
+    guild_id: i64,
+    user_id: i64,
+) -> Result<Option<i64>, sqlx::Error> {
+    let rank = sqlx::query_scalar::<_, i64>(
+        r#"
+        SELECT rank::BIGINT
+        FROM (
+            SELECT user_id, RANK() OVER (ORDER BY (balance + bank) DESC) AS rank
+            FROM users_economy
+            WHERE guild_id = $1
+        ) ranked
+        WHERE user_id = $2
+        "#,
+    )
+    .bind(guild_id)
+    .bind(user_id)
+    .fetch_optional(pool)
+    .await?;
+
+    Ok(rank)
+}
+
+pub async fn get_global_rank(pool: &PgPool, user_id: i64) -> Result<Option<i64>, sqlx::Error> {
+    let rank = sqlx::query_scalar::<_, i64>(
+        r#"
+        SELECT rank::BIGINT
+        FROM (
+            SELECT user_id, RANK() OVER (ORDER BY SUM(balance + bank) DESC) AS rank
+            FROM users_economy
+            GROUP BY user_id
+        ) ranked
+        WHERE user_id = $1
+        "#,
+    )
+    .bind(user_id)
+    .fetch_optional(pool)
+    .await?;
+
+    Ok(rank)
+}
+
+pub async fn get_inventory_item_count(
+    pool: &PgPool,
+    guild_id: i64,
+    user_id: i64,
+) -> Result<i64, sqlx::Error> {
+    sqlx::query_scalar::<_, i64>(
+        "SELECT COALESCE(SUM(quantity), 0)::BIGINT FROM economy_inventory WHERE guild_id = $1 AND user_id = $2",
+    )
+    .bind(guild_id)
+    .bind(user_id)
+    .fetch_one(pool)
+    .await
+}
+
 pub async fn get_total_wealth(pool: &PgPool) -> Result<i64, sqlx::Error> {
     let row = sqlx::query!("SELECT SUM(balance + bank)::BIGINT as \"total!\" FROM users_economy")
         .fetch_one(pool)

@@ -103,7 +103,9 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 
 // ── Live Dashboard Data Fetching ────────────────────
 async function fetchLiveStats() {
-    const API_URL = 'https://aegisforge.fly.dev/api/stats';
+    const API_URL = window.location.protocol === 'file:'
+        ? 'https://aegisforge.fly.dev/api/stats'
+        : '/api/stats';
     
     const formatUptime = (seconds) => {
         const days = Math.floor(seconds / 86400);
@@ -169,6 +171,9 @@ async function fetchLiveStats() {
 
         const wStatus = document.getElementById('stat-wealth-status');
         const xpStatus = document.getElementById('stat-xp-status');
+        const commandsStatus = document.getElementById('stat-commands-status');
+        const inventoryStatus = document.getElementById('stat-inventory-status');
+        const versionStatus = document.getElementById('stat-version-status');
         
         if (gStatus) gStatus.innerText = data.server_count.toLocaleString();
         if (uStatus) uStatus.innerText = data.user_count.toLocaleString();
@@ -176,6 +181,9 @@ async function fetchLiveStats() {
         if (sOnline) sOnline.innerText = data.shards_online;
         if (wStatus) wStatus.innerText = `$${(data.economy_activity || 0).toLocaleString()}`;
         if (xpStatus) xpStatus.innerText = (data.xp_gain_24h || 0).toLocaleString();
+        if (commandsStatus) commandsStatus.innerText = (data.total_commands_executed || 0).toLocaleString();
+        if (inventoryStatus) inventoryStatus.innerText = (data.inventory_items || 0).toLocaleString();
+        if (versionStatus) versionStatus.innerText = data.version ? `v${data.version}` : 'v4.1';
         
         const overallStatus = document.getElementById('overall-status');
         if (upStatus) {
@@ -185,7 +193,7 @@ async function fetchLiveStats() {
 
         // Real numbers for other things too
         const cmdCount = typeof commandsData !== 'undefined' ? commandsData.reduce((acc, cat) => acc + cat.commands.length, 0) : 42;
-        const version = "v4.0.0-lazy";
+        const version = data.version ? `v${data.version}` : "v4.1.0";
 
         const aboutCmds = document.getElementById('about-commands-count');
         const aboutVersion = document.getElementById('about-version');
@@ -254,7 +262,10 @@ async function fetchLiveStats() {
             user_count: 1450283,
             uptime_seconds: 86400 * 42,
             shards_total: 2,
-            shards_online: 2
+            shards_online: 2,
+            total_commands_executed: 0,
+            inventory_items: 0,
+            version: '4.1.0'
         };
 
         const overallStatus = document.getElementById('overall-status');
@@ -279,11 +290,17 @@ async function fetchLiveStats() {
         const uptimeStatus = document.getElementById('stat-uptime-status');
         const sTotal = document.getElementById('shards-total');
         const sOnline = document.getElementById('shards-online');
+        const commandsStatus = document.getElementById('stat-commands-status');
+        const inventoryStatus = document.getElementById('stat-inventory-status');
+        const versionStatus = document.getElementById('stat-version-status');
 
         if (guildsStatus) guildsStatus.innerText = fallbackData.server_count.toLocaleString();
         if (usersStatus) usersStatus.innerText = fallbackData.user_count.toLocaleString();
         if (sTotal) sTotal.innerText = fallbackData.shards_total;
         if (sOnline) sOnline.innerText = fallbackData.shards_online;
+        if (commandsStatus) commandsStatus.innerText = fallbackData.total_commands_executed.toLocaleString();
+        if (inventoryStatus) inventoryStatus.innerText = fallbackData.inventory_items.toLocaleString();
+        if (versionStatus) versionStatus.innerText = `v${fallbackData.version}`;
         
         if (uptimeStatus) {
             const uptimeData = formatUptime(fallbackData.uptime_seconds); 
@@ -323,10 +340,13 @@ const dashObserver = new IntersectionObserver((entries) => {
 
 const statsSection = document.querySelector('.stats-section');
 const statusSection = document.getElementById('overall-status');
+const heroStats = document.getElementById('hero-servers');
 
 if (statsSection) {
     dashObserver.observe(statsSection);
 } else if (statusSection) {
+    fetchLiveStats();
+} else if (heroStats) {
     fetchLiveStats();
 }
 
@@ -493,12 +513,6 @@ document.addEventListener('mousemove', (e) => {
 
 // 5. Page Initialization
 function initApp() {
-    document.body.style.opacity = '0';
-    document.body.style.transition = 'opacity 0.6s ease';
-    setTimeout(() => {
-        document.body.style.opacity = '1';
-    }, 50);
-
     initReveals();
 }
 

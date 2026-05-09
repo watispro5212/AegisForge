@@ -35,6 +35,7 @@ const commandsData = [
             { name: "/economy shop", desc: "Browse the global auto-rendered shop catalog with profile, cosmetic, boost, utility, community, and limited items.", usage: "/economy shop category:text" },
             { name: "/economy buy", desc: "Buy one or more items from the global shop using wallet funds.", usage: "/economy buy item:text quantity:int" },
             { name: "/economy inventory", desc: "View your purchased shop items in the current server economy.", usage: "/economy inventory user:@user" },
+            { name: "/economy profile", desc: "View wallet, bank, net worth, local/global rank, and shop inventory count in one v4.1 profile.", usage: "/economy profile user:@user" },
             { name: "/economy rob", desc: "Attempt to steal from another user's wallet.", usage: "/economy rob user:@user" },
             { name: "/economy crime", desc: "Take a high-risk job with a 60-minute cooldown.", usage: "/economy crime" },
             { name: "/economy fish", desc: "Catch and sell fish with a 5-minute cooldown.", usage: "/economy fish" },

@@ -977,3 +977,237 @@
         padding: 0;
     }
 }
+
+/* ============================================================
+   V4.1 WEBSITE OVERHAUL
+   ============================================================ */
+.ops-strip {
+    width: min(1180px, 90vw);
+    margin: -36px auto 90px;
+    position: relative;
+    z-index: 3;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.ops-card,
+.surface-panel,
+.release-card {
+    background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.018));
+    border: 1px solid rgba(255,255,255,0.09);
+    box-shadow: 0 24px 70px rgba(0,0,0,0.28);
+}
+
+.ops-card {
+    border-radius: 16px;
+    padding: 1.35rem;
+}
+
+.ops-kicker,
+.surface-label,
+.release-eyebrow {
+    display: block;
+    color: var(--cyan);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+}
+
+.ops-card strong {
+    display: block;
+    font-size: 1.05rem;
+    margin-bottom: 0.45rem;
+}
+
+.ops-card p,
+.surface-panel p,
+.release-card p {
+    color: var(--text-dim);
+    font-size: 0.9rem;
+    line-height: 1.65;
+}
+
+.command-surface-section {
+    width: min(1180px, 90vw);
+    margin: 0 auto;
+    padding: 10px 0 90px;
+}
+
+.command-surface-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 0.9fr;
+    gap: 1rem;
+    align-items: stretch;
+}
+
+.surface-panel {
+    border-radius: 18px;
+    padding: 1.7rem;
+    min-height: 220px;
+}
+
+.surface-panel-large {
+    grid-row: span 2;
+    padding: 2.2rem;
+}
+
+.surface-panel h3 {
+    font-size: clamp(1.25rem, 2vw, 2rem);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.8rem;
+}
+
+.surface-command-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+    margin-top: 1.6rem;
+}
+
+.surface-command-list code {
+    background: rgba(0, 242, 255, 0.08);
+    border: 1px solid rgba(0, 242, 255, 0.16);
+    color: var(--cyan);
+    border-radius: 999px;
+    padding: 0.45rem 0.7rem;
+    font-size: 0.78rem;
+}
+
+.commands-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    max-width: 1100px;
+}
+
+.commands-main {
+    background: rgba(255,255,255,0.012);
+    border: 1px solid rgba(255,255,255,0.055);
+    border-radius: 22px;
+    padding: 2rem;
+}
+
+.commands-sidebar {
+    display: none;
+}
+
+.registry-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.registry-header p {
+    max-width: 720px;
+}
+
+.accordion-item {
+    border-radius: 16px;
+    background: rgba(8, 10, 18, 0.72);
+}
+
+.accordion-header {
+    min-height: 78px;
+}
+
+.category-icon {
+    min-width: 58px;
+    height: 42px;
+    padding: 0 0.55rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: rgba(0, 242, 255, 0.08);
+    color: var(--cyan);
+    font-size: 0.72rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+}
+
+.cmd-card {
+    min-height: 156px;
+}
+
+.cmd-usage code {
+    white-space: normal;
+    word-break: break-word;
+}
+
+.live-metrics-status {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+}
+
+.changelog-item code,
+.legal-section code {
+    background: rgba(0,242,255,0.08);
+    color: var(--cyan);
+    border-radius: 5px;
+    padding: 0.08rem 0.35rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78em;
+}
+
+.release-card {
+    width: min(900px, 90vw);
+    margin: 0 auto 80px;
+    border-radius: 20px;
+    padding: clamp(1.5rem, 4vw, 2.4rem);
+}
+
+.release-card h2 {
+    font-size: clamp(1.6rem, 4vw, 2.5rem);
+    line-height: 1.1;
+    letter-spacing: -0.025em;
+    margin-bottom: 0.7rem;
+}
+
+@media (max-width: 1050px) {
+    .ops-strip,
+    .command-surface-grid,
+    .commands-layout,
+    .live-metrics-status {
+        grid-template-columns: 1fr;
+    }
+
+    .ops-strip {
+        margin-top: 0;
+    }
+
+    .commands-main {
+        padding: 1.25rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .ops-strip,
+    .command-surface-section {
+        width: min(94vw, 1180px);
+    }
+
+    .surface-panel,
+    .surface-panel-large {
+        min-height: auto;
+        padding: 1.35rem;
+    }
+
+    .accordion-header {
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .category-info {
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .cmd-grid {
+        grid-template-columns: 1fr;
+    }
+}

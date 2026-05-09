@@ -2,6 +2,7 @@
 
 use axum::{
     extract::{Json, State},
+    http::HeaderMap,
     routing::get,
     routing::post,
     Router,
@@ -49,9 +50,26 @@ struct ShardStatus {
 
 async fn handle_vote(
     State(state): State<AppState>,
+    headers: HeaderMap,
     Json(payload): Json<VotePayload>,
 ) -> impl axum::response::IntoResponse {
     info!("Received top.gg vote from user {}", payload.user);
+
+    if let Ok(secret) = std::env::var("TOPGG_WEBHOOK_SECRET") {
+        let auth = headers
+            .get("authorization")
+            .and_then(|value| value.to_str().ok())
+            .unwrap_or_default();
+        let token = headers
+            .get("x-topgg-authorization")
+            .and_then(|value| value.to_str().ok())
+            .unwrap_or_default();
+
+        let valid = auth == secret || auth == format!("Bearer {}", secret) || token == secret;
+        if !valid {
+            return axum::http::StatusCode::UNAUTHORIZED;
+        }
+    }
 
     let user_id: i64 = payload.user.parse().unwrap_or(0);
     if user_id == 0 {
@@ -79,16 +97,16 @@ async fn handle_vote(
                 serenity::model::webhook::Webhook::from_url(&http, &webhook_url).await
             {
                 let embed = serenity::builder::CreateEmbed::new()
-                    .title("New Vote - Top.gg")
+                    .title("AegisForge Vote Reward")
                     .description(format!(
-                        "<@{}> voted for AegisForge and received **${}**.",
+                        "<@{}> voted on Top.gg and received **${}** across their economy profiles.",
                         payload.user, bonus
                     ))
-                    .field("Bonus", format!("`${}`", bonus), true)
+                    .field("Reward", format!("`${}`", bonus), true)
                     .field(
-                        "Weekend Multiplier",
+                        "Multiplier",
                         if payload.is_weekend {
-                            "2x active"
+                            "Weekend 2x"
                         } else {
                             "Standard"
                         },
@@ -115,9 +133,21 @@ struct Stats {
     uptime_seconds: u64,
     economy_activity: i64,
     xp_gain_24h: i64,
+    total_commands_executed: i64,
+    total_economy_transactions: i64,
+    inventory_items: i64,
     shards_total: u64,
     shards_online: u64,
     shards: Vec<ShardStatus>,
+    version: &'static str,
+}
+
+#[derive(Serialize)]
+struct Health {
+    ok: bool,
+    service: &'static str,
+    version: &'static str,
+    uptime_seconds: u64,
 }
 
 #[derive(Clone)]
@@ -137,6 +167,24 @@ async fn get_stats(State(state): State<AppState>) -> Json<Stats> {
         .await
         .unwrap_or(0);
     let total_xp = crate::db::leveling::get_total_xp(pool).await.unwrap_or(0);
+    let total_commands = sqlx::query_scalar::<_, i64>(
+        "SELECT COALESCE((SELECT stat_value FROM global_stats WHERE stat_key = 'total_commands_executed'), 0)",
+    )
+    .fetch_one(pool)
+    .await
+    .unwrap_or(0);
+    let economy_transactions = sqlx::query_scalar::<_, i64>(
+        "SELECT COALESCE((SELECT stat_value FROM global_stats WHERE stat_key = 'total_economy_transactions'), 0)",
+    )
+    .fetch_one(pool)
+    .await
+    .unwrap_or(0);
+    let inventory_items = sqlx::query_scalar::<_, i64>(
+        "SELECT COALESCE(SUM(quantity), 0)::BIGINT FROM economy_inventory",
+    )
+    .fetch_one(pool)
+    .await
+    .unwrap_or(0);
 
     let mut shard_statuses = Vec::new();
     let runners = state.shard_manager.runners.lock().await;
@@ -161,9 +209,22 @@ async fn get_stats(State(state): State<AppState>) -> Json<Stats> {
         uptime_seconds: state.start_time.elapsed().as_secs(),
         economy_activity: total_wealth,
         xp_gain_24h: total_xp,
+        total_commands_executed: total_commands,
+        total_economy_transactions: economy_transactions,
+        inventory_items,
         shards_total,
         shards_online,
         shards: shard_statuses,
+        version: env!("CARGO_PKG_VERSION"),
+    })
+}
+
+async fn get_health(State(state): State<AppState>) -> Json<Health> {
+    Json(Health {
+        ok: true,
+        service: "aegisforge",
+        version: env!("CARGO_PKG_VERSION"),
+        uptime_seconds: state.start_time.elapsed().as_secs(),
     })
 }
 
@@ -361,6 +422,7 @@ async fn main() -> Result<(), Error> {
 
     let app = Router::new()
         .route("/", get(|| async { "OK" }))
+        .route("/api/health", get(get_health))
         .route("/api/stats", get(get_stats))
         .route("/api/vote", post(handle_vote))
         .layer(

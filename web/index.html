@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="core.css">
     <link rel="stylesheet" href="components.css">
     <link rel="stylesheet" href="animations.css">
-    <link rel="stylesheet" href="pages.css">
+    <link rel="stylesheet" href="pages.css?v=4.1">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -168,6 +168,57 @@
         </div>
     </div>
 
+    <!-- v4.1 Operations Strip -->
+    <section class="ops-strip" aria-label="AegisForge v4.1 operational highlights">
+        <div class="ops-card">
+            <span class="ops-kicker">v4.1 module</span>
+            <strong>Hyperforge Market</strong>
+            <p>Global catalog, purchase flow, and persistent inventory profiles for every guild economy.</p>
+        </div>
+        <div class="ops-card">
+            <span class="ops-kicker">runtime</span>
+            <strong>Live API Telemetry</strong>
+            <p>Website status pages now read command totals, economy transactions, inventory volume, and shard health.</p>
+        </div>
+        <div class="ops-card">
+            <span class="ops-kicker">security</span>
+            <strong>Verified Vote Webhooks</strong>
+            <p>Top.gg rewards can be protected with a shared secret before economy balances are updated.</p>
+        </div>
+    </section>
+
+    <!-- Command Surface -->
+    <section class="command-surface-section">
+        <div class="section-header">
+            <span class="section-tag">Command Surface</span>
+            <h2>One bot for daily server operations</h2>
+            <p class="subtitle">v4.1 focuses on fewer dead ends: commands either act, report, or clearly tell you what to configure next.</p>
+        </div>
+        <div class="command-surface-grid">
+            <article class="surface-panel surface-panel-large">
+                <span class="surface-label">Economy loop</span>
+                <h3>Earn, bank, buy, show off.</h3>
+                <p>Players can build wealth through work, daily rewards, fishing, hunting, gambling, and the new shop inventory. The profile command turns that state into one readable snapshot.</p>
+                <div class="surface-command-list">
+                    <code>/economy profile</code>
+                    <code>/economy shop</code>
+                    <code>/economy buy</code>
+                    <code>/economy inventory</code>
+                </div>
+            </article>
+            <article class="surface-panel">
+                <span class="surface-label">Moderation</span>
+                <h3>Clear action history.</h3>
+                <p>Ban, kick, timeout, warnings, locks, and purges use structured embeds and persistent mod cases.</p>
+            </article>
+            <article class="surface-panel">
+                <span class="surface-label">Utilities</span>
+                <h3>Useful extras.</h3>
+                <p>Timers, dictionary lookups, polls, timestamps, QR codes, math, and server/user lookups.</p>
+            </article>
+        </div>
+    </section>
+
     <!-- Tech Stack Spotlight -->
     <section class="stack-section">
         <div class="section-header">
@@ -300,6 +351,7 @@
     <script src="script.js"></script>
 </body>
 </html>
+
 
 
 

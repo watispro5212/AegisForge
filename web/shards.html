@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="core.css">
     <link rel="stylesheet" href="components.css">
     <link rel="stylesheet" href="animations.css">
-    <link rel="stylesheet" href="pages.css">
+    <link rel="stylesheet" href="pages.css?v=4.1">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -90,6 +90,18 @@
                     <span class="metric-label">uptime</span>
                     <span class="metric-value" id="stat-uptime-status">...</span>
                 </div>
+                <div class="metric-mini">
+                    <span class="metric-label">commands</span>
+                    <span class="metric-value" id="stat-commands-status">...</span>
+                </div>
+                <div class="metric-mini">
+                    <span class="metric-label">inventory</span>
+                    <span class="metric-value" id="stat-inventory-status">...</span>
+                </div>
+                <div class="metric-mini">
+                    <span class="metric-label">version</span>
+                    <span class="metric-value" id="stat-version-status">...</span>
+                </div>
             </div>
 
             <!-- Shard Map -->
@@ -138,3 +150,4 @@
     <script src="script.js"></script>
 </body>
 </html>
+

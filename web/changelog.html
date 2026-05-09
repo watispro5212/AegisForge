@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="core.css">
     <link rel="stylesheet" href="components.css">
     <link rel="stylesheet" href="animations.css">
-    <link rel="stylesheet" href="pages.css">
+    <link rel="stylesheet" href="pages.css?v=4.1">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -67,8 +67,11 @@
                     <div class="changelog-title">v4.1.0 - Hyperforge Market</div>
                     <ul class="changelog-list">
                         <li><span class="badge badge-new">NEW</span> Added <code>/economy shop</code>, <code>/economy buy</code>, and <code>/economy inventory</code>.</li>
+                        <li><span class="badge badge-new">NEW</span> Added <code>/economy profile</code> with wallet, bank, net worth, local/global rank, and inventory count.</li>
+                        <li><span class="badge badge-new">NEW</span> Added <code>/api/health</code> and expanded <code>/api/stats</code> with command, transaction, inventory, and version telemetry.</li>
                         <li><span class="badge badge-new">NEW</span> Added a global shop catalog with Profile, Cosmetic, Collectible, Boost, Utility, Community, and Limited categories.</li>
                         <li><span class="badge badge-new">NEW</span> Added persistent inventory storage for purchased item quantities per server economy.</li>
+                        <li><span class="badge badge-fix">FIX</span> Added optional Top.gg webhook secret verification before vote rewards are applied.</li>
                         <li><span class="badge badge-polish">UI</span> Updated website copy, command registry, and economy guide for the v4.1 shop flow.</li>
                         <li><span class="badge badge-fix">FIX</span> Synchronized bot help output with the real command surface.</li>
                     </ul>
@@ -190,3 +193,4 @@
     <script src="script.js"></script>
 </body>
 </html>
+
