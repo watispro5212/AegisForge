@@ -1,6 +1,27 @@
 use crate::{Context, Error};
 use poise::serenity_prelude as serenity;
 
+const TOPSTATS_BOT_ID: &str = "1500582485367722004";
+
+#[derive(serde::Deserialize)]
+struct TopStatsBot {
+    monthly_votes: Option<i64>,
+    total_votes: Option<i64>,
+    server_count: Option<i64>,
+}
+
+async fn fetch_topstats(http: &reqwest::Client) -> Option<TopStatsBot> {
+    let token = std::env::var("TOPSTATS_TOKEN").ok()?;
+    let url = format!("https://api.topstats.gg/discord/bots/{}", TOPSTATS_BOT_ID);
+    let resp = http
+        .get(&url)
+        .header("Authorization", token)
+        .send()
+        .await
+        .ok()?;
+    resp.json::<TopStatsBot>().await.ok()
+}
+
 /// check the bot latency
 #[poise::command(slash_command, prefix_command)]
 pub async fn ping(ctx: Context<'_>) -> Result<(), Error> {
@@ -170,39 +191,54 @@ pub async fn stats(ctx: Context<'_>) -> Result<(), Error> {
     let guilds = ctx.cache().guild_count();
     let users = ctx.cache().user_count();
     let uptime = ctx.data().start_time.elapsed();
+    let topstats = fetch_topstats(&ctx.data().http_client).await;
 
-    ctx.send(
-        poise::CreateReply::default().embed(
-            serenity::CreateEmbed::new()
-                .title("📊 AegisForge — Global Telemetry")
-                .description("Aggregated metrics from the entire AegisForge network.")
-                .field(
-                    "🌐 Reach",
-                    format!("**{}** Servers\n**{}** Users", guilds, users),
-                    true,
-                )
-                .field(
-                    "⚙️ Resource Usage",
-                    "Tokio Runtime: Active\nDB Pool: Optimal",
-                    true,
-                )
-                .field(
-                    "⏱️ Session",
-                    format!(
-                        "<t:{}:R>",
-                        (chrono::Utc::now() - chrono::Duration::seconds(uptime.as_secs() as i64))
-                            .timestamp()
-                    ),
-                    true,
-                )
-                .footer(serenity::CreateEmbedFooter::new(
-                    "Powered by Rust + Tokio | AegisForge v4",
-                ))
-                .timestamp(serenity::Timestamp::now())
-                .color(0x00E5FF),
-        ),
-    )
-    .await?;
+    let mut embed = serenity::CreateEmbed::new()
+        .title("📊 AegisForge — Global Telemetry")
+        .description("Aggregated metrics from the entire AegisForge network.")
+        .field(
+            "🌐 Reach",
+            format!("**{}** Servers\n**{}** Users", guilds, users),
+            true,
+        )
+        .field(
+            "⚙️ Resource Usage",
+            "Tokio Runtime: Active\nDB Pool: Optimal",
+            true,
+        )
+        .field(
+            "⏱️ Session",
+            format!(
+                "<t:{}:R>",
+                (chrono::Utc::now() - chrono::Duration::seconds(uptime.as_secs() as i64))
+                    .timestamp()
+            ),
+            true,
+        );
+
+    if let Some(ts) = topstats {
+        let monthly = ts.monthly_votes.unwrap_or(0);
+        let total = ts.total_votes.unwrap_or(0);
+        let tracked_servers = ts.server_count.unwrap_or(guilds as i64);
+        embed = embed.field(
+            "🗳️ Top.gg Votes",
+            format!("**{}** this month\n**{}** all time", monthly, total),
+            true,
+        ).field(
+            "📈 Tracked Servers",
+            format!("**{}**", tracked_servers),
+            true,
+        );
+    }
+
+    embed = embed
+        .footer(serenity::CreateEmbedFooter::new(
+            "Powered by Rust + Tokio | AegisForge v4",
+        ))
+        .timestamp(serenity::Timestamp::now())
+        .color(0x00E5FF);
+
+    ctx.send(poise::CreateReply::default().embed(embed)).await?;
     Ok(())
 }
 

@@ -3,7 +3,11 @@
     "allow": [
       "Bash(Select-Object -First 10)",
       "Bash(git restore *)",
-      "Bash(fly status *)"
+      "Bash(fly status *)",
+      "WebSearch",
+      "WebFetch(domain:docs.topstats.gg)",
+      "WebFetch(domain:github.com)",
+      "Bash(cargo check *)"
     ]
   }
 }
