@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Select-Object -First 10)",
+      "Bash(git restore *)",
+      "Bash(fly status *)"
+    ]
+  }
+}
