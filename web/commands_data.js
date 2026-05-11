@@ -15,7 +15,13 @@ const commandsData = [
             { name: "/nuke", desc: "Recreate the current channel to clear all history.", usage: "/nuke" },
             { name: "/slowmode", desc: "Set the channel rate limit in seconds.", usage: "/slowmode seconds:int" },
             { name: "/lock", desc: "Prevent @everyone from sending messages.", usage: "/lock" },
-            { name: "/unlock", desc: "Remove the current channel lock.", usage: "/unlock" }
+            { name: "/unlock", desc: "Remove the current channel lock.", usage: "/unlock" },
+            { name: "/shadowban", desc: "Silently restrict a member using the mute role without notifying them. Logs internally only.", usage: "/shadowban user:@user reason:text" },
+            { name: "/unshadowban", desc: "Lift a shadow ban and restore a member's ability to interact.", usage: "/unshadowban user:@user" },
+            { name: "/tactical report", desc: "Generate a full moderation history report for a user — all cases, action counts, and timestamps.", usage: "/tactical report user:@user" },
+            { name: "/tactical intercept", desc: "Lock every text channel across the entire server simultaneously.", usage: "/tactical intercept reason:text" },
+            { name: "/tactical restore", desc: "Lift a server-wide intercept — unlocks all text channels at once.", usage: "/tactical restore" },
+            { name: "/tactical breach", desc: "Kick a user and bulk-delete their recent messages from the current channel.", usage: "/tactical breach user:@user purge_count:int reason:text" }
         ]
     },
     {
@@ -118,8 +124,13 @@ const commandsData = [
             { name: "/logs", desc: "Configure the moderation log channel.", usage: "/logs channel:#channel" },
             { name: "/welcome", desc: "Configure welcome messages.", usage: "/welcome channel:#channel message:text" },
             { name: "/autorole", desc: "Configure the join auto-role.", usage: "/autorole role:@role" },
+            { name: "/muterole", desc: "Set the role applied on /mute and /shadowban.", usage: "/muterole role:@role" },
             { name: "/prefix", desc: "Set the prefix command prefix.", usage: "/prefix prefix:text" },
             { name: "/settings", desc: "Review this server's saved configuration.", usage: "/settings" },
+            { name: "/sentinel enable", desc: "Activate Sentinel anti-raid detection for this server.", usage: "/sentinel enable" },
+            { name: "/sentinel disable", desc: "Deactivate Sentinel anti-raid detection.", usage: "/sentinel disable" },
+            { name: "/sentinel threshold", desc: "Set the join rate that triggers a raid response.", usage: "/sentinel threshold joins:int window:int" },
+            { name: "/sentinel status", desc: "Show current Sentinel configuration and state.", usage: "/sentinel status" },
             { name: "/create", desc: "Create a reminder.", usage: "/create duration:text message:text" }
         ]
     }

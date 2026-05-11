@@ -39,6 +39,8 @@ pub struct Data {
     pub database: Arc<Database>,
     pub start_time: std::time::Instant,
     pub http_client: reqwest::Client,
+    pub raid_tracker: Arc<models::sentinel::RaidTracker>,
+    pub sentinel_settings: Arc<dashmap::DashMap<u64, models::sentinel::SentinelConfig>>,
 }
 
 #[derive(Serialize)]
@@ -303,6 +305,9 @@ async fn main() -> Result<(), Error> {
                 commands::moderation::unlock(),
                 commands::moderation::timeout(),
                 commands::moderation::mute(),
+                commands::moderation::shadowban(),
+                commands::moderation::unshadowban(),
+                commands::moderation::tactical(),
                 commands::moderation::unmute(),
                 commands::moderation::warn(),
                 commands::moderation::purge(),
@@ -316,6 +321,8 @@ async fn main() -> Result<(), Error> {
                 commands::config::autorole(),
                 commands::config::prefix(),
                 commands::config::settings(),
+                commands::config::muterole(),
+                commands::config::sentinel(),
                 // reminders
                 commands::remind::create(),
             ],
@@ -396,6 +403,8 @@ async fn main() -> Result<(), Error> {
                         database: db,
                         start_time,
                         http_client: reqwest::Client::new(),
+                        raid_tracker: Arc::new(dashmap::DashMap::new()),
+                        sentinel_settings: Arc::new(dashmap::DashMap::new()),
                     })
                 })
             }

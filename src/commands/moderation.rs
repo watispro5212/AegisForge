@@ -1,6 +1,7 @@
 use crate::db::mod_cases::NewModCase;
 use crate::{Context, Error};
 use poise::serenity_prelude as serenity;
+use serenity::model::channel::ChannelType;
 use std::time::Duration;
 
 /// kick someone out
@@ -15,6 +16,7 @@ pub async fn kick(
     #[description = "The user to kick"] user: serenity::User,
     #[description = "The reason for the kick"] reason: Option<String>,
 ) -> Result<(), Error> {
+    ctx.defer().await?;
     let guild_id = ctx.guild_id().ok_or("Must be in a guild")?;
     let reason_str = reason.as_deref().unwrap_or("No reason provided");
 
@@ -73,6 +75,7 @@ pub async fn timeout(
     #[description = "Duration in minutes (1-40320)"] minutes: u64,
     #[description = "The reason for the timeout"] reason: Option<String>,
 ) -> Result<(), Error> {
+    ctx.defer().await?;
     let guild_id = ctx.guild_id().ok_or("Must be in a guild")?;
     let reason_str = reason.as_deref().unwrap_or("No reason provided");
 
@@ -140,6 +143,7 @@ pub async fn ban(
     #[description = "Delete message history (days, 0-7)"] delete_days: Option<u8>,
     #[description = "The reason for the ban"] reason: Option<String>,
 ) -> Result<(), Error> {
+    ctx.defer().await?;
     let guild_id = ctx.guild_id().ok_or("Must be in a guild")?;
     let reason_str = reason.as_deref().unwrap_or("No reason provided");
     let days = delete_days.unwrap_or(0).min(7);
@@ -199,6 +203,7 @@ pub async fn softban(
     #[description = "Delete message history (days, 1-7)"] delete_days: Option<u8>,
     #[description = "The reason for the softban"] reason: Option<String>,
 ) -> Result<(), Error> {
+    ctx.defer().await?;
     let guild_id = ctx.guild_id().ok_or("Must be in a guild")?;
     let reason_str = reason.as_deref().unwrap_or("No reason provided");
     let days = delete_days.unwrap_or(1).clamp(1, 7);
@@ -257,6 +262,7 @@ pub async fn unban(
     ctx: Context<'_>,
     #[description = "The user ID to unban"] user_id: serenity::UserId,
 ) -> Result<(), Error> {
+    ctx.defer().await?;
     let guild_id = ctx.guild_id().ok_or("Must be in a guild")?;
     guild_id.unban(ctx.http(), user_id).await?;
 
@@ -308,6 +314,7 @@ pub async fn warn(
     #[description = "The user to warn"] user: serenity::User,
     #[description = "The reason for the warning"] reason: String,
 ) -> Result<(), Error> {
+    ctx.defer().await?;
     // log to DB
     let pool = &ctx.data().database.pool;
     let guild_id = ctx.guild_id().unwrap().get() as i64;
@@ -365,6 +372,7 @@ pub async fn purge(
     ctx: Context<'_>,
     #[description = "Number of messages to delete (1-100)"] amount: u64,
 ) -> Result<(), Error> {
+    ctx.defer().await?;
     let channel = ctx.channel_id();
     let limit = amount.clamp(1, 100) as u8;
 
@@ -393,6 +401,7 @@ pub async fn purge(
     guild_only
 )]
 pub async fn nuke(ctx: Context<'_>) -> Result<(), Error> {
+    ctx.defer().await?;
     let channel = ctx
         .guild_channel()
         .await
@@ -540,6 +549,7 @@ pub async fn mute(
     #[description = "Duration in minutes (defaults to 60)"] minutes: Option<u64>,
     #[description = "The reason for the mute"] reason: Option<String>,
 ) -> Result<(), Error> {
+    ctx.defer().await?;
     let guild_id = ctx.guild_id().ok_or("Must be in a guild")?;
     let reason_str = reason.as_deref().unwrap_or("No reason provided");
     let m = minutes.unwrap_or(60);
@@ -594,6 +604,196 @@ pub async fn mute(
     Ok(())
 }
 
+/// silently restrict a member without notifying them
+#[poise::command(
+    slash_command,
+    prefix_command,
+    required_permissions = "MANAGE_ROLES",
+    guild_only,
+    ephemeral
+)]
+pub async fn shadowban(
+    ctx: Context<'_>,
+    #[description = "The user to shadow ban"] user: serenity::User,
+    #[description = "Internal reason (never shown to the target)"] reason: Option<String>,
+) -> Result<(), Error> {
+    let guild_id = ctx.guild_id().ok_or("Must be in a guild")?;
+    let reason_str = reason.as_deref().unwrap_or("No reason provided");
+    let pool = &ctx.data().database.pool;
+    let guild_id_i64 = guild_id.get() as i64;
+
+    let config = ctx.data().database.get_guild_config(guild_id_i64).await?;
+    let mute_role_id = match config.mute_role_id {
+        Some(id) => serenity::RoleId::new(id as u64),
+        None => {
+            ctx.say("❌ No mute role configured. Set one first with `/muterole <role>`.").await?;
+            return Ok(());
+        }
+    };
+
+    if user.id == ctx.author().id {
+        ctx.say("❌ You cannot shadow ban yourself.").await?;
+        return Ok(());
+    }
+
+    // apply mute role silently — no DM, no public message
+    let mut member = guild_id.member(ctx.http(), user.id).await?;
+    member.add_role(ctx.http(), mute_role_id).await?;
+
+    // record in shadow_bans table
+    crate::db::guild::add_shadow_ban(
+        pool,
+        guild_id_i64,
+        user.id.get() as i64,
+        ctx.author().id.get() as i64,
+        Some(reason_str),
+    )
+    .await?;
+
+    // log to mod_cases
+    let case = crate::db::mod_cases::create_case(
+        pool,
+        NewModCase {
+            guild_id: guild_id_i64,
+            target_id: user.id.get() as i64,
+            moderator_id: ctx.author().id.get() as i64,
+            action: crate::models::mod_case::ModAction::ShadowBan,
+            reason: Some(reason_str),
+            duration_secs: None,
+            expires_at: None,
+        },
+    )
+    .await?;
+
+    // log to mod log channel only
+    if let Some(log_channel) = config.mod_log_channel {
+        let embed = serenity::CreateEmbed::new()
+            .title("👤 Shadow Ban Applied")
+            .description(format!(
+                "**{}** (`{}`) has been silently restricted.",
+                user.name, user.id
+            ))
+            .field("👤 Target", format!("<@{}>", user.id), true)
+            .field("🛡️ Moderator", format!("<@{}>", ctx.author().id), true)
+            .field("🆔 Case", format!("#{}", case.case_number), true)
+            .field("📝 Reason", reason_str, false)
+            .field("ℹ️ Note", "The target has not been notified.", false)
+            .footer(serenity::CreateEmbedFooter::new(
+                "AegisForge Shadow Ban | Visible to moderators only",
+            ))
+            .timestamp(serenity::Timestamp::now())
+            .color(0x2C2F33);
+
+        let _ = serenity::ChannelId::new(log_channel as u64)
+            .send_message(
+                ctx.http(),
+                serenity::builder::CreateMessage::new().embed(embed),
+            )
+            .await;
+    }
+
+    // ephemeral confirmation — only the invoking mod sees this
+    ctx.send(poise::CreateReply::default().ephemeral(true).embed(
+        serenity::CreateEmbed::new()
+            .title("👤 Shadow Ban Applied")
+            .description(format!(
+                "**{}** has been silently restricted. They have not been notified.",
+                user.name
+            ))
+            .field("🆔 Case", format!("#{}", case.case_number), true)
+            .field("📝 Reason", reason_str, false)
+            .color(0x2C2F33),
+    ))
+    .await?;
+    Ok(())
+}
+
+/// lift a shadow ban and restore a member's ability to interact
+#[poise::command(
+    slash_command,
+    prefix_command,
+    required_permissions = "MANAGE_ROLES",
+    guild_only,
+    ephemeral
+)]
+pub async fn unshadowban(
+    ctx: Context<'_>,
+    #[description = "The user to un-shadow ban"] user: serenity::User,
+) -> Result<(), Error> {
+    let guild_id = ctx.guild_id().ok_or("Must be in a guild")?;
+    let pool = &ctx.data().database.pool;
+    let guild_id_i64 = guild_id.get() as i64;
+
+    let config = ctx.data().database.get_guild_config(guild_id_i64).await?;
+    let mute_role_id = match config.mute_role_id {
+        Some(id) => serenity::RoleId::new(id as u64),
+        None => {
+            ctx.say("❌ No mute role configured. Set one with `/muterole <role>`.").await?;
+            return Ok(());
+        }
+    };
+
+    let was_banned = crate::db::guild::remove_shadow_ban(pool, guild_id_i64, user.id.get() as i64).await?;
+    if !was_banned {
+        ctx.say(format!("❌ **{}** is not shadow banned.", user.name)).await?;
+        return Ok(());
+    }
+
+    // remove mute role silently
+    let mut member = guild_id.member(ctx.http(), user.id).await?;
+    member.remove_role(ctx.http(), mute_role_id).await?;
+
+    // log to mod_cases
+    let case = crate::db::mod_cases::create_case(
+        pool,
+        NewModCase {
+            guild_id: guild_id_i64,
+            target_id: user.id.get() as i64,
+            moderator_id: ctx.author().id.get() as i64,
+            action: crate::models::mod_case::ModAction::ShadowUnban,
+            reason: None,
+            duration_secs: None,
+            expires_at: None,
+        },
+    )
+    .await?;
+
+    // log to mod log channel
+    if let Some(log_channel) = config.mod_log_channel {
+        let embed = serenity::CreateEmbed::new()
+            .title("👤 Shadow Ban Lifted")
+            .description(format!(
+                "**{}** (`{}`) has been silently restored.",
+                user.name, user.id
+            ))
+            .field("👤 Target", format!("<@{}>", user.id), true)
+            .field("🛡️ Moderator", format!("<@{}>", ctx.author().id), true)
+            .field("🆔 Case", format!("#{}", case.case_number), true)
+            .footer(serenity::CreateEmbedFooter::new(
+                "AegisForge Shadow Ban | Visible to moderators only",
+            ))
+            .timestamp(serenity::Timestamp::now())
+            .color(0x57F287);
+
+        let _ = serenity::ChannelId::new(log_channel as u64)
+            .send_message(
+                ctx.http(),
+                serenity::builder::CreateMessage::new().embed(embed),
+            )
+            .await;
+    }
+
+    ctx.send(poise::CreateReply::default().ephemeral(true).embed(
+        serenity::CreateEmbed::new()
+            .title("👤 Shadow Ban Lifted")
+            .description(format!("**{}** can interact normally again.", user.name))
+            .field("🆔 Case", format!("#{}", case.case_number), true)
+            .color(0x57F287),
+    ))
+    .await?;
+    Ok(())
+}
+
 /// unmute a member (removes timeout)
 #[poise::command(
     slash_command,
@@ -606,6 +806,7 @@ pub async fn unmute(
     #[description = "The user to unmute"] user: serenity::User,
     #[description = "The reason for the unmute"] reason: Option<String>,
 ) -> Result<(), Error> {
+    ctx.defer().await?;
     let guild_id = ctx.guild_id().ok_or("Must be in a guild")?;
     let reason_str = reason.as_deref().unwrap_or("No reason provided");
 
@@ -642,6 +843,379 @@ pub async fn unmute(
                 .color(0x57F287),
         ),
     )
+    .await?;
+    Ok(())
+}
+
+// ── Tactical Commands ────────────────────────────────────────────────────────
+
+/// advanced tactical moderation operations
+#[poise::command(
+    slash_command,
+    prefix_command,
+    required_permissions = "MANAGE_GUILD",
+    guild_only,
+    subcommands("report", "intercept", "restore", "breach")
+)]
+pub async fn tactical(_ctx: Context<'_>) -> Result<(), Error> {
+    Ok(())
+}
+
+/// generate a full moderation history report for a user
+#[poise::command(slash_command, prefix_command, guild_only)]
+pub async fn report(
+    ctx: Context<'_>,
+    #[description = "The user to pull the report for"] user: serenity::User,
+) -> Result<(), Error> {
+    ctx.defer().await?;
+    let guild_id = ctx.guild_id().ok_or("Must be in a guild")?;
+    let pool = &ctx.data().database.pool;
+    let guild_id_i64 = guild_id.get() as i64;
+
+    let cases =
+        crate::db::mod_cases::get_cases_for_user(pool, guild_id_i64, user.id.get() as i64)
+            .await?;
+
+    if cases.is_empty() {
+        ctx.send(poise::CreateReply::default().embed(
+            serenity::CreateEmbed::new()
+                .title(format!("📋 Tactical Report — {}", user.name))
+                .description("No moderation history found for this user.")
+                .color(0x2C2F33),
+        ))
+        .await?;
+        return Ok(());
+    }
+
+    // tally action counts
+    let mut counts: std::collections::HashMap<&str, usize> = std::collections::HashMap::new();
+    for c in &cases {
+        *counts.entry(c.action.as_str()).or_insert(0) += 1;
+    }
+
+    // build case log — last 10 entries to avoid embed overflow
+    let recent: Vec<_> = cases.iter().rev().take(10).collect();
+    let case_log = recent
+        .iter()
+        .map(|c| {
+            let ts = c.created_at.timestamp();
+            format!(
+                "`#{}` **{}** — <t:{}:R>{}",
+                c.case_number,
+                c.action,
+                ts,
+                c.reason
+                    .as_deref()
+                    .map(|r| format!("\n> {}", r))
+                    .unwrap_or_default()
+            )
+        })
+        .collect::<Vec<_>>()
+        .join("\n");
+
+    let summary = counts
+        .iter()
+        .map(|(k, v)| format!("`{}` ×{}", k, v))
+        .collect::<Vec<_>>()
+        .join("  ");
+
+    ctx.send(poise::CreateReply::default().embed(
+        serenity::CreateEmbed::new()
+            .title(format!("📋 Tactical Report — {}", user.name))
+            .description(format!(
+                "**{}** total case(s) on record.\n\n{}",
+                cases.len(),
+                summary
+            ))
+            .thumbnail(user.face())
+            .field(
+                format!(
+                    "Recent Cases (showing {}/{})",
+                    recent.len(),
+                    cases.len()
+                ),
+                case_log,
+                false,
+            )
+            .field("🆔 User ID", format!("`{}`", user.id), true)
+            .field(
+                "📅 First Case",
+                format!("<t:{}:D>", cases.first().unwrap().created_at.timestamp()),
+                true,
+            )
+            .field(
+                "📅 Latest Case",
+                format!("<t:{}:D>", cases.last().unwrap().created_at.timestamp()),
+                true,
+            )
+            .footer(serenity::CreateEmbedFooter::new(
+                "AegisForge Tactical Report | Moderator eyes only",
+            ))
+            .timestamp(serenity::Timestamp::now())
+            .color(0x2C2F33),
+    ))
+    .await?;
+    Ok(())
+}
+
+/// lock all text channels across the entire server simultaneously
+#[poise::command(
+    slash_command,
+    prefix_command,
+    required_permissions = "MANAGE_CHANNELS",
+    guild_only
+)]
+pub async fn intercept(
+    ctx: Context<'_>,
+    #[description = "Reason for the server-wide lockdown"] reason: Option<String>,
+) -> Result<(), Error> {
+    ctx.defer().await?;
+    let guild_id = ctx.guild_id().ok_or("Must be in a guild")?;
+    let reason_str = reason.as_deref().unwrap_or("Tactical intercept ordered by staff");
+
+    let channels = guild_id.channels(ctx.http()).await?;
+    let text_channels: Vec<_> = channels
+        .values()
+        .filter(|c| c.kind == ChannelType::Text)
+        .collect();
+
+    let total = text_channels.len();
+    let everyone = guild_id.everyone_role();
+    let overwrite = serenity::PermissionOverwrite {
+        allow: serenity::Permissions::empty(),
+        deny: serenity::Permissions::SEND_MESSAGES,
+        kind: serenity::PermissionOverwriteType::Role(everyone),
+    };
+
+    // acknowledge immediately — the channel loop takes time
+    ctx.send(poise::CreateReply::default().embed(
+        serenity::CreateEmbed::new()
+            .title("🔒 Tactical Intercept — Initiating")
+            .description(format!(
+                "Locking **{}** channel(s) server-wide. Stand by.",
+                total
+            ))
+            .color(0xFF4500),
+    ))
+    .await?;
+
+    let mut locked = 0usize;
+    for channel in &text_channels {
+        if channel
+            .create_permission(ctx.http(), overwrite.clone())
+            .await
+            .is_ok()
+        {
+            locked += 1;
+        }
+    }
+
+    // log to mod channel
+    let config = ctx
+        .data()
+        .database
+        .get_guild_config(guild_id.get() as i64)
+        .await?;
+    if let Some(log_channel) = config.mod_log_channel {
+        let embed = serenity::CreateEmbed::new()
+            .title("🔒 Tactical Intercept Deployed")
+            .description(format!(
+                "Server-wide lockdown initiated by <@{}>.",
+                ctx.author().id
+            ))
+            .field("Channels Locked", format!("`{}/{}`", locked, total), true)
+            .field("📝 Reason", reason_str, false)
+            .footer(serenity::CreateEmbedFooter::new(
+                "Use /unlock on each channel or /tactical restore to lift",
+            ))
+            .timestamp(serenity::Timestamp::now())
+            .color(0xFF4500);
+
+        let _ = serenity::ChannelId::new(log_channel as u64)
+            .send_message(
+                ctx.http(),
+                serenity::builder::CreateMessage::new().embed(embed),
+            )
+            .await;
+    }
+
+    ctx.send(poise::CreateReply::default().embed(
+        serenity::CreateEmbed::new()
+            .title("🔒 Tactical Intercept — Complete")
+            .description(format!(
+                "**{}/{}** channels locked.\n📝 Reason: {}",
+                locked, total, reason_str
+            ))
+            .footer(serenity::CreateEmbedFooter::new(
+                "Use /unlock per channel to restore, or /tactical restore for full lift",
+            ))
+            .timestamp(serenity::Timestamp::now())
+            .color(0xFF4500),
+    ))
+    .await?;
+    Ok(())
+}
+
+/// lift a server-wide intercept — removes the @everyone SEND_MESSAGES deny from all channels
+#[poise::command(
+    slash_command,
+    prefix_command,
+    required_permissions = "MANAGE_CHANNELS",
+    guild_only
+)]
+pub async fn restore(ctx: Context<'_>) -> Result<(), Error> {
+    ctx.defer().await?;
+    let guild_id = ctx.guild_id().ok_or("Must be in a guild")?;
+    let channels = guild_id.channels(ctx.http()).await?;
+    let text_channels: Vec<_> = channels
+        .values()
+        .filter(|c| c.kind == ChannelType::Text)
+        .collect();
+
+    let total = text_channels.len();
+    let everyone = guild_id.everyone_role();
+
+    ctx.send(poise::CreateReply::default().embed(
+        serenity::CreateEmbed::new()
+            .title("🔓 Tactical Restore — Initiating")
+            .description(format!("Unlocking **{}** channel(s). Stand by.", total))
+            .color(0x57F287),
+    ))
+    .await?;
+
+    let mut restored = 0usize;
+    for channel in &text_channels {
+        if channel
+            .delete_permission(
+                ctx.http(),
+                serenity::PermissionOverwriteType::Role(everyone),
+            )
+            .await
+            .is_ok()
+        {
+            restored += 1;
+        }
+    }
+
+    // log to mod channel
+    let config = ctx
+        .data()
+        .database
+        .get_guild_config(guild_id.get() as i64)
+        .await?;
+    if let Some(log_channel) = config.mod_log_channel {
+        let embed = serenity::CreateEmbed::new()
+            .title("🔓 Tactical Restore Complete")
+            .description(format!(
+                "Server-wide lockdown lifted by <@{}>.",
+                ctx.author().id
+            ))
+            .field("Channels Restored", format!("`{}/{}`", restored, total), true)
+            .timestamp(serenity::Timestamp::now())
+            .color(0x57F287);
+
+        let _ = serenity::ChannelId::new(log_channel as u64)
+            .send_message(
+                ctx.http(),
+                serenity::builder::CreateMessage::new().embed(embed),
+            )
+            .await;
+    }
+
+    ctx.send(poise::CreateReply::default().embed(
+        serenity::CreateEmbed::new()
+            .title("🔓 Tactical Restore — Complete")
+            .description(format!(
+                "**{}/{}** channels unlocked. The server is open again.",
+                restored, total
+            ))
+            .timestamp(serenity::Timestamp::now())
+            .color(0x57F287),
+    ))
+    .await?;
+    Ok(())
+}
+
+/// kick a user and purge their recent messages from the current channel
+#[poise::command(
+    slash_command,
+    prefix_command,
+    required_permissions = "KICK_MEMBERS",
+    guild_only
+)]
+pub async fn breach(
+    ctx: Context<'_>,
+    #[description = "The user to breach"] user: serenity::User,
+    #[description = "Messages to purge from this channel (1-50, default 25)"] purge_count: Option<u8>,
+    #[description = "Reason"] reason: Option<String>,
+) -> Result<(), Error> {
+    ctx.defer().await?;
+    let guild_id = ctx.guild_id().ok_or("Must be in a guild")?;
+    let reason_str = reason.as_deref().unwrap_or("Tactical breach");
+    let limit = purge_count.unwrap_or(25).clamp(1, 50);
+    let pool = &ctx.data().database.pool;
+
+    // fetch recent messages and filter to target user
+    let messages = ctx
+        .channel_id()
+        .messages(
+            ctx.http(),
+            serenity::GetMessages::default().limit(100),
+        )
+        .await?;
+
+    let target_msgs: Vec<serenity::MessageId> = messages
+        .iter()
+        .filter(|m| m.author.id == user.id)
+        .take(limit as usize)
+        .map(|m| m.id)
+        .collect();
+
+    let purged = target_msgs.len();
+    if !target_msgs.is_empty() {
+        let _ = ctx
+            .channel_id()
+            .delete_messages(ctx.http(), &target_msgs)
+            .await;
+    }
+
+    // kick
+    guild_id
+        .kick_with_reason(ctx.http(), user.id, reason_str)
+        .await?;
+
+    // log to mod_cases
+    let case = crate::db::mod_cases::create_case(
+        pool,
+        NewModCase {
+            guild_id: guild_id.get() as i64,
+            target_id: user.id.get() as i64,
+            moderator_id: ctx.author().id.get() as i64,
+            action: crate::models::mod_case::ModAction::Kick,
+            reason: Some(reason_str),
+            duration_secs: None,
+            expires_at: None,
+        },
+    )
+    .await?;
+
+    ctx.send(poise::CreateReply::default().embed(
+        serenity::CreateEmbed::new()
+            .title("⚡ Tactical Breach — Executed")
+            .description(format!(
+                "**{}** has been expelled and their message trail purged.",
+                user.name
+            ))
+            .field("👤 Target", format!("<@{}>", user.id), true)
+            .field("🗑️ Messages Purged", format!("`{}`", purged), true)
+            .field("🆔 Case", format!("#{}", case.case_number), true)
+            .field("📝 Reason", reason_str, false)
+            .footer(serenity::CreateEmbedFooter::new(
+                "Moderation Action Logged | AegisForge Tactical",
+            ))
+            .timestamp(serenity::Timestamp::now())
+            .color(0xFF4500),
+    ))
     .await?;
     Ok(())
 }

@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="core.css">
     <link rel="stylesheet" href="components.css">
     <link rel="stylesheet" href="animations.css">
-    <link rel="stylesheet" href="pages.css?v=4.1">
+    <link rel="stylesheet" href="pages.css?v=4.2">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -61,6 +61,20 @@
             </div>
 
             <div class="changelog-timeline">
+
+                <div class="changelog-item reveal-on-scroll">
+                    <div class="changelog-date">May 11, 2026</div>
+                    <div class="changelog-title">v4.2.0 - Sentinel Security Suite</div>
+                    <ul class="changelog-list">
+                        <li><span class="badge badge-new">NEW</span> <strong>Sentinel Anti-Raid:</strong> per-guild join-rate detection auto-kicks raiders and fires an alert to the mod log channel. Configurable via <code>/sentinel enable/disable/threshold/status</code>.</li>
+                        <li><span class="badge badge-new">NEW</span> <strong>Shadow Ban System:</strong> <code>/shadowban</code> and <code>/unshadowban</code> silently apply/remove the mute role with no user notification. Requires <code>/muterole</code> setup. Full mod case audit trail.</li>
+                        <li><span class="badge badge-new">NEW</span> <strong>Tactical Commands:</strong> <code>/tactical report</code> generates full mod history; <code>/tactical intercept</code> locks all server channels at once; <code>/tactical restore</code> lifts the lock; <code>/tactical breach</code> kicks + purges a user's messages.</li>
+                        <li><span class="badge badge-new">NEW</span> <code>/muterole</code> config command to designate the server mute role for both <code>/mute</code> and <code>/shadowban</code>.</li>
+                        <li><span class="badge badge-fix">FIX</span> All slash commands now call <code>ctx.defer()</code> before async work — eliminates the 3-second interaction timeout that caused "application did not respond" errors.</li>
+                        <li><span class="badge badge-fix">FIX</span> <code>/botinfo</code> now runs its three database queries in parallel via <code>tokio::join!</code> — faster cold responses.</li>
+                        <li><span class="badge badge-new">NEW</span> TopStats.gg integration — <code>/stats</code> now shows monthly and all-time vote counts pulled from the TopStats API.</li>
+                    </ul>
+                </div>
 
                 <div class="changelog-item reveal-on-scroll">
                     <div class="changelog-date">May 9, 2026</div>
@@ -202,7 +216,7 @@
         </div>
     </footer>
 
-    <script src="script.js?v=4.1.2"></script>
+    <script src="script.js?v=4.2.2"></script>
 </body>
 </html>
 

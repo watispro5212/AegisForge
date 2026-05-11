@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="core.css">
     <link rel="stylesheet" href="components.css">
     <link rel="stylesheet" href="animations.css">
-    <link rel="stylesheet" href="pages.css?v=4.1">
+    <link rel="stylesheet" href="pages.css?v=4.2">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -56,9 +56,9 @@
     <header class="hero">
         <div class="hero-inner">
             <div class="hero-content">
-                <div class="hero-badge">v4.1 - Hyperforge Market is live</div>
+                <div class="hero-badge">v4.2 - Sentinel Security Suite is live</div>
                 <h1>Run your server with <span class="text-gradient">speed</span>, structure, and control.</h1>
-                <p>AegisForge v4.1 combines moderation, economy, leveling, utility tools, persistent shop inventory, and live telemetry in one fast Discord bot built on Rust, Tokio, Serenity, SQLx, and Neon Postgres.</p>
+                <p>AegisForge v4.2 adds Sentinel anti-raid detection, silent shadow bans, and tactical moderation commands on top of economy, leveling, utility tools, persistent shop inventory, and live telemetry — all in one fast Discord bot built on Rust.</p>
                 <div class="hero-btns">
                     <a href="https://discord.com/oauth2/authorize?client_id=1500582485367722004&permissions=8&response_type=code&redirect_uri=https%3A%2F%2Fdiscord.com%2Foauth2%2Fauthorize%3Fclient_id%3D1500582485367722004&integration_type=0&scope=bot+identify+applications.commands+applications.commands.permissions.update+openid" target="_blank" rel="noopener noreferrer" class="btn-primary shine-effect btn-icon">
                         <i class="fa-brands fa-discord"></i>Add to Server
@@ -154,6 +154,12 @@
             <span class="ticker-separator">•</span>
             <span class="ticker-item">LIVE TELEMETRY</span>
             <span class="ticker-separator">•</span>
+            <span class="ticker-item">SENTINEL ANTI-RAID</span>
+            <span class="ticker-separator">•</span>
+            <span class="ticker-item">SHADOW BAN SYSTEM</span>
+            <span class="ticker-separator">•</span>
+            <span class="ticker-item">TACTICAL OPS</span>
+            <span class="ticker-separator">•</span>
             <span class="ticker-item">ZERO GC PAUSES</span>
             <span class="ticker-separator">•</span>
             <span class="ticker-item">RUST BACKEND</span>
@@ -165,25 +171,31 @@
             <span class="ticker-item">XP LEVELING SYSTEM</span>
             <span class="ticker-separator">•</span>
             <span class="ticker-item">LIVE TELEMETRY</span>
+            <span class="ticker-separator">•</span>
+            <span class="ticker-item">SENTINEL ANTI-RAID</span>
+            <span class="ticker-separator">•</span>
+            <span class="ticker-item">SHADOW BAN SYSTEM</span>
+            <span class="ticker-separator">•</span>
+            <span class="ticker-item">TACTICAL OPS</span>
         </div>
     </div>
 
-    <!-- v4.1 Operations Strip -->
-    <section class="ops-strip" aria-label="AegisForge v4.1 operational highlights">
+    <!-- v4.2 Operations Strip -->
+    <section class="ops-strip" aria-label="AegisForge v4.2 operational highlights">
         <div class="ops-card">
-            <span class="ops-kicker">v4.1 module</span>
-            <strong>Hyperforge Market</strong>
-            <p>Global catalog, purchase flow, and persistent inventory profiles for every guild economy.</p>
+            <span class="ops-kicker">v4.2 module</span>
+            <strong>Sentinel Anti-Raid</strong>
+            <p>Heuristic join-rate detection auto-kicks raiders and fires an Ember Orange alert to your mod log the moment the threshold is breached.</p>
         </div>
         <div class="ops-card">
-            <span class="ops-kicker">runtime</span>
-            <strong>Live API Telemetry</strong>
-            <p>Website status pages now read command totals, economy transactions, inventory volume, and shard health.</p>
+            <span class="ops-kicker">v4.2 module</span>
+            <strong>Shadow Ban System</strong>
+            <p>Silently restrict a member using the mute role — no DM, no public message, full audit trail visible only to your moderation team.</p>
         </div>
         <div class="ops-card">
-            <span class="ops-kicker">security</span>
-            <strong>Verified Vote Webhooks</strong>
-            <p>Top.gg rewards can be protected with a shared secret before economy balances are updated.</p>
+            <span class="ops-kicker">v4.2 module</span>
+            <strong>Tactical Commands</strong>
+            <p>Server-wide intercept, one-command restore, targeted breach kicks, and full mod history reports under <code>/tactical</code>.</p>
         </div>
     </section>
 
@@ -208,8 +220,14 @@
             </article>
             <article class="surface-panel">
                 <span class="surface-label">Moderation</span>
-                <h3>Clear action history.</h3>
-                <p>Ban, kick, timeout, warnings, locks, and purges use structured embeds and persistent mod cases.</p>
+                <h3>Precision at every level.</h3>
+                <p>Ban, kick, timeout, warn, purge, lock, shadow ban, server-wide intercept, and full history reports — all logged to persistent mod cases.</p>
+                <div class="surface-command-list">
+                    <code>/tactical report</code>
+                    <code>/shadowban</code>
+                    <code>/tactical intercept</code>
+                    <code>/sentinel enable</code>
+                </div>
             </article>
             <article class="surface-panel">
                 <span class="surface-label">Utilities</span>
@@ -254,7 +272,12 @@
             <div class="feature-card reveal-on-scroll">
                 <div class="feature-icon">MOD</div>
                 <h3>Moderation</h3>
-                <p>Ban, softban, kick, timeout, warn, purge, slowmode, lock, unlock, and nuke channels with structured responses.</p>
+                <p>Ban, softban, kick, timeout, warn, purge, slowmode, lock, unlock, nuke, shadow ban, tactical intercept, and full mod history reports.</p>
+            </div>
+            <div class="feature-card reveal-on-scroll">
+                <div class="feature-icon">SNT</div>
+                <h3>Sentinel</h3>
+                <p>Configurable anti-raid detection — auto-kicks when join rate spikes past your threshold and fires a live alert to your mod log channel.</p>
             </div>
             <div class="feature-card reveal-on-scroll">
                 <div class="feature-icon">ECO</div>
@@ -306,6 +329,14 @@
                 <h3>How do I setup logs?</h3>
                 <p>Use <code>/logs channel:#channel</code> to designate where all moderation actions should be archived.</p>
             </div>
+            <div class="faq-item">
+                <h3>How does Sentinel work?</h3>
+                <p>Run <code>/sentinel enable</code> and optionally <code>/sentinel threshold joins:5 window:10</code>. When the join rate exceeds the threshold, joiners are auto-kicked and a raid alert fires to your mod log channel.</p>
+            </div>
+            <div class="faq-item">
+                <h3>What is a shadow ban?</h3>
+                <p>Use <code>/muterole @role</code> once to set it up, then <code>/shadowban @user</code>. The mute role is applied silently — no DM or public message. Only your mod log sees the action.</p>
+            </div>
         </div>
     </section>
 
@@ -344,11 +375,11 @@
         </div>
         <div class="footer-bottom">
             <p>&copy; 2026 AegisForge. Built by watispro1.</p>
-            <p class="footer-tagline">Fast moderation, economy, leveling, and utilities.</p>
+            <p class="footer-tagline">Fast moderation, economy, leveling, utilities, and Sentinel security.</p>
         </div>
     </footer>
 
-    <script src="script.js?v=4.1.2"></script>
+    <script src="script.js?v=4.2.2"></script>
 </body>
 </html>
 

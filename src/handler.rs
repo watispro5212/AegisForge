@@ -1,6 +1,6 @@
 use poise::serenity_prelude as serenity;
-use std::time::Duration;
-use tracing::{error, info};
+use std::time::{Duration, Instant};
+use tracing::{error, info, warn};
 
 pub async fn event_handler(
     ctx: &serenity::Context,
@@ -113,7 +113,87 @@ pub async fn event_handler(
 
         serenity::FullEvent::GuildMemberAddition { new_member } => {
             let guild_id = new_member.guild_id.get() as i64;
+            let guild_id_u64 = new_member.guild_id.get();
             let db = &data.database;
+
+            // ── Sentinel Anti-Raid ───────────────────────────────────
+            {
+                let (enabled, threshold, window_secs) = data
+                    .sentinel_settings
+                    .get(&guild_id_u64)
+                    .map(|s| (s.enabled, s.threshold, s.window_secs))
+                    .unwrap_or((false, 5, 10));
+
+                if enabled {
+                    let now = Instant::now();
+                    let window = Duration::from_secs(window_secs);
+                    let user_id = new_member.user.id.get();
+
+                    let count = {
+                        let mut entry = data
+                            .raid_tracker
+                            .entry(guild_id_u64)
+                            .or_insert_with(std::collections::VecDeque::new);
+                        entry.retain(|(t, _)| now.duration_since(*t) < window);
+                        entry.push_back((now, user_id));
+                        entry.len()
+                    };
+
+                    if count >= threshold {
+                        warn!(
+                            "Sentinel: raid detected in guild {} — {} joins in {}s",
+                            guild_id_u64, count, window_secs
+                        );
+
+                        let kick_result = ctx
+                            .http
+                            .kick_member(
+                                new_member.guild_id,
+                                new_member.user.id,
+                                Some("Sentinel Anti-Raid: abnormal join rate detected"),
+                            )
+                            .await;
+
+                        if let Ok(config) = db.get_guild_config(guild_id).await {
+                            if let Some(log_channel) = config.mod_log_channel {
+                                let action = if kick_result.is_ok() {
+                                    "`Kicked`"
+                                } else {
+                                    "`Kick Failed — check bot permissions`"
+                                };
+                                let embed = serenity::builder::CreateEmbed::new()
+                                    .title("🚨 Sentinel — Raid Detected")
+                                    .description(format!(
+                                        "**{}** users joined within **{}s** — threshold exceeded.\n<@{}> was flagged and actioned.",
+                                        count, window_secs, user_id
+                                    ))
+                                    .field("Joins Detected", format!("`{}`", count), true)
+                                    .field("Threshold", format!("`{}`", threshold), true)
+                                    .field("Action", action, true)
+                                    .field(
+                                        "Flagged User",
+                                        format!("<@{}> (`{}`)", user_id, user_id),
+                                        false,
+                                    )
+                                    .footer(serenity::builder::CreateEmbedFooter::new(
+                                        "AegisForge Sentinel — /sentinel disable to turn off",
+                                    ))
+                                    .timestamp(serenity::Timestamp::now())
+                                    .color(0xFF4500);
+
+                                let _ = serenity::ChannelId::new(log_channel as u64)
+                                    .send_message(
+                                        &ctx.http,
+                                        serenity::builder::CreateMessage::new().embed(embed),
+                                    )
+                                    .await;
+                            }
+                        }
+
+                        return Ok(());
+                    }
+                }
+            }
 
             if let Ok(config) = db.get_guild_config(guild_id).await {
                 // auto-role

@@ -117,3 +117,68 @@ pub async fn set_prefix(pool: &PgPool, guild_id: i64, prefix: &str) -> sqlx::Res
     .await?;
     Ok(())
 }
+
+pub async fn set_mute_role(pool: &PgPool, guild_id: i64, role_id: i64) -> sqlx::Result<()> {
+    sqlx::query(
+        "UPDATE guild_configs SET mute_role_id = $1 WHERE guild_id = $2",
+    )
+    .bind(role_id)
+    .bind(guild_id)
+    .execute(pool)
+    .await?;
+    Ok(())
+}
+
+pub async fn add_shadow_ban(
+    pool: &PgPool,
+    guild_id: i64,
+    user_id: i64,
+    moderator_id: i64,
+    reason: Option<&str>,
+) -> sqlx::Result<()> {
+    sqlx::query(
+        "INSERT INTO shadow_bans (guild_id, user_id, moderator_id, reason)
+         VALUES ($1, $2, $3, $4)
+         ON CONFLICT (guild_id, user_id) DO UPDATE SET
+             moderator_id = EXCLUDED.moderator_id,
+             reason       = EXCLUDED.reason,
+             created_at   = NOW()",
+    )
+    .bind(guild_id)
+    .bind(user_id)
+    .bind(moderator_id)
+    .bind(reason)
+    .execute(pool)
+    .await?;
+    Ok(())
+}
+
+pub async fn remove_shadow_ban(
+    pool: &PgPool,
+    guild_id: i64,
+    user_id: i64,
+) -> sqlx::Result<bool> {
+    let result = sqlx::query(
+        "DELETE FROM shadow_bans WHERE guild_id = $1 AND user_id = $2",
+    )
+    .bind(guild_id)
+    .bind(user_id)
+    .execute(pool)
+    .await?;
+    Ok(result.rows_affected() > 0)
+}
+
+pub async fn is_shadow_banned(
+    pool: &PgPool,
+    guild_id: i64,
+    user_id: i64,
+) -> sqlx::Result<bool> {
+    let row = sqlx::query(
+        "SELECT 1 FROM shadow_bans WHERE guild_id = $1 AND user_id = $2",
+    )
+    .bind(guild_id)
+    .bind(user_id)
+    .fetch_optional(pool)
+    .await?;
+    Ok(row.is_some())
+}

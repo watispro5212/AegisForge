@@ -18,6 +18,7 @@ pub async fn rank(
     ctx: Context<'_>,
     #[description = "User to check rank of"] user: Option<serenity::User>,
 ) -> Result<(), Error> {
+    ctx.defer().await?;
     let target = user.as_ref().unwrap_or(ctx.author());
     let guild_id = ctx.guild_id().unwrap().get() as i64;
 
@@ -68,6 +69,7 @@ pub async fn leaderboard(
     ctx: Context<'_>,
     #[description = "Show global leaderboard across all servers"] global: Option<bool>,
 ) -> Result<(), Error> {
+    ctx.defer().await?;
     let is_global = global.unwrap_or(false);
 
     let mut content = String::new();
@@ -128,6 +130,7 @@ pub async fn customize(
     #[description = "Hex color (e.g. #00E5FF)"] color: Option<String>,
     #[description = "Text color (e.g. #FFFFFF)"] text_color: Option<String>,
 ) -> Result<(), Error> {
+    ctx.defer().await?;
     let guild_id = ctx.guild_id().unwrap().get() as i64;
     let user_id = ctx.author().id.get() as i64;
 

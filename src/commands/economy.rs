@@ -263,6 +263,7 @@ pub async fn shop(
     #[description = "Optional category filter: profile, cosmetic, collectible, boost, utility, community, limited"]
     category: Option<String>,
 ) -> Result<(), Error> {
+    ctx.defer().await?;
     let filter = category.as_ref().map(|c| c.to_lowercase());
     let items: Vec<ShopItem> = global_shop_items()
         .iter()
@@ -337,6 +338,7 @@ pub async fn buy(
     #[description = "Shop item id or exact item name"] item: String,
     #[description = "Quantity to buy (defaults to 1)"] quantity: Option<i64>,
 ) -> Result<(), Error> {
+    ctx.defer().await?;
     let item = find_shop_item(&item).ok_or_else(|| {
         "Unknown shop item. Use `/economy shop` to view valid item ids.".to_string()
     })?;
@@ -415,6 +417,7 @@ pub async fn inventory(
     ctx: Context<'_>,
     #[description = "User to inspect (defaults to you)"] user: Option<serenity::User>,
 ) -> Result<(), Error> {
+    ctx.defer().await?;
     let target = user.as_ref().unwrap_or(ctx.author());
     let guild_id = ctx.guild_id().unwrap().get() as i64;
     let target_id = target.id.get() as i64;
@@ -477,6 +480,7 @@ pub async fn profile(
     ctx: Context<'_>,
     #[description = "User to inspect (defaults to you)"] user: Option<serenity::User>,
 ) -> Result<(), Error> {
+    ctx.defer().await?;
     let target = user.as_ref().unwrap_or(ctx.author());
     let guild_id = ctx.guild_id().unwrap().get() as i64;
     let target_id = target.id.get() as i64;
@@ -538,6 +542,7 @@ pub async fn balance(
     ctx: Context<'_>,
     #[description = "User to check (defaults to you)"] user: Option<serenity::User>,
 ) -> Result<(), Error> {
+    ctx.defer().await?;
     let target = user.as_ref().unwrap_or(ctx.author());
     let guild_id = ctx.guild_id().unwrap().get() as i64;
 
@@ -573,6 +578,7 @@ pub async fn balance(
 /// claim your daily reward
 #[poise::command(slash_command, guild_only)]
 pub async fn daily(ctx: Context<'_>) -> Result<(), Error> {
+    ctx.defer().await?;
     let guild_id = ctx.guild_id().unwrap().get() as i64;
     let user_id = ctx.author().id.get() as i64;
 
@@ -629,6 +635,7 @@ pub async fn daily(ctx: Context<'_>) -> Result<(), Error> {
 /// work to earn some cash (30min cooldown)
 #[poise::command(slash_command, guild_only)]
 pub async fn work(ctx: Context<'_>) -> Result<(), Error> {
+    ctx.defer().await?;
     let guild_id = ctx.guild_id().unwrap().get() as i64;
     let user_id = ctx.author().id.get() as i64;
 
@@ -716,6 +723,7 @@ pub async fn pay(
     #[description = "User to pay"] user: serenity::User,
     #[description = "Amount to send"] amount: i64,
 ) -> Result<(), Error> {
+    ctx.defer().await?;
     if amount <= 0 {
         return Err("Amount must be positive.".into());
     }
@@ -772,6 +780,7 @@ pub async fn leaderboard(
     ctx: Context<'_>,
     #[description = "Show the global leaderboard instead"] global: Option<bool>,
 ) -> Result<(), Error> {
+    ctx.defer().await?;
     let is_global = global.unwrap_or(false);
 
     let (title, footer, content) = if is_global {
@@ -837,6 +846,7 @@ pub async fn deposit(
     ctx: Context<'_>,
     #[description = "Amount to deposit"] amount: i64,
 ) -> Result<(), Error> {
+    ctx.defer().await?;
     if amount <= 0 {
         return Err("Amount must be positive.".into());
     }
@@ -876,6 +886,7 @@ pub async fn withdraw(
     ctx: Context<'_>,
     #[description = "Amount to withdraw"] amount: i64,
 ) -> Result<(), Error> {
+    ctx.defer().await?;
     if amount <= 0 {
         return Err("Amount must be positive.".into());
     }
@@ -912,6 +923,7 @@ pub async fn withdraw(
 /// beg for spare change
 #[poise::command(slash_command, guild_only)]
 pub async fn beg(ctx: Context<'_>) -> Result<(), Error> {
+    ctx.defer().await?;
     let guild_id = ctx.guild_id().unwrap().get() as i64;
     let user_id = ctx.author().id.get() as i64;
 
@@ -954,6 +966,7 @@ pub async fn beg(ctx: Context<'_>) -> Result<(), Error> {
 /// search around for hidden money
 #[poise::command(slash_command, guild_only)]
 pub async fn search(ctx: Context<'_>) -> Result<(), Error> {
+    ctx.defer().await?;
     let guild_id = ctx.guild_id().unwrap().get() as i64;
     let user_id = ctx.author().id.get() as i64;
 
@@ -992,6 +1005,7 @@ pub async fn slots(
     ctx: Context<'_>,
     #[description = "Amount to bet (minimum $10)"] bet: i64,
 ) -> Result<(), Error> {
+    ctx.defer().await?;
     if bet < 10 {
         return Err("Minimum bet is **$10**.".into());
     }
@@ -1082,6 +1096,7 @@ pub async fn slots(
 /// view slot machine odds and payout table
 #[poise::command(slash_command, guild_only)]
 pub async fn gamble_info(ctx: Context<'_>) -> Result<(), Error> {
+    ctx.defer().await?;
     ctx.send(
         poise::CreateReply::default().embed(
             serenity::CreateEmbed::new()
@@ -1116,6 +1131,7 @@ pub async fn gamble_info(ctx: Context<'_>) -> Result<(), Error> {
 /// view the global wealth leaderboard
 #[poise::command(slash_command, guild_only)]
 pub async fn global_leaderboard(ctx: Context<'_>) -> Result<(), Error> {
+    ctx.defer().await?;
     let lb = economy::get_global_leaderboard(&ctx.data().database.pool, 10).await?;
 
     let medals = ["🥇", "🥈", "🥉"];
@@ -1153,6 +1169,7 @@ pub async fn rob(
     ctx: Context<'_>,
     #[description = "User to rob"] user: serenity::User,
 ) -> Result<(), Error> {
+    ctx.defer().await?;
     if user.id == ctx.author().id {
         return Err("You can't rob yourself.".into());
     }
@@ -1229,6 +1246,7 @@ pub async fn rob(
 /// commit a crime to earn big (high risk!)
 #[poise::command(slash_command, guild_only)]
 pub async fn crime(ctx: Context<'_>) -> Result<(), Error> {
+    ctx.defer().await?;
     let guild_id = ctx.guild_id().unwrap().get() as i64;
     let user_id = ctx.author().id.get() as i64;
 
@@ -1295,6 +1313,7 @@ pub async fn crime(ctx: Context<'_>) -> Result<(), Error> {
 /// go fishing for some quick cash
 #[poise::command(slash_command, guild_only)]
 pub async fn fish(ctx: Context<'_>) -> Result<(), Error> {
+    ctx.defer().await?;
     let guild_id = ctx.guild_id().unwrap().get() as i64;
     let user_id = ctx.author().id.get() as i64;
 
@@ -1357,6 +1376,7 @@ pub async fn fish(ctx: Context<'_>) -> Result<(), Error> {
 /// go hunting in the wild
 #[poise::command(slash_command, guild_only)]
 pub async fn hunt(ctx: Context<'_>) -> Result<(), Error> {
+    ctx.defer().await?;
     let guild_id = ctx.guild_id().unwrap().get() as i64;
     let user_id = ctx.author().id.get() as i64;
 

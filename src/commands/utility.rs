@@ -47,6 +47,7 @@ pub async fn ping(ctx: Context<'_>) -> Result<(), Error> {
 /// info about the current server
 #[poise::command(slash_command, prefix_command, guild_only, rename = "server")]
 pub async fn serverinfo(ctx: Context<'_>) -> Result<(), Error> {
+    ctx.defer().await?;
     let guild = ctx.guild().ok_or("Must be in a guild")?.clone();
 
     let icon = guild.icon_url().unwrap_or_default();
@@ -188,6 +189,7 @@ pub async fn vote(ctx: Context<'_>) -> Result<(), Error> {
 /// show global bot statistics
 #[poise::command(slash_command, prefix_command)]
 pub async fn stats(ctx: Context<'_>) -> Result<(), Error> {
+    ctx.defer().await?;
     let guilds = ctx.cache().guild_count();
     let users = ctx.cache().user_count();
     let uptime = ctx.data().start_time.elapsed();
@@ -245,27 +247,38 @@ pub async fn stats(ctx: Context<'_>) -> Result<(), Error> {
 /// show bot telemetry and links
 #[poise::command(slash_command, prefix_command)]
 pub async fn botinfo(ctx: Context<'_>) -> Result<(), Error> {
+    ctx.defer().await?;
     let guilds = ctx.cache().guild_count();
     let users = ctx.cache().user_count();
     let uptime = ctx.data().start_time.elapsed();
 
-    let total_commands: i64 = sqlx::query_scalar(
-        "SELECT COALESCE((SELECT stat_value FROM global_stats WHERE stat_key = 'total_commands_executed'), 0)",
-    )
-    .fetch_one(&ctx.data().database.pool)
-    .await
-    .unwrap_or(0);
-    let economy_transactions: i64 = sqlx::query_scalar(
-        "SELECT COALESCE((SELECT stat_value FROM global_stats WHERE stat_key = 'total_economy_transactions'), 0)",
-    )
-    .fetch_one(&ctx.data().database.pool)
-    .await
-    .unwrap_or(0);
-    let inventory_items: i64 =
-        sqlx::query_scalar("SELECT COALESCE(SUM(quantity), 0)::BIGINT FROM economy_inventory")
-            .fetch_one(&ctx.data().database.pool)
+    let pool = &ctx.data().database.pool;
+    let (total_commands, economy_transactions, inventory_items) = tokio::join!(
+        async {
+            sqlx::query_scalar::<_, i64>(
+                "SELECT COALESCE((SELECT stat_value FROM global_stats WHERE stat_key = 'total_commands_executed'), 0)",
+            )
+            .fetch_one(pool)
             .await
-            .unwrap_or(0);
+            .unwrap_or(0)
+        },
+        async {
+            sqlx::query_scalar::<_, i64>(
+                "SELECT COALESCE((SELECT stat_value FROM global_stats WHERE stat_key = 'total_economy_transactions'), 0)",
+            )
+            .fetch_one(pool)
+            .await
+            .unwrap_or(0)
+        },
+        async {
+            sqlx::query_scalar::<_, i64>(
+                "SELECT COALESCE(SUM(quantity), 0)::BIGINT FROM economy_inventory",
+            )
+            .fetch_one(pool)
+            .await
+            .unwrap_or(0)
+        }
+    );
 
     ctx.send(poise::CreateReply::default().embed(
         serenity::CreateEmbed::new()
@@ -535,6 +548,7 @@ pub async fn dictionary(
     ctx: Context<'_>,
     #[description = "Word to look up"] word: String,
 ) -> Result<(), Error> {
+    ctx.defer().await?;
     #[derive(serde::Deserialize)]
     struct Definition {
         definition: String,
