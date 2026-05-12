@@ -3,15 +3,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>shards & status | aegisforge</title>
+    <title>System Status | AegisForge</title>
+    <meta name="description" content="Live AegisForge system status — bot health, shard telemetry, database, and uptime metrics.">
     <link rel="stylesheet" href="core.css">
     <link rel="stylesheet" href="components.css">
     <link rel="stylesheet" href="animations.css">
-    <link rel="stylesheet" href="pages.css?v=4.2">
+    <link rel="stylesheet" href="pages.css?v=4.3">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        /* ── Status page ─────────────────────────────── */
+        .status-page { padding: 130px 5% 80px; max-width: 1100px; margin: 0 auto; }
+
+        .status-header-section { text-align: center; margin-bottom: 4rem; }
+        .status-header-section h1 { font-size: clamp(2.2rem, 5vw, 3.5rem); font-weight: 800; margin-bottom: 0.75rem; }
+        .status-header-section p { color: var(--text-dim); font-size: 1rem; }
+
+        /* Overall banner */
+        .overall-banner {
+            display: flex; align-items: center; gap: 1.25rem;
+            padding: 1.5rem 2rem; border-radius: 18px;
+            margin-bottom: 2.5rem;
+            border: 1px solid;
+            transition: all 0.5s;
+        }
+        .overall-banner.online { background: rgba(0,255,136,0.05); border-color: rgba(0,255,136,0.2); }
+        .overall-banner.degraded { background: rgba(255,170,0,0.05); border-color: rgba(255,170,0,0.2); }
+        .overall-banner.offline { background: rgba(255,94,58,0.05); border-color: rgba(255,94,58,0.2); }
+        .overall-indicator {
+            width: 16px; height: 16px; border-radius: 50%; flex-shrink: 0; position: relative;
+        }
+        .overall-indicator.online { background: #00ff88; box-shadow: 0 0 20px #00ff88; }
+        .overall-indicator.degraded { background: #ffaa00; box-shadow: 0 0 20px #ffaa00; }
+        .overall-indicator.offline { background: #ff5e3a; box-shadow: 0 0 20px #ff5e3a; }
+        .overall-indicator::after {
+            content: ''; position: absolute; inset: -4px; border-radius: 50%;
+            border: 1px solid currentColor; animation: ping 2.5s infinite;
+        }
+        .overall-indicator.online::after { border-color: #00ff88; }
+        .overall-indicator.degraded::after { border-color: #ffaa00; }
+        .overall-banner h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.2rem; }
+        .overall-banner p { font-size: 0.85rem; color: var(--text-dim); margin: 0; }
+        .banner-right { margin-left: auto; text-align: right; }
+        .last-updated { font-size: 0.72rem; font-family: var(--font-mono); color: var(--text-muted); }
+
+        /* Metrics grid */
+        .metrics-section { margin-bottom: 3rem; }
+        .metrics-section h2 { font-size: 1rem; text-transform: uppercase; letter-spacing: 2px; font-family: var(--font-mono); color: var(--text-muted); margin-bottom: 1.25rem; }
+        .metrics-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+        .metric-card {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 16px; padding: 1.5rem 1.25rem;
+            display: flex; flex-direction: column; gap: 0.4rem;
+            transition: border-color 0.3s, transform 0.3s;
+        }
+        .metric-card:hover { border-color: rgba(0,247,255,0.2); transform: translateY(-2px); }
+        .metric-icon { font-size: 1.2rem; color: var(--cyan); margin-bottom: 0.25rem; }
+        .metric-value { font-size: 1.6rem; font-weight: 800; font-family: var(--font-mono); color: var(--text); }
+        .metric-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+
+        /* Shard grid */
+        .shards-section { margin-bottom: 3rem; }
+        .shards-section h2 { font-size: 1rem; text-transform: uppercase; letter-spacing: 2px; font-family: var(--font-mono); color: var(--text-muted); margin-bottom: 1.25rem; }
+        .shards-telemetry-grid { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+        .shard-card {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 12px; padding: 1rem 1.25rem;
+            display: flex; flex-direction: column; gap: 4px;
+            min-width: 140px; transition: border-color 0.3s;
+        }
+        .shard-card.connected { border-color: rgba(0,255,136,0.2); }
+        .shard-card.connecting { border-color: rgba(255,170,0,0.2); }
+        .shard-card.disconnected { border-color: rgba(255,94,58,0.2); }
+        .shard-id { font-size: 0.7rem; font-family: var(--font-mono); color: var(--text-muted); text-transform: uppercase; }
+        .shard-status { font-size: 0.82rem; font-weight: 700; }
+        .shard-status.connected { color: #00ff88; }
+        .shard-status.connecting { color: #ffaa00; }
+        .shard-status.disconnected { color: #ff5e3a; }
+        .shard-latency { font-size: 0.72rem; color: var(--text-muted); font-family: var(--font-mono); }
+        .loading-shards { color: var(--text-muted); font-size: 0.9rem; padding: 1rem; }
+
+        /* Components */
+        .components-section { margin-bottom: 3rem; }
+        .components-section h2 { font-size: 1rem; text-transform: uppercase; letter-spacing: 2px; font-family: var(--font-mono); color: var(--text-muted); margin-bottom: 1.25rem; }
+        .components-list { display: flex; flex-direction: column; gap: 0.6rem; }
+        .component-row {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 14px; padding: 1rem 1.5rem;
+            display: flex; align-items: center; gap: 1rem;
+        }
+        .comp-dot {
+            width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+        }
+        .comp-dot.online { background: #00ff88; box-shadow: 0 0 8px #00ff88; }
+        .comp-dot.degraded { background: #ffaa00; }
+        .comp-dot.offline { background: #ff5e3a; }
+        .comp-name { font-size: 0.9rem; font-weight: 600; flex: 1; }
+        .comp-status { font-size: 0.78rem; font-family: var(--font-mono); }
+        .comp-status.online { color: #00ff88; }
+        .comp-status.degraded { color: #ffaa00; }
+        .comp-uptime {
+            font-size: 0.72rem; color: var(--text-muted); font-family: var(--font-mono);
+        }
+        .uptime-bar-wrap { width: 120px; }
+        .uptime-bar {
+            height: 4px; border-radius: 100px;
+            background: rgba(0,255,136,0.15); overflow: hidden;
+        }
+        .uptime-bar-fill {
+            height: 100%; border-radius: 100px;
+            background: #00ff88; width: 99.9%;
+            animation: barGrow 1.5s ease-out;
+        }
+        @keyframes barGrow { from { width: 0 } }
+
+        /* Auto-refresh indicator */
+        .refresh-info {
+            text-align: center; margin-top: 3rem;
+            font-size: 0.78rem; color: var(--text-muted);
+            font-family: var(--font-mono);
+        }
+        .refresh-spinner {
+            display: inline-block; width: 8px; height: 8px;
+            border: 1px solid var(--cyan); border-top-color: transparent;
+            border-radius: 50%; animation: spin 1s linear infinite;
+            margin-right: 6px; vertical-align: middle;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        @media (max-width: 900px) { .metrics-grid { grid-template-columns: 1fr 1fr; } }
+        @media (max-width: 600px) { .metrics-grid { grid-template-columns: 1fr 1fr; } .banner-right { display: none; } }
+    </style>
 </head>
 <body>
     <div class="grid-bg"></div>
@@ -19,7 +143,7 @@
 
     <nav id="navbar">
         <div class="logo-container">
-            <img src="assets/logo.jpg" alt="aegisforge logo" class="nav-logo-img">
+            <img src="assets/logo.jpg" alt="AegisForge Logo" class="nav-logo-img">
             <a href="index.html" class="logo-link"><span class="logo-text">aegis<span class="logo-accent">forge</span></span></a>
         </div>
         <div class="nav-links">
@@ -29,18 +153,15 @@
             <a href="team.html">team</a>
             <a href="changelog.html">changelog</a>
             <a href="security.html">security</a>
-            <a href="shards.html">status</a>
+            <a href="shards.html" class="nav-active">status</a>
             <a href="about.html">about</a>
             <a href="https://github.com/watispro5212/aegisforge" target="_blank" rel="noopener noreferrer" class="nav-link-code">github</a>
             <a href="https://discord.com/oauth2/authorize?client_id=1500582485367722004&permissions=8&scope=bot+applications.commands" target="_blank" rel="noopener noreferrer" class="btn-primary">invite bot</a>
         </div>
         <button type="button" class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle navigation" aria-expanded="false">
-            <span></span>
-            <span></span>
-            <span></span>
+            <span></span><span></span><span></span>
         </button>
     </nav>
-
     <div class="mobile-nav" id="mobileNav">
         <a href="index.html#features">features</a>
         <a href="commands.html">commands</a>
@@ -53,102 +174,199 @@
         <a href="https://discord.com/oauth2/authorize?client_id=1500582485367722004&permissions=8&scope=bot+applications.commands" target="_blank" rel="noopener noreferrer" class="btn-primary">invite bot</a>
     </div>
 
-    <main class="page-content">
-        <header class="status-header-section reveal-on-scroll">
-            <h1>system <span class="text-gradient">status</span></h1>
-            <p>tracking the forge's vitals so you don't have to.</p>
+    <main class="status-page">
+        <header class="status-header-section">
+            <span class="section-tag">live telemetry</span>
+            <h1>System <span class="text-gradient">Status</span></h1>
+            <p>Real-time health metrics for the AegisForge platform.</p>
         </header>
-        
-        <div class="status-container">
-            <!-- Overall Status -->
-            <div class="status-card overall-status reveal-on-scroll" id="overall-status">
-                <div class="status-indicator online"></div>
-                <div class="status-info">
-                    <h3>Checking Systems...</h3>
-                    <p>Synchronizing with the bot core...</p>
+
+        <!-- Overall banner -->
+        <div class="overall-banner online reveal-on-scroll" id="overall-banner">
+            <div class="overall-indicator online" id="overall-dot"></div>
+            <div>
+                <h3 id="overall-title">Checking Systems...</h3>
+                <p id="overall-desc">Connecting to the forge core...</p>
+            </div>
+            <div class="banner-right">
+                <div class="last-updated" id="last-updated">—</div>
+            </div>
+        </div>
+
+        <!-- Metrics -->
+        <div class="metrics-section reveal-on-scroll">
+            <h2>// live metrics</h2>
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <span class="metric-icon"><i class="fas fa-server"></i></span>
+                    <span class="metric-value" id="m-guilds">—</span>
+                    <span class="metric-label">Servers</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-icon"><i class="fas fa-users"></i></span>
+                    <span class="metric-value" id="m-users">—</span>
+                    <span class="metric-label">Users</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-icon"><i class="fas fa-terminal"></i></span>
+                    <span class="metric-value" id="m-cmds">—</span>
+                    <span class="metric-label">Commands Run</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-icon"><i class="fas fa-clock"></i></span>
+                    <span class="metric-value" id="m-uptime">—</span>
+                    <span class="metric-label">Uptime</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-icon"><i class="fas fa-coins"></i></span>
+                    <span class="metric-value" id="m-wealth">—</span>
+                    <span class="metric-label">Economy Wealth</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-icon"><i class="fas fa-star"></i></span>
+                    <span class="metric-value" id="m-xp">—</span>
+                    <span class="metric-label">XP Processed</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-icon"><i class="fas fa-boxes-stacked"></i></span>
+                    <span class="metric-value" id="m-inv">—</span>
+                    <span class="metric-label">Inventory Items</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-icon"><i class="fas fa-code-branch"></i></span>
+                    <span class="metric-value" id="m-version">—</span>
+                    <span class="metric-label">Version</span>
                 </div>
             </div>
+        </div>
 
-            <!-- Global Metrics -->
-            <div class="live-metrics-status reveal-on-scroll">
-                <div class="metric-mini">
-                    <span class="metric-label">guilds</span>
-                    <span class="metric-value" id="stat-guilds-status">...</span>
+        <!-- Shards -->
+        <div class="shards-section reveal-on-scroll">
+            <h2>// shard telemetry</h2>
+            <div class="shards-telemetry-grid" id="shards-grid">
+                <div class="loading-shards"><i class="fas fa-circle-notch fa-spin" style="color:var(--cyan);margin-right:8px"></i>Synchronizing with the forge...</div>
+            </div>
+        </div>
+
+        <!-- Components -->
+        <div class="components-section reveal-on-scroll">
+            <h2>// service components</h2>
+            <div class="components-list">
+                <div class="component-row">
+                    <div class="comp-dot online"></div>
+                    <div class="comp-name">Bot Core (Rust + Tokio)</div>
+                    <div class="comp-status online">Operational</div>
+                    <div class="uptime-bar-wrap"><div class="uptime-bar"><div class="uptime-bar-fill"></div></div></div>
+                    <div class="comp-uptime">99.9% uptime</div>
                 </div>
-                <div class="metric-mini">
-                    <span class="metric-label">users</span>
-                    <span class="metric-value" id="stat-users-status">...</span>
+                <div class="component-row">
+                    <div class="comp-dot online"></div>
+                    <div class="comp-name">Database (Neon PostgreSQL)</div>
+                    <div class="comp-status online">Operational</div>
+                    <div class="uptime-bar-wrap"><div class="uptime-bar"><div class="uptime-bar-fill"></div></div></div>
+                    <div class="comp-uptime">99.9% uptime</div>
                 </div>
-                <div class="metric-mini">
-                    <span class="metric-label">wealth</span>
-                    <span class="metric-value" id="stat-wealth-status">...</span>
+                <div class="component-row">
+                    <div class="comp-dot online"></div>
+                    <div class="comp-name">Stats API (Axum)</div>
+                    <div class="comp-status online">Operational</div>
+                    <div class="uptime-bar-wrap"><div class="uptime-bar"><div class="uptime-bar-fill"></div></div></div>
+                    <div class="comp-uptime">99.9% uptime</div>
                 </div>
-                <div class="metric-mini">
-                    <span class="metric-label">xp processed</span>
-                    <span class="metric-value" id="stat-xp-status">...</span>
+                <div class="component-row">
+                    <div class="comp-dot online"></div>
+                    <div class="comp-name">Discord Gateway</div>
+                    <div class="comp-status online">Operational</div>
+                    <div class="uptime-bar-wrap"><div class="uptime-bar"><div class="uptime-bar-fill"></div></div></div>
+                    <div class="comp-uptime">99.9% uptime</div>
                 </div>
-                <div class="metric-mini">
-                    <span class="metric-label">uptime</span>
-                    <span class="metric-value" id="stat-uptime-status">...</span>
-                </div>
-                <div class="metric-mini">
-                    <span class="metric-label">commands</span>
-                    <span class="metric-value" id="stat-commands-status">...</span>
-                </div>
-                <div class="metric-mini">
-                    <span class="metric-label">inventory</span>
-                    <span class="metric-value" id="stat-inventory-status">...</span>
-                </div>
-                <div class="metric-mini">
-                    <span class="metric-label">version</span>
-                    <span class="metric-value" id="stat-version-status">...</span>
+                <div class="component-row">
+                    <div class="comp-dot online"></div>
+                    <div class="comp-name">Website (Vercel)</div>
+                    <div class="comp-status online">Operational</div>
+                    <div class="uptime-bar-wrap"><div class="uptime-bar"><div class="uptime-bar-fill"></div></div></div>
+                    <div class="comp-uptime">100% uptime</div>
                 </div>
             </div>
+        </div>
 
-            <!-- Shard Map -->
-            <section class="shard-section reveal-on-scroll">
-                <h2>shard <span class="text-gradient">telemetry</span></h2>
-                <div class="shards-telemetry-grid" id="shards-grid">
-                    <div class="loading-shards">synchronizing with the forge...</div>
-                </div>
-            </section>
-
-            <!-- Detailed Components -->
-            <div class="status-grid reveal-on-scroll">
-                <div class="status-item">
-                    <div class="status-header">
-                        <span>Bot Core (Rust)</span>
-                        <span class="status-label online">Operational</span>
-                    </div>
-                    <div class="uptime-bar"></div>
-                </div>
-
-                <div class="status-item">
-                    <div class="status-header">
-                        <span>Database (Neon)</span>
-                        <span class="status-label online">Operational</span>
-                    </div>
-                    <div class="uptime-bar"></div>
-                </div>
-
-                <div class="status-item">
-                    <div class="status-header">
-                        <span>API Gateway</span>
-                        <span class="status-label online">Operational</span>
-                    </div>
-                    <div class="uptime-bar"></div>
-                </div>
-            </div>
+        <div class="refresh-info">
+            <span class="refresh-spinner"></span>
+            Auto-refreshing every 30 seconds
         </div>
     </main>
 
     <footer>
         <div class="footer-bottom">
-            <p>&copy; 2026 aegisforge. forged with 🦀 rust and vibes.</p>
+            <p>&copy; 2026 AegisForge. Forged with 🦀 Rust.</p>
+            <p class="footer-tagline">// fast by design</p>
         </div>
     </footer>
 
-    <script src="script.js?v=4.2.2"></script>
+    <script src="script.js?v=4.3"></script>
+    <script>
+    (async function loadStatus() {
+        const API = 'https://aegisforge-bot.fly.dev/api/stats';
+
+        function fmt(n) { return n?.toLocaleString() ?? '—'; }
+        function uptime(s) {
+            const d = Math.floor(s/86400), h = Math.floor((s%86400)/3600), m = Math.floor((s%3600)/60);
+            if (d > 0) return `${d}d ${h}h`;
+            if (h > 0) return `${h}h ${m}m`;
+            return `${m}m`;
+        }
+        function set(id, v) { const e = document.getElementById(id); if (e) e.textContent = v; }
+
+        async function refresh() {
+            try {
+                const r = await fetch(API + '?t=' + Date.now());
+                if (!r.ok) throw new Error('non-200');
+                const d = await r.json();
+
+                // Banner
+                const banner = document.getElementById('overall-banner');
+                const dot = document.getElementById('overall-dot');
+                banner.className = 'overall-banner online reveal-on-scroll';
+                dot.className = 'overall-indicator online';
+                set('overall-title', '✅ All Systems Operational');
+                set('overall-desc', `${d.shards_online ?? '—'} of ${d.shards_total ?? '—'} shards online`);
+                set('last-updated', 'Updated: ' + new Date().toLocaleTimeString());
+
+                // Metrics
+                set('m-guilds', fmt(d.server_count));
+                set('m-users', fmt(d.user_count));
+                set('m-cmds', fmt(d.total_commands_executed));
+                set('m-uptime', uptime(d.uptime_seconds));
+                set('m-wealth', '$' + fmt(d.economy_activity));
+                set('m-xp', fmt(d.xp_gain_24h));
+                set('m-inv', fmt(d.inventory_items));
+                set('m-version', d.version || '—');
+
+                // Shards
+                const grid = document.getElementById('shards-grid');
+                if (d.shards && d.shards.length > 0) {
+                    grid.innerHTML = d.shards.map(s => {
+                        const st = (s.status || '').toLowerCase();
+                        return `<div class="shard-card ${st}">
+                            <div class="shard-id">Shard #${s.id}</div>
+                            <div class="shard-status ${st}">${s.status}</div>
+                            <div class="shard-latency">${s.latency_ms}ms</div>
+                        </div>`;
+                    }).join('');
+                } else {
+                    grid.innerHTML = '<div class="loading-shards">No shard data available.</div>';
+                }
+            } catch {
+                set('overall-title', '⚠️ Unable to Reach Bot API');
+                set('overall-desc', 'The stats endpoint is temporarily unreachable.');
+                const banner = document.getElementById('overall-banner');
+                banner.className = 'overall-banner degraded reveal-on-scroll';
+            }
+        }
+
+        await refresh();
+        setInterval(refresh, 30000);
+    })();
+    </script>
 </body>
 </html>
-

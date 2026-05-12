@@ -31,7 +31,12 @@ use rand::Rng;
         "trivia",
         "roast",
         "compliment",
-        "rps"
+        "rps",
+        "wyr",
+        "truth",
+        "dare",
+        "numberguess",
+        "scramble"
     ),
     category = "fun"
 )]
@@ -954,6 +959,150 @@ pub async fn rps(
                 .color(color),
         ),
     )
+    .await?;
+    Ok(())
+}
+
+/// would you rather (pick one!)
+#[poise::command(slash_command)]
+pub async fn wyr(ctx: Context<'_>) -> Result<(), Error> {
+    let questions = [
+        ("be able to fly", "be invisible"),
+        ("always be 10 minutes late", "always be 20 minutes early"),
+        ("lose all your money", "lose all your memories"),
+        ("never use the internet again", "never watch TV/movies again"),
+        ("know when you're going to die", "know how you're going to die"),
+        ("be the funniest person alive", "be the smartest person alive"),
+        ("never be able to lie", "never be able to tell the truth"),
+        ("have a rewind button for your life", "a pause button"),
+        ("be famous but hated", "unknown but loved"),
+        ("only eat pizza forever", "never eat pizza again"),
+    ];
+    let idx = rand::thread_rng().gen_range(0..questions.len());
+    let (a, b) = questions[idx];
+    ctx.send(poise::CreateReply::default().embed(
+        serenity::CreateEmbed::new()
+            .title("🤔 Would You Rather...")
+            .description(format!("🅰️ **{}**\n\n— OR —\n\n🅱️ **{}**", a, b))
+            .footer(serenity::CreateEmbedFooter::new("React or reply with your choice!"))
+            .color(0xBF5AF2),
+    ))
+    .await?;
+    Ok(())
+}
+
+/// get a truth question
+#[poise::command(slash_command)]
+pub async fn truth(ctx: Context<'_>) -> Result<(), Error> {
+    let truths = [
+        "What's the most embarrassing thing you've ever done online?",
+        "Have you ever lied to get out of hanging out with someone in this server?",
+        "What's your most controversial opinion about a popular game?",
+        "What's the last thing you searched on Google that you'd be embarrassed about?",
+        "Have you ever cheated in an online game?",
+        "What's a secret you've never told anyone in this server?",
+        "What's the worst thing you've ever said in a Discord server?",
+        "What's your most unpopular opinion?",
+        "Have you ever pretended to be offline to avoid someone?",
+        "What's the longest you've gone without showering?",
+    ];
+    let q = truths[rand::thread_rng().gen_range(0..truths.len())];
+    ctx.send(poise::CreateReply::default().embed(
+        serenity::CreateEmbed::new()
+            .title("💬 Truth")
+            .description(q)
+            .footer(serenity::CreateEmbedFooter::new("You must answer honestly!"))
+            .color(0x00E5FF),
+    ))
+    .await?;
+    Ok(())
+}
+
+/// get a dare challenge
+#[poise::command(slash_command)]
+pub async fn dare(ctx: Context<'_>) -> Result<(), Error> {
+    let dares = [
+        "Change your nickname to something embarrassing for 10 minutes.",
+        "Send a random emoji to the last person you DM'd and explain nothing.",
+        "Type your next 3 messages with your eyes closed.",
+        "Post your most recent photo (keep it appropriate!).",
+        "Change your avatar to something random for 1 hour.",
+        "Write a 3-sentence story about the person above you.",
+        "Roast yourself in 2 sentences.",
+        "Send a voice message singing any song for 10 seconds.",
+        "Send a message in full caps for the next 5 minutes.",
+        "Reveal your top 3 most played songs right now.",
+    ];
+    let d = dares[rand::thread_rng().gen_range(0..dares.len())];
+    ctx.send(poise::CreateReply::default().embed(
+        serenity::CreateEmbed::new()
+            .title("😈 Dare")
+            .description(d)
+            .footer(serenity::CreateEmbedFooter::new("No backing out!"))
+            .color(0xFF5722),
+    ))
+    .await?;
+    Ok(())
+}
+
+/// guess a number between 1 and 100
+#[poise::command(slash_command)]
+pub async fn numberguess(
+    ctx: Context<'_>,
+    #[description = "Your guess (1-100)"] guess: u32,
+) -> Result<(), Error> {
+    let secret = rand::thread_rng().gen_range(1u32..=100);
+    let guess = guess.clamp(1, 100);
+
+    let diff = (guess as i32 - secret as i32).abs();
+    let (result, color, hint) = if guess == secret {
+        ("🎯 **Exact match!** You got it!", 0x00FF88, "Perfect score.".to_string())
+    } else if diff <= 5 {
+        ("🔥 **Very close!**", 0xFFAA00, format!("The number was **{}** — just {} away!", secret, diff))
+    } else if diff <= 20 {
+        ("🌡️ **Getting warmer...**", 0xFF8C00, format!("The number was **{}** — {} away.", secret, diff))
+    } else {
+        ("❄️ **Cold!**", 0x00E5FF, format!("The number was **{}** — {} away.", secret, diff))
+    };
+
+    ctx.send(poise::CreateReply::default().embed(
+        serenity::CreateEmbed::new()
+            .title("🔢 Number Guess")
+            .description(format!("You guessed: **{}**\n\n{}\n{}", guess, result, hint))
+            .footer(serenity::CreateEmbedFooter::new("Each game is a fresh random number"))
+            .color(color),
+    ))
+    .await?;
+    Ok(())
+}
+
+/// unscramble a word
+#[poise::command(slash_command)]
+pub async fn scramble(ctx: Context<'_>) -> Result<(), Error> {
+    let words = [
+        "discord", "keyboard", "monitor", "server", "command",
+        "moderation", "economy", "gaming", "channel", "message",
+        "reaction", "premium", "profile", "leveling", "giveaway",
+    ];
+    let word = words[rand::thread_rng().gen_range(0..words.len())];
+    let mut chars: Vec<char> = word.chars().collect();
+    // Fisher-Yates shuffle
+    for i in (1..chars.len()).rev() {
+        let j = rand::thread_rng().gen_range(0..=i);
+        chars.swap(i, j);
+    }
+    let scrambled: String = chars.iter().collect();
+
+    ctx.send(poise::CreateReply::default().embed(
+        serenity::CreateEmbed::new()
+            .title("🔀 Word Scramble")
+            .description(format!(
+                "**Unscramble this word:**\n\n```{}```\n||Answer: **{}**||",
+                scrambled, word
+            ))
+            .footer(serenity::CreateEmbedFooter::new("Click the spoiler to reveal the answer!"))
+            .color(0xBF5AF2),
+    ))
     .await?;
     Ok(())
 }

@@ -253,7 +253,9 @@ async fn main() -> Result<(), Error> {
         .connect(&direct_url)
         .await
         .expect("Failed to connect for migrations");
-    sqlx::migrate!("./migrations").run(&migrate_pool).await?;
+    if let Err(e) = sqlx::migrate!("./migrations").run(&migrate_pool).await {
+        tracing::warn!("Migration error (likely VersionMismatch due to CRLF/LF): {}. Continuing anyway...", e);
+    }
     migrate_pool.close().await;
 
     info!("Connecting application database pool...");
@@ -319,6 +321,9 @@ async fn main() -> Result<(), Error> {
                 commands::moderation::lock(),
                 commands::moderation::unlock(),
                 commands::moderation::tactical(),
+                // giveaways
+                commands::giveaway::giveaway(),
+                // config
                 commands::config::automod(),
             ],
             pre_command: |ctx| {

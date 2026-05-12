@@ -3,16 +3,158 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About | AegisForge v4.2</title>
-    <meta name="description" content="Learn about AegisForge v4.2: a high-performance Rust-powered Discord bot built for moderation, economy, shop inventory, leveling, Sentinel security, and server control.">
+    <title>About | AegisForge</title>
+    <meta name="description" content="Learn about AegisForge: a high-performance Rust-powered Discord bot built for moderation, economy, leveling, Sentinel security, and server control.">
     <link rel="stylesheet" href="core.css">
     <link rel="stylesheet" href="components.css">
     <link rel="stylesheet" href="animations.css">
-    <link rel="stylesheet" href="pages.css?v=4.2">
+    <link rel="stylesheet" href="pages.css?v=4.3">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        /* ── About page enhancements ─────────────────── */
+        .about-hero {
+            padding: 160px 5% 80px;
+            text-align: center;
+            position: relative;
+        }
+        .about-hero h1 { font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 800; margin: 1rem 0; }
+        .about-hero p { font-size: 1.15rem; color: var(--text-dim); max-width: 600px; margin: 0 auto; line-height: 1.7; }
+
+        .about-content { max-width: 1100px; margin: 0 auto; padding: 0 5% 100px; }
+
+        /* Mission */
+        .mission-block {
+            background: linear-gradient(135deg, rgba(0,247,255,0.04) 0%, rgba(191,90,242,0.04) 100%);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 2.5rem 3rem;
+            margin-bottom: 5rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .mission-block::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            width: 3px;
+            background: linear-gradient(180deg, var(--cyan), var(--purple));
+        }
+        .mission-block p { color: var(--text-dim); line-height: 1.85; font-size: 1.05rem; margin-bottom: 1rem; }
+        .mission-block p:last-child { margin-bottom: 0; }
+        .mission-block strong { color: var(--text); }
+
+        /* Stats row */
+        .about-section-title {
+            font-size: 1.6rem; font-weight: 800; margin-bottom: 2rem;
+            letter-spacing: -0.02em;
+        }
+        .stat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem; margin-bottom: 5rem; }
+        .stat-pill {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.75rem 1.5rem;
+            text-align: center;
+            transition: border-color 0.3s, transform 0.3s;
+        }
+        .stat-pill:hover { border-color: var(--cyan); transform: translateY(-3px); }
+        .stat-pill .value { display: block; font-size: 2.2rem; font-weight: 800; color: var(--cyan); font-family: var(--font-mono); }
+        .stat-pill .label { display: block; font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 0.4rem; }
+
+        /* Feature cards */
+        .about-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; margin-bottom: 5rem; }
+        .about-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2rem;
+            transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+        }
+        .about-card:hover { border-color: rgba(0,247,255,0.3); transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.4); }
+        .about-card-icon { font-size: 2rem; display: block; margin-bottom: 1rem; }
+        .about-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.65rem; }
+        .about-card p { color: var(--text-dim); font-size: 0.9rem; line-height: 1.7; }
+
+        /* Tech stack */
+        .tech-stack-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 5rem; }
+        .tech-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            transition: border-color 0.3s, transform 0.3s;
+        }
+        .tech-card:hover { border-color: rgba(0,247,255,0.25); transform: translateY(-2px); }
+        .tech-card-icon { font-size: 1.6rem; }
+        .tech-card-name { font-weight: 700; font-size: 0.95rem; }
+        .tech-card-desc { font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; }
+        .tech-card-badge {
+            display: inline-block;
+            font-size: 0.65rem;
+            font-family: var(--font-mono);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 2px 8px;
+            border-radius: 100px;
+            background: rgba(0,247,255,0.08);
+            color: var(--cyan);
+            border: 1px solid rgba(0,247,255,0.2);
+            width: fit-content;
+        }
+
+        /* Timeline */
+        .timeline { position: relative; padding-left: 2rem; margin-bottom: 5rem; }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 8px; bottom: 0;
+            width: 1px;
+            background: linear-gradient(180deg, var(--cyan), transparent);
+        }
+        .timeline-item { position: relative; padding-bottom: 2.5rem; padding-left: 2rem; }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -2rem;
+            top: 8px;
+            width: 9px; height: 9px;
+            border-radius: 50%;
+            background: var(--cyan);
+            box-shadow: 0 0 12px var(--cyan);
+        }
+        .timeline-date { font-family: var(--font-mono); font-size: 0.75rem; color: var(--cyan); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 0.35rem; }
+        .timeline-title { font-weight: 700; font-size: 1rem; margin-bottom: 0.35rem; }
+        .timeline-desc { font-size: 0.88rem; color: var(--text-dim); line-height: 1.6; }
+
+        /* CTA */
+        .about-cta {
+            background: linear-gradient(135deg, rgba(0,247,255,0.06) 0%, rgba(191,90,242,0.06) 100%);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 4rem 3rem;
+            text-align: center;
+        }
+        .about-cta-title { font-size: 2rem; font-weight: 800; margin-bottom: 0.75rem; }
+        .about-cta-sub { color: var(--text-dim); margin-bottom: 2rem; font-size: 1.05rem; }
+
+        @media (max-width: 900px) {
+            .stat-row { grid-template-columns: 1fr 1fr; }
+            .about-grid { grid-template-columns: 1fr 1fr; }
+            .tech-stack-grid { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 600px) {
+            .stat-row { grid-template-columns: 1fr 1fr; }
+            .about-grid { grid-template-columns: 1fr; }
+            .tech-stack-grid { grid-template-columns: 1fr 1fr; }
+            .mission-block { padding: 1.75rem; }
+        }
+    </style>
 </head>
 <body>
     <div class="grid-bg"></div>
@@ -21,7 +163,7 @@
     <!-- Navigation -->
     <nav id="navbar">
         <div class="logo-container">
-            <img src="assets/logo.jpg" alt="aegisforge Logo" class="nav-logo-img">
+            <img src="assets/logo.jpg" alt="AegisForge Logo" class="nav-logo-img">
             <a href="index.html" class="logo-link"><span class="logo-text">aegis<span class="logo-accent">forge</span></span></a>
         </div>
         <div class="nav-links">
@@ -32,17 +174,14 @@
             <a href="changelog.html">changelog</a>
             <a href="security.html">security</a>
             <a href="shards.html">status</a>
-            <a href="about.html">about</a>
+            <a href="about.html" class="nav-active">about</a>
             <a href="https://github.com/watispro5212/aegisforge" target="_blank" rel="noopener noreferrer" class="nav-link-code">github</a>
             <a href="https://discord.com/oauth2/authorize?client_id=1500582485367722004&permissions=8&scope=bot+applications.commands" target="_blank" rel="noopener noreferrer" class="btn-primary">invite bot</a>
         </div>
         <button type="button" class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle navigation" aria-expanded="false">
-            <span></span>
-            <span></span>
-            <span></span>
+            <span></span><span></span><span></span>
         </button>
     </nav>
-
     <div class="mobile-nav" id="mobileNav">
         <a href="index.html#features">features</a>
         <a href="commands.html">commands</a>
@@ -59,17 +198,14 @@
     <div class="about-hero">
         <span class="section-tag">the project</span>
         <h1>about <span class="text-gradient">aegisforge</span></h1>
-        <p>A high-performance Discord bot engineered from the ground up in Rust: purpose-built for speed, reliability, and deep server control without unnecessary bloat.</p>
+        <p>A production-grade Discord bot built entirely in Rust — engineered for speed, reliability, and deep server control without unnecessary bloat.</p>
     </div>
 
     <div class="about-content">
 
-        <!-- Banner -->
-        <img src="assets/banner.png" alt="aegisforge Banner" class="banner-about reveal-on-scroll">
-
         <!-- Mission -->
         <div class="mission-block reveal-on-scroll">
-            <p><strong>AegisForge v4.2 Elite is built for communities that need reliable, high-performance tools.</strong> Moderation, economy, shop inventory, leveling, and utility workflows are designed to stay fast, readable, and consistent as a server grows. Our latest modernization update focuses on stability, code quality, and professional-grade security.</p>
+            <p><strong>AegisForge is built for communities that need reliable, high-performance tools.</strong> Moderation, economy, shop inventory, leveling, and utility workflows are designed to stay fast and consistent as a server grows.</p>
             <p>Rust gives the bot predictable performance and memory safety. Tokio handles concurrent work, Serenity and Poise power Discord interactions, SQLx manages PostgreSQL persistence, and DashMap keeps hot guild configuration data quick to access.</p>
             <p>Whether you run a small friend server or a busy public community, AegisForge keeps the basics close at hand: clear commands, persistent settings, live stats, and practical automation.</p>
         </div>
@@ -82,97 +218,140 @@
                 <span class="label">Active Servers</span>
             </div>
             <div class="stat-pill reveal-on-scroll">
-                <span class="value" id="about-commands-count">--</span>
+                <span class="value" id="about-users">--</span>
+                <span class="label">Total Users</span>
+            </div>
+            <div class="stat-pill reveal-on-scroll">
+                <span class="value" id="about-commands-count">70+</span>
                 <span class="label">Commands</span>
             </div>
             <div class="stat-pill reveal-on-scroll">
-                <span class="value" id="about-version">--</span>
+                <span class="value">v4.2</span>
                 <span class="label">Current Version</span>
-            </div>
-            <div class="stat-pill reveal-on-scroll">
-                <span class="value" id="about-users">--</span>
-                <span class="label">Total Users</span>
             </div>
         </div>
 
         <!-- What it does -->
-        <h2 class="about-section-title">What aegisforge Does</h2>
+        <h2 class="about-section-title">What AegisForge Does</h2>
         <div class="about-grid">
             <div class="about-card reveal-on-scroll">
                 <span class="about-card-icon">🛡️</span>
                 <h3>Moderation</h3>
-                <p>Full suite of moderation commands — ban, kick, mute, timeout, warn, purge, slowmode, lock — all with structured embed responses and a persistent case numbering system for accountability.</p>
+                <p>Ban, kick, mute, timeout, warn, purge, slowmode, lock — all with structured embed responses and a persistent case numbering system for accountability.</p>
             </div>
             <div class="about-card reveal-on-scroll">
                 <span class="about-card-icon">💰</span>
                 <h3>Economy</h3>
-                <p>A complete server economy with wallets, banking, daily rewards, shop purchases, persistent inventories, gambling, rob mechanics, and rich leaderboards persisted in PostgreSQL.</p>
+                <p>Wallets, banking, daily rewards, shop purchases, persistent inventories, gambling, rob mechanics, and rich leaderboards — all persisted in PostgreSQL.</p>
             </div>
             <div class="about-card reveal-on-scroll">
                 <span class="about-card-icon">📈</span>
                 <h3>Leveling</h3>
-                <p>Automatic XP tracking per message, configurable level-up announcements, and role rewards at specific milestones — keeping your most active members engaged and recognized.</p>
+                <p>Automatic XP tracking per message, configurable level-up announcements, and role rewards at specific milestones to keep active members recognized.</p>
+            </div>
+            <div class="about-card reveal-on-scroll">
+                <span class="about-card-icon">🚨</span>
+                <h3>Sentinel Security</h3>
+                <p>Real-time raid detection, shadow bans, AutoMod with keyword blacklists, and configurable anti-spam thresholds to protect your community automatically.</p>
             </div>
             <div class="about-card reveal-on-scroll">
                 <span class="about-card-icon">⚙️</span>
                 <h3>Configuration</h3>
-                <p>Every guild gets fully customizable settings — welcome/goodbye channels and messages, auto-role on join, moderation log channels, and per-server command prefix.</p>
+                <p>Fully customizable per-guild settings — welcome/goodbye channels, auto-role on join, moderation log channels, and per-server command prefix.</p>
             </div>
             <div class="about-card reveal-on-scroll">
                 <span class="about-card-icon">⚡</span>
-                <h3>Utility</h3>
-                <p>Dozens of quality-of-life commands: server info, user lookup, avatar fetching, QR code generator, math evaluator, world clock, reaction polls, Discord timestamp formatter, and more.</p>
-            </div>
-            <div class="about-card reveal-on-scroll">
-                <span class="about-card-icon">🎉</span>
-                <h3>Fun</h3>
-                <p>Keep your community entertained with trivia, coinflip, dice, 8-ball, ship, rate, mock text, animal pictures, and 20+ social interaction commands.</p>
+                <h3>Utility & Fun</h3>
+                <p>Dozens of quality-of-life commands: server info, user lookup, avatar, QR codes, math, world clock, reaction polls, trivia, coinflip, and more.</p>
             </div>
         </div>
 
         <!-- Tech Stack -->
         <h2 class="about-section-title">Technology Stack</h2>
-        <div class="tech-stack-list">
-            <div class="tech-item reveal-on-scroll">
-                <span class="tech-label">🦀 Rust</span>
-                <span class="tech-desc">Systems language — memory-safe, zero GC, blazing fast</span>
+        <div class="tech-stack-grid">
+            <div class="tech-card reveal-on-scroll">
+                <span class="tech-card-icon">🦀</span>
+                <span class="tech-card-name">Rust</span>
+                <span class="tech-card-badge">core language</span>
+                <span class="tech-card-desc">Memory-safe, zero GC, predictable performance across all workloads.</span>
             </div>
-            <div class="tech-item reveal-on-scroll">
-                <span class="tech-label">⚡ Tokio</span>
-                <span class="tech-desc">Async runtime for non-blocking concurrent task handling</span>
+            <div class="tech-card reveal-on-scroll">
+                <span class="tech-card-icon">⚡</span>
+                <span class="tech-card-name">Tokio</span>
+                <span class="tech-card-badge">async runtime</span>
+                <span class="tech-card-desc">Non-blocking concurrent task handling for thousands of simultaneous events.</span>
             </div>
-            <div class="tech-item reveal-on-scroll">
-                <span class="tech-label">🔷 Serenity</span>
-                <span class="tech-desc">Low-level Discord API client with full gateway support</span>
+            <div class="tech-card reveal-on-scroll">
+                <span class="tech-card-icon">🔷</span>
+                <span class="tech-card-name">Serenity</span>
+                <span class="tech-card-badge">discord client</span>
+                <span class="tech-card-desc">Low-level Discord API client with full gateway and REST support.</span>
             </div>
-            <div class="tech-item reveal-on-scroll">
-                <span class="tech-label">🎯 Poise</span>
-                <span class="tech-desc">Slash command and prefix command framework on top of Serenity</span>
+            <div class="tech-card reveal-on-scroll">
+                <span class="tech-card-icon">🎯</span>
+                <span class="tech-card-name">Poise</span>
+                <span class="tech-card-badge">command framework</span>
+                <span class="tech-card-desc">Slash command and prefix command framework built on top of Serenity.</span>
             </div>
-            <div class="tech-item reveal-on-scroll">
-                <span class="tech-label">🐘 SQLx</span>
-                <span class="tech-desc">Compile-time verified async PostgreSQL queries</span>
+            <div class="tech-card reveal-on-scroll">
+                <span class="tech-card-icon">🐘</span>
+                <span class="tech-card-name">SQLx</span>
+                <span class="tech-card-badge">database layer</span>
+                <span class="tech-card-desc">Async PostgreSQL client with runtime-verified queries for safety.</span>
             </div>
-            <div class="tech-item reveal-on-scroll">
-                <span class="tech-label">🗄️ Neon</span>
-                <span class="tech-desc">Serverless PostgreSQL with connection pooling via PgBouncer</span>
+            <div class="tech-card reveal-on-scroll">
+                <span class="tech-card-icon">🗄️</span>
+                <span class="tech-card-name">Neon</span>
+                <span class="tech-card-badge">serverless pg</span>
+                <span class="tech-card-desc">Serverless PostgreSQL with connection pooling via PgBouncer proxy.</span>
             </div>
-            <div class="tech-item reveal-on-scroll">
-                <span class="tech-label">🔑 DashMap</span>
-                <span class="tech-desc">Lock-free concurrent hashmap for in-memory guild config cache</span>
+            <div class="tech-card reveal-on-scroll">
+                <span class="tech-card-icon">🔑</span>
+                <span class="tech-card-name">DashMap</span>
+                <span class="tech-card-badge">cache layer</span>
+                <span class="tech-card-desc">Lock-free concurrent hashmap for in-memory guild configuration caching.</span>
             </div>
-            <div class="tech-item reveal-on-scroll">
-                <span class="tech-label">🌐 Axum</span>
-                <span class="tech-desc">High-performance web server powering the /api/stats endpoint</span>
+            <div class="tech-card reveal-on-scroll">
+                <span class="tech-card-icon">🌐</span>
+                <span class="tech-card-name">Axum</span>
+                <span class="tech-card-badge">web server</span>
+                <span class="tech-card-desc">High-performance web server powering the stats and health API endpoints.</span>
+            </div>
+        </div>
+
+        <!-- Version Timeline -->
+        <h2 class="about-section-title">Version History</h2>
+        <div class="timeline">
+            <div class="timeline-item reveal-on-scroll">
+                <div class="timeline-date">May 2026</div>
+                <div class="timeline-title">v4.2 — Sentinel & AutoMod</div>
+                <div class="timeline-desc">Introduced Sentinel anti-raid engine, shadow bans, AutoMod keyword filtering, tactical kick with message purge, case management system, and a full website redesign.</div>
+            </div>
+            <div class="timeline-item reveal-on-scroll">
+                <div class="timeline-date">April 2026</div>
+                <div class="timeline-title">v4.1 — Economy & Leveling Overhaul</div>
+                <div class="timeline-desc">Added gambling commands (blackjack, slots, coinflip, dice), fishing, hunting, a full shop/inventory system, and XP-based role rewards.</div>
+            </div>
+            <div class="timeline-item reveal-on-scroll">
+                <div class="timeline-date">March 2026</div>
+                <div class="timeline-title">v4.0 — Rust Rewrite</div>
+                <div class="timeline-desc">Complete rewrite from JavaScript to Rust using Serenity + Poise. Migrated to PostgreSQL via Neon for persistent server-wide economy and leveling data.</div>
+            </div>
+            <div class="timeline-item reveal-on-scroll">
+                <div class="timeline-date">2025</div>
+                <div class="timeline-title">v1–v3 — Early Development</div>
+                <div class="timeline-desc">Initial bot prototype built in JavaScript with basic moderation commands. Iterated through several versions adding utility, fun, and configuration features.</div>
             </div>
         </div>
 
         <!-- CTA -->
-        <div class="about-cta">
+        <div class="about-cta reveal-on-scroll">
             <h2 class="about-cta-title">Ready to try it?</h2>
-            <p class="about-cta-sub">aegisforge is free, open source, and installs in seconds.</p>
+            <p class="about-cta-sub">AegisForge is free and installs in seconds. No setup required.</p>
             <div class="hero-btns">
-                <a href="https://discord.com/oauth2/authorize?client_id=1500582485367722004&permissions=8&response_type=code&redirect_uri=https%3A%2F%2Fdiscord.com%2Foauth2%2Fauthorize%3Fclient_id%3D1500582485367722004&integration_type=0&scope=bot+identify+applications.commands+applications.commands.permissions.update+openid" target="_blank" rel="noopener noreferrer" class="btn-primary shine-effect">Invite aegisforge</a>
+                <a href="https://discord.com/oauth2/authorize?client_id=1500582485367722004&permissions=8&scope=bot+applications.commands" target="_blank" rel="noopener noreferrer" class="btn-primary shine-effect btn-icon">
+                    <i class="fa-brands fa-discord"></i>Invite AegisForge
+                </a>
                 <a href="https://github.com/watispro5212/aegisforge" target="_blank" rel="noopener noreferrer" class="btn-secondary">View on GitHub</a>
             </div>
         </div>
@@ -183,7 +362,7 @@
     <footer>
         <div class="footer-top">
             <div class="logo-container">
-            <img src="assets/logo.jpg" alt="aegisforge Logo" class="nav-logo-img">
+                <img src="assets/logo.jpg" alt="AegisForge Logo" class="nav-logo-img">
                 <span class="logo-text">aegis<span class="logo-accent">forge</span></span>
             </div>
             <div class="footer-links">
@@ -194,24 +373,29 @@
                 <a href="shards.html">status</a>
                 <a href="about.html">about</a>
                 <a href="https://github.com/watispro5212/aegisforge" target="_blank" rel="noopener noreferrer">github</a>
-                <a href="privacy.html">privacy policy</a>
-                <a href="terms.html">terms of service</a>
+                <a href="privacy.html">privacy</a>
+                <a href="terms.html">terms</a>
             </div>
         </div>
         <div class="footer-bottom">
             <p>&copy; 2026 AegisForge. Built by watispro1.</p>
-            <p class="footer-tagline">Fast moderation, economy, leveling, and utilities.</p>
+            <p class="footer-tagline">// forged in rust — fast by design</p>
         </div>
     </footer>
 
     <script src="commands_data.js"></script>
-    <script src="script.js?v=4.2.2"></script>
+    <script src="script.js?v=4.3"></script>
+    <script>
+        // Pull live stats into about page
+        (async function() {
+            try {
+                const r = await fetch('https://aegisforge-bot.fly.dev/api/stats');
+                const d = await r.json();
+                const el = (id, val) => { const e = document.getElementById(id); if (e) e.textContent = val; };
+                el('stat-guilds', d.server_count?.toLocaleString() || '--');
+                el('about-users', d.user_count?.toLocaleString() || '--');
+            } catch {}
+        })();
+    </script>
 </body>
 </html>
-
-
-
-
-
-
-
