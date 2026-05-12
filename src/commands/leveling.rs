@@ -174,10 +174,13 @@ pub async fn set_xp(
     // calculate level from XP (simplified: level = sqrt(xp) / 5)
     let level = ((xp as f64).sqrt() / 5.0).floor() as i32;
     
-    sqlx::query!(
+    sqlx::query(
         "UPDATE users_leveling SET xp = $1, level = $2 WHERE guild_id = $3 AND user_id = $4",
-        xp, level, guild_id, user.id.get() as i64
     )
+    .bind(xp)
+    .bind(level)
+    .bind(guild_id)
+    .bind(user.id.get() as i64)
     .execute(pool)
     .await?;
 
@@ -195,10 +198,11 @@ pub async fn reset_user(
     let guild_id = ctx.guild_id().unwrap().get() as i64;
     let pool = &ctx.data().database.pool;
     
-    sqlx::query!(
+    sqlx::query(
         "DELETE FROM users_leveling WHERE guild_id = $1 AND user_id = $2",
-        guild_id, user.id.get() as i64
     )
+    .bind(guild_id)
+    .bind(user.id.get() as i64)
     .execute(pool)
     .await?;
 

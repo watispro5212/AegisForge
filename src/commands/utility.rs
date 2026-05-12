@@ -1,5 +1,5 @@
 use crate::{Context, Error};
-use poise::serenity_prelude as serenity;
+use poise::serenity_prelude::{self as serenity, CreateEmbed};
 
 const TOPSTATS_BOT_ID: &str = "1500582485367722004";
 
@@ -32,7 +32,7 @@ pub async fn ping(ctx: Context<'_>) -> Result<(), Error> {
     msg.edit(
         ctx,
         poise::CreateReply::default().embed(
-            serenity::CreateEmbed::new()
+            CreateEmbed::new()
                 .title("⚡ AegisForge Status")
                 .field("Gateway Latency", format!("{}ms", elapsed), true)
                 .field("API Status", "Connected", true)
@@ -51,28 +51,27 @@ pub async fn serverinfo(ctx: Context<'_>) -> Result<(), Error> {
     let guild = ctx.guild().ok_or("Must be in a guild")?.clone();
 
     let icon = guild.icon_url().unwrap_or_default();
-    let boost_tier = format!("Tier {}", u8::from(guild.premium_tier));
+    // boost_tier calculated here for potential future use or logging
+    let _boost_tier = format!("Tier {}", u8::from(guild.premium_tier));
 
     ctx.send(
         poise::CreateReply::default().embed(
-            serenity::CreateEmbed::new()
-                .title(format!("🔷 AegisForge — {}", guild.name))
-                .description(format!("Operational overview for **{}**.", guild.name))
+            CreateEmbed::new()
+                .title(format!("🔷 Server Information — {}", guild.name))
+                .description(format!("Overview for **{}**.", guild.name))
                 .thumbnail(icon)
                 .field("👑 Owner", format!("<@{}>", guild.owner_id), true)
-                .field("👥 Members", guild.member_count.to_string(), true)
-                .field("📺 Channels", guild.channels.len().to_string(), true)
-                .field("📜 Roles", guild.roles.len().to_string(), true)
-                .field("🚀 Boost Level", boost_tier, true)
+                .field("👥 Members", format!("`{}`", guild.member_count), true)
+                .field("📺 Channels", format!("`{}`", guild.channels.len()), true)
+                .field("📜 Roles", format!("`{}`", guild.roles.len()), true)
+                .field("🚀 Boosts", format!("`{}` (Tier {})", guild.premium_subscription_count.unwrap_or(0), u8::from(guild.premium_tier)), true)
+                .field("🛡️ Security", format!("Level `{}`", format!("{:?}", guild.verification_level)), true)
                 .field(
                     "📅 Created",
-                    format!("<t:{}:F>", guild.id.created_at().unix_timestamp()),
-                    true,
+                    format!("<t:{}:F> (<t:{}:R>)", guild.id.created_at().unix_timestamp(), guild.id.created_at().unix_timestamp()),
+                    false,
                 )
-                .footer(serenity::CreateEmbedFooter::new(format!(
-                    "ID: {} | AegisForge v4.2",
-                    guild.id
-                )))
+                .footer(serenity::CreateEmbedFooter::new(format!("ID: {}", guild.id)))
                 .timestamp(serenity::Timestamp::now())
                 .color(0x00E5FF),
         ),
@@ -91,24 +90,24 @@ pub async fn whois(
 
     ctx.send(
         poise::CreateReply::default().embed(
-            serenity::CreateEmbed::new()
+            CreateEmbed::new()
                 .title("👤 User Profile")
-                .description(format!("User info for **{}**.", target.name))
+                .description(format!("Information for **{}**.", target.name))
                 .thumbnail(target.face())
                 .field("📝 Username", format!("**{}**", target.name), true)
-                .field("🆔 User ID", target.id.to_string(), true)
+                .field("🆔 ID", format!("`{}`", target.id), true)
                 .field(
-                    "🤖 Entity Type",
+                    "🤖 Type",
                     if target.bot {
-                        "Service Bot"
+                        "Bot"
                     } else {
-                        "Human User"
+                        "User"
                     },
                     true,
                 )
                 .field(
                     "📅 Account Created",
-                    format!("<t:{}:F>", target.id.created_at().unix_timestamp()),
+                    format!("<t:{}:F> (<t:{}:R>)", target.id.created_at().unix_timestamp(), target.id.created_at().unix_timestamp()),
                     false,
                 )
                 .footer(serenity::CreateEmbedFooter::new("AegisForge v4.2"))
@@ -131,7 +130,7 @@ pub async fn avatar(
 
     ctx.send(
         poise::CreateReply::default().embed(
-            serenity::CreateEmbed::new()
+            CreateEmbed::new()
                 .title("🖼️ User Avatar")
                 .description(format!("Avatar asset for **{}**.", target.name))
                 .image(&avatar_url)
@@ -157,7 +156,7 @@ pub async fn uptime(ctx: Context<'_>) -> Result<(), Error> {
 
     ctx.send(
         poise::CreateReply::default().embed(
-            serenity::CreateEmbed::new()
+            CreateEmbed::new()
                 .title("🕒 Bot Uptime")
                 .description(format!(
                     "Current session uptime: **{}d {}h {}m**.",
@@ -175,7 +174,7 @@ pub async fn uptime(ctx: Context<'_>) -> Result<(), Error> {
 #[poise::command(slash_command, prefix_command)]
 pub async fn vote(ctx: Context<'_>) -> Result<(), Error> {
     ctx.send(poise::CreateReply::default().embed(
-        serenity::CreateEmbed::new()
+        CreateEmbed::new()
             .title("🗳️ Support AegisForge")
             .description("Vote on top.gg to support the bot and receive a **$1,000 economy bonus** ($2,000 on weekends).")
             .field("Link", "[Click here to vote](https://top.gg/bot/1500582485367722004/vote)", false)
@@ -195,7 +194,7 @@ pub async fn stats(ctx: Context<'_>) -> Result<(), Error> {
     let uptime = ctx.data().start_time.elapsed();
     let topstats = fetch_topstats(&ctx.data().http_client).await;
 
-    let mut embed = serenity::CreateEmbed::new()
+    let mut embed = CreateEmbed::new()
         .title("📊 AegisForge — Global Stats")
         .description("Aggregated metrics from the entire AegisForge network.")
         .field(
@@ -281,7 +280,7 @@ pub async fn botinfo(ctx: Context<'_>) -> Result<(), Error> {
     );
 
     ctx.send(poise::CreateReply::default().embed(
-        serenity::CreateEmbed::new()
+        CreateEmbed::new()
             .title("AegisForge v4.2 - Bot Info")
             .description("Runtime, network, economy, and stats for the current bot process.")
             .field("Version", format!("v{}", env!("CARGO_PKG_VERSION")), true)
@@ -319,7 +318,7 @@ pub async fn embed(
 
     ctx.send(
         poise::CreateReply::default().embed(
-            serenity::CreateEmbed::new()
+            CreateEmbed::new()
                 .title(title)
                 .description(description)
                 .color(color_val),
@@ -356,7 +355,7 @@ pub async fn help(
         );
         ctx.send(
             poise::CreateReply::default().embed(
-                serenity::CreateEmbed::new()
+                CreateEmbed::new()
                     .title(format!("🔍 Help — {}", cmd))
                     .description(msg)
                     .color(0x00E5FF),
@@ -367,10 +366,10 @@ pub async fn help(
     }
 
     ctx.send(poise::CreateReply::default().embed(
-        serenity::CreateEmbed::new()
+        CreateEmbed::new()
             .title("🛡️ AegisForge v4.2 — Command Center")
             .description("Server protection, economy, leveling, utilities, and high-performance automation. Use `/` to browse all slash commands.")
-            .field("⚙️ Utility", "`ping`, `server`, `user`, `avatar`, `uptime`, `stats`, `embed`, `qr`, `math`, `weather`, `worldclock`, `poll`, `timestamp`, `timer`, `help`", false)
+            .field("⚙️ Utility", "`ping`, `server`, `user`, `avatar`, `uptime`, `stats`, `embed`, `qr`, `math`, `weather`, `worldclock`, `poll`, `timestamp`, `remind`, `help`", false)
             .field("🛡️ Moderation", "`ban`, `softban`, `unban`, `kick`, `mute`, `unmute`, `timeout`, `warn`, `purge`, `nuke`, `slowmode`, `cases`, `slowmode_global`, `lock`, `unlock`", false)
             .field("💰 Economy", "`balance`, `daily`, `work`, `pay`, `deposit`, `withdraw`, `beg`, `search`, `slots`, `blackjack`, `coinflip`, `shop`, `buy`, `inventory`, `rob`, `crime`, `fish`, `hunt`, `leaderboard`, `gamble_info`", false)
             .field("📈 Leveling", "`rank`, `leaderboard`, `set_xp`, `reset_user` (staff only)", false)
@@ -399,7 +398,7 @@ pub async fn math(
 
     ctx.send(
         poise::CreateReply::default().embed(
-            serenity::CreateEmbed::new()
+            CreateEmbed::new()
                 .title("🔢 Calculator")
                 .field("Expression", format!("`{}`", expression), false)
                 .field("Result", format!("**{}**", result), false)
@@ -424,7 +423,7 @@ pub async fn qr(
 
     ctx.send(
         poise::CreateReply::default().embed(
-            serenity::CreateEmbed::new()
+            CreateEmbed::new()
                 .title("🔳 QR Generator")
                 .description(format!("Encoded data: `{}`", data))
                 .image(qr_url)
@@ -441,24 +440,45 @@ pub async fn crypto(
     ctx: Context<'_>,
     #[description = "Symbol (e.g. BTC, ETH, SOL)"] symbol: String,
 ) -> Result<(), Error> {
-    ctx.send(
-        poise::CreateReply::default().embed(
-            serenity::CreateEmbed::new()
-                .title(format!("🪙 Crypto Price — {}", symbol.to_uppercase()))
-                .description(format!(
-                    "Fetching real-time market data for **{}**...",
-                    symbol.to_uppercase()
-                ))
-                .field("Market Status", "Volatility: High", true)
-                .field("Trend", "📈 Bullish", true)
-                .footer(serenity::CreateEmbedFooter::new(
-                    "Powered by AegisForge Finance",
-                ))
-                .color(0x00E5FF),
-        ),
-    )
-    .await?;
-    Ok(())
+    ctx.defer().await?;
+    let sym = symbol.to_uppercase();
+    let pair = format!("{}USDT", sym);
+    let url = format!("https://api.binance.com/api/v3/ticker/24hr?symbol={}", pair);
+
+    #[derive(serde::Deserialize)]
+    struct BinanceTicker {
+        #[serde(rename = "lastPrice")] last_price: String,
+        #[serde(rename = "priceChangePercent")] price_change: String,
+        #[serde(rename = "highPrice")] high: String,
+        #[serde(rename = "lowPrice")] low: String,
+        volume: String,
+    }
+
+    let res = ctx.data().http_client.get(&url).send().await;
+    
+    if let Ok(response) = res {
+        if let Ok(ticker) = response.json::<BinanceTicker>().await {
+            let price: f64 = ticker.last_price.parse().unwrap_or(0.0);
+            let change: f64 = ticker.price_change.parse().unwrap_or(0.0);
+            let color = if change >= 0.0 { 0x00FF88 } else { 0xFF3B3B };
+            let emoji = if change >= 0.0 { "📈" } else { "📉" };
+
+            ctx.send(poise::CreateReply::default().embed(
+                CreateEmbed::new()
+                    .title(format!("🪙 {}/USDT Market Data", sym))
+                    .description(format!("{} **${:.2}** ({:+.2}%)", emoji, price, change))
+                    .field("24h High", format!("`${:.2}`", ticker.high.parse::<f64>().unwrap_or(0.0)), true)
+                    .field("24h Low", format!("`${:.2}`", ticker.low.parse::<f64>().unwrap_or(0.0)), true)
+                    .field("24h Volume", format!("`{}`", ticker.volume), true)
+                    .footer(serenity::CreateEmbedFooter::new("Data provided by Binance"))
+                    .timestamp(serenity::Timestamp::now())
+                    .color(color)
+            )).await?;
+            return Ok(());
+        }
+    }
+
+    Err(format!("Could not find market data for **{}**. Make sure it's a valid symbol on Binance.", sym).into())
 }
 
 /// translate text between languages (requires API key — contact server admin)
@@ -470,7 +490,7 @@ pub async fn translate(
 ) -> Result<(), Error> {
     ctx.send(
         poise::CreateReply::default().embed(
-            serenity::CreateEmbed::new()
+            CreateEmbed::new()
                 .title("🌍 Translation")
                 .description(format!("**Original:** {}", text))
                 .field(
@@ -493,27 +513,29 @@ pub async fn translate(
     Ok(())
 }
 
-/// set a timer — the bot will DM you when it's done
+/// set a reminder
 #[poise::command(slash_command, prefix_command)]
-pub async fn timer(
+pub async fn remind(
     ctx: Context<'_>,
     #[description = "Duration in minutes (1–1440)"] minutes: u64,
+    #[description = "What should I remind you about?"] 
+    #[rest]
+    reason: String,
 ) -> Result<(), Error> {
     if minutes == 0 || minutes > 1440 {
-        return Err("Timer must be between 1 and 1440 minutes (24 hours).".into());
+        return Err("Reminder must be between 1 and 1440 minutes (24 hours).".into());
     }
 
     let expires_at = chrono::Utc::now().timestamp() + (minutes as i64 * 60);
 
     ctx.send(
         poise::CreateReply::default().embed(
-            serenity::CreateEmbed::new()
-                .title("⏲️ Timer Set")
-                .description(format!("I'll DM you in **{}** minute(s).", minutes))
-                .field("Expires", format!("<t:{}:R>", expires_at), true)
-                .footer(serenity::CreateEmbedFooter::new(
-                    "Make sure your DMs are open!",
-                ))
+            CreateEmbed::new()
+                .title("⏲️ Reminder Set")
+                .description(format!("I'll remind you about **{}** in **{}** minute(s).", reason, minutes))
+                .field("Scheduled For", format!("<t:{}:F>", expires_at), true)
+                .field("Time Remaining", format!("<t:{}:R>", expires_at), true)
+                .footer(serenity::CreateEmbedFooter::new("AegisForge v4.2"))
                 .color(0x00E5FF),
         ),
     )
@@ -521,6 +543,7 @@ pub async fn timer(
 
     let http = ctx.serenity_context().http.clone();
     let user_id = ctx.author().id;
+    let reason_clone = reason.clone();
 
     tokio::spawn(async move {
         tokio::time::sleep(tokio::time::Duration::from_secs(minutes * 60)).await;
@@ -529,9 +552,10 @@ pub async fn timer(
                 .send_message(
                     &http,
                     serenity::CreateMessage::new().embed(
-                        serenity::CreateEmbed::new()
-                            .title("⏰ Timer Done!")
-                            .description(format!("Your **{}**-minute timer has ended!", minutes))
+                        CreateEmbed::new()
+                            .title("⏰ Reminder!")
+                            .description(format!("You asked me to remind you about: **{}**", reason_clone))
+                            .footer(serenity::CreateEmbedFooter::new(format!("Requested {} minute(s) ago", minutes)))
                             .color(0x00FF88),
                     ),
                 )
@@ -616,7 +640,7 @@ pub async fn dictionary(
 
     ctx.send(
         poise::CreateReply::default().embed(
-            serenity::CreateEmbed::new()
+            CreateEmbed::new()
                 .title(title)
                 .description(body.trim())
                 .footer(serenity::CreateEmbedFooter::new(
@@ -642,7 +666,7 @@ pub async fn worldclock(ctx: Context<'_>) -> Result<(), Error> {
 
     ctx.send(
         poise::CreateReply::default().embed(
-            serenity::CreateEmbed::new()
+            CreateEmbed::new()
                 .title("🌎 World Clock")
                 .field("🇬🇧 London (UTC)", fmt(0), true)
                 .field("🇺🇸 New York (EST)", fmt(-5 * 3600), true)
@@ -673,7 +697,7 @@ pub async fn poll(
     let msg = ctx
         .send(
             poise::CreateReply::default().embed(
-                serenity::CreateEmbed::new()
+                CreateEmbed::new()
                     .title("📊 Community Poll")
                     .description(question)
                     .footer(serenity::CreateEmbedFooter::new(format!(
@@ -697,11 +721,12 @@ pub async fn poll(
 async fn autocomplete_city(
     _ctx: Context<'_>,
     partial: &str,
-) -> impl Iterator<Item = String> {
+) -> Vec<String> {
     ["London", "New York", "Tokyo", "Paris", "Berlin", "Sydney", "Los Angeles", "Chicago", "Toronto", "Mumbai"]
         .iter()
         .filter(move |name| name.to_lowercase().starts_with(&partial.to_lowercase()))
         .map(|name| name.to_string())
+        .collect()
 }
 
 /// get the current weather for a city
@@ -729,7 +754,7 @@ pub async fn weather(
     let wind = current["windspeedKmph"].as_str().unwrap_or("0");
     
     ctx.send(poise::CreateReply::default().embed(
-        serenity::CreateEmbed::new()
+        CreateEmbed::new()
             .title(format!("🌦️ Weather — {}", city))
             .field("Condition", desc, true)
             .field("Temperature", format!("`{}°C` ({}°F)", temp_c, temp_f), true)

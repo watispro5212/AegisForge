@@ -63,14 +63,14 @@ impl Database {
         }
 
         // slow way
-        let rows = sqlx::query!(
+        let rows: Vec<(String,)> = sqlx::query_as(
             "SELECT phrase FROM automod_blacklist WHERE guild_id = $1",
-            guild_id
         )
+        .bind(guild_id)
         .fetch_all(&self.pool)
         .await?;
 
-        let list: Vec<String> = rows.into_iter().map(|r| r.phrase).collect();
+        let list: Vec<String> = rows.into_iter().map(|r| r.0).collect();
         self.automod_cache.insert(guild_id, list.clone());
         Ok(list)
     }

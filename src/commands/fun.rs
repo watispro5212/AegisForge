@@ -30,7 +30,8 @@ use rand::Rng;
         "choose",
         "trivia",
         "roast",
-        "compliment"
+        "compliment",
+        "rps"
     ),
     category = "fun"
 )]
@@ -904,6 +905,53 @@ pub async fn compliment(
                     "Spread positivity • AegisForge",
                 ))
                 .color(0x00FF88),
+        ),
+    )
+    .await?;
+    Ok(())
+}
+/// play rock paper scissors with the bot
+#[poise::command(slash_command)]
+pub async fn rps(
+    ctx: Context<'_>,
+    #[description = "Your choice: rock, paper, or scissors"] choice: String,
+) -> Result<(), Error> {
+    let user_choice = choice.to_lowercase();
+    if !["rock", "paper", "scissors"].contains(&user_choice.as_str()) {
+        return Err("Please choose rock, paper, or scissors.".into());
+    }
+
+    let bot_choices = ["rock", "paper", "scissors"];
+    let bot_choice = bot_choices[rand::thread_rng().gen_range(0..3)];
+
+    let (result, color) = if user_choice == bot_choice {
+        ("It's a tie!", 0xFFAA00)
+    } else if (user_choice == "rock" && bot_choice == "scissors")
+        || (user_choice == "paper" && bot_choice == "rock")
+        || (user_choice == "scissors" && bot_choice == "paper")
+    {
+        ("You win!", 0x00FF88)
+    } else {
+        ("I win!", 0xFF3B3B)
+    };
+
+    let emojis = [
+        ("rock", "🪨"),
+        ("paper", "📄"),
+        ("scissors", "✂️"),
+    ];
+    let user_emoji = emojis.iter().find(|(n, _)| n == &user_choice).unwrap().1;
+    let bot_emoji = emojis.iter().find(|(n, _)| n == &bot_choice).unwrap().1;
+
+    ctx.send(
+        poise::CreateReply::default().embed(
+            serenity::CreateEmbed::new()
+                .title("🎮 Rock Paper Scissors")
+                .description(format!(
+                    "**You:** {} {}\n**Bot:** {} {}\n\n**{}**",
+                    user_emoji, user_choice, bot_emoji, bot_choice, result
+                ))
+                .color(color),
         ),
     )
     .await?;

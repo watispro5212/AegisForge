@@ -64,6 +64,18 @@
             <div class="changelog-timeline">
 
                 <div class="changelog-item reveal-on-scroll">
+                    <div class="changelog-date">May 12, 2026</div>
+                    <div class="changelog-title">v4.2.2 - Elite Modernization & Stability</div>
+                    <ul class="changelog-list">
+                        <li><span class="badge badge-polish">POLISH</span> <strong>Codebase Refactor:</strong> Completely rebuilt the <code>moderation.rs</code> module to resolve deep Result type propagation errors and improve long-term maintainability.</li>
+                        <li><span class="badge badge-fix">FIX</span> <strong>API Compatibility:</strong> Fixed type mismatches and mutability errors across the slowmode and global slowmode command loops.</li>
+                        <li><span class="badge badge-perf">PERF</span> <strong>Lean Deployment:</strong> Removed deprecated AI and legacy reminder modules to reduce bot memory footprint and improve cold-start times.</li>
+                        <li><span class="badge badge-polish">UI</span> <strong>Professional Branding:</strong> Purged hyperbolic terminology like "Ultimate" from all command responses in favor of a cleaner "Elite" visual identity.</li>
+                        <li><span class="badge badge-new">NEW</span> <strong>Subcommand Discovery:</strong> Properly registered <code>/economy dice</code> and <code>/economy work_list</code> in the main framework options.</li>
+                    </ul>
+                </div>
+
+                <div class="changelog-item reveal-on-scroll">
                     <div class="changelog-date">May 11, 2026</div>
                     <div class="changelog-title">v4.2.1 - Full AutoMod Suite &amp; Event Logging</div>
                     <ul class="changelog-list">
@@ -93,6 +105,7 @@
                     </ul>
                 </div>
 
+                <div class="changelog-timeline">
                 <div class="changelog-item reveal-on-scroll">
                     <div class="changelog-date">May 9, 2026</div>
                     <div class="changelog-title">v4.1.2 - Live Status Sync</div>
@@ -139,72 +152,6 @@
                     </ul>
                 </div>
 
-                <div class="changelog-item reveal-on-scroll">
-                    <div class="changelog-date">May 9, 2026</div>
-                    <div class="changelog-title">v3.1.1 — Web Overhaul</div>
-                    <ul class="changelog-list">
-                        <li><span class="badge badge-new">NEW</span> Added mobile hamburger menu with slide animation across all pages.</li>
-                        <li><span class="badge badge-new">NEW</span> Active nav link highlighting based on current page.</li>
-                        <li><span class="badge badge-fix">FIX</span> Fixed accordion on commands page — categories were always open with no toggle behavior.</li>
-                        <li><span class="badge badge-fix">FIX</span> Fixed privacy policy — second section had completely broken HTML structure.</li>
-                        <li><span class="badge badge-fix">FIX</span> Added missing background elements to commands page.</li>
-                        <li><span class="badge badge-fix">FIX</span> Upgraded Font Awesome 6.0 → 6.5 on commands and changelog pages.</li>
-                        <li><span class="badge badge-polish">UI</span> Added proper styles for ~50 previously-unstyled CSS classes across all pages.</li>
-                    </ul>
-                </div>
-
-                <div class="changelog-item reveal-on-scroll">
-                    <div class="changelog-date">May 6, 2026</div>
-                    <div class="changelog-title">v3.1.0 — Hyperforge</div>
-                    <ul class="changelog-list">
-                        <li><span class="badge badge-new">NEW</span> Added 20+ new commands across all categories.</li>
-                        <li><span class="badge badge-new">NEW</span> Advanced economy: <code>/rob</code>, <code>/slots</code>, <code>/search</code> modules with full risk mechanics.</li>
-                        <li><span class="badge badge-new">NEW</span> Banking suite: <code>/deposit</code> and <code>/withdraw</code> with separate wallet/bank security model.</li>
-                        <li><span class="badge badge-new">NEW</span> Productivity tools: <code>/math</code>, <code>/qrcode</code>, <code>/dictionary</code>.</li>
-                        <li><span class="badge badge-new">NEW</span> Social expansion: <code>/fun ship</code> and animal commands (<code>/fox</code>, <code>/panda</code>, <code>/bird</code>).</li>
-                        <li><span class="badge badge-perf">PERF</span> Synchronized DashMap cache for sub-millisecond guild config lookups.</li>
-                        <li><span class="badge badge-polish">UI</span> Updated command registry and team page for better accessibility.</li>
-                    </ul>
-                </div>
-
-                <div class="changelog-item reveal-on-scroll">
-                    <div class="changelog-date">May 5, 2026</div>
-                    <div class="changelog-title">v3.0.0 — Eternal Forge</div>
-                    <ul class="changelog-list">
-                        <li><span class="badge badge-new">NEW</span> Full Economy System with work, daily, and transaction mechanics.</li>
-                        <li><span class="badge badge-new">NEW</span> Leveling Framework with XP-based ranks and configurable role rewards.</li>
-                        <li><span class="badge badge-new">NEW</span> Moderation Audit Logs with permanent database storage and unique Case IDs.</li>
-                        <li><span class="badge badge-new">NEW</span> Custom prefix support per guild.</li>
-                        <li><span class="badge badge-perf">PERF</span> Hardened Fly.io deployment with persistent connection pool optimization.</li>
-                        <li><span class="badge badge-fix">FIX</span> Migrated to <code>native-tls</code> to resolve a High-severity DoS vulnerability in <code>rustls-webpki</code>.</li>
-                        <li><span class="badge badge-fix">FIX</span> Upgraded to SQLx v0.8.6 to patch critical binary protocol misinterpretation flaws.</li>
-                    </ul>
-                </div>
-
-                <div class="changelog-item reveal-on-scroll">
-                    <div class="changelog-date">May 3, 2026</div>
-                    <div class="changelog-title">v2.0.0 — The Expansion</div>
-                    <ul class="changelog-list">
-                        <li><span class="badge badge-new">NEW</span> Rotating presence status cycling through 4 branded messages every 60s.</li>
-                        <li><span class="badge badge-new">NEW</span> <code>/8ball</code>, <code>/joke</code>, and <code>/embed</code> commands.</li>
-                        <li><span class="badge badge-polish">UI</span> Rebranded to official aegisforge assets with full free-to-use model.</li>
-                        <li><span class="badge badge-polish">UI</span> Updated site navigation and expanded support server structure.</li>
-                    </ul>
-                </div>
-
-                <div class="changelog-item reveal-on-scroll">
-                    <div class="changelog-date">May 2026</div>
-                    <div class="changelog-title">v0.1.0 — Genesis</div>
-                    <ul class="changelog-list">
-                        <li><span class="badge badge-new">NEW</span> Initial release of aegisforge, written entirely in Rust.</li>
-                        <li><span class="badge badge-new">NEW</span> Core moderation: Ban, Kick, Timeout, Warn, Purge.</li>
-                        <li><span class="badge badge-new">NEW</span> Utility commands: Avatar, Ping, Uptime, Coinflip, Dice, Poll.</li>
-                        <li><span class="badge badge-new">NEW</span> Integrated Neon Serverless Postgres for blazing-fast database interactions.</li>
-                        <li><span class="badge badge-new">NEW</span> Auto-moderation event listeners for server protection.</li>
-                        <li><span class="badge badge-new">NEW</span> Official dashboard website launched.</li>
-                    </ul>
-                </div>
-
             </div>
         </div>
     </main>
@@ -228,7 +175,7 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2026 aegisforge. Forged with 🦀 Rust and precision.</p>
+            <p>&copy; 2026 AegisForge. Forged with 🦀 Rust and precision.</p>
             <p class="footer-tagline">Fast moderation, economy, leveling, and utilities.</p>
         </div>
     </footer>
@@ -236,4 +183,3 @@
     <script src="script.js?v=4.2.2"></script>
 </body>
 </html>
-

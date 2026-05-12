@@ -7,21 +7,20 @@ pub async fn get_user_leveling(
     guild_id: i64,
     user_id: i64,
 ) -> sqlx::Result<UserLeveling> {
-    let leveling = sqlx::query_as!(
-        UserLeveling,
+    let leveling = sqlx::query_as::<_, UserLeveling>(
         r#"
         SELECT 
             guild_id, user_id, xp, level, last_msg, 
-            rank_card_background as "rank_card_background!", 
-            rank_card_color as "rank_card_color!", 
-            rank_card_text_color as "rank_card_text_color!", 
+            rank_card_background, 
+            rank_card_color, 
+            rank_card_text_color, 
             created_at, updated_at
         FROM users_leveling
         WHERE guild_id = $1 AND user_id = $2
         "#,
-        guild_id,
-        user_id
     )
+    .bind(guild_id)
+    .bind(user_id)
     .fetch_optional(pool)
     .await?;
 
@@ -32,18 +31,21 @@ pub async fn get_user_leveling(
         crate::db::guild::get_or_create(pool, guild_id).await?;
 
         // create default
-        sqlx::query!(
+        sqlx::query(
             "INSERT INTO users_leveling (guild_id, user_id, rank_card_background, rank_card_color, rank_card_text_color) VALUES ($1, $2, 'default', '#00E5FF', '#FFFFFF') ON CONFLICT DO NOTHING",
-            guild_id,
-            user_id
-        ).execute(pool).await?;
+        )
+        .bind(guild_id)
+        .bind(user_id)
+        .execute(pool)
+        .await?;
 
-        Ok(sqlx::query_as!(
-            UserLeveling,
-            "SELECT guild_id, user_id, xp, level, last_msg, rank_card_background as \"rank_card_background!\", rank_card_color as \"rank_card_color!\", rank_card_text_color as \"rank_card_text_color!\", created_at, updated_at FROM users_leveling WHERE guild_id = $1 AND user_id = $2",
-            guild_id,
-            user_id
-        ).fetch_one(pool).await?)
+        Ok(sqlx::query_as::<_, UserLeveling>(
+            "SELECT guild_id, user_id, xp, level, last_msg, rank_card_background, rank_card_color, rank_card_text_color, created_at, updated_at FROM users_leveling WHERE guild_id = $1 AND user_id = $2",
+        )
+        .bind(guild_id)
+        .bind(user_id)
+        .fetch_one(pool)
+        .await?)
     }
 }
 
@@ -64,13 +66,15 @@ pub async fn add_xp(pool: &PgPool, guild_id: i64, user_id: i64, amount: i64) -> 
     let leveled_up = new_level > leveling.level;
     leveling.level = new_level;
 
-    sqlx::query!(
+    sqlx::query(
         "UPDATE users_leveling SET xp = $1, level = $2, last_msg = NOW() WHERE guild_id = $3 AND user_id = $4",
-        leveling.xp,
-        leveling.level,
-        guild_id,
-        user_id
-    ).execute(pool).await?;
+    )
+    .bind(leveling.xp)
+    .bind(leveling.level)
+    .bind(guild_id)
+    .bind(user_id)
+    .execute(pool)
+    .await?;
 
     Ok(leveled_up)
 }
@@ -84,30 +88,34 @@ pub async fn update_rank_card_customization(
     text_color: Option<String>,
 ) -> sqlx::Result<()> {
     if let Some(bg) = background {
-        sqlx::query!(
+        sqlx::query(
             "UPDATE users_leveling SET rank_card_background = $1 WHERE guild_id = $2 AND user_id = $3",
-            bg,
-            guild_id,
-            user_id
-        ).execute(pool).await?;
+        )
+        .bind(bg)
+        .bind(guild_id)
+        .bind(user_id)
+        .execute(pool)
+        .await?;
     }
     if let Some(c) = color {
-        sqlx::query!(
+        sqlx::query(
             "UPDATE users_leveling SET rank_card_color = $1 WHERE guild_id = $2 AND user_id = $3",
-            c,
-            guild_id,
-            user_id
         )
+        .bind(c)
+        .bind(guild_id)
+        .bind(user_id)
         .execute(pool)
         .await?;
     }
     if let Some(tc) = text_color {
-        sqlx::query!(
+        sqlx::query(
             "UPDATE users_leveling SET rank_card_text_color = $1 WHERE guild_id = $2 AND user_id = $3",
-            tc,
-            guild_id,
-            user_id
-        ).execute(pool).await?;
+        )
+        .bind(tc)
+        .bind(guild_id)
+        .bind(user_id)
+        .execute(pool)
+        .await?;
     }
     Ok(())
 }
@@ -117,14 +125,16 @@ pub async fn get_leaderboard(
     guild_id: i64,
     limit: i64,
 ) -> sqlx::Result<Vec<UserLeveling>> {
-    sqlx::query_as!(
-        UserLeveling,
-        "SELECT guild_id, user_id, xp, level, last_msg, rank_card_background as \"rank_card_background!\", rank_card_color as \"rank_card_color!\", rank_card_text_color as \"rank_card_text_color!\", created_at, updated_at FROM users_leveling WHERE guild_id = $1 ORDER BY xp DESC LIMIT $2",
-        guild_id,
-        limit
-    ).fetch_all(pool).await
+    sqlx::query_as::<_, UserLeveling>(
+        "SELECT guild_id, user_id, xp, level, last_msg, rank_card_background, rank_card_color, rank_card_text_color, created_at, updated_at FROM users_leveling WHERE guild_id = $1 ORDER BY xp DESC LIMIT $2",
+    )
+    .bind(guild_id)
+    .bind(limit)
+    .fetch_all(pool)
+    .await
 }
 
+#[derive(Debug, Clone, sqlx::FromRow)]
 pub struct GlobalLevelingEntry {
     pub user_id: i64,
     pub total_xp: i64,
@@ -134,28 +144,26 @@ pub async fn get_global_leaderboard(
     pool: &PgPool,
     limit: i64,
 ) -> Result<Vec<GlobalLevelingEntry>, sqlx::Error> {
-    sqlx::query_as!(
-        GlobalLevelingEntry,
-        "SELECT user_id, SUM(xp)::BIGINT as \"total_xp!\" FROM users_leveling GROUP BY user_id ORDER BY SUM(xp) DESC LIMIT $1",
-        limit
+    sqlx::query_as::<_, GlobalLevelingEntry>(
+        "SELECT user_id, SUM(xp)::BIGINT as total_xp FROM users_leveling GROUP BY user_id ORDER BY SUM(xp) DESC LIMIT $1",
     )
+    .bind(limit)
     .fetch_all(pool)
     .await
 }
 
 pub async fn get_total_xp(pool: &PgPool) -> Result<i64, sqlx::Error> {
-    let row = sqlx::query!("SELECT SUM(xp)::BIGINT as \"total!\" FROM users_leveling")
+    let row: (Option<i64>,) = sqlx::query_as("SELECT SUM(xp)::BIGINT FROM users_leveling")
         .fetch_one(pool)
         .await?;
-    Ok(row.total)
+    Ok(row.0.unwrap_or(0))
 }
 
 pub async fn get_level_roles(pool: &PgPool, guild_id: i64) -> sqlx::Result<Vec<LevelRole>> {
-    sqlx::query_as!(
-        LevelRole,
+    sqlx::query_as::<_, LevelRole>(
         "SELECT * FROM level_roles WHERE guild_id = $1 ORDER BY level ASC",
-        guild_id
     )
+    .bind(guild_id)
     .fetch_all(pool)
     .await
 }

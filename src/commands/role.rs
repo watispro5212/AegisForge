@@ -1,3 +1,7 @@
+use crate::{Context, Error};
+use poise::serenity_prelude::{CreateEmbed, CreateEmbedFooter, EditRole, Role, User};
+use std::cmp::Reverse;
+
 /// role management
 #[poise::command(
     slash_command,
@@ -18,8 +22,8 @@ pub async fn role(_ctx: Context<'_>) -> Result<(), Error> {
 )]
 pub async fn add(
     ctx: Context<'_>,
-    #[description = "The member to add the role to"] user: serenity::User,
-    #[description = "The role to add"] role: serenity::Role,
+    #[description = "The member to add the role to"] user: User,
+    #[description = "The role to add"] role: Role,
 ) -> Result<(), Error> {
     ctx.defer().await?;
     let guild_id = ctx.guild_id().ok_or("Must be in a guild")?;
@@ -28,10 +32,10 @@ pub async fn add(
 
     ctx.send(
         poise::CreateReply::default().embed(
-            serenity::CreateEmbed::new()
+            CreateEmbed::new()
                 .title("🎭 Role Added")
                 .description(format!("Successfully assigned **{}** to <@{}>.", role.name, user.id))
-                .footer(serenity::CreateEmbedFooter::new("AegisForge v4.2 | Role Management"))
+                .footer(CreateEmbedFooter::new("AegisForge v4.2 | Role Management"))
                 .color(0x00FF88),
         ),
     )
@@ -48,8 +52,8 @@ pub async fn add(
 )]
 pub async fn remove(
     ctx: Context<'_>,
-    #[description = "The member to remove the role from"] user: serenity::User,
-    #[description = "The role to remove"] role: serenity::Role,
+    #[description = "The member to remove the role from"] user: User,
+    #[description = "The role to remove"] role: Role,
 ) -> Result<(), Error> {
     ctx.defer().await?;
     let guild_id = ctx.guild_id().ok_or("Must be in a guild")?;
@@ -58,10 +62,10 @@ pub async fn remove(
 
     ctx.send(
         poise::CreateReply::default().embed(
-            serenity::CreateEmbed::new()
+            CreateEmbed::new()
                 .title("🎭 Role Removed")
                 .description(format!("Successfully removed **{}** from <@{}>.", role.name, user.id))
-                .footer(serenity::CreateEmbedFooter::new("AegisForge v4.2 | Role Management"))
+                .footer(CreateEmbedFooter::new("AegisForge v4.2 | Role Management"))
                 .color(0xFF4500),
         ),
     )
@@ -86,10 +90,10 @@ pub async fn list(ctx: Context<'_>) -> Result<(), Error> {
 
     ctx.send(
         poise::CreateReply::default().embed(
-            serenity::CreateEmbed::new()
+            CreateEmbed::new()
                 .title(format!("🎭 Roles in {}", guild.name))
                 .description(format!("Total Roles: **{}**\n\n{}", roles.len(), role_list))
-                .footer(serenity::CreateEmbedFooter::new("Showing top 20 roles by position"))
+                .footer(CreateEmbedFooter::new("Showing top 20 roles by position"))
                 .color(0x00E5FF),
         ),
     )
@@ -110,11 +114,11 @@ pub async fn create(
         .and_then(|c| u32::from_str_radix(c.trim_start_matches('#'), 16).ok())
         .unwrap_or(0);
 
-    let role = guild_id.create_role(ctx.http(), serenity::EditRole::new().name(name).color(color_val)).await?;
+    let role = guild_id.create_role(ctx.http(), EditRole::new().name(name).colour(color_val)).await?;
 
     ctx.send(
         poise::CreateReply::default().embed(
-            serenity::CreateEmbed::new()
+            CreateEmbed::new()
                 .title("🎭 Role Created")
                 .description(format!("Successfully created role <@&{}>.", role.id))
                 .color(0x00FF88),
@@ -128,7 +132,7 @@ pub async fn create(
 #[poise::command(slash_command, prefix_command, required_permissions = "MANAGE_ROLES", guild_only)]
 pub async fn delete(
     ctx: Context<'_>,
-    #[description = "The role to delete"] role: serenity::Role,
+    #[description = "The role to delete"] role: Role,
 ) -> Result<(), Error> {
     ctx.defer().await?;
     let guild_id = ctx.guild_id().ok_or("Must be in a guild")?;
@@ -136,7 +140,7 @@ pub async fn delete(
 
     ctx.send(
         poise::CreateReply::default().embed(
-            serenity::CreateEmbed::new()
+            CreateEmbed::new()
                 .title("🎭 Role Deleted")
                 .description(format!("Successfully deleted role **{}**.", role.name))
                 .color(0xFF4500),

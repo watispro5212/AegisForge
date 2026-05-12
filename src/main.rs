@@ -234,8 +234,8 @@ async fn get_health(State(state): State<AppState>) -> Json<Health> {
     })
 }
 
-type Error = Box<dyn std::error::Error + Send + Sync>;
-type Context<'a> = poise::Context<'a, Data, Error>;
+pub type Error = Box<dyn std::error::Error + Send + Sync>;
+pub type Context<'a> = poise::Context<'a, Data, Error>;
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
@@ -289,7 +289,7 @@ async fn main() -> Result<(), Error> {
                 commands::utility::weather(),
                 commands::utility::crypto(),
                 commands::utility::translate(),
-                commands::utility::timer(),
+                commands::utility::remind(),
                 commands::utility::dictionary(),
                 commands::utility::worldclock(),
                 commands::utility::poll(),
@@ -305,37 +305,47 @@ async fn main() -> Result<(), Error> {
                 commands::moderation::unban(),
                 commands::moderation::kick(),
                 commands::moderation::nuke(),
+                commands::moderation::mute(),
+                commands::moderation::unmute(),
+                commands::moderation::timeout(),
+                commands::moderation::warn(),
+                commands::moderation::warns(),
+                commands::moderation::clearwarns(),
+                commands::moderation::purge(),
+                commands::moderation::nuke(),
                 commands::moderation::slowmode(),
+                commands::moderation::slowmode_global(),
+                commands::moderation::cases(),
                 commands::moderation::lock(),
                 commands::moderation::unlock(),
-                commands::moderation::timeout(),
-                commands::moderation::mute(),
-                commands::moderation::shadowban(),
-                commands::moderation::unshadowban(),
                 commands::moderation::tactical(),
-                commands::moderation::unmute(),
-                commands::moderation::warn(),
-                commands::moderation::purge(),
-                commands::moderation::cases(),
-                commands::moderation::slowmode_global(),
-                // role management
+                // fun
+                commands::fun::fun(),
+                // economy
+                commands::economy::economy(),
+                commands::economy::dice(),
+                commands::economy::work_list(),
+                // leveling
+                commands::leveling::rank(),
+                commands::leveling::leaderboard(),
+                commands::leveling::set_xp(),
+                commands::leveling::reset_user(),
+                // roles
                 commands::role::role(),
                 // config
                 commands::config::logs(),
-                commands::config::welcome(),
-                commands::config::autorole(),
-                commands::config::prefix(),
-                commands::config::settings(),
-                commands::config::muterole(),
-                commands::config::sentinel(),
-                commands::config::automod(),
                 commands::config::msglogs(),
                 commands::config::memberlogs(),
+                commands::config::welcome(),
                 commands::config::goodbye(),
-                // reminders
-                commands::remind::create(),
+                commands::config::autorole(),
+                commands::config::prefix(),
+                commands::config::muterole(),
+                commands::config::settings(),
+                commands::config::sentinel(),
+                commands::config::automod(),
                 // ai
-                commands::ai::ai(),
+                // commands::ai::ai(),
             ],
             pre_command: |ctx| {
                 Box::pin(async move {
