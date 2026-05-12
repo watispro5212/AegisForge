@@ -1,24 +1,26 @@
 # AegisForge
 
-AegisForge v4.1 is a high-performance Discord bot built in Rust for moderation, economy, shop inventory, leveling, server configuration, utility commands, and live status telemetry.
+AegisForge v4.3 is a high-performance Discord bot built in Rust. It provides advanced moderation (Sentinel Anti-Raid & AutoMod), economy with global shops, giveways, leveling, utility tools, and real-time dashboard telemetry.
 
-The bot runs on Serenity, Poise, Tokio, SQLx, Neon Postgres, DashMap, and Axum. The public website is static, but its status and about pages read real live bot stats from the Rust API instead of hardcoded counters.
+The bot runs on Serenity, Poise, Tokio, SQLx, Neon Postgres, DashMap, and Axum. The public website is fully static and communicates with the Rust API for live telemetry and statistics.
 
 ## Current Release
 
-- Version: `4.1.2` website/docs refresh on top of bot version `4.1.0`
+- Version: `v4.3` — Advanced Bot Upgrades & UI Glassmorphism Redesign
 - Bot/API status: `GET /api/health`
 - Live stats: `GET /api/stats`
 - Website stats route: `web/api/stats.js` proxies the live Rust API first, then falls back to Neon database totals if the bot API is unavailable.
 
 ## Features
 
-- Moderation: ban, softban, unban, kick, timeout, mute, unmute, warn, purge, nuke, slowmode, lock, and unlock.
-- Economy: wallet, bank, daily rewards, work, fishing, hunting, crime, slots, robbery, payments, global shop purchases, inventory, and leaderboards.
-- Leveling: message XP, rank lookup, local/global leaderboards, and rank card customization.
-- Configuration: logs, welcome messages, autorole, prefixes, and guild settings.
-- Utility: ping, stats, bot info, server/user lookup, avatars, embeds, timestamps, math, QR codes, dictionary lookup, timers, polls, and world clock.
-- Website: static front end with live API-backed status, shard telemetry, about stats, command registry, economy guide, changelog, and policy pages.
+- **Moderation**: Sentinel Anti-Raid detection, AutoMod (spam, invites, caps, mass mentions, bad words), ban, softban, shadowban, timeout, purge, nuke, tactical intercept (server lockdown), and tactical breach.
+- **Economy**: wallet, bank, daily rewards, work, fishing, hunting, crime, slots, robbery, payments, global shop purchases, inventory, and leaderboards.
+- **Giveaways**: Complete giveaway management system with DashMap in-memory storage (`start`, `end`, `reroll`, `list`).
+- **Fun**: 25+ fun commands including Would You Rather, Truth, Dare, Number Guess, Word Scramble, Ship, Meme, etc.
+- **Leveling**: message XP, rank lookup, local/global leaderboards, and rank card customization.
+- **Configuration**: custom logs, welcome/goodbye messages, autorole, prefixes, and guild settings.
+- **Utility**: ping, stats, bot info, server/user lookup, avatars, embeds, timestamps, math, QR codes, dictionary lookup, timers, polls, and world clock.
+- **Website**: Premium glassmorphism front-end with live API-backed status telemetry, shard network views, command registry, changelog, and policy pages.
 
 ## Tech Stack
 
@@ -27,11 +29,11 @@ The bot runs on Serenity, Poise, Tokio, SQLx, Neon Postgres, DashMap, and Axum. 
 - Serenity
 - Poise
 - SQLx
-- Neon/PostgreSQL
+- Neon Serverless Postgres
 - Axum
 - DashMap
-- Vercel for the website
-- Fly.io for the bot/API deployment
+- Vercel (Frontend Web App)
+- Fly.io (Backend Bot Deployment)
 
 ## Environment
 

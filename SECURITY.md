@@ -2,49 +2,34 @@
 
 ## Supported Versions
 
-Security updates are prioritized for the latest public release.
+AegisForge maintains security updates for the latest stable major release only. Older versions may not receive security backports.
 
-| Version | Supported |
-| ------- | --------- |
-| v4.x    | Yes       |
-| v3.x    | No        |
-| < v3.0  | No        |
+| Version | Supported          |
+| ------- | ------------------ |
+| 4.x     | :white_check_mark: |
+| < 4.0   | :x:                |
 
 ## Reporting a Vulnerability
 
-Please do not disclose suspected vulnerabilities publicly.
+Security is a core priority for AegisForge, especially given the bot's advanced moderation and Sentinel capabilities.
 
-1. Open a private report through GitHub security advisories if available.
-2. If GitHub advisories are unavailable, contact the maintainer through the official support server: https://discord.gg/HbmafcgjNa
-3. Include the affected component, reproduction steps, expected impact, logs or screenshots if useful, and whether the issue is already being exploited.
+If you discover a security vulnerability within AegisForge, please DO NOT report it on the public issue tracker or public Discord channels. 
 
-We aim to acknowledge valid reports within 48 hours and provide a fix, mitigation, or status update within 7 days.
+Please send an email to the project maintainers directly or reach out via direct message to `watispro1` on Discord.
 
-## Scope
+### What to include
 
-Security reports are most useful when they affect:
+When reporting an issue, please include:
+- A description of the vulnerability and its impact.
+- Steps to reproduce the issue.
+- Any relevant logs, screenshots, or code snippets.
+- Your Discord handle or contact method.
 
-- Discord command authorization or permission checks.
-- Moderation, warning, or audit-log integrity.
-- Economy balances, inventory, vote rewards, or transaction accounting.
-- SQL queries, migrations, or database access.
-- Public API routes such as `/api/stats`, `/api/health`, and `/api/vote`.
-- Secrets, tokens, deployment configuration, or webhook verification.
+### Resolution Process
 
-## Hardening Notes
+1. We will acknowledge receipt of your report within 48 hours.
+2. We will investigate the issue and determine its validity and severity.
+3. If confirmed, we will develop a patch and deploy it to the production environment.
+4. We will notify you when the fix has been applied.
 
-- SQL is executed through SQLx with parameterized queries.
-- Runtime database traffic should use pooled Neon/PgBouncer connections.
-- Schema migrations should use the direct Neon connection string.
-- Top.gg vote rewards should be protected with `TOPGG_WEBHOOK_SECRET` when enabled.
-- Never commit `.env`, Discord tokens, database URLs, webhook URLs, or deployment secrets.
-
-## Dependency Checks
-
-Run these before release when possible:
-
-```bash
-cargo audit
-cargo clippy --all-targets -- -D warnings
-cd web && npm audit
-```
+Thank you for helping keep AegisForge safe.
