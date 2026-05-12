@@ -1,4 +1,5 @@
 use poise::serenity_prelude as serenity;
+use std::collections::VecDeque;
 use std::time::{Duration, Instant};
 use tracing::{error, info, warn};
 
@@ -323,36 +324,249 @@ pub async fn event_handler(
                 }
             }
 
-            // ── Automod — guild-specific blacklist only ──────────────
+            // ── AutoMod ──────────────────────────────────────────────
             if config.automod_enabled {
-                let content = new_message.content.to_lowercase();
+                let content_lower = new_message.content.to_lowercase();
+                let content_raw = &new_message.content;
+                let author_id = new_message.author.id;
+                let channel_id = new_message.channel_id;
+                let log_channel = config.mod_log_channel;
 
-                if let Ok(guild_blacklist) = db.get_automod_blacklist(guild_id).await {
-                    let hit = guild_blacklist
-                        .iter()
-                        .find(|phrase| content.contains(&phrase.to_lowercase()));
+                let send_automod_alert = |reason: &'static str, detail: String| {
+                    let embed = serenity::builder::CreateEmbed::new()
+                        .title("🛡️ AutoMod — Message Removed")
+                        .description(format!("<@{}>'s message was removed.", author_id))
+                        .field("Reason", reason, true)
+                        .field("Detail", detail, false)
+                        .footer(serenity::builder::CreateEmbedFooter::new(
+                            "AegisForge AutoMod | /automod to configure",
+                        ))
+                        .timestamp(serenity::Timestamp::now())
+                        .color(0xFF3B3B);
+                    embed
+                };
 
-                    if let Some(_phrase) = hit {
+                // Blacklist phrases
+                if let Ok(blacklist) = db.get_automod_blacklist(guild_id).await {
+                    if let Some(phrase) = blacklist.iter().find(|p| content_lower.contains(p.as_str())) {
                         let _ = new_message.delete(ctx).await;
-
-                        let embed = serenity::builder::CreateEmbed::new()
-                            .title("🛡️ AutoMod — Message Removed")
-                            .description(format!(
-                                "<@{}>'s message was removed for containing a blacklisted phrase.",
-                                new_message.author.id
-                            ))
-                            .field("Reason", "Blacklisted phrase detected", false)
-                            .footer(serenity::builder::CreateEmbedFooter::new(
-                                "Configure your blacklist with /automod settings",
-                            ))
-                            .color(0xFF3B3B);
-
-                        let _ = new_message
-                            .channel_id
-                            .send_message(ctx, serenity::builder::CreateMessage::new().embed(embed))
-                            .await;
-
+                        let embed = send_automod_alert("Blacklisted phrase", format!("`{}`", phrase));
+                        let _ = channel_id.send_message(ctx, serenity::builder::CreateMessage::new().embed(embed)).await;
+                        if let Some(lc) = log_channel {
+                            let log_embed = serenity::builder::CreateEmbed::new()
+                                .title("🛡️ AutoMod — Blacklist Hit")
+                                .field("User", format!("<@{}>", author_id), true)
+                                .field("Channel", format!("<#{}>", channel_id), true)
+                                .field("Phrase", format!("`{}`", phrase), false)
+                                .color(0xFF3B3B).timestamp(serenity::Timestamp::now());
+                            let _ = serenity::ChannelId::new(lc as u64).send_message(ctx, serenity::builder::CreateMessage::new().embed(log_embed)).await;
+                        }
                         return Ok(());
+                    }
+                }
+
+                // Anti-invite links
+                if config.automod_invites {
+                    let has_invite = content_lower.contains("discord.gg/")
+                        || content_lower.contains("discord.com/invite/")
+                        || content_lower.contains("discordapp.com/invite/");
+                    if has_invite {
+                        let _ = new_message.delete(ctx).await;
+                        let embed = send_automod_alert("Discord invite link", "Invite links are not allowed.".into());
+                        let _ = channel_id.send_message(ctx, serenity::builder::CreateMessage::new().embed(embed)).await;
+                        if let Some(lc) = log_channel {
+                            let log_embed = serenity::builder::CreateEmbed::new()
+                                .title("🛡️ AutoMod — Invite Link Blocked")
+                                .field("User", format!("<@{}>", author_id), true)
+                                .field("Channel", format!("<#{}>", channel_id), true)
+                                .color(0xFF3B3B).timestamp(serenity::Timestamp::now());
+                            let _ = serenity::ChannelId::new(lc as u64).send_message(ctx, serenity::builder::CreateMessage::new().embed(log_embed)).await;
+                        }
+                        return Ok(());
+                    }
+                }
+
+                // Anti-caps (>70% uppercase, message must be >15 chars)
+                if config.automod_caps && content_raw.len() > 15 {
+                    let letters = content_raw.chars().filter(|c| c.is_alphabetic()).count();
+                    let caps = content_raw.chars().filter(|c| c.is_uppercase()).count();
+                    if letters > 5 && caps * 100 / letters >= 70 {
+                        let _ = new_message.delete(ctx).await;
+                        let embed = send_automod_alert("Excessive caps", format!("{}% uppercase", caps * 100 / letters));
+                        let _ = channel_id.send_message(ctx, serenity::builder::CreateMessage::new().embed(embed)).await;
+                        if let Some(lc) = log_channel {
+                            let log_embed = serenity::builder::CreateEmbed::new()
+                                .title("🛡️ AutoMod — Caps Violation")
+                                .field("User", format!("<@{}>", author_id), true)
+                                .field("Caps %", format!("{}%", caps * 100 / letters), true)
+                                .color(0xFF3B3B).timestamp(serenity::Timestamp::now());
+                            let _ = serenity::ChannelId::new(lc as u64).send_message(ctx, serenity::builder::CreateMessage::new().embed(log_embed)).await;
+                        }
+                        return Ok(());
+                    }
+                }
+
+                // Anti-mention spam (≥5 unique user or role mentions)
+                if config.automod_mentions {
+                    let mention_count = new_message.mentions.len() + new_message.mention_roles.len();
+                    if mention_count >= 5 {
+                        let _ = new_message.delete(ctx).await;
+                        let embed = send_automod_alert("Mass mentions", format!("{} mentions in one message", mention_count));
+                        let _ = channel_id.send_message(ctx, serenity::builder::CreateMessage::new().embed(embed)).await;
+                        if let Some(lc) = log_channel {
+                            let log_embed = serenity::builder::CreateEmbed::new()
+                                .title("🛡️ AutoMod — Mass Mentions")
+                                .field("User", format!("<@{}>", author_id), true)
+                                .field("Mentions", format!("`{}`", mention_count), true)
+                                .color(0xFF3B3B).timestamp(serenity::Timestamp::now());
+                            let _ = serenity::ChannelId::new(lc as u64).send_message(ctx, serenity::builder::CreateMessage::new().embed(log_embed)).await;
+                        }
+                        return Ok(());
+                    }
+                }
+
+                // Anti-spam (same message ≥3 times within 10 seconds)
+                if config.automod_spam {
+                    let guild_id_u64 = new_message.guild_id.unwrap().get();
+                    let user_id_u64 = author_id.get();
+                    let now = Instant::now();
+                    let msg_text = content_raw.clone();
+
+                    let dupe_count = {
+                        let mut entry = data
+                            .spam_tracker
+                            .entry((guild_id_u64, user_id_u64))
+                            .or_insert_with(VecDeque::new);
+                        entry.retain(|(t, _)| now.duration_since(*t) < Duration::from_secs(10));
+                        entry.push_back((now, msg_text.clone()));
+                        entry.iter().filter(|(_, c)| c == &msg_text).count()
+                    };
+
+                    if dupe_count >= 3 {
+                        let _ = new_message.delete(ctx).await;
+                        let embed = send_automod_alert("Message spam", format!("Same message sent {} times in 10s", dupe_count));
+                        let _ = channel_id.send_message(ctx, serenity::builder::CreateMessage::new().embed(embed)).await;
+                        if let Some(lc) = log_channel {
+                            let log_embed = serenity::builder::CreateEmbed::new()
+                                .title("🛡️ AutoMod — Spam Detected")
+                                .field("User", format!("<@{}>", author_id), true)
+                                .field("Repeated", format!("`{}x`", dupe_count), true)
+                                .color(0xFF3B3B).timestamp(serenity::Timestamp::now());
+                            let _ = serenity::ChannelId::new(lc as u64).send_message(ctx, serenity::builder::CreateMessage::new().embed(log_embed)).await;
+                        }
+                        return Ok(());
+                    }
+                }
+            }
+        }
+
+        // ── Message Delete Logging ───────────────────────────────────
+        serenity::FullEvent::MessageDelete { channel_id, deleted_message_id, guild_id, .. } => {
+            if let Some(gid) = guild_id {
+                let guild_id_i64 = gid.get() as i64;
+                if let Ok(config) = data.database.get_guild_config(guild_id_i64).await {
+                    if let Some(lc) = config.message_log_channel {
+                        let embed = serenity::builder::CreateEmbed::new()
+                            .title("🗑️ Message Deleted")
+                            .field("Channel", format!("<#{}>", channel_id), true)
+                            .field("Message ID", format!("`{}`", deleted_message_id), true)
+                            .footer(serenity::builder::CreateEmbedFooter::new("AegisForge Message Log"))
+                            .timestamp(serenity::Timestamp::now())
+                            .color(0xFF4500);
+                        let _ = serenity::ChannelId::new(lc as u64)
+                            .send_message(&ctx.http, serenity::builder::CreateMessage::new().embed(embed))
+                            .await;
+                    }
+                }
+            }
+        }
+
+        // ── Message Edit Logging ─────────────────────────────────────
+        serenity::FullEvent::MessageUpdate { old_if_available, new, event } => {
+            let guild_id = match event.guild_id {
+                Some(g) => g,
+                None => return Ok(()),
+            };
+            // skip bot edits
+            if new.as_ref().map(|m| m.author.bot).unwrap_or(false) {
+                return Ok(());
+            }
+            let guild_id_i64 = guild_id.get() as i64;
+            if let Ok(config) = data.database.get_guild_config(guild_id_i64).await {
+                if let Some(lc) = config.message_log_channel {
+                    let author_str = new
+                        .as_ref()
+                        .map(|m| format!("<@{}>", m.author.id))
+                        .unwrap_or_else(|| "Unknown".into());
+                    let old_content = old_if_available
+                        .as_ref()
+                        .map(|m| m.content.chars().take(512).collect::<String>())
+                        .unwrap_or_else(|| "_Not cached_".into());
+                    let new_content = new
+                        .as_ref()
+                        .map(|m| m.content.chars().take(512).collect::<String>())
+                        .unwrap_or_else(|| "_Unknown_".into());
+
+                    let embed = serenity::builder::CreateEmbed::new()
+                        .title("✏️ Message Edited")
+                        .field("Author", author_str, true)
+                        .field("Channel", format!("<#{}>", event.channel_id), true)
+                        .field("Before", &old_content, false)
+                        .field("After", &new_content, false)
+                        .footer(serenity::builder::CreateEmbedFooter::new("AegisForge Message Log"))
+                        .timestamp(serenity::Timestamp::now())
+                        .color(0xFEE75C);
+                    let _ = serenity::ChannelId::new(lc as u64)
+                        .send_message(&ctx.http, serenity::builder::CreateMessage::new().embed(embed))
+                        .await;
+                }
+            }
+        }
+
+        // ── Member Leave Logging + Goodbye Message ───────────────────
+        serenity::FullEvent::GuildMemberRemoval { guild_id, user, .. } => {
+            let guild_id_i64 = guild_id.get() as i64;
+            if let Ok(config) = data.database.get_guild_config(guild_id_i64).await {
+                // Member log
+                if let Some(lc) = config.member_log_channel {
+                    let embed = serenity::builder::CreateEmbed::new()
+                        .title("📤 Member Left")
+                        .description(format!("**{}** left the server.", user.name))
+                        .thumbnail(user.face())
+                        .field("User ID", format!("`{}`", user.id), true)
+                        .field(
+                            "Account Age",
+                            format!("<t:{}:R>", user.id.created_at().unix_timestamp()),
+                            true,
+                        )
+                        .footer(serenity::builder::CreateEmbedFooter::new("AegisForge Member Log"))
+                        .timestamp(serenity::Timestamp::now())
+                        .color(0xFF4500);
+                    let _ = serenity::ChannelId::new(lc as u64)
+                        .send_message(&ctx.http, serenity::builder::CreateMessage::new().embed(embed))
+                        .await;
+                }
+
+                // Goodbye message
+                if let Some(gc) = config.goodbye_channel {
+                    if !config.goodbye_message.is_empty() {
+                        let server_name = ctx
+                            .cache
+                            .guild(*guild_id)
+                            .map(|g| g.name.clone())
+                            .unwrap_or_else(|| "the server".to_string());
+                        let msg = config
+                            .goodbye_message
+                            .replace("{user}", &user.name)
+                            .replace("{server}", &server_name);
+                        let embed = serenity::builder::CreateEmbed::new()
+                            .title(format!("👋 Goodbye from {}!", server_name))
+                            .description(&msg)
+                            .thumbnail(user.face())
+                            .color(0x2C2F33);
+                        let _ = serenity::ChannelId::new(gc as u64)
+                            .send_message(&ctx.http, serenity::builder::CreateMessage::new().embed(embed))
+                            .await;
                     }
                 }
             }

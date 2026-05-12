@@ -34,6 +34,9 @@ mod models;
 
 use db::Database;
 
+pub type SpamTracker =
+    dashmap::DashMap<(u64, u64), std::collections::VecDeque<(std::time::Instant, String)>>;
+
 #[derive(Debug)]
 pub struct Data {
     pub database: Arc<Database>,
@@ -41,6 +44,7 @@ pub struct Data {
     pub http_client: reqwest::Client,
     pub raid_tracker: Arc<models::sentinel::RaidTracker>,
     pub sentinel_settings: Arc<dashmap::DashMap<u64, models::sentinel::SentinelConfig>>,
+    pub spam_tracker: Arc<SpamTracker>,
 }
 
 #[derive(Serialize)]
@@ -323,6 +327,10 @@ async fn main() -> Result<(), Error> {
                 commands::config::settings(),
                 commands::config::muterole(),
                 commands::config::sentinel(),
+                commands::config::automod(),
+                commands::config::msglogs(),
+                commands::config::memberlogs(),
+                commands::config::goodbye(),
                 // reminders
                 commands::remind::create(),
             ],
@@ -405,6 +413,7 @@ async fn main() -> Result<(), Error> {
                         http_client: reqwest::Client::new(),
                         raid_tracker: Arc::new(dashmap::DashMap::new()),
                         sentinel_settings: Arc::new(dashmap::DashMap::new()),
+                        spam_tracker: Arc::new(dashmap::DashMap::new()),
                     })
                 })
             }

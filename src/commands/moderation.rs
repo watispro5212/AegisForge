@@ -637,7 +637,7 @@ pub async fn shadowban(
     }
 
     // apply mute role silently — no DM, no public message
-    let mut member = guild_id.member(ctx.http(), user.id).await?;
+    let member = guild_id.member(ctx.http(), user.id).await?;
     member.add_role(ctx.http(), mute_role_id).await?;
 
     // record in shadow_bans table
@@ -740,7 +740,7 @@ pub async fn unshadowban(
     }
 
     // remove mute role silently
-    let mut member = guild_id.member(ctx.http(), user.id).await?;
+    let member = guild_id.member(ctx.http(), user.id).await?;
     member.remove_role(ctx.http(), mute_role_id).await?;
 
     // log to mod_cases

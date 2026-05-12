@@ -64,6 +64,22 @@
 
                 <div class="changelog-item reveal-on-scroll">
                     <div class="changelog-date">May 11, 2026</div>
+                    <div class="changelog-title">v4.2.1 - Full AutoMod Suite &amp; Event Logging</div>
+                    <ul class="changelog-list">
+                        <li><span class="badge badge-new">NEW</span> <strong>AutoMod Anti-Spam:</strong> detects the same message sent 3+ times within 10 seconds, deletes it, and fires a mod log alert.</li>
+                        <li><span class="badge badge-new">NEW</span> <strong>AutoMod Anti-Invite:</strong> automatically deletes Discord invite links (<code>discord.gg/</code>, <code>discord.com/invite/</code>).</li>
+                        <li><span class="badge badge-new">NEW</span> <strong>AutoMod Anti-Caps:</strong> deletes messages where more than 70% of alphabetic characters are uppercase.</li>
+                        <li><span class="badge badge-new">NEW</span> <strong>AutoMod Anti-Mention Spam:</strong> deletes messages containing 5 or more user or role mentions.</li>
+                        <li><span class="badge badge-new">NEW</span> <strong><code>/automod</code> command group:</strong> enable, disable, status, spam, invites, caps, mentions, blacklist-add, blacklist-remove, blacklist-list.</li>
+                        <li><span class="badge badge-new">NEW</span> <strong>Message logging:</strong> <code>/msglogs</code> — edits and deletes are logged to a dedicated channel with before/after content.</li>
+                        <li><span class="badge badge-new">NEW</span> <strong>Member logging:</strong> <code>/memberlogs</code> — member leaves are logged with account age and user ID.</li>
+                        <li><span class="badge badge-new">NEW</span> <strong>Goodbye messages:</strong> <code>/goodbye</code> — send a goodbye embed when members leave, with <code>{user}</code> and <code>{server}</code> placeholders.</li>
+                        <li><span class="badge badge-fix">FIX</span> <code>mod_cases</code> CHECK constraint updated to include <code>softban</code>, <code>shadowban</code>, and <code>shadowunban</code> — these were previously rejected silently.</li>
+                    </ul>
+                </div>
+
+                <div class="changelog-item reveal-on-scroll">
+                    <div class="changelog-date">May 11, 2026</div>
                     <div class="changelog-title">v4.2.0 - Sentinel Security Suite</div>
                     <ul class="changelog-list">
                         <li><span class="badge badge-new">NEW</span> <strong>Sentinel Anti-Raid:</strong> per-guild join-rate detection auto-kicks raiders and fires an alert to the mod log channel. Configurable via <code>/sentinel enable/disable/threshold/status</code>.</li>

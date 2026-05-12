@@ -127,10 +127,23 @@ const commandsData = [
             { name: "/muterole", desc: "Set the role applied on /mute and /shadowban.", usage: "/muterole role:@role" },
             { name: "/prefix", desc: "Set the prefix command prefix.", usage: "/prefix prefix:text" },
             { name: "/settings", desc: "Review this server's saved configuration.", usage: "/settings" },
+            { name: "/msglogs", desc: "Set the channel for message edit and delete logs.", usage: "/msglogs channel:#channel" },
+            { name: "/memberlogs", desc: "Set the channel for member join and leave logs.", usage: "/memberlogs channel:#channel" },
+            { name: "/goodbye", desc: "Set the goodbye channel and message.", usage: "/goodbye channel:#channel message:text" },
             { name: "/sentinel enable", desc: "Activate Sentinel anti-raid detection for this server.", usage: "/sentinel enable" },
             { name: "/sentinel disable", desc: "Deactivate Sentinel anti-raid detection.", usage: "/sentinel disable" },
             { name: "/sentinel threshold", desc: "Set the join rate that triggers a raid response.", usage: "/sentinel threshold joins:int window:int" },
             { name: "/sentinel status", desc: "Show current Sentinel configuration and state.", usage: "/sentinel status" },
+            { name: "/automod enable", desc: "Turn on automatic moderation for this server.", usage: "/automod enable" },
+            { name: "/automod disable", desc: "Turn off automatic moderation.", usage: "/automod disable" },
+            { name: "/automod status", desc: "Show which automod modules are active and the current blacklist.", usage: "/automod status" },
+            { name: "/automod spam", desc: "Toggle anti-spam detection (same message 3x in 10s).", usage: "/automod spam state:on" },
+            { name: "/automod invites", desc: "Toggle Discord invite link blocking.", usage: "/automod invites state:on" },
+            { name: "/automod caps", desc: "Toggle excessive caps detection (>70% uppercase).", usage: "/automod caps state:on" },
+            { name: "/automod mentions", desc: "Toggle mass mention blocking (5+ mentions).", usage: "/automod mentions state:on" },
+            { name: "/automod blacklist-add", desc: "Add a phrase to the server blacklist.", usage: "/automod blacklist-add phrase:text" },
+            { name: "/automod blacklist-remove", desc: "Remove a phrase from the server blacklist.", usage: "/automod blacklist-remove phrase:text" },
+            { name: "/automod blacklist-list", desc: "Show all blacklisted phrases for this server.", usage: "/automod blacklist-list" },
             { name: "/create", desc: "Create a reminder.", usage: "/create duration:text message:text" }
         ]
     }

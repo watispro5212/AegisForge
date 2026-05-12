@@ -327,3 +327,225 @@ pub async fn sentinel_status(ctx: Context<'_>) -> Result<(), Error> {
     .await?;
     Ok(())
 }
+
+// ── AutoMod Command Group ────────────────────────────────────────────────────
+
+/// configure the AutoMod system
+#[poise::command(
+    slash_command,
+    prefix_command,
+    required_permissions = "MANAGE_GUILD",
+    guild_only,
+    subcommands(
+        "automod_enable",
+        "automod_disable",
+        "automod_status",
+        "automod_spam",
+        "automod_invites",
+        "automod_caps",
+        "automod_mentions",
+        "automod_blacklist_add",
+        "automod_blacklist_remove",
+        "automod_blacklist_list"
+    )
+)]
+pub async fn automod(_ctx: Context<'_>) -> Result<(), Error> {
+    Ok(())
+}
+
+#[poise::command(slash_command, prefix_command, rename = "enable", guild_only)]
+pub async fn automod_enable(ctx: Context<'_>) -> Result<(), Error> {
+    let guild_id = ctx.guild_id().unwrap().get() as i64;
+    crate::db::guild::set_automod_enabled(&ctx.data().database.pool, guild_id, true).await?;
+    ctx.data().database.invalidate_cache(guild_id);
+    ctx.send(poise::CreateReply::default().embed(
+        serenity::CreateEmbed::new()
+            .title("🛡️ AutoMod Enabled")
+            .description("Automatic moderation is now **active**. Use `/automod status` to review modules.")
+            .color(0x00FF88),
+    )).await?;
+    Ok(())
+}
+
+#[poise::command(slash_command, prefix_command, rename = "disable", guild_only)]
+pub async fn automod_disable(ctx: Context<'_>) -> Result<(), Error> {
+    let guild_id = ctx.guild_id().unwrap().get() as i64;
+    crate::db::guild::set_automod_enabled(&ctx.data().database.pool, guild_id, false).await?;
+    ctx.data().database.invalidate_cache(guild_id);
+    ctx.send(poise::CreateReply::default().embed(
+        serenity::CreateEmbed::new()
+            .title("🔓 AutoMod Disabled")
+            .description("Automatic moderation has been turned off.")
+            .color(0xFF4500),
+    )).await?;
+    Ok(())
+}
+
+#[poise::command(slash_command, prefix_command, rename = "status", guild_only)]
+pub async fn automod_status(ctx: Context<'_>) -> Result<(), Error> {
+    ctx.defer().await?;
+    let guild_id = ctx.guild_id().unwrap().get() as i64;
+    let config = ctx.data().database.get_guild_config(guild_id).await?;
+    let blacklist = crate::db::guild::list_blacklist_phrases(&ctx.data().database.pool, guild_id).await.unwrap_or_default();
+
+    let on = |b: bool| if b { "`🟢 On`" } else { "`🔴 Off`" };
+
+    ctx.send(poise::CreateReply::default().embed(
+        serenity::CreateEmbed::new()
+            .title("🛡️ AutoMod — Status")
+            .field("AutoMod", on(config.automod_enabled), true)
+            .field("Anti-Spam", on(config.automod_spam), true)
+            .field("Anti-Invite", on(config.automod_invites), true)
+            .field("Anti-Caps", on(config.automod_caps), true)
+            .field("Anti-Mentions", on(config.automod_mentions), true)
+            .field(
+                "Blacklist",
+                if blacklist.is_empty() { "_Empty_".into() } else { format!("`{}`", blacklist.join("`, `")) },
+                false,
+            )
+            .color(if config.automod_enabled { 0x00E5FF } else { 0x2C2F33 }),
+    )).await?;
+    Ok(())
+}
+
+#[poise::command(slash_command, prefix_command, rename = "spam", guild_only)]
+pub async fn automod_spam(
+    ctx: Context<'_>,
+    #[description = "on or off"] state: String,
+) -> Result<(), Error> {
+    let val = state.trim().to_lowercase() == "on";
+    let guild_id = ctx.guild_id().unwrap().get() as i64;
+    crate::db::guild::set_automod_spam(&ctx.data().database.pool, guild_id, val).await?;
+    ctx.data().database.invalidate_cache(guild_id);
+    ctx.say(format!("✅ Anti-spam is now **{}**.", if val { "on" } else { "off" })).await?;
+    Ok(())
+}
+
+#[poise::command(slash_command, prefix_command, rename = "invites", guild_only)]
+pub async fn automod_invites(
+    ctx: Context<'_>,
+    #[description = "on or off"] state: String,
+) -> Result<(), Error> {
+    let val = state.trim().to_lowercase() == "on";
+    let guild_id = ctx.guild_id().unwrap().get() as i64;
+    crate::db::guild::set_automod_invites(&ctx.data().database.pool, guild_id, val).await?;
+    ctx.data().database.invalidate_cache(guild_id);
+    ctx.say(format!("✅ Anti-invite is now **{}**.", if val { "on" } else { "off" })).await?;
+    Ok(())
+}
+
+#[poise::command(slash_command, prefix_command, rename = "caps", guild_only)]
+pub async fn automod_caps(
+    ctx: Context<'_>,
+    #[description = "on or off"] state: String,
+) -> Result<(), Error> {
+    let val = state.trim().to_lowercase() == "on";
+    let guild_id = ctx.guild_id().unwrap().get() as i64;
+    crate::db::guild::set_automod_caps(&ctx.data().database.pool, guild_id, val).await?;
+    ctx.data().database.invalidate_cache(guild_id);
+    ctx.say(format!("✅ Anti-caps is now **{}**.", if val { "on" } else { "off" })).await?;
+    Ok(())
+}
+
+#[poise::command(slash_command, prefix_command, rename = "mentions", guild_only)]
+pub async fn automod_mentions(
+    ctx: Context<'_>,
+    #[description = "on or off"] state: String,
+) -> Result<(), Error> {
+    let val = state.trim().to_lowercase() == "on";
+    let guild_id = ctx.guild_id().unwrap().get() as i64;
+    crate::db::guild::set_automod_mentions(&ctx.data().database.pool, guild_id, val).await?;
+    ctx.data().database.invalidate_cache(guild_id);
+    ctx.say(format!("✅ Anti-mention-spam is now **{}**.", if val { "on" } else { "off" })).await?;
+    Ok(())
+}
+
+#[poise::command(slash_command, prefix_command, rename = "blacklist-add", guild_only)]
+pub async fn automod_blacklist_add(
+    ctx: Context<'_>,
+    #[description = "Phrase to block"] phrase: String,
+) -> Result<(), Error> {
+    let guild_id = ctx.guild_id().unwrap().get() as i64;
+    crate::db::guild::add_blacklist_phrase(&ctx.data().database.pool, guild_id, phrase.trim()).await?;
+    ctx.data().database.invalidate_cache(guild_id);
+    ctx.say(format!("✅ `{}` added to the blacklist.", phrase.trim())).await?;
+    Ok(())
+}
+
+#[poise::command(slash_command, prefix_command, rename = "blacklist-remove", guild_only)]
+pub async fn automod_blacklist_remove(
+    ctx: Context<'_>,
+    #[description = "Phrase to unblock"] phrase: String,
+) -> Result<(), Error> {
+    let guild_id = ctx.guild_id().unwrap().get() as i64;
+    let removed = crate::db::guild::remove_blacklist_phrase(&ctx.data().database.pool, guild_id, phrase.trim()).await?;
+    ctx.data().database.invalidate_cache(guild_id);
+    if removed {
+        ctx.say(format!("✅ `{}` removed from the blacklist.", phrase.trim())).await?;
+    } else {
+        ctx.say(format!("❌ `{}` was not on the blacklist.", phrase.trim())).await?;
+    }
+    Ok(())
+}
+
+#[poise::command(slash_command, prefix_command, rename = "blacklist-list", guild_only)]
+pub async fn automod_blacklist_list(ctx: Context<'_>) -> Result<(), Error> {
+    ctx.defer().await?;
+    let guild_id = ctx.guild_id().unwrap().get() as i64;
+    let list = crate::db::guild::list_blacklist_phrases(&ctx.data().database.pool, guild_id).await.unwrap_or_default();
+    let body = if list.is_empty() {
+        "_No phrases on the blacklist._".into()
+    } else {
+        list.iter().map(|p| format!("`{}`", p)).collect::<Vec<_>>().join("\n")
+    };
+    ctx.send(poise::CreateReply::default().embed(
+        serenity::CreateEmbed::new()
+            .title(format!("🚫 Blacklist ({} phrase{})", list.len(), if list.len() == 1 { "" } else { "s" }))
+            .description(body)
+            .color(0x2C2F33),
+    )).await?;
+    Ok(())
+}
+
+// ── Logging Channel Commands ──────────────────────────────────────────────────
+
+/// set the channel for message edit and delete logs
+#[poise::command(slash_command, prefix_command, required_permissions = "MANAGE_GUILD", guild_only)]
+pub async fn msglogs(
+    ctx: Context<'_>,
+    #[description = "Channel for message logs"] channel: serenity::GuildChannel,
+) -> Result<(), Error> {
+    let guild_id = ctx.guild_id().unwrap().get() as i64;
+    crate::db::guild::set_message_log_channel(&ctx.data().database.pool, guild_id, channel.id.get() as i64).await?;
+    ctx.data().database.invalidate_cache(guild_id);
+    ctx.say(format!("✅ Message logs will be sent to <#{}>.", channel.id)).await?;
+    Ok(())
+}
+
+/// set the channel for member join and leave logs
+#[poise::command(slash_command, prefix_command, required_permissions = "MANAGE_GUILD", guild_only)]
+pub async fn memberlogs(
+    ctx: Context<'_>,
+    #[description = "Channel for member join/leave logs"] channel: serenity::GuildChannel,
+) -> Result<(), Error> {
+    let guild_id = ctx.guild_id().unwrap().get() as i64;
+    crate::db::guild::set_member_log_channel(&ctx.data().database.pool, guild_id, channel.id.get() as i64).await?;
+    ctx.data().database.invalidate_cache(guild_id);
+    ctx.say(format!("✅ Member logs will be sent to <#{}>.", channel.id)).await?;
+    Ok(())
+}
+
+/// set the goodbye message channel and text
+#[poise::command(slash_command, prefix_command, required_permissions = "MANAGE_GUILD", guild_only)]
+pub async fn goodbye(
+    ctx: Context<'_>,
+    #[description = "Channel for goodbye messages"] channel: serenity::GuildChannel,
+    #[description = "Message text (use {user} and {server} as placeholders)"] message: Option<String>,
+) -> Result<(), Error> {
+    let guild_id = ctx.guild_id().unwrap().get() as i64;
+    let msg = message.unwrap_or_else(|| "Goodbye, {user}. We will miss you.".into());
+    crate::db::guild::set_goodbye_channel(&ctx.data().database.pool, guild_id, channel.id.get() as i64, &msg).await?;
+    ctx.data().database.invalidate_cache(guild_id);
+    ctx.say(format!("✅ Goodbye messages will be sent to <#{}>.\nMessage: `{}`", channel.id, msg)).await?;
+    Ok(())
+}
