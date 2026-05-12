@@ -13,172 +13,242 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <style>
-        /* ── Commands page overhaul ──────────────────── */
-        body { overflow-x: hidden; }
+        /* ── Premium Commands Page Overhaul ──────────────────── */
+        body { overflow-x: hidden; background-color: var(--bg-dark); color: var(--text); }
 
         .commands-layout {
             display: grid;
-            grid-template-columns: 260px 1fr;
+            grid-template-columns: 280px 1fr;
             min-height: 100vh;
-            padding-top: 73px;
+            padding-top: 100px;
             max-width: 1400px;
             margin: 0 auto;
-            padding-left: 5%;
-            padding-right: 5%;
+            gap: 3rem;
+            padding-left: 4%;
+            padding-right: 4%;
         }
 
-        /* Sidebar */
-        .commands-sidebar { padding: 3rem 0 3rem; }
-        .sidebar-sticky { position: sticky; top: 100px; }
+        /* Glassmorphic Sidebar */
+        .commands-sidebar { padding: 0 0 3rem; }
+        .sidebar-sticky { 
+            position: sticky; top: 120px; 
+            background: rgba(10, 14, 23, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 24px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
         .sidebar-sticky h3 {
-            font-size: 0.7rem; text-transform: uppercase; letter-spacing: 3px;
-            color: var(--text-muted); margin-bottom: 1rem; font-family: var(--font-mono);
+            font-size: 0.8rem; text-transform: uppercase; letter-spacing: 4px;
+            color: var(--cyan); margin-bottom: 1.5rem; font-family: var(--font-mono);
+            font-weight: 700;
         }
-        .sidebar-nav { display: flex; flex-direction: column; gap: 2px; }
+        .sidebar-nav { display: flex; flex-direction: column; gap: 8px; }
         .sidebar-cat-btn {
-            display: flex; align-items: center; gap: 10px;
-            padding: 0.6rem 0.9rem; border-radius: 10px;
-            background: none; border: none; cursor: pointer;
+            display: flex; align-items: center; gap: 12px;
+            padding: 0.8rem 1rem; border-radius: 12px;
+            background: transparent; border: 1px solid transparent; cursor: pointer;
             color: var(--text-dim); font-family: var(--font-main);
-            font-size: 0.88rem; font-weight: 500;
+            font-size: 0.95rem; font-weight: 500;
             width: 100%; text-align: left;
-            transition: background 0.2s, color 0.2s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .sidebar-cat-btn:hover { background: rgba(255,255,255,0.04); color: var(--text); }
-        .sidebar-cat-btn.active { background: rgba(0,247,255,0.08); color: var(--cyan); }
-        .sidebar-cat-icon { font-size: 1rem; width: 20px; text-align: center; }
+        .sidebar-cat-btn:hover { 
+            background: rgba(255, 255, 255, 0.03); 
+            border-color: rgba(255, 255, 255, 0.08);
+            transform: translateX(4px);
+            color: var(--text); 
+        }
+        .sidebar-cat-btn.active { 
+            background: linear-gradient(90deg, rgba(0,247,255,0.15) 0%, rgba(0,247,255,0.02) 100%);
+            border-color: rgba(0,247,255,0.3); 
+            color: #fff; 
+            box-shadow: inset 2px 0 0 var(--cyan);
+        }
+        .sidebar-cat-icon { font-size: 1.1rem; width: 24px; text-align: center; opacity: 0.8; }
+        .sidebar-cat-btn.active .sidebar-cat-icon { color: var(--cyan); opacity: 1; text-shadow: 0 0 12px var(--cyan); }
         .sidebar-count {
-            margin-left: auto; background: rgba(255,255,255,0.06);
-            padding: 1px 7px; border-radius: 100px;
-            font-size: 0.7rem; font-family: var(--font-mono);
+            margin-left: auto; background: rgba(0,0,0,0.3);
+            padding: 2px 8px; border-radius: 6px;
+            font-size: 0.75rem; font-family: var(--font-mono);
+            border: 1px solid rgba(255,255,255,0.05);
         }
-        .sidebar-divider { height: 1px; background: var(--border); margin: 1.25rem 0; }
-        .sidebar-links { display: flex; flex-direction: column; gap: 6px; }
+        .sidebar-divider { height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent); margin: 2rem 0; }
+        
+        .sidebar-links { display: flex; flex-direction: column; gap: 10px; }
         .sidebar-link {
-            display: flex; align-items: center; gap: 8px;
+            display: flex; align-items: center; gap: 10px;
             color: var(--text-muted); text-decoration: none;
-            font-size: 0.82rem; padding: 0.4rem 0.9rem;
-            border-radius: 8px; transition: color 0.2s, background 0.2s;
+            font-size: 0.9rem; padding: 0.6rem 1rem;
+            border-radius: 10px; transition: all 0.2s;
         }
-        .sidebar-link:hover { color: var(--cyan); background: rgba(0,247,255,0.04); }
+        .sidebar-link:hover { color: #fff; background: rgba(255,255,255,0.05); }
 
-        /* Main */
-        .commands-main { padding: 3rem 0 5rem 3rem; }
-        .registry-header { margin-bottom: 2.5rem; }
-        .registry-header h1 { font-size: clamp(2rem, 4vw, 2.8rem); font-weight: 800; margin-bottom: 0.5rem; }
-        .registry-header p { color: var(--text-dim); font-size: 0.95rem; }
+        /* Main Content */
+        .commands-main { padding: 0 0 6rem 0; }
+        .registry-header { margin-bottom: 3.5rem; position: relative; }
+        .registry-header::before {
+            content: ''; position: absolute; top: -50%; left: -10%;
+            width: 300px; height: 300px; background: var(--cyan);
+            filter: blur(150px); opacity: 0.15; z-index: -1;
+            border-radius: 50%;
+        }
+        .registry-header h1 { font-size: clamp(2.5rem, 5vw, 3.5rem); font-weight: 800; margin-bottom: 1rem; line-height: 1.1; }
+        .registry-header p { color: var(--text-dim); font-size: 1.1rem; max-width: 600px; line-height: 1.6; }
 
-        /* Search */
+        /* Premium Search Bar */
         .search-container {
-            position: relative; margin-bottom: 2.5rem;
-            background: var(--bg-card); border: 1px solid var(--border);
-            border-radius: 14px; display: flex; align-items: center;
-            padding: 0 1.25rem; transition: border-color 0.3s;
+            position: relative; margin-bottom: 2rem;
+            background: rgba(10, 14, 23, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 100px; display: flex; align-items: center;
+            padding: 0.5rem 1.5rem; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2), inset 0 0 0 1px transparent;
+            backdrop-filter: blur(10px);
         }
-        .search-container:focus-within { border-color: var(--cyan); }
-        .search-icon { color: var(--text-muted); font-size: 0.9rem; margin-right: 0.75rem; }
+        .search-container:focus-within { 
+            border-color: var(--cyan); 
+            box-shadow: 0 8px 32px rgba(0,247,255,0.15), 0 0 20px rgba(0,247,255,0.2), inset 0 0 0 1px rgba(0,247,255,0.3);
+            transform: scale(1.01);
+        }
+        .search-icon { color: var(--cyan); font-size: 1.1rem; margin-right: 1rem; }
         .search-container input {
             flex: 1; background: none; border: none; outline: none;
             color: var(--text); font-family: var(--font-main);
-            font-size: 0.95rem; padding: 0.9rem 0;
+            font-size: 1.05rem; padding: 1rem 0;
         }
-        .search-container input::placeholder { color: var(--text-muted); }
+        .search-container input::placeholder { color: var(--text-muted); font-weight: 300; }
         .search-count {
-            font-size: 0.75rem; font-family: var(--font-mono);
-            color: var(--text-muted); white-space: nowrap;
+            font-size: 0.85rem; font-family: var(--font-mono);
+            color: var(--cyan); background: rgba(0,247,255,0.1);
+            padding: 4px 12px; border-radius: 100px;
         }
         .search-clear {
-            background: none; border: none; cursor: pointer;
-            color: var(--text-muted); padding: 4px 8px;
-            font-size: 0.85rem; display: none;
+            background: rgba(255,255,255,0.05); border: none; cursor: pointer;
+            color: var(--text); width: 32px; height: 32px; border-radius: 50%;
+            display: none; align-items: center; justify-content: center;
+            transition: all 0.2s; margin-left: 1rem;
         }
-        .search-clear.visible { display: block; }
+        .search-clear:hover { background: rgba(255,94,58,0.2); color: var(--orange); }
+        .search-clear.visible { display: flex; }
 
-        /* Quick filter pills */
-        .quick-filters { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 2rem; }
+        /* Modern Filter Pills */
+        .quick-filters { display: flex; gap: 0.8rem; flex-wrap: wrap; margin-bottom: 3rem; }
         .qf-btn {
-            padding: 0.35rem 0.9rem; border-radius: 100px;
-            background: var(--bg-card); border: 1px solid var(--border);
-            color: var(--text-muted); font-size: 0.78rem; cursor: pointer;
-            font-family: var(--font-main); font-weight: 600;
-            transition: all 0.2s;
+            padding: 0.6rem 1.2rem; border-radius: 100px;
+            background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08);
+            color: var(--text-dim); font-size: 0.85rem; cursor: pointer;
+            font-family: var(--font-main); font-weight: 600; letter-spacing: 0.5px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex; align-items: center; gap: 8px;
         }
-        .qf-btn:hover { border-color: var(--cyan); color: var(--cyan); }
-        .qf-btn.active { background: rgba(0,247,255,0.1); border-color: var(--cyan); color: var(--cyan); }
+        .qf-btn i { font-size: 0.9rem; }
+        .qf-btn:hover { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); transform: translateY(-2px); }
+        .qf-btn.active { 
+            background: var(--cyan); border-color: var(--cyan); 
+            color: var(--bg-dark); box-shadow: 0 4px 15px rgba(0,247,255,0.3);
+        }
 
-        /* Accordion */
-        .commands-accordion { display: flex; flex-direction: column; gap: 0.75rem; }
-        .cat-block { border: 1px solid var(--border); border-radius: 16px; overflow: hidden; transition: border-color 0.3s; }
-        .cat-block:hover { border-color: rgba(255,255,255,0.12); }
+        /* Sleek Cards Layout */
+        .commands-accordion { display: flex; flex-direction: column; gap: 2.5rem; }
+        .cat-block { display: flex; flex-direction: column; gap: 1rem; }
         .cat-header {
             display: flex; align-items: center; gap: 1rem;
-            padding: 1.1rem 1.5rem; cursor: pointer;
-            background: var(--bg-card);
-            user-select: none; transition: background 0.2s;
+            margin-bottom: 0.5rem; padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
         }
-        .cat-header:hover { background: var(--bg-card-hover); }
-        .cat-emoji { font-size: 1.2rem; }
-        .cat-title { font-weight: 700; font-size: 1rem; flex: 1; }
-        .cat-count {
-            font-size: 0.72rem; font-family: var(--font-mono);
-            background: rgba(255,255,255,0.05); border: 1px solid var(--border);
-            padding: 2px 8px; border-radius: 100px; color: var(--text-muted);
+        .cat-emoji { font-size: 1.5rem; background: rgba(255,255,255,0.05); width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 12px; }
+        .cat-title { font-weight: 800; font-size: 1.4rem; color: #fff; letter-spacing: 0.5px; }
+        .cat-count { display: none; }
+        .cat-chevron { display: none; }
+
+        .cmd-list { 
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); 
+            gap: 1.25rem; 
         }
-        .cat-chevron { color: var(--text-muted); font-size: 0.85rem; transition: transform 0.3s; }
-        .cat-block.open .cat-chevron { transform: rotate(180deg); }
 
-        .cmd-list { display: none; border-top: 1px solid var(--border); }
-        .cat-block.open .cmd-list { display: block; }
-
+        /* Glassmorphism Command Cards */
         .cmd-item {
-            display: grid; grid-template-columns: 220px 1fr auto;
-            align-items: start; gap: 1rem;
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid rgba(255,255,255,0.04);
-            transition: background 0.15s;
+            background: rgba(15, 20, 30, 0.4);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 16px; padding: 1.5rem;
+            display: flex; flex-direction: column; gap: 1rem;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative; overflow: hidden;
+            backdrop-filter: blur(10px);
         }
-        .cmd-item:last-child { border-bottom: none; }
-        .cmd-item:hover { background: rgba(255,255,255,0.015); }
+        .cmd-item::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at top right, rgba(0,247,255,0.1), transparent 70%);
+            opacity: 0; transition: opacity 0.4s ease; z-index: 0;
+        }
+        .cmd-item:hover {
+            transform: translateY(-5px) scale(1.02);
+            border-color: rgba(0,247,255,0.3);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3), 0 0 20px rgba(0,247,255,0.1);
+        }
+        .cmd-item:hover::before { opacity: 1; }
+        
+        .cmd-content-wrapper { position: relative; z-index: 1; display: flex; flex-direction: column; height: 100%; }
+        
+        .cmd-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem; gap: 1rem; }
         .cmd-name {
-            font-family: var(--font-mono); font-size: 0.82rem;
+            font-family: var(--font-mono); font-size: 1.05rem;
             color: var(--cyan); font-weight: 700;
-            display: flex; align-items: center; gap: 6px;
+            display: flex; align-items: center; gap: 4px;
         }
-        .cmd-name-prefix { color: rgba(0,247,255,0.4); font-weight: 400; }
-        .cmd-desc { font-size: 0.85rem; color: var(--text-dim); line-height: 1.5; }
-        .cmd-usage {
-            font-family: var(--font-mono); font-size: 0.72rem;
-            color: var(--text-muted); margin-top: 4px;
-        }
-        .cmd-badges { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+        .cmd-name-prefix { color: rgba(0,247,255,0.5); font-weight: 400; }
+        
+        .cmd-badges { display: flex; gap: 6px; flex-wrap: wrap; }
         .cmd-badge {
-            font-size: 0.65rem; padding: 2px 7px; border-radius: 100px;
+            font-size: 0.65rem; padding: 3px 8px; border-radius: 6px;
             font-family: var(--font-mono); text-transform: uppercase;
-            letter-spacing: 0.5px; white-space: nowrap;
+            font-weight: 700; letter-spacing: 1px;
         }
-        .badge-slash { background: rgba(0,247,255,0.08); color: var(--cyan); border: 1px solid rgba(0,247,255,0.2); }
-        .badge-admin { background: rgba(255,94,58,0.08); color: var(--orange); border: 1px solid rgba(255,94,58,0.2); }
-        .badge-mod { background: rgba(255,170,0,0.08); color: #ffaa00; border: 1px solid rgba(255,170,0,0.2); }
+        .badge-slash { background: rgba(0,247,255,0.1); color: var(--cyan); border: 1px solid rgba(0,247,255,0.25); }
+        .badge-admin { background: rgba(255,94,58,0.1); color: #ff5e3a; border: 1px solid rgba(255,94,58,0.25); }
+        .badge-mod { background: rgba(255,170,0,0.1); color: #ffaa00; border: 1px solid rgba(255,170,0,0.25); }
 
-        /* No results */
+        .cmd-desc { font-size: 0.95rem; color: var(--text-dim); line-height: 1.6; margin-bottom: 1.5rem; flex: 1; }
+        
+        .cmd-usage {
+            font-family: var(--font-mono); font-size: 0.8rem;
+            color: var(--text-muted); background: rgba(0,0,0,0.4);
+            padding: 0.75rem 1rem; border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.03);
+            margin-top: auto;
+        }
+
+        /* Search Highlighting */
+        mark {
+            background: rgba(0,247,255,0.2);
+            color: #fff; border-radius: 3px; padding: 0 2px;
+            box-shadow: 0 0 8px rgba(0,247,255,0.4);
+        }
+
+        /* States */
         .no-results {
-            text-align: center; padding: 4rem; color: var(--text-muted);
-            display: none;
+            text-align: center; padding: 6rem 2rem; color: var(--text-muted);
+            display: none; background: rgba(255,255,255,0.02); border-radius: 24px;
+            border: 1px dashed rgba(255,255,255,0.1);
         }
-        .no-results i { font-size: 2rem; margin-bottom: 1rem; display: block; }
+        .no-results i { font-size: 3rem; margin-bottom: 1.5rem; display: block; color: rgba(255,255,255,0.2); }
+        .no-results h3 { font-size: 1.5rem; color: #fff; margin-bottom: 0.5rem; }
 
-        /* Loading */
-        .loading-state { text-align: center; padding: 3rem; color: var(--text-muted); }
-        .loading-state i { font-size: 1.5rem; margin-bottom: 0.75rem; display: block; color: var(--cyan); }
+        .loading-state { text-align: center; padding: 6rem; color: var(--text-muted); }
+        .loading-state i { font-size: 2.5rem; margin-bottom: 1.5rem; display: block; color: var(--cyan); text-shadow: 0 0 20px var(--cyan); }
 
         /* Responsive */
+        @media (max-width: 1024px) {
+            .commands-layout { grid-template-columns: 240px 1fr; gap: 2rem; }
+        }
         @media (max-width: 900px) {
-            .commands-layout { grid-template-columns: 1fr; padding-top: 90px; }
+            .commands-layout { grid-template-columns: 1fr; padding-top: 120px; }
             .commands-sidebar { display: none; }
-            .commands-main { padding: 2rem 0 4rem; }
-            .cmd-item { grid-template-columns: 1fr; }
-            .cmd-badges { flex-direction: row; align-items: flex-start; }
+            .commands-main { padding: 0; }
+            .cmd-list { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -312,7 +382,7 @@
         const searchClear = document.getElementById('search-clear');
         const quickFilters = document.querySelectorAll('.qf-btn');
 
-        if (!window.COMMANDS_DATA) { accordion.innerHTML = '<p style="color:var(--text-muted);padding:2rem">Command data unavailable.</p>'; return; }
+        if (!window.commandsData) { accordion.innerHTML = '<p style="color:var(--text-muted);padding:2rem">Command data unavailable.</p>'; return; }
 
         const PERM_LEVELS = {
             'ban_members': 'admin', 'kick_members': 'admin', 'manage_guild': 'admin',
@@ -324,21 +394,37 @@
         let currentFilter = 'all';
 
         function getPerm(cmd) {
-            const p = (cmd.permissions || '').toLowerCase().replace(/ /g,'_');
-            return PERM_LEVELS[p] || 'all';
+            // infer perm based on category or name for display if no perm object exists
+            if (cmd.name.startsWith('/tactical') || cmd.name.startsWith('/sentinel')) return 'admin';
+            if (cmd.name === '/ban' || cmd.name === '/kick') return 'mod';
+            return 'all';
         }
+
+        // FontAwesome icon mapper based on string
+        const iconMap = {
+            "Shield": '<i class="fas fa-shield-alt"></i>',
+            "Coins": '<i class="fas fa-coins"></i>',
+            "Chart": '<i class="fas fa-chart-line"></i>',
+            "Tools": '<i class="fas fa-tools"></i>',
+            "Spark": '<i class="fas fa-bolt"></i>',
+            "Gift": '<i class="fas fa-gift"></i>',
+            "Config": '<i class="fas fa-cogs"></i>'
+        };
 
         function buildSidebar() {
             sidebarNav.innerHTML = '';
-            COMMANDS_DATA.forEach(cat => {
+            commandsData.forEach(cat => {
                 const btn = document.createElement('button');
                 btn.className = 'sidebar-cat-btn';
-                btn.innerHTML = `<span class="sidebar-cat-icon">${cat.emoji || '📋'}</span>${cat.name}<span class="sidebar-count">${cat.commands.length}</span>`;
+                btn.innerHTML = `<span class="sidebar-cat-icon">${iconMap[cat.icon] || '<i class="fas fa-folder"></i>'}</span>${cat.category}<span class="sidebar-count">${cat.commands.length}</span>`;
                 btn.addEventListener('click', () => {
-                    document.getElementById('cat-' + cat.name)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    document.querySelectorAll('.sidebar-cat-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    document.getElementById('cat-' + cat.category)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 });
                 sidebarNav.appendChild(btn);
             });
+            if (sidebarNav.firstChild) sidebarNav.firstChild.classList.add('active');
         }
 
         function buildAccordion(filter = '', permFilter = 'all') {
@@ -346,10 +432,10 @@
             noResults.style.display = 'none';
             let totalVisible = 0;
 
-            COMMANDS_DATA.forEach(cat => {
+            commandsData.forEach(cat => {
                 const filteredCmds = cat.commands.filter(cmd => {
                     const q = filter.toLowerCase();
-                    const matchesSearch = !q || cmd.name.toLowerCase().includes(q) || (cmd.description || '').toLowerCase().includes(q) || (cmd.usage || '').toLowerCase().includes(q);
+                    const matchesSearch = !q || cmd.name.toLowerCase().includes(q) || (cmd.desc || '').toLowerCase().includes(q) || (cmd.usage || '').toLowerCase().includes(q);
                     const matchesPerm = permFilter === 'all' || getPerm(cmd) === permFilter;
                     return matchesSearch && matchesPerm;
                 });
@@ -358,21 +444,15 @@
                 totalVisible += filteredCmds.length;
 
                 const block = document.createElement('div');
-                block.className = 'cat-block' + (openCats.has(cat.name) || filter ? ' open' : '');
-                block.id = 'cat-' + cat.name;
+                block.className = 'cat-block' + (openCats.has(cat.category) || filter ? ' open' : '');
+                block.id = 'cat-' + cat.category;
 
                 const header = document.createElement('div');
                 header.className = 'cat-header';
                 header.innerHTML = `
-                    <span class="cat-emoji">${cat.emoji || '📋'}</span>
-                    <span class="cat-title">${cat.name}</span>
-                    <span class="cat-count">${filteredCmds.length}</span>
-                    <i class="fas fa-chevron-down cat-chevron"></i>
+                    <div class="cat-emoji">${iconMap[cat.icon] || '<i class="fas fa-folder"></i>'}</div>
+                    <div class="cat-title">${cat.category}</div>
                 `;
-                header.addEventListener('click', () => {
-                    const isOpen = block.classList.toggle('open');
-                    if (isOpen) openCats.add(cat.name); else openCats.delete(cat.name);
-                });
 
                 const list = document.createElement('div');
                 list.className = 'cmd-list';
@@ -385,18 +465,15 @@
                     if (perm === 'admin') badges += '<span class="cmd-badge badge-admin">admin</span>';
                     else if (perm === 'mod') badges += '<span class="cmd-badge badge-mod">mod</span>';
 
-                    const highlight = (text) => {
-                        if (!filter) return text;
-                        return text.replace(new RegExp(`(${filter.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi'), '<mark style="background:rgba(0,247,255,0.2);color:var(--cyan);border-radius:2px">$1</mark>');
-                    };
-
                     item.innerHTML = `
-                        <div class="cmd-name"><span class="cmd-name-prefix">/</span>${highlight(cmd.name)}</div>
-                        <div>
-                            <div class="cmd-desc">${highlight(cmd.description || 'No description.')}</div>
+                        <div class="cmd-content-wrapper">
+                            <div class="cmd-header">
+                                <div class="cmd-name">${cmd.name.replace('/', '<span class="cmd-name-prefix">/</span>')}</div>
+                                <div class="cmd-badges">${badges}</div>
+                            </div>
+                            <div class="cmd-desc">${cmd.desc || 'No description.'}</div>
                             ${cmd.usage ? `<div class="cmd-usage">${cmd.usage}</div>` : ''}
                         </div>
-                        <div class="cmd-badges">${badges}</div>
                     `;
                     list.appendChild(item);
                 });
