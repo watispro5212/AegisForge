@@ -117,7 +117,23 @@ const commandsData = [
             { name: "/fun choose", desc: "Choose from comma-separated options.", usage: "/fun choose options:text" },
             { name: "/fun trivia", desc: "Ask a multiple-choice trivia question.", usage: "/fun trivia" },
             { name: "/fun roast", desc: "Send a light SFW roast.", usage: "/fun roast user:@user" },
-            { name: "/fun compliment", desc: "Send a genuine compliment.", usage: "/fun compliment user:@user" }
+            { name: "/fun compliment", desc: "Send a genuine compliment.", usage: "/fun compliment user:@user" },
+            { name: "/fun rps", desc: "Play rock paper scissors.", usage: "/fun rps choice:text" },
+            { name: "/fun wyr", desc: "Play Would You Rather.", usage: "/fun wyr" },
+            { name: "/fun truth", desc: "Get a truth question.", usage: "/fun truth" },
+            { name: "/fun dare", desc: "Get a dare challenge.", usage: "/fun dare" },
+            { name: "/fun numberguess", desc: "Play a number guessing game (1-100).", usage: "/fun numberguess guess:int" },
+            { name: "/fun scramble", desc: "Unscramble a random word.", usage: "/fun scramble" }
+        ]
+    },
+    {
+        category: "Giveaways",
+        icon: "Spark",
+        commands: [
+            { name: "/giveaway start", desc: "Start a new giveaway in the current channel.", usage: "/giveaway start prize:text duration_minutes:int winners:int" },
+            { name: "/giveaway end", desc: "End a giveaway early and pick winners.", usage: "/giveaway end message_id:string" },
+            { name: "/giveaway reroll", desc: "Reroll a finished giveaway to pick a new winner.", usage: "/giveaway reroll message_id:string" },
+            { name: "/giveaway list", desc: "View all active giveaways in this server.", usage: "/giveaway list" }
         ]
     },
     {
