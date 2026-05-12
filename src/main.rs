@@ -319,33 +319,7 @@ async fn main() -> Result<(), Error> {
                 commands::moderation::lock(),
                 commands::moderation::unlock(),
                 commands::moderation::tactical(),
-                // fun
-                commands::fun::fun(),
-                // economy
-                commands::economy::economy(),
-                commands::economy::dice(),
-                commands::economy::work_list(),
-                // leveling
-                commands::leveling::rank(),
-                commands::leveling::leaderboard(),
-                commands::leveling::set_xp(),
-                commands::leveling::reset_user(),
-                // roles
-                commands::role::role(),
-                // config
-                commands::config::logs(),
-                commands::config::msglogs(),
-                commands::config::memberlogs(),
-                commands::config::welcome(),
-                commands::config::goodbye(),
-                commands::config::autorole(),
-                commands::config::prefix(),
-                commands::config::muterole(),
-                commands::config::settings(),
-                commands::config::sentinel(),
                 commands::config::automod(),
-                // ai
-                // commands::ai::ai(),
             ],
             pre_command: |ctx| {
                 Box::pin(async move {
