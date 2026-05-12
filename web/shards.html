@@ -1,10 +1,10 @@
-﻿<!DOCTYPE html>
+﻿?<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>System Status | AegisForge</title>
-    <meta name="description" content="Live AegisForge system status â€” bot health, shard telemetry, database, and uptime metrics.">
+    <meta name="description" content="Live AegisForge system status — bot health, shard telemetry, database, and uptime metrics.">
     <link rel="stylesheet" href="core.css">
     <link rel="stylesheet" href="components.css">
     <link rel="stylesheet" href="animations.css">
@@ -14,7 +14,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
-        /* â”€â”€ Status page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+        /* ── Status page ─────────────────────────────── */
         .status-page { padding: 130px 5% 80px; max-width: 1100px; margin: 0 auto; }
 
         .status-header-section { text-align: center; margin-bottom: 4rem; }
@@ -189,7 +189,7 @@
                 <p id="overall-desc">Connecting to the forge core...</p>
             </div>
             <div class="banner-right">
-                <div class="last-updated" id="last-updated">â€”</div>
+                <div class="last-updated" id="last-updated">—</div>
             </div>
         </div>
 
@@ -199,42 +199,42 @@
             <div class="metrics-grid">
                 <div class="metric-card">
                     <span class="metric-icon"><i class="fas fa-server"></i></span>
-                    <span class="metric-value" id="m-guilds">â€”</span>
+                    <span class="metric-value" id="m-guilds">—</span>
                     <span class="metric-label">Servers</span>
                 </div>
                 <div class="metric-card">
                     <span class="metric-icon"><i class="fas fa-users"></i></span>
-                    <span class="metric-value" id="m-users">â€”</span>
+                    <span class="metric-value" id="m-users">—</span>
                     <span class="metric-label">Users</span>
                 </div>
                 <div class="metric-card">
                     <span class="metric-icon"><i class="fas fa-terminal"></i></span>
-                    <span class="metric-value" id="m-cmds">â€”</span>
+                    <span class="metric-value" id="m-cmds">—</span>
                     <span class="metric-label">Commands Run</span>
                 </div>
                 <div class="metric-card">
                     <span class="metric-icon"><i class="fas fa-clock"></i></span>
-                    <span class="metric-value" id="m-uptime">â€”</span>
+                    <span class="metric-value" id="m-uptime">—</span>
                     <span class="metric-label">Uptime</span>
                 </div>
                 <div class="metric-card">
                     <span class="metric-icon"><i class="fas fa-coins"></i></span>
-                    <span class="metric-value" id="m-wealth">â€”</span>
+                    <span class="metric-value" id="m-wealth">—</span>
                     <span class="metric-label">Economy Wealth</span>
                 </div>
                 <div class="metric-card">
                     <span class="metric-icon"><i class="fas fa-star"></i></span>
-                    <span class="metric-value" id="m-xp">â€”</span>
+                    <span class="metric-value" id="m-xp">—</span>
                     <span class="metric-label">XP Processed</span>
                 </div>
                 <div class="metric-card">
                     <span class="metric-icon"><i class="fas fa-boxes-stacked"></i></span>
-                    <span class="metric-value" id="m-inv">â€”</span>
+                    <span class="metric-value" id="m-inv">—</span>
                     <span class="metric-label">Inventory Items</span>
                 </div>
                 <div class="metric-card">
                     <span class="metric-icon"><i class="fas fa-code-branch"></i></span>
-                    <span class="metric-value" id="m-version">â€”</span>
+                    <span class="metric-value" id="m-version">—</span>
                     <span class="metric-label">Version</span>
                 </div>
             </div>
@@ -298,7 +298,7 @@
 
     <footer>
         <div class="footer-bottom">
-            <p>&copy; 2026 AegisForge. Forged with ðŸ¦€ Rust.</p>
+            <p>&copy; 2026 AegisForge. Forged with 🦀 Rust.</p>
             <p class="footer-tagline">// fast by design</p>
         </div>
     </footer>
@@ -308,7 +308,7 @@
     (async function loadStatus() {
         const API = 'https://aegisforge-bot.fly.dev/api/stats';
 
-        function fmt(n) { return n?.toLocaleString() ?? 'â€”'; }
+        function fmt(n) { return n?.toLocaleString() ?? '—'; }
         function uptime(s) {
             const d = Math.floor(s/86400), h = Math.floor((s%86400)/3600), m = Math.floor((s%3600)/60);
             if (d > 0) return `${d}d ${h}h`;
@@ -328,8 +328,8 @@
                 const dot = document.getElementById('overall-dot');
                 banner.className = 'overall-banner online reveal-on-scroll';
                 dot.className = 'overall-indicator online';
-                set('overall-title', 'âœ… All Systems Operational');
-                set('overall-desc', `${d.shards_online ?? 'â€”'} of ${d.shards_total ?? 'â€”'} shards online`);
+                set('overall-title', '✅ All Systems Operational');
+                set('overall-desc', `${d.shards_online ?? '—'} of ${d.shards_total ?? '—'} shards online`);
                 set('last-updated', 'Updated: ' + new Date().toLocaleTimeString());
 
                 // Metrics
@@ -340,7 +340,7 @@
                 set('m-wealth', '$' + fmt(d.economy_activity));
                 set('m-xp', fmt(d.xp_gain_24h));
                 set('m-inv', fmt(d.inventory_items));
-                set('m-version', d.version || 'â€”');
+                set('m-version', d.version || '—');
 
                 // Shards
                 const grid = document.getElementById('shards-grid');
@@ -357,7 +357,7 @@
                     grid.innerHTML = '<div class="loading-shards">No shard data available.</div>';
                 }
             } catch {
-                set('overall-title', 'âš ï¸ Unable to Reach Bot API');
+                set('overall-title', '⚠️ Unable to Reach Bot API');
                 set('overall-desc', 'The stats endpoint is temporarily unreachable.');
                 const banner = document.getElementById('overall-banner');
                 banner.className = 'overall-banner degraded reveal-on-scroll';

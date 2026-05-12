@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Changelog | aegisforge</title>
-    <meta name="description" content="aegisforge version history â€” every update, fix, and improvement to the Rust Discord bot.">
+    <meta name="description" content="aegisforge version history — every update, fix, and improvement to the Rust Discord bot.">
     <link rel="stylesheet" href="core.css">
     <link rel="stylesheet" href="components.css">
     <link rel="stylesheet" href="animations.css">
@@ -58,7 +58,7 @@
             <div class="changelog-page-hero reveal-on-scroll">
                 <span class="section-tag">version history</span>
                 <h1>What's <span class="text-gradient">Changed</span></h1>
-                <p>Every update, fix, and improvement â€” tracked and documented.</p>
+                <p>Every update, fix, and improvement — tracked and documented.</p>
             </div>
 
             <div class="changelog-timeline">
@@ -96,10 +96,10 @@
                         <li><span class="badge badge-new">NEW</span> <strong>AutoMod Anti-Caps:</strong> deletes messages where more than 70% of alphabetic characters are uppercase.</li>
                         <li><span class="badge badge-new">NEW</span> <strong>AutoMod Anti-Mention Spam:</strong> deletes messages containing 5 or more user or role mentions.</li>
                         <li><span class="badge badge-new">NEW</span> <strong><code>/automod</code> command group:</strong> enable, disable, status, spam, invites, caps, mentions, blacklist-add, blacklist-remove, blacklist-list.</li>
-                        <li><span class="badge badge-new">NEW</span> <strong>Message logging:</strong> <code>/msglogs</code> â€” edits and deletes are logged to a dedicated channel with before/after content.</li>
-                        <li><span class="badge badge-new">NEW</span> <strong>Member logging:</strong> <code>/memberlogs</code> â€” member leaves are logged with account age and user ID.</li>
-                        <li><span class="badge badge-new">NEW</span> <strong>Goodbye messages:</strong> <code>/goodbye</code> â€” send a goodbye embed when members leave, with <code>{user}</code> and <code>{server}</code> placeholders.</li>
-                        <li><span class="badge badge-fix">FIX</span> <code>mod_cases</code> CHECK constraint updated to include <code>softban</code>, <code>shadowban</code>, and <code>shadowunban</code> â€” these were previously rejected silently.</li>
+                        <li><span class="badge badge-new">NEW</span> <strong>Message logging:</strong> <code>/msglogs</code> — edits and deletes are logged to a dedicated channel with before/after content.</li>
+                        <li><span class="badge badge-new">NEW</span> <strong>Member logging:</strong> <code>/memberlogs</code> — member leaves are logged with account age and user ID.</li>
+                        <li><span class="badge badge-new">NEW</span> <strong>Goodbye messages:</strong> <code>/goodbye</code> — send a goodbye embed when members leave, with <code>{user}</code> and <code>{server}</code> placeholders.</li>
+                        <li><span class="badge badge-fix">FIX</span> <code>mod_cases</code> CHECK constraint updated to include <code>softban</code>, <code>shadowban</code>, and <code>shadowunban</code> — these were previously rejected silently.</li>
                     </ul>
                 </div>
 
@@ -111,9 +111,9 @@
                         <li><span class="badge badge-new">NEW</span> <strong>Shadow Ban System:</strong> <code>/shadowban</code> and <code>/unshadowban</code> silently apply/remove the mute role with no user notification. Requires <code>/muterole</code> setup. Full mod case audit trail.</li>
                         <li><span class="badge badge-new">NEW</span> <strong>Tactical Commands:</strong> <code>/tactical report</code> generates full mod history; <code>/tactical intercept</code> locks all server channels at once; <code>/tactical restore</code> lifts the lock; <code>/tactical breach</code> kicks + purges a user's messages.</li>
                         <li><span class="badge badge-new">NEW</span> <code>/muterole</code> config command to designate the server mute role for both <code>/mute</code> and <code>/shadowban</code>.</li>
-                        <li><span class="badge badge-fix">FIX</span> All slash commands now call <code>ctx.defer()</code> before async work â€” eliminates the 3-second interaction timeout that caused "application did not respond" errors.</li>
-                        <li><span class="badge badge-fix">FIX</span> <code>/botinfo</code> now runs its three database queries in parallel via <code>tokio::join!</code> â€” faster cold responses.</li>
-                        <li><span class="badge badge-new">NEW</span> TopStats.gg integration â€” <code>/stats</code> now shows monthly and all-time vote counts pulled from the TopStats API.</li>
+                        <li><span class="badge badge-fix">FIX</span> All slash commands now call <code>ctx.defer()</code> before async work — eliminates the 3-second interaction timeout that caused "application did not respond" errors.</li>
+                        <li><span class="badge badge-fix">FIX</span> <code>/botinfo</code> now runs its three database queries in parallel via <code>tokio::join!</code> — faster cold responses.</li>
+                        <li><span class="badge badge-new">NEW</span> TopStats.gg integration — <code>/stats</code> now shows monthly and all-time vote counts pulled from the TopStats API.</li>
                     </ul>
                 </div>
 
@@ -147,20 +147,20 @@
 
                 <div class="changelog-item reveal-on-scroll">
                     <div class="changelog-date">May 8, 2026</div>
-                    <div class="changelog-title">v4.0.0 â€” The Hyperforge Reboot</div>
+                    <div class="changelog-title">v4.0.0 — The Hyperforge Reboot</div>
                     <ul class="changelog-list">
                         <li><span class="badge badge-new">NEW</span> Registered 6 previously-invisible commands: <code>/softban</code>, <code>/nuke</code>, <code>/botinfo</code>, <code>/embed</code>, <code>/timestamp</code>, <code>/math</code>.</li>
-                        <li><span class="badge badge-new">NEW</span> Added <code>reqwest</code> HTTP client â€” bot can now call external APIs from commands.</li>
+                        <li><span class="badge badge-new">NEW</span> Added <code>reqwest</code> HTTP client — bot can now call external APIs from commands.</li>
                         <li><span class="badge badge-new">NEW</span> <code>/bird</code>, <code>/cat</code>, <code>/panda</code> now fetch live images + facts from some-random-api.com instead of broken hardcoded URLs.</li>
-                        <li><span class="badge badge-new">NEW</span> <code>/timer</code> actually works â€” DMs you when the countdown ends.</li>
+                        <li><span class="badge badge-new">NEW</span> <code>/timer</code> actually works — DMs you when the countdown ends.</li>
                         <li><span class="badge badge-new">NEW</span> <code>/dictionary</code> calls the Free Dictionary API and shows real definitions.</li>
                         <li><span class="badge badge-new">NEW</span> <code>/worldclock</code> expanded from 3 to 9 cities with proper timezone offsets.</li>
-                        <li><span class="badge badge-fix">FIX</span> Removed per-command webhook spam â€” every command was firing a webhook HTTP call.</li>
+                        <li><span class="badge badge-fix">FIX</span> Removed per-command webhook spam — every command was firing a webhook HTTP call.</li>
                         <li><span class="badge badge-fix">FIX</span> <code>/botinfo</code> commands counter now actually increments via <code>post_command</code> hook.</li>
                         <li><span class="badge badge-fix">FIX</span> <code>/unban</code> now uses a proper embed instead of a plain text response.</li>
-                        <li><span class="badge badge-polish">UI</span> Standardized all moderation embed colors â€” red for bans, yellow for mutes, green for reversals.</li>
+                        <li><span class="badge badge-polish">UI</span> Standardized all moderation embed colors — red for bans, yellow for mutes, green for reversals.</li>
                         <li><span class="badge badge-polish">UI</span> Doubled joke, fact, and trivia question pools.</li>
-                        <li><span class="badge badge-perf">PERF</span> Shared reqwest client in Data struct â€” one connection pool for all commands.</li>
+                        <li><span class="badge badge-perf">PERF</span> Shared reqwest client in Data struct — one connection pool for all commands.</li>
                     </ul>
                 </div>
 
@@ -187,7 +187,7 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2026 AegisForge. Forged with ðŸ¦€ Rust and precision.</p>
+            <p>&copy; 2026 AegisForge. Forged with 🦀 Rust and precision.</p>
             <p class="footer-tagline">Fast moderation, economy, leveling, and utilities.</p>
         </div>
     </footer>

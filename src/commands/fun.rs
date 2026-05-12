@@ -28,19 +28,30 @@ use rand::Rng;
         "reverse",
         "ascii",
         "choose",
-        "trivia",
         "roast",
-        "compliment",
+        "compliment"
+    ),
+    category = "fun"
+)]
+pub async fn fun(_ctx: Context<'_>) -> Result<(), Error> {
+    Ok(())
+}
+
+/// interactive mini-games
+#[poise::command(
+    slash_command,
+    subcommands(
         "rps",
         "wyr",
         "truth",
         "dare",
         "numberguess",
-        "scramble"
+        "scramble",
+        "trivia"
     ),
     category = "fun"
 )]
-pub async fn fun(_ctx: Context<'_>) -> Result<(), Error> {
+pub async fn games(_ctx: Context<'_>) -> Result<(), Error> {
     Ok(())
 }
 

@@ -297,6 +297,7 @@ async fn main() -> Result<(), Error> {
                 commands::utility::poll(),
                 // fun
                 commands::fun::fun(),
+                commands::fun::games(),
                 // economy
                 commands::economy::economy(),
                 // leveling
@@ -306,7 +307,6 @@ async fn main() -> Result<(), Error> {
                 commands::moderation::softban(),
                 commands::moderation::unban(),
                 commands::moderation::kick(),
-                commands::moderation::nuke(),
                 commands::moderation::mute(),
                 commands::moderation::unmute(),
                 commands::moderation::timeout(),
@@ -396,8 +396,26 @@ async fn main() -> Result<(), Error> {
             let database = Arc::clone(&database);
             move |ctx, ready, framework| {
                 let db = Arc::clone(&database);
+                let ctx_clone = ctx.clone();
                 Box::pin(async move {
                     info!("AegisForge online as {}", ready.user.name);
+                    
+                    tokio::spawn(async move {
+                        let statuses = [
+                            "v4.3 Elite",
+                            "Sentinel Anti-Raid",
+                            "/help | aegisforge.com",
+                            "AutoMod Active"
+                        ];
+                        let mut i = 0;
+                        loop {
+                            let activity = serenity::ActivityData::playing(statuses[i % statuses.len()]);
+                            ctx_clone.set_presence(Some(activity), serenity::OnlineStatus::Online);
+                            i += 1;
+                            tokio::time::sleep(tokio::time::Duration::from_secs(30)).await;
+                        }
+                    });
+                    
                     poise::builtins::register_globally(ctx, &framework.options().commands).await?;
                     Ok(Data {
                         database: db,

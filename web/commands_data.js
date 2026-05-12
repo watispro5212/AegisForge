@@ -115,15 +115,21 @@ const commandsData = [
             { name: "/fun reverse", desc: "Reverse text.", usage: "/fun reverse text:text" },
             { name: "/fun ascii", desc: "Make short spaced-out text.", usage: "/fun ascii text:text" },
             { name: "/fun choose", desc: "Choose from comma-separated options.", usage: "/fun choose options:text" },
-            { name: "/fun trivia", desc: "Ask a multiple-choice trivia question.", usage: "/fun trivia" },
             { name: "/fun roast", desc: "Send a light SFW roast.", usage: "/fun roast user:@user" },
-            { name: "/fun compliment", desc: "Send a genuine compliment.", usage: "/fun compliment user:@user" },
-            { name: "/fun rps", desc: "Play rock paper scissors.", usage: "/fun rps choice:text" },
-            { name: "/fun wyr", desc: "Play Would You Rather.", usage: "/fun wyr" },
-            { name: "/fun truth", desc: "Get a truth question.", usage: "/fun truth" },
-            { name: "/fun dare", desc: "Get a dare challenge.", usage: "/fun dare" },
-            { name: "/fun numberguess", desc: "Play a number guessing game (1-100).", usage: "/fun numberguess guess:int" },
-            { name: "/fun scramble", desc: "Unscramble a random word.", usage: "/fun scramble" }
+            { name: "/fun compliment", desc: "Send a genuine compliment.", usage: "/fun compliment user:@user" }
+        ]
+    },
+    {
+        category: "Games",
+        icon: "Gamepad",
+        commands: [
+            { name: "/games trivia", desc: "Ask a multiple-choice trivia question.", usage: "/games trivia" },
+            { name: "/games rps", desc: "Play rock paper scissors.", usage: "/games rps choice:text" },
+            { name: "/games wyr", desc: "Play Would You Rather.", usage: "/games wyr" },
+            { name: "/games truth", desc: "Get a truth question.", usage: "/games truth" },
+            { name: "/games dare", desc: "Get a dare challenge.", usage: "/games dare" },
+            { name: "/games numberguess", desc: "Play a number guessing game (1-100).", usage: "/games numberguess guess:int" },
+            { name: "/games scramble", desc: "Unscramble a random word.", usage: "/games scramble" }
         ]
     },
     {
