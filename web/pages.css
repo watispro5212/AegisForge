@@ -1,11 +1,11 @@
 /* --- SECURITY PAGE --------------------------------- */
 .text-gradient-orange {
-    background: linear-gradient(135deg, #FF4500, #FF8C00, #FFD700);
-    background-size: 300% 300%;
+    background: linear-gradient(135deg, #FF4500, #ff6a00, #ffb300);
+    background-size: 200% 200%;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    animation: gradientFlow 6s ease infinite;
+    animation: gradientFlow 5s ease infinite;
 }
 
 .security-hero {
@@ -39,11 +39,12 @@
 
 /* Threat Matrix */
 .threat-matrix {
-    background: rgba(255, 69, 0, 0.03);
-    border: 1px solid rgba(255, 69, 0, 0.2);
+    background: rgba(255, 69, 0, 0.02);
+    border: 1px solid rgba(255, 69, 0, 0.15);
     border-radius: var(--radius);
     overflow: hidden;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
+    box-shadow: 0 20px 50px rgba(255, 69, 0, 0.05);
 }
 
 .threat-matrix-header {
@@ -461,8 +462,9 @@
     left: 28px;
     top: 60px;
     bottom: 60px;
-    width: 1px;
-    background: linear-gradient(to bottom, var(--cyan), rgba(0, 229, 255, 0.1));
+    width: 2px;
+    background: linear-gradient(to bottom, var(--cyan), var(--cyan-dim), transparent);
+    opacity: 0.4;
 }
 
 .setup-step {

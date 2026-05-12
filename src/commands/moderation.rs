@@ -45,14 +45,14 @@ pub async fn kick(
             serenity::CreateEmbed::new()
                 .title("👢 Member Kicked")
                 .description(format!(
-                    "**{}** has been expelled from the forge.",
+                    "**{}** has been kicked from the server.",
                     user.name
                 ))
                 .field("👤 Target", format!("<@{}>", user.id), true)
                 .field("🛡️ Moderator", format!("<@{}>", ctx.author().id), true)
                 .field("📝 Reason", reason_str, false)
                 .footer(serenity::CreateEmbedFooter::new(
-                    "Moderation Action Logged | AegisForge v4",
+                    "Moderation Action Logged | AegisForge v4.2",
                 ))
                 .timestamp(serenity::Timestamp::now())
                 .color(0xFF5722),
@@ -120,7 +120,7 @@ pub async fn timeout(
                 .field("⏱️ Duration", format!("{} minute(s)", minutes), true)
                 .field("📝 Reason", reason_str, false)
                 .footer(serenity::CreateEmbedFooter::new(
-                    "Moderation Action Logged | AegisForge v4",
+                    "Moderation Action Logged | AegisForge v4.2",
                 ))
                 .timestamp(serenity::Timestamp::now())
                 .color(0xFEE75C),
@@ -173,14 +173,14 @@ pub async fn ban(
             serenity::CreateEmbed::new()
                 .title("🔨 Member Banned")
                 .description(format!(
-                    "**{}** has been permanently severed from the forge.",
+                    "**{}** has been permanently banned from the server.",
                     user.name
                 ))
                 .field("👤 Target", format!("<@{}>", user.id), true)
                 .field("🗑️ History Cleared", format!("{} day(s)", days), true)
                 .field("📝 Reason", reason_str, false)
                 .footer(serenity::CreateEmbedFooter::new(
-                    "Moderation Action Logged | AegisForge v4",
+                    "Moderation Action Logged | AegisForge v4.2",
                 ))
                 .timestamp(serenity::Timestamp::now())
                 .color(0xED4245),
@@ -241,7 +241,7 @@ pub async fn softban(
                 .field("🗑️ History Cleared", format!("{} day(s)", days), true)
                 .field("📝 Reason", reason_str, false)
                 .footer(serenity::CreateEmbedFooter::new(
-                    "Moderation Action Logged | AegisForge v4",
+                    "Moderation Action Logged | AegisForge v4.2",
                 ))
                 .timestamp(serenity::Timestamp::now())
                 .color(0xFF5722),
@@ -287,12 +287,12 @@ pub async fn unban(
             serenity::CreateEmbed::new()
                 .title("✅ Member Unbanned")
                 .description(format!(
-                    "User `{}` has been unbanned from the forge.",
+                    "User `{}` has been unbanned from the server.",
                     user_id
                 ))
                 .field("🛡️ Moderator", format!("<@{}>", ctx.author().id), true)
                 .footer(serenity::CreateEmbedFooter::new(
-                    "Moderation Action Logged | AegisForge v4",
+                    "Moderation Action Logged | AegisForge v4.2",
                 ))
                 .timestamp(serenity::Timestamp::now())
                 .color(0x57F287),
@@ -351,7 +351,7 @@ pub async fn warn(
                 .field("🆔 Case", format!("#{}", case.case_number), true)
                 .field("📝 Reason", &reason, false)
                 .footer(serenity::CreateEmbedFooter::new(
-                    "Moderation Action Logged | AegisForge v4",
+                    "Moderation Action Logged | AegisForge v4.2",
                 ))
                 .timestamp(serenity::Timestamp::now())
                 .color(0xFEE75C),
@@ -426,9 +426,9 @@ pub async fn nuke(ctx: Context<'_>) -> Result<(), Error> {
     new_channel.send_message(ctx.http(), serenity::CreateMessage::new().embed(
         serenity::CreateEmbed::new()
             .title("💥 Channel Nuked")
-            .description("The forge has been reset. All previous messages were vaporized.")
+            .description("The forge has been reset. All previous messages were deleted.")
             .image("https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExMngxNXN3MngxNXN3MngxNXN3MngxNXN3MngxNXN3MngxNXN3MngxNXN3JmVwPXYxX2ludGVybmFsX2dpZl9ieV9pZCZjdD1n/HhTXt43pk1I1W/giphy.gif")
-            .footer(serenity::CreateEmbedFooter::new("Forged anew | AegisForge v4"))
+            .footer(serenity::CreateEmbedFooter::new("Forged anew | AegisForge v4.2"))
             .color(0x00E5FF)
     )).await?;
 
@@ -594,7 +594,7 @@ pub async fn mute(
                 .field("⏱️ Duration", format!("{} minute(s)", m), true)
                 .field("📝 Reason", reason_str, false)
                 .footer(serenity::CreateEmbedFooter::new(
-                    "Moderation Action Logged | AegisForge v4",
+                    "Moderation Action Logged | AegisForge v4.2",
                 ))
                 .timestamp(serenity::Timestamp::now())
                 .color(0xFEE75C),
@@ -837,7 +837,7 @@ pub async fn unmute(
                 .field("👤 Target", format!("<@{}>", user.id), true)
                 .field("📝 Reason", reason_str, false)
                 .footer(serenity::CreateEmbedFooter::new(
-                    "Moderation Action Logged | AegisForge v4",
+                    "Moderation Action Logged | AegisForge v4.2",
                 ))
                 .timestamp(serenity::Timestamp::now())
                 .color(0x57F287),
@@ -949,7 +949,7 @@ pub async fn report(
                 true,
             )
             .footer(serenity::CreateEmbedFooter::new(
-                "AegisForge Tactical Report | Moderator eyes only",
+                "AegisForge v4.2 Report | Moderator eyes only",
             ))
             .timestamp(serenity::Timestamp::now())
             .color(0x2C2F33),
@@ -990,7 +990,7 @@ pub async fn intercept(
     // acknowledge immediately — the channel loop takes time
     ctx.send(poise::CreateReply::default().embed(
         serenity::CreateEmbed::new()
-            .title("🔒 Tactical Intercept — Initiating")
+            .title("🔒 Lockdown — Initiating")
             .description(format!(
                 "Locking **{}** channel(s) server-wide. Stand by.",
                 total
@@ -1018,7 +1018,7 @@ pub async fn intercept(
         .await?;
     if let Some(log_channel) = config.mod_log_channel {
         let embed = serenity::CreateEmbed::new()
-            .title("🔒 Tactical Intercept Deployed")
+            .title("🔒 Lockdown Deployed")
             .description(format!(
                 "Server-wide lockdown initiated by <@{}>.",
                 ctx.author().id
@@ -1041,7 +1041,7 @@ pub async fn intercept(
 
     ctx.send(poise::CreateReply::default().embed(
         serenity::CreateEmbed::new()
-            .title("🔒 Tactical Intercept — Complete")
+            .title("🔒 Lockdown — Complete")
             .description(format!(
                 "**{}/{}** channels locked.\n📝 Reason: {}",
                 locked, total, reason_str
@@ -1201,9 +1201,9 @@ pub async fn breach(
 
     ctx.send(poise::CreateReply::default().embed(
         serenity::CreateEmbed::new()
-            .title("⚡ Tactical Breach — Executed")
+            .title("⚡ Moderation Action")
             .description(format!(
-                "**{}** has been expelled and their message trail purged.",
+                "**{}** has been kicked and their message trail purged.",
                 user.name
             ))
             .field("👤 Target", format!("<@{}>", user.id), true)
@@ -1211,11 +1211,90 @@ pub async fn breach(
             .field("🆔 Case", format!("#{}", case.case_number), true)
             .field("📝 Reason", reason_str, false)
             .footer(serenity::CreateEmbedFooter::new(
-                "Moderation Action Logged | AegisForge Tactical",
+                "Moderation Action Logged | AegisForge v4.2",
             ))
             .timestamp(serenity::Timestamp::now())
             .color(0xFF4500),
     ))
     .await?;
+    Ok(())
+}
+
+/// view the moderation history for a user
+#[poise::command(
+    slash_command,
+    prefix_command,
+    required_permissions = "MANAGE_MESSAGES",
+    guild_only
+)]
+pub async fn cases(
+    ctx: Context<'_>,
+    #[description = "The user to check"] user: serenity::User,
+) -> Result<(), Error> {
+    ctx.defer().await?;
+    let guild_id = ctx.guild_id().unwrap().get() as i64;
+    let pool = &ctx.data().database.pool;
+    
+    let cases = crate::db::mod_cases::get_cases_for_user(pool, guild_id, user.id.get() as i64).await?;
+    
+    if cases.is_empty() {
+        return ctx.say(format!("**{}** has a clean record. No cases found.", user.name)).await.map(|_| ());
+    }
+    
+    let mut description = String::new();
+    for case in cases.iter().rev().take(10) {
+        description.push_str(&format!(
+            "**Case #{}** — `{}`\nModerator: <@{}>\nReason: {}\nDate: <t:{}:d>\n\n",
+            case.case_number,
+            case.action,
+            case.moderator_id,
+            case.reason.as_deref().unwrap_or("No reason provided"),
+            case.created_at.timestamp()
+        ));
+    }
+    
+    ctx.send(poise::CreateReply::default().embed(
+        serenity::CreateEmbed::new()
+            .title(format!("📜 Mod History — {}", user.name))
+            .description(description)
+            .footer(serenity::CreateEmbedFooter::new(format!("Showing latest {}/{} cases", cases.len().min(10), cases.len())))
+            .color(0x00E5FF)
+    )).await?;
+    
+    Ok(())
+}
+
+/// set a global slowmode for all text channels
+#[poise::command(
+    slash_command,
+    prefix_command,
+    required_permissions = "MANAGE_GUILD",
+    guild_only
+)]
+pub async fn slowmode_global(
+    ctx: Context<'_>,
+    #[description = "Seconds of slowmode (0 to disable)"] seconds: u64,
+) -> Result<(), Error> {
+    ctx.defer().await?;
+    let guild_id = ctx.guild_id().unwrap();
+    let channels = guild_id.channels(ctx.http()).await?;
+    
+    let mut count = 0;
+    for channel in channels.values() {
+        if channel.kind == serenity::ChannelType::Text {
+            if channel.edit(ctx.http(), serenity::EditChannel::new().rate_limit_per_user(seconds)).await.is_ok() {
+                count += 1;
+            }
+        }
+    }
+    
+    ctx.send(poise::CreateReply::default().embed(
+        serenity::CreateEmbed::new()
+            .title("🐌 Global Slowmode Deployed")
+            .description(format!("Slowmode of **{}s** applied to **{}** text channels.", seconds, count))
+            .color(0xFFAA00)
+            .footer(serenity::CreateEmbedFooter::new("AegisForge v4.2 | Crowd Control"))
+    )).await?;
+    
     Ok(())
 }

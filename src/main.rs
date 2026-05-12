@@ -119,7 +119,7 @@ async fn handle_vote(
                         true,
                     )
                     .footer(serenity::builder::CreateEmbedFooter::new(
-                        "AegisForge v4 - Vote Reward System",
+                        "AegisForge v4.2 - Vote Reward",
                     ))
                     .timestamp(serenity::Timestamp::now())
                     .color(0x00FF88);
@@ -286,6 +286,7 @@ async fn main() -> Result<(), Error> {
                 commands::utility::embed(),
                 commands::utility::timestamp(),
                 commands::utility::math(),
+                commands::utility::weather(),
                 commands::utility::crypto(),
                 commands::utility::translate(),
                 commands::utility::timer(),
@@ -315,10 +316,10 @@ async fn main() -> Result<(), Error> {
                 commands::moderation::unmute(),
                 commands::moderation::warn(),
                 commands::moderation::purge(),
+                commands::moderation::cases(),
+                commands::moderation::slowmode_global(),
                 // role management
-                commands::role::add(),
-                commands::role::remove(),
-                commands::role::list(),
+                commands::role::role(),
                 // config
                 commands::config::logs(),
                 commands::config::welcome(),
@@ -333,6 +334,8 @@ async fn main() -> Result<(), Error> {
                 commands::config::goodbye(),
                 // reminders
                 commands::remind::create(),
+                // ai
+                commands::ai::ai(),
             ],
             pre_command: |ctx| {
                 Box::pin(async move {

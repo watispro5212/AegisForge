@@ -33,7 +33,7 @@ pub async fn ping(ctx: Context<'_>) -> Result<(), Error> {
         ctx,
         poise::CreateReply::default().embed(
             serenity::CreateEmbed::new()
-                .title("⚡ AegisForge — Connection")
+                .title("⚡ AegisForge Status")
                 .field("Gateway Latency", format!("{}ms", elapsed), true)
                 .field("API Status", "Connected", true)
                 .timestamp(serenity::Timestamp::now())
@@ -70,7 +70,7 @@ pub async fn serverinfo(ctx: Context<'_>) -> Result<(), Error> {
                     true,
                 )
                 .footer(serenity::CreateEmbedFooter::new(format!(
-                    "ID: {} | AegisForge v4",
+                    "ID: {} | AegisForge v4.2",
                     guild.id
                 )))
                 .timestamp(serenity::Timestamp::now())
@@ -92,8 +92,8 @@ pub async fn whois(
     ctx.send(
         poise::CreateReply::default().embed(
             serenity::CreateEmbed::new()
-                .title("👤 AegisForge — Profile")
-                .description(format!("Identity data for **{}**.", target.name))
+                .title("👤 User Profile")
+                .description(format!("User info for **{}**.", target.name))
                 .thumbnail(target.face())
                 .field("📝 Username", format!("**{}**", target.name), true)
                 .field("🆔 User ID", target.id.to_string(), true)
@@ -111,7 +111,7 @@ pub async fn whois(
                     format!("<t:{}:F>", target.id.created_at().unix_timestamp()),
                     false,
                 )
-                .footer(serenity::CreateEmbedFooter::new("AegisForge v4"))
+                .footer(serenity::CreateEmbedFooter::new("AegisForge v4.2"))
                 .timestamp(serenity::Timestamp::now())
                 .color(0x00E5FF),
         ),
@@ -132,7 +132,7 @@ pub async fn avatar(
     ctx.send(
         poise::CreateReply::default().embed(
             serenity::CreateEmbed::new()
-                .title("🖼️ AegisForge — Visual Identity")
+                .title("🖼️ User Avatar")
                 .description(format!("Avatar asset for **{}**.", target.name))
                 .image(&avatar_url)
                 .footer(serenity::CreateEmbedFooter::new(format!(
@@ -158,12 +158,12 @@ pub async fn uptime(ctx: Context<'_>) -> Result<(), Error> {
     ctx.send(
         poise::CreateReply::default().embed(
             serenity::CreateEmbed::new()
-                .title("🕒 AegisForge — Uptime")
+                .title("🕒 Bot Uptime")
                 .description(format!(
                     "Current session uptime: **{}d {}h {}m**.",
                     days, hours, minutes
                 ))
-                .footer(serenity::CreateEmbedFooter::new("AegisForge v4"))
+                .footer(serenity::CreateEmbedFooter::new("AegisForge v4.2"))
                 .color(0x00E5FF),
         ),
     )
@@ -196,7 +196,7 @@ pub async fn stats(ctx: Context<'_>) -> Result<(), Error> {
     let topstats = fetch_topstats(&ctx.data().http_client).await;
 
     let mut embed = serenity::CreateEmbed::new()
-        .title("📊 AegisForge — Global Telemetry")
+        .title("📊 AegisForge — Global Stats")
         .description("Aggregated metrics from the entire AegisForge network.")
         .field(
             "🌐 Reach",
@@ -235,7 +235,7 @@ pub async fn stats(ctx: Context<'_>) -> Result<(), Error> {
 
     embed = embed
         .footer(serenity::CreateEmbedFooter::new(
-            "Powered by Rust + Tokio | AegisForge v4",
+            "Powered by Rust + Tokio | AegisForge v4.2",
         ))
         .timestamp(serenity::Timestamp::now())
         .color(0x00E5FF);
@@ -282,8 +282,8 @@ pub async fn botinfo(ctx: Context<'_>) -> Result<(), Error> {
 
     ctx.send(poise::CreateReply::default().embed(
         serenity::CreateEmbed::new()
-            .title("AegisForge v4.1 - Advanced Telemetry")
-            .description("Runtime, network, economy, and release telemetry for the current bot process.")
+            .title("AegisForge v4.2 - Bot Info")
+            .description("Runtime, network, economy, and stats for the current bot process.")
             .field("Version", format!("v{}", env!("CARGO_PKG_VERSION")), true)
             .field("Runtime", "Rust + Tokio", true)
             .field("Discord Layer", "Serenity + Poise", true)
@@ -293,9 +293,9 @@ pub async fn botinfo(ctx: Context<'_>) -> Result<(), Error> {
             .field("Economy Transactions", economy_transactions.to_string(), true)
             .field("Inventory Items", inventory_items.to_string(), true)
             .field("Uptime", format!("<t:{}:R>", (chrono::Utc::now() - chrono::Duration::seconds(uptime.as_secs() as i64)).timestamp()), true)
-            .field("Links", "[Support Server](https://discord.gg/HbmafcgjNa) | [Top.gg](https://top.gg/bot/1500582485367722004)", false)
+            .field("Links", "[Website](https://aegisforge-vert.vercel.app/) | [Top.gg](https://top.gg/bot/1500582485367722004)", false)
             .footer(serenity::CreateEmbedFooter::new(format!(
-                "AegisForge v{} Hyperforge Core",
+                "AegisForge v{}",
                 env!("CARGO_PKG_VERSION")
             )))
             .timestamp(serenity::Timestamp::now())
@@ -368,17 +368,17 @@ pub async fn help(
 
     ctx.send(poise::CreateReply::default().embed(
         serenity::CreateEmbed::new()
-            .title("🛡️ AegisForge v4.1 — Hyperforge Market")
-            .description("Server protection, economy, leveling, utilities, and the new global shop inventory system. Use `/` to browse all slash commands.")
-            .field("⚙️ Utility", "`ping`, `server`, `user`, `avatar`, `uptime`, `stats`, `embed`, `qr`, `math`, `worldclock`, `poll`, `timestamp`, `timer`, `help`", false)
-            .field("🛡️ Moderation", "`ban`, `softban`, `unban`, `kick`, `mute`, `unmute`, `timeout`, `warn`, `purge`, `nuke`, `slowmode`, `lock`, `unlock`", false)
-            .field("💰 Economy", "`balance`, `daily`, `work`, `pay`, `deposit`, `withdraw`, `beg`, `search`, `slots`, `shop`, `buy`, `inventory`, `rob`, `crime`, `fish`, `hunt`, `leaderboard`, `global_leaderboard`, `gamble_info`", false)
-            .field("📈 Leveling", "`rank`, `leaderboard`", false)
-            .field("🎮 Fun", "`coinflip`, `dice`, `eightball`, `joke`, `fact`, `ship`, `rate`, `mock`, `reverse`, `ascii`, `choose`, `trivia`, `roast`, `compliment`, `meme`, animal pics + more`", false)
-            .field("🔧 Config", "`logs`, `welcome`, `autorole`, `prefix`, `settings`", false)
-            .field("👤 Roles", "`role add`, `role remove`, `role list`", false)
-            .field("🔗 Links", "[Website](https://aegisforge-vert.vercel.app) | [Invite](https://discord.com/oauth2/authorize?client_id=1500582485367722004&permissions=8&scope=bot+applications.commands)", false)
-            .footer(serenity::CreateEmbedFooter::new("Type /help <command> for details"))
+            .title("🛡️ AegisForge v4.2 — Command Center")
+            .description("Server protection, economy, leveling, utilities, and high-performance automation. Use `/` to browse all slash commands.")
+            .field("⚙️ Utility", "`ping`, `server`, `user`, `avatar`, `uptime`, `stats`, `embed`, `qr`, `math`, `weather`, `worldclock`, `poll`, `timestamp`, `timer`, `help`", false)
+            .field("🛡️ Moderation", "`ban`, `softban`, `unban`, `kick`, `mute`, `unmute`, `timeout`, `warn`, `purge`, `nuke`, `slowmode`, `cases`, `slowmode_global`, `lock`, `unlock`", false)
+            .field("💰 Economy", "`balance`, `daily`, `work`, `pay`, `deposit`, `withdraw`, `beg`, `search`, `slots`, `blackjack`, `coinflip`, `shop`, `buy`, `inventory`, `rob`, `crime`, `fish`, `hunt`, `leaderboard`, `gamble_info`", false)
+            .field("📈 Leveling", "`rank`, `leaderboard`, `set_xp`, `reset_user` (staff only)", false)
+            .field("🎮 Fun", "`coinflip`, `dice`, `eightball`, `joke`, `fact`, `ship`, `rate`, `mock`, `reverse`, `ascii`, `choose`, `trivia`, `roast`, `compliment`, `meme`", false)
+            .field("🔧 Config", "`logs`, `welcome`, `goodbye`, `autorole`, `prefix`, `settings`, `sentinel`, `automod` (staff only)", false)
+            .field("👤 Roles", "`/role add`, `/role remove`, `/role list`, `/role create`, `/role delete` (staff only)", false)
+            .field("🔗 Links", "[Website](https://aegisforge-vert.vercel.app/) | [Support Server](https://discord.gg/HbmafcgjNa)", false)
+            .footer(serenity::CreateEmbedFooter::new("AegisForge v4.2 | Secure • Powerful • Fast"))
             .timestamp(serenity::Timestamp::now())
             .color(0x00E5FF),
     )).await?;
@@ -400,7 +400,7 @@ pub async fn math(
     ctx.send(
         poise::CreateReply::default().embed(
             serenity::CreateEmbed::new()
-                .title("🔢 AegisForge — Calculator")
+                .title("🔢 Calculator")
                 .field("Expression", format!("`{}`", expression), false)
                 .field("Result", format!("**{}**", result), false)
                 .footer(serenity::CreateEmbedFooter::new("Powered by evalexpr"))
@@ -425,7 +425,7 @@ pub async fn qr(
     ctx.send(
         poise::CreateReply::default().embed(
             serenity::CreateEmbed::new()
-                .title("🔳 AegisForge — QR Generator")
+                .title("🔳 QR Generator")
                 .description(format!("Encoded data: `{}`", data))
                 .image(qr_url)
                 .color(0x00E5FF),
@@ -444,7 +444,7 @@ pub async fn crypto(
     ctx.send(
         poise::CreateReply::default().embed(
             serenity::CreateEmbed::new()
-                .title(format!("🪙 Crypto Forge — {}", symbol.to_uppercase()))
+                .title(format!("🪙 Crypto Price — {}", symbol.to_uppercase()))
                 .description(format!(
                     "Fetching real-time market data for **{}**...",
                     symbol.to_uppercase()
@@ -691,5 +691,53 @@ pub async fn poll(
     message
         .react(ctx, serenity::ReactionType::Unicode("❌".to_string()))
         .await?;
+    Ok(())
+}
+
+async fn autocomplete_city(
+    _ctx: Context<'_>,
+    partial: &str,
+) -> impl Iterator<Item = String> {
+    ["London", "New York", "Tokyo", "Paris", "Berlin", "Sydney", "Los Angeles", "Chicago", "Toronto", "Mumbai"]
+        .iter()
+        .filter(move |name| name.to_lowercase().starts_with(&partial.to_lowercase()))
+        .map(|name| name.to_string())
+}
+
+/// get the current weather for a city
+#[poise::command(slash_command, prefix_command)]
+pub async fn weather(
+    ctx: Context<'_>,
+    #[description = "City name"] 
+    #[autocomplete = "autocomplete_city"]
+    city: String,
+) -> Result<(), Error> {
+    ctx.defer().await?;
+    let url = format!("https://wttr.in/{}?format=j1", urlencoding::encode(&city));
+    
+    let res = ctx.data().http_client.get(url).send().await?;
+    if !res.status().is_success() {
+        return Err("Could not find weather data for that location.".into());
+    }
+    
+    let data: serde_json::Value = res.json().await?;
+    let current = &data["current_condition"][0];
+    let temp_c = current["temp_C"].as_str().unwrap_or("0");
+    let temp_f = current["temp_F"].as_str().unwrap_or("0");
+    let desc = current["weatherDesc"][0]["value"].as_str().unwrap_or("Unknown");
+    let humidity = current["humidity"].as_str().unwrap_or("0");
+    let wind = current["windspeedKmph"].as_str().unwrap_or("0");
+    
+    ctx.send(poise::CreateReply::default().embed(
+        serenity::CreateEmbed::new()
+            .title(format!("🌦️ Weather — {}", city))
+            .field("Condition", desc, true)
+            .field("Temperature", format!("`{}°C` ({}°F)", temp_c, temp_f), true)
+            .field("Humidity", format!("`{}%`", humidity), true)
+            .field("Wind Speed", format!("`{} km/h`", wind), true)
+            .footer(serenity::CreateEmbedFooter::new("Powered by wttr.in"))
+            .color(0x00E5FF)
+    )).await?;
+    
     Ok(())
 }

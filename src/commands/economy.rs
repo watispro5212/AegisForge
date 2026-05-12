@@ -27,7 +27,9 @@ use sqlx::Row;
         "profile",
         "crime",
         "fish",
-        "hunt"
+        "hunt",
+        "blackjack",
+        "coinflip"
     ),
     category = "economy",
     guild_only
@@ -567,7 +569,7 @@ pub async fn balance(
                     ),
                     false,
                 )
-                .footer(serenity::CreateEmbedFooter::new("AegisForge v4.1 Economy"))
+                .footer(serenity::CreateEmbedFooter::new("AegisForge v4.2 Economy"))
                 .color(0x00E5FF),
         ),
     )
@@ -1436,5 +1438,101 @@ pub async fn hunt(ctx: Context<'_>) -> Result<(), Error> {
         ),
     )
     .await?;
+    Ok(())
+}
+
+/// play a game of blackjack against the house
+#[poise::command(slash_command, guild_only)]
+pub async fn blackjack(
+    ctx: Context<'_>,
+    #[description = "Amount to bet (minimum $50)"] bet: i64,
+) -> Result<(), Error> {
+    ctx.defer().await?;
+    if bet < 50 {
+        return Err("Minimum bet is **$50**.".into());
+    }
+
+    let guild_id = ctx.guild_id().unwrap().get() as i64;
+    let user_id = ctx.author().id.get() as i64;
+
+    let eco = economy::get_user_economy(&ctx.data().database.pool, guild_id, user_id).await?;
+    if bet > eco.balance {
+        return Err(format!("Insufficient funds. You only have `${}`.", eco.balance).into());
+    }
+
+    // Simplified Blackjack
+    let (p_score, d_score) = {
+        let mut rng = rand::thread_rng();
+        let p1 = rng.gen_range(2..=11);
+        let p2 = rng.gen_range(2..=11);
+        let d1 = rng.gen_range(2..=11);
+        let d2 = rng.gen_range(2..=11);
+        (p1 + p2, d1 + d2)
+    };
+
+    let mut embed = serenity::CreateEmbed::new()
+        .title("🃏 AegisForge Blackjack")
+        .field("Your Score", format!("`{}`", p_score), true)
+        .field("Dealer Score", format!("`{}`", d_score), true)
+        .timestamp(serenity::Timestamp::now());
+
+    if p_score > 21 {
+        economy::update_balance(&ctx.data().database.pool, guild_id, user_id, -bet).await?;
+        embed = embed
+            .description(format!("Bust! You went over 21 and lost **${}**.", bet))
+            .color(0xFF3B3B);
+    } else if d_score > 21 || p_score > d_score {
+        let profit = bet;
+        economy::update_balance(&ctx.data().database.pool, guild_id, user_id, profit).await?;
+        embed = embed
+            .description(format!("Congratulations! You won **${}**!", bet))
+            .color(0x00FF88);
+    } else if p_score == d_score {
+        embed = embed
+            .description("It's a push! You tied with the dealer.")
+            .color(0xFEE75C);
+    } else {
+        economy::update_balance(&ctx.data().database.pool, guild_id, user_id, -bet).await?;
+        embed = embed
+            .description(format!("The dealer wins. You lost **${}**.", bet))
+            .color(0xFF3B3B);
+    }
+
+    ctx.send(poise::CreateReply::default().embed(embed.footer(serenity::CreateEmbedFooter::new("AegisForge v4.2 Economy")))).await?;
+    Ok(())
+}
+
+/// flip a coin to double or lose your bet
+#[poise::command(slash_command, guild_only)]
+pub async fn coinflip(
+    ctx: Context<'_>,
+    #[description = "Heads or Tails"] choice: String,
+    #[description = "Amount to bet"] bet: i64,
+) -> Result<(), Error> {
+    ctx.defer().await?;
+    if bet <= 0 { return Err("Bet must be positive.".into()); }
+    
+    let guild_id = ctx.guild_id().unwrap().get() as i64;
+    let user_id = ctx.author().id.get() as i64;
+    let eco = economy::get_user_economy(&ctx.data().database.pool, guild_id, user_id).await?;
+    if bet > eco.balance { return Err("Insufficient funds.".into()); }
+
+    let win = rand::random::<bool>();
+    let side = if win { choice.clone() } else { if choice.to_lowercase() == "heads" { "Tails".into() } else { "Heads".into() } };
+
+    let mut embed = serenity::CreateEmbed::new()
+        .title("🪙 Coin Flip")
+        .description(format!("The coin landed on **{}**!", side))
+        .timestamp(serenity::Timestamp::now());
+
+    if win {
+        economy::update_balance(&ctx.data().database.pool, guild_id, user_id, bet).await?;
+        embed = embed.field("Result", format!("You won **${}**!", bet), false).color(0x00FF88);
+    } else {
+        economy::update_balance(&ctx.data().database.pool, guild_id, user_id, -bet).await?;
+        embed = embed.field("Result", format!("You lost **${}**.", bet), false).color(0xFF3B3B);
+    }
+
+    ctx.send(poise::CreateReply::default().embed(embed.footer(serenity::CreateEmbedFooter::new("AegisForge v4.2 Economy")))).await?;
     Ok(())
 }

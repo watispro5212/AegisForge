@@ -329,7 +329,7 @@ async function fetchLiveStats() {
             shards_online: 0,
             total_commands_executed: 0,
             inventory_items: 0,
-            version: '4.1.0',
+            version: '4.2.5',
             source: 'fallback',
             shards: []
         });
@@ -428,43 +428,42 @@ if (statsSection) {
 
 // This is now handled in initReveals()
 
-// 2. 3D Tilt Effect for Cards
-const tiltCards = document.querySelectorAll('.tilt-card, .feature-card, .dashboard-card, .stack-card');
+// 2. Refined 3D Tilt Effect for Cards
+const tiltCards = document.querySelectorAll('.tilt-card, .feature-card, .dashboard-card, .stack-card, .ops-card');
 
 tiltCards.forEach(card => {
-    // Ensure styles are set correctly
     card.style.transformStyle = 'preserve-3d';
-    card.style.transition = 'transform 0.1s ease-out';
+    card.style.transition = 'transform 0.2s cubic-bezier(0.16, 1, 0.3, 1)';
     
-    // Add child translation for pop-out effect
     Array.from(card.children).forEach(child => {
         if (!child.style.transform && !child.classList.contains('hero-glow') && !child.classList.contains('cta-glow')) {
-            child.style.transform = 'translateZ(20px)';
+            child.style.transform = 'translateZ(30px)';
         }
     });
 
     card.addEventListener('mousemove', e => {
         const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left; // x position within the element
-        const y = e.clientY - rect.top;  // y position within the element
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
         
         const centerX = rect.width / 2;
         const centerY = rect.height / 2;
         
-        // Calculate rotation based on cursor position
-        const rotateX = ((y - centerY) / centerY) * -10; // Max 10 deg
-        const rotateY = ((x - centerX) / centerX) * 10;
+        const rotateX = ((y - centerY) / centerY) * -8;
+        const rotateY = ((x - centerX) / centerX) * 8;
         
-        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+        card.style.transform = `perspective(1200px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.03, 1.03, 1.03)`;
+        
+        // Add a subtle dynamic glow based on mouse position
+        const glowX = (x / rect.width) * 100;
+        const glowY = (y / rect.height) * 100;
+        card.style.background = `radial-gradient(circle at ${glowX}% ${glowY}%, var(--bg-card-hover) 0%, var(--bg-card) 70%)`;
     });
 
     card.addEventListener('mouseleave', () => {
-        card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
-        // Smooth snap back
-        card.style.transition = 'transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1)';
-        setTimeout(() => {
-            card.style.transition = 'transform 0.1s ease-out';
-        }, 500);
+        card.style.transform = `perspective(1200px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+        card.style.background = '';
+        card.style.transition = 'transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)';
     });
 });
 

@@ -162,7 +162,7 @@ pub async fn joke(ctx: Context<'_>) -> Result<(), Error> {
                 .title("😂 Programming Joke")
                 .description(joke)
                 .footer(serenity::CreateEmbedFooter::new(
-                    "Powered by AegisForge Humor Engine v4",
+                    "Powered by AegisForge Humor",
                 ))
                 .color(0x00E5FF),
         ),
@@ -204,7 +204,7 @@ pub async fn fact(ctx: Context<'_>) -> Result<(), Error> {
                 .title("💡 Random Fact")
                 .description(f)
                 .footer(serenity::CreateEmbedFooter::new(
-                    "AegisForge Knowledge Core",
+                    "AegisForge Info",
                 ))
                 .color(0x00E5FF),
         ),
@@ -556,7 +556,7 @@ pub async fn ship(
     ctx.send(
         poise::CreateReply::default().embed(
             serenity::CreateEmbed::new()
-                .title("💖 Matchmaking Forge")
+                .title("💖 Matchmaking")
                 .description(format!(
                     "Checking compatibility between **{}** and **{}**...",
                     user1.name, u2.name
@@ -591,7 +591,7 @@ pub async fn rate(
     ctx.send(
         poise::CreateReply::default().embed(
             serenity::CreateEmbed::new()
-                .title("⚖️ The Oracle's Rating")
+                .title("⚖️ The Bot Rating")
                 .description(format!("**{}** gets a **{}/10**", thing, rating))
                 .field("Verdict", comment, false)
                 .color(0x00E5FF),

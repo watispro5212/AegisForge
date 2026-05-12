@@ -50,7 +50,7 @@ PORT=8080
 For the website API route, optionally set:
 
 ```env
-BOT_STATS_URL=https://aegisforge.fly.dev/api/stats
+BOT_STATS_URL=https://aegisforge-bot.fly.dev/api/stats
 ```
 
 If `BOT_STATS_URL` is not set, the website API route uses the production Fly.io stats endpoint by default.

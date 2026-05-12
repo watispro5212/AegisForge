@@ -4,7 +4,7 @@ function toNumber(value) {
     return Number(value || 0);
 }
 
-const DEFAULT_BOT_STATS_URL = process.env.BOT_STATS_URL || 'https://aegisforge.fly.dev/api/stats';
+const DEFAULT_BOT_STATS_URL = process.env.BOT_STATS_URL || 'https://aegisforge-bot.fly.dev/api/stats';
 
 async function fetchBotStats() {
     const url = process.env.BOT_STATS_URL || process.env.NEXT_PUBLIC_STATS_API_URL || DEFAULT_BOT_STATS_URL;
@@ -34,7 +34,7 @@ function normalizeStats(stats, source) {
         user_count: toNumber(stats.user_count),
         uptime_seconds: toNumber(stats.uptime_seconds),
         economy_activity: toNumber(stats.economy_activity),
-        xp_gain_24h: toNumber(stats.xp_gain_24h),
+        xp_processed: toNumber(stats.xp_processed || stats.xp_gain_24h),
         total_commands_executed: toNumber(stats.total_commands_executed),
         total_economy_transactions: toNumber(stats.total_economy_transactions),
         inventory_items: toNumber(stats.inventory_items),
@@ -77,14 +77,14 @@ module.exports = async function handler(req, res) {
             user_count: 0,
             uptime_seconds: 0,
             economy_activity: toNumber(wealth.total),
-            xp_gain_24h: toNumber(xp.total),
+            xp_processed: toNumber(xp.total),
             total_commands_executed: toNumber(commands.total),
             total_economy_transactions: toNumber(transactions.total),
             inventory_items: toNumber(inventory.total),
             shards_total: 0,
             shards_online: 0,
             shards: [],
-            version: '4.2.1',
+            version: '4.2.5',
         }, 'vercel-neon'));
     } catch (error) {
         console.error('Database query failed:', error);

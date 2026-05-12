@@ -5,7 +5,7 @@ use poise::serenity_prelude as serenity;
 /// leveling commands
 #[poise::command(
     slash_command,
-    subcommands("rank", "leaderboard", "customize"),
+    subcommands("rank", "leaderboard", "customize", "set_xp", "reset_user"),
     category = "Leveling"
 )]
 pub async fn leveling(_ctx: Context<'_>) -> Result<(), Error> {
@@ -150,12 +150,58 @@ pub async fn customize(
                 .title("🎨 Rank Card Updated")
                 .description("Your rank card preferences have been saved successfully!")
                 .footer(serenity::CreateEmbedFooter::new(
-                    "AegisForge v4 Customization",
+                    "AegisForge v4.2 Customization",
                 ))
                 .color(0x00FF88),
         ),
     )
     .await?;
 
+    Ok(())
+}
+
+/// set a user's XP (staff only)
+#[poise::command(slash_command, guild_only, required_permissions = "MANAGE_GUILD")]
+pub async fn set_xp(
+    ctx: Context<'_>,
+    #[description = "The user to modify"] user: serenity::User,
+    #[description = "The new XP amount"] xp: i64,
+) -> Result<(), Error> {
+    ctx.defer().await?;
+    let guild_id = ctx.guild_id().unwrap().get() as i64;
+    let pool = &ctx.data().database.pool;
+    
+    // calculate level from XP (simplified: level = sqrt(xp) / 5)
+    let level = ((xp as f64).sqrt() / 5.0).floor() as i32;
+    
+    sqlx::query!(
+        "UPDATE users_leveling SET xp = $1, level = $2 WHERE guild_id = $3 AND user_id = $4",
+        xp, level, guild_id, user.id.get() as i64
+    )
+    .execute(pool)
+    .await?;
+
+    ctx.say(format!("✅ Set **{}**'s XP to `{}` (Level `{}`).", user.name, xp, level)).await?;
+    Ok(())
+}
+
+/// reset a user's leveling data (staff only)
+#[poise::command(slash_command, guild_only, required_permissions = "MANAGE_GUILD")]
+pub async fn reset_user(
+    ctx: Context<'_>,
+    #[description = "The user to reset"] user: serenity::User,
+) -> Result<(), Error> {
+    ctx.defer().await?;
+    let guild_id = ctx.guild_id().unwrap().get() as i64;
+    let pool = &ctx.data().database.pool;
+    
+    sqlx::query!(
+        "DELETE FROM users_leveling WHERE guild_id = $1 AND user_id = $2",
+        guild_id, user.id.get() as i64
+    )
+    .execute(pool)
+    .await?;
+
+    ctx.say(format!("✅ Reset all leveling data for **{}**.", user.name)).await?;
     Ok(())
 }

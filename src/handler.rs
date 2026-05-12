@@ -53,7 +53,7 @@ pub async fn event_handler(
                                     .field("Language", "`Rust`", true)
                                     .field("Status", "🟢 Operational", true)
                                     .footer(serenity::builder::CreateEmbedFooter::new(format!(
-                                        "AegisForge v{} - High-Performance Discord Automation",
+                                        "AegisForge v{}",
                                         env!("CARGO_PKG_VERSION")
                                     )))
                                     .timestamp(serenity::Timestamp::now())
@@ -93,7 +93,7 @@ pub async fn event_handler(
                                 .field("Total Servers", format!("`{}`", guild_count), true)
                                 .field("Server ID", format!("`{}`", guild_id), true)
                                 .footer(serenity::builder::CreateEmbedFooter::new(format!(
-                                    "AegisForge v{} - Guild Join Event",
+                                    "AegisForge v{} - Member Joined",
                                     env!("CARGO_PKG_VERSION")
                                 )))
                                 .timestamp(serenity::Timestamp::now())
@@ -163,21 +163,19 @@ pub async fn event_handler(
                                     "`Kick Failed — check bot permissions`"
                                 };
                                 let embed = serenity::builder::CreateEmbed::new()
-                                    .title("🚨 Sentinel — Raid Detected")
+                                    .title("🚨 Sentinel — Join Spike Detected")
                                     .description(format!(
-                                        "**{}** users joined within **{}s** — threshold exceeded.\n<@{}> was flagged and actioned.",
+                                        "**{}** users joined within **{}s**. <@{}> has been kicked.",
                                         count, window_secs, user_id
                                     ))
-                                    .field("Joins Detected", format!("`{}`", count), true)
-                                    .field("Threshold", format!("`{}`", threshold), true)
                                     .field("Action", action, true)
                                     .field(
-                                        "Flagged User",
+                                        "User",
                                         format!("<@{}> (`{}`)", user_id, user_id),
-                                        false,
+                                        true,
                                     )
                                     .footer(serenity::builder::CreateEmbedFooter::new(
-                                        "AegisForge Sentinel — /sentinel disable to turn off",
+                                        "AegisForge Sentinel",
                                     ))
                                     .timestamp(serenity::Timestamp::now())
                                     .color(0xFF4500);
@@ -197,6 +195,25 @@ pub async fn event_handler(
             }
 
             if let Ok(config) = db.get_guild_config(guild_id).await {
+                // Member log
+                if let Some(lc) = config.member_log_channel {
+                    let embed = serenity::builder::CreateEmbed::new()
+                        .title("📥 Member Joined")
+                        .description(format!("**{}** joined the server.", new_member.user.name))
+                        .thumbnail(new_member.user.face())
+                        .field("User ID", format!("`{}`", new_member.user.id), true)
+                        .field(
+                            "Account Age",
+                            format!("<t:{}:R>", new_member.user.id.created_at().unix_timestamp()),
+                            true,
+                        )
+                        .footer(serenity::builder::CreateEmbedFooter::new("AegisForge Member Log"))
+                        .timestamp(serenity::Timestamp::now())
+                        .color(0x57F287);
+                    let _ = serenity::ChannelId::new(lc as u64)
+                        .send_message(&ctx.http, serenity::builder::CreateMessage::new().embed(embed))
+                        .await;
+                }
                 // auto-role
                 if let Some(role_id) = config.auto_role_id {
                     let _ = new_member
@@ -339,7 +356,7 @@ pub async fn event_handler(
                         .field("Reason", reason, true)
                         .field("Detail", detail, false)
                         .footer(serenity::builder::CreateEmbedFooter::new(
-                            "AegisForge AutoMod | /automod to configure",
+                            "AegisForge AutoMod",
                         ))
                         .timestamp(serenity::Timestamp::now())
                         .color(0xFF3B3B);
@@ -582,11 +599,11 @@ pub async fn event_handler(
 fn set_presence(ctx: &serenity::Context, guild_count: usize, idx: usize) {
     let (activity, status) = match idx % 4 {
         0 => (
-            serenity::ActivityData::watching(format!("{} servers | /help", guild_count)),
+            serenity::ActivityData::watching(format!("{} servers | v4.2", guild_count)),
             serenity::OnlineStatus::Online,
         ),
         1 => (
-            serenity::ActivityData::playing("economy | /economy balance"),
+            serenity::ActivityData::playing("AegisForge | /help"),
             serenity::OnlineStatus::Online,
         ),
         2 => (
