@@ -4,7 +4,7 @@ function toNumber(value) {
     return Number(value || 0);
 }
 
-const DEFAULT_BOT_STATS_URL = 'https://aegisforge.fly.dev/api/stats';
+const DEFAULT_BOT_STATS_URL = process.env.BOT_STATS_URL || 'https://aegisforge.fly.dev/api/stats';
 
 async function fetchBotStats() {
     const url = process.env.BOT_STATS_URL || process.env.NEXT_PUBLIC_STATS_API_URL || DEFAULT_BOT_STATS_URL;
@@ -84,7 +84,7 @@ module.exports = async function handler(req, res) {
             shards_total: 0,
             shards_online: 0,
             shards: [],
-            version: '4.1.0',
+            version: '4.2.1',
         }, 'vercel-neon'));
     } catch (error) {
         console.error('Database query failed:', error);

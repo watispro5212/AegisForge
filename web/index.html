@@ -30,6 +30,7 @@
             <a href="economy.html">economy</a>
             <a href="team.html">team</a>
             <a href="changelog.html">changelog</a>
+            <a href="security.html">security</a>
             <a href="shards.html">status</a>
             <a href="about.html">about</a>
             <a href="https://github.com/watispro5212/aegisforge" target="_blank" rel="noopener noreferrer" class="nav-link-code">github</a>
@@ -53,83 +54,97 @@
     </div>
 
     <!-- Hero -->
-    <header class="hero">
-        <div class="hero-inner">
-            <div class="hero-content">
-                <div class="hero-badge">v4.2 - AutoMod Suite &amp; Sentinel Security</div>
-                <h1>Run your server with <span class="text-gradient">speed</span>, structure, and control.</h1>
-                <p>AegisForge v4.2 brings a full AutoMod suite, Sentinel anti-raid, silent shadow bans, tactical moderation, message and member event logging — all on top of economy, leveling, and utilities built in Rust.</p>
-                <div class="hero-btns">
-                    <a href="https://discord.com/oauth2/authorize?client_id=1500582485367722004&permissions=8&response_type=code&redirect_uri=https%3A%2F%2Fdiscord.com%2Foauth2%2Fauthorize%3Fclient_id%3D1500582485367722004&integration_type=0&scope=bot+identify+applications.commands+applications.commands.permissions.update+openid" target="_blank" rel="noopener noreferrer" class="btn-primary shine-effect btn-icon">
-                        <i class="fa-brands fa-discord"></i>Add to Server
-                    </a>
-                    <a href="commands.html" class="btn-secondary">View Commands</a>
-                </div>
-                <div class="hero-stats">
-                    <div class="stat"><span class="stat-num" id="hero-servers">--</span><span class="stat-label">Servers</span></div>
-                    <div class="stat-divider"></div>
-                    <div class="stat"><span class="stat-num" id="hero-users">--</span><span class="stat-label">Users</span></div>
-                    <div class="stat-divider"></div>
-                    <div class="stat"><span class="stat-num">100%</span><span class="stat-label">Rust</span></div>
-                </div>
+    <header class="hero hero-split">
+        <div class="hero-content">
+            <div class="hero-badge">v4.2 — AutoMod Suite &amp; Sentinel Security</div>
+            <h1>Run your server with <span class="text-gradient">speed</span>, structure, and control.</h1>
+            <p>AegisForge v4.2 — moderation, economy, leveling, AutoMod, Sentinel anti-raid, shadow bans, and tactical commands. All built in Rust. All free.</p>
+            <div class="hero-btns">
+                <a href="https://discord.com/oauth2/authorize?client_id=1500582485367722004&permissions=8&scope=bot+applications.commands" target="_blank" rel="noopener noreferrer" class="btn-primary shine-effect btn-icon">
+                    <i class="fa-brands fa-discord"></i>Add to Server
+                </a>
+                <a href="security.html" class="btn-secondary">Security Features</a>
             </div>
+            <div class="hero-stats">
+                <div class="stat"><span class="stat-num" id="hero-servers">--</span><span class="stat-label">Servers</span></div>
+                <div class="stat-divider"></div>
+                <div class="stat"><span class="stat-num" id="hero-users">--</span><span class="stat-label">Users</span></div>
+                <div class="stat-divider"></div>
+                <div class="stat"><span class="stat-num">100%</span><span class="stat-label">Rust</span></div>
+            </div>
+        </div>
 
-            <div class="hero-visual">
-                <div class="discord-mockup">
-                    <div class="mockup-header">
-                        <div class="mockup-dots"><span></span><span></span><span></span></div>
-                        <div class="mockup-title"># global-chat &nbsp;•&nbsp; aegisforge</div>
+        <div class="hero-visual">
+            <div class="discord-mockup">
+                <div class="mockup-header">
+                    <div class="mockup-dots"><span></span><span></span><span></span></div>
+                    <div class="mockup-title"># mod-log &nbsp;•&nbsp; aegisforge</div>
+                </div>
+                <div class="mockup-body">
+                    <div class="mockup-msg bot">
+                        <div class="mockup-avatar-bot">🛡️</div>
+                        <div class="mockup-content">
+                            <div class="mockup-meta">
+                                <span class="mockup-name bot-name">aegisforge</span>
+                                <span class="bot-badge">APP</span>
+                                <span class="mockup-time">Today at 3:14 PM</span>
+                            </div>
+                            <div class="mockup-embed">
+                                <div class="embed-sidebar" style="background:#FF4500;"></div>
+                                <div class="embed-inner">
+                                    <div class="embed-title">🚨 Sentinel — Raid Detected</div>
+                                    <div class="embed-desc"><strong>7</strong> users joined in <strong>10s</strong>. Auto-kicked.</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="mockup-body">
-                        <div class="mockup-msg">
-                            <img src="https://cdn.discordapp.com/embed/avatars/0.png" class="mockup-avatar" alt="User">
-                            <div class="mockup-content">
-                                <div class="mockup-meta"><span class="mockup-name">watispro1</span> <span class="mockup-time">Today at 4:20 PM</span></div>
-                                <div class="mockup-text">/leveling rank</div>
+                    <div class="mockup-msg bot">
+                        <div class="mockup-avatar-bot">⚙️</div>
+                        <div class="mockup-content">
+                            <div class="mockup-meta">
+                                <span class="mockup-name bot-name">aegisforge</span>
+                                <span class="bot-badge">APP</span>
+                                <span class="mockup-time">Today at 3:15 PM</span>
                             </div>
-                        </div>
-                        <div class="mockup-msg bot">
-                            <div class="mockup-avatar-bot">⚙️</div>
-                            <div class="mockup-content">
-                                <div class="mockup-meta">
-                                    <span class="mockup-name bot-name">aegisforge</span>
-                                    <span class="bot-badge">APP</span>
-                                    <span class="mockup-time">Today at 4:20 PM</span>
-                                </div>
-                                <div class="mockup-embed">
-                                    <div class="embed-sidebar success"></div>
-                                    <div class="embed-inner">
-                                        <div class="embed-title">📈 Your Leveling Stats</div>
-                                        <div class="embed-desc">
-                                            <strong>Level:</strong> 42<br>
-                                            <strong>XP:</strong> 12,450 / 15,000<br>
-                                            <strong>Rank:</strong> #1 Global
-                                        </div>
-                                    </div>
+                            <div class="mockup-embed">
+                                <div class="embed-sidebar" style="background:#FF3B3B;"></div>
+                                <div class="embed-inner">
+                                    <div class="embed-title">🛡️ AutoMod — Invite Link Blocked</div>
+                                    <div class="embed-desc"><code>@user#1234</code> · Channel <code>#general</code></div>
                                 </div>
                             </div>
                         </div>
-                        <div class="mockup-msg">
-                            <img src="https://cdn.discordapp.com/embed/avatars/2.png" class="mockup-avatar" alt="User">
-                            <div class="mockup-content">
-                                <div class="mockup-meta"><span class="mockup-name">Member</span> <span class="mockup-time">Today at 4:21 PM</span></div>
-                                <div class="mockup-text">/economy buy item:hyperforge_core</div>
+                    </div>
+                    <div class="mockup-msg bot">
+                        <div class="mockup-avatar-bot">⚙️</div>
+                        <div class="mockup-content">
+                            <div class="mockup-meta">
+                                <span class="mockup-name bot-name">aegisforge</span>
+                                <span class="bot-badge">APP</span>
+                                <span class="mockup-time">Today at 3:22 PM</span>
+                            </div>
+                            <div class="mockup-embed">
+                                <div class="embed-sidebar success"></div>
+                                <div class="embed-inner">
+                                    <div class="embed-title">📈 Your Leveling Stats</div>
+                                    <div class="embed-desc"><strong>Level:</strong> 42 &nbsp; <strong>XP:</strong> 12,450 / 15,000</div>
+                                </div>
                             </div>
                         </div>
-                        <div class="mockup-msg bot">
-                            <div class="mockup-avatar-bot">⚙️</div>
-                            <div class="mockup-content">
-                                <div class="mockup-meta">
-                                    <span class="mockup-name bot-name">aegisforge</span>
-                                    <span class="bot-badge">APP</span>
-                                    <span class="mockup-time">Today at 4:21 PM</span>
-                                </div>
-                                <div class="mockup-embed">
-                                    <div class="embed-sidebar success-alt"></div>
-                                    <div class="embed-inner">
-                                        <div class="embed-title">Shop Purchase Complete</div>
-                                        <div class="embed-desc">You bought <strong>1x Hyperforge Core</strong> from the global shop.</div>
-                                    </div>
+                    </div>
+                    <div class="mockup-msg bot">
+                        <div class="mockup-avatar-bot">⚙️</div>
+                        <div class="mockup-content">
+                            <div class="mockup-meta">
+                                <span class="mockup-name bot-name">aegisforge</span>
+                                <span class="bot-badge">APP</span>
+                                <span class="mockup-time">Today at 3:31 PM</span>
+                            </div>
+                            <div class="mockup-embed">
+                                <div class="embed-sidebar success-alt"></div>
+                                <div class="embed-inner">
+                                    <div class="embed-title">💰 Economy Balance</div>
+                                    <div class="embed-desc">Wallet: <strong>$4,200</strong> · Bank: <strong>$18,500</strong></div>
                                 </div>
                             </div>
                         </div>
@@ -358,6 +373,43 @@
         </div>
     </section>
 
+
+    <!-- Quick Setup -->
+    <section class="quick-setup-section">
+        <div class="section-header">
+            <span class="section-tag">Quick Setup</span>
+            <h2>Running in under <span class="text-gradient">two minutes</span></h2>
+        </div>
+        <div class="quick-setup-grid">
+            <div class="quick-setup-step reveal-on-scroll">
+                <div class="quick-setup-num">01</div>
+                <h3>Invite the bot</h3>
+                <p>Add AegisForge to your server using the invite link. Grant the permissions it requests.</p>
+                <a href="https://discord.com/oauth2/authorize?client_id=1500582485367722004&permissions=8&scope=bot+applications.commands" target="_blank" rel="noopener noreferrer" class="quick-setup-link">Invite &rarr;</a>
+            </div>
+            <div class="quick-setup-step reveal-on-scroll">
+                <div class="quick-setup-num">02</div>
+                <h3>Set your log channels</h3>
+                <p>Point moderation, message, and member events to your dedicated channels.</p>
+                <code>/logs &nbsp;/msglogs &nbsp;/memberlogs</code>
+            </div>
+            <div class="quick-setup-step reveal-on-scroll">
+                <div class="quick-setup-num">03</div>
+                <h3>Enable security</h3>
+                <p>Turn on Sentinel and AutoMod to protect your server from raids and spam.</p>
+                <code>/sentinel enable &nbsp;/automod enable</code>
+            </div>
+            <div class="quick-setup-step reveal-on-scroll">
+                <div class="quick-setup-num">04</div>
+                <h3>Configure economy</h3>
+                <p>Economy and leveling are on by default. Customise shop items and XP rewards via settings.</p>
+                <code>/settings &nbsp;/economy shop</code>
+            </div>
+        </div>
+        <div class="quick-setup-cta">
+            <a href="security.html" class="btn-secondary">Full Security Setup Guide &rarr;</a>
+        </div>
+    </section>
 
     <!-- CTA -->
     <section class="cta-section">

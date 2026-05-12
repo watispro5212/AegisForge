@@ -103,7 +103,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 
 // ── Live Dashboard Data Fetching ────────────────────
 async function fetchLiveStats() {
-    const LIVE_STATS_URL = 'https://aegisforge.fly.dev/api/stats';
+    const LIVE_STATS_URL = window.AEGISFORGE_STATS_URL || 'https://aegisforge-bot.fly.dev/api/stats';
     const isLocalStatic = window.location.protocol === 'file:'
         || ['127.0.0.1', 'localhost'].includes(window.location.hostname);
     const API_URLS = isLocalStatic ? [LIVE_STATS_URL] : ['/api/stats', LIVE_STATS_URL];
