@@ -11,9 +11,11 @@ pub async fn get_user_leveling(
         r#"
         SELECT 
             guild_id, user_id, xp, level, last_msg, 
-            rank_card_background, 
-            rank_card_color, 
-            rank_card_text_color, 
+            COALESCE(rank_card_background, 'default') AS rank_card_background,
+            COALESCE(rank_card_color, '#00E5FF') AS rank_card_color,
+            COALESCE(rank_card_text_color, '#FFFFFF') AS rank_card_text_color,
+            COALESCE(rank_card_badge, 'none') AS rank_card_badge,
+            COALESCE(rank_card_frame, 'none') AS rank_card_frame,
             created_at, updated_at
         FROM users_leveling
         WHERE guild_id = $1 AND user_id = $2
@@ -32,7 +34,7 @@ pub async fn get_user_leveling(
 
         // create default
         sqlx::query(
-            "INSERT INTO users_leveling (guild_id, user_id, rank_card_background, rank_card_color, rank_card_text_color) VALUES ($1, $2, 'default', '#00E5FF', '#FFFFFF') ON CONFLICT DO NOTHING",
+            "INSERT INTO users_leveling (guild_id, user_id, rank_card_background, rank_card_color, rank_card_text_color, rank_card_badge, rank_card_frame) VALUES ($1, $2, 'default', '#00E5FF', '#FFFFFF', 'none', 'none') ON CONFLICT DO NOTHING",
         )
         .bind(guild_id)
         .bind(user_id)
@@ -40,7 +42,7 @@ pub async fn get_user_leveling(
         .await?;
 
         Ok(sqlx::query_as::<_, UserLeveling>(
-            "SELECT guild_id, user_id, xp, level, last_msg, rank_card_background, rank_card_color, rank_card_text_color, created_at, updated_at FROM users_leveling WHERE guild_id = $1 AND user_id = $2",
+            "SELECT guild_id, user_id, xp, level, last_msg, COALESCE(rank_card_background, 'default') AS rank_card_background, COALESCE(rank_card_color, '#00E5FF') AS rank_card_color, COALESCE(rank_card_text_color, '#FFFFFF') AS rank_card_text_color, COALESCE(rank_card_badge, 'none') AS rank_card_badge, COALESCE(rank_card_frame, 'none') AS rank_card_frame, created_at, updated_at FROM users_leveling WHERE guild_id = $1 AND user_id = $2",
         )
         .bind(guild_id)
         .bind(user_id)
@@ -120,13 +122,141 @@ pub async fn update_rank_card_customization(
     Ok(())
 }
 
+pub async fn update_rank_card_badge(
+    pool: &PgPool,
+    guild_id: i64,
+    user_id: i64,
+    badge: &str,
+) -> sqlx::Result<()> {
+    sqlx::query(
+        "UPDATE users_leveling SET rank_card_badge = $1 WHERE guild_id = $2 AND user_id = $3",
+    )
+    .bind(badge)
+    .bind(guild_id)
+    .bind(user_id)
+    .execute(pool)
+    .await?;
+    Ok(())
+}
+
+pub async fn update_rank_card_frame(
+    pool: &PgPool,
+    guild_id: i64,
+    user_id: i64,
+    frame: &str,
+) -> sqlx::Result<()> {
+    sqlx::query(
+        "UPDATE users_leveling SET rank_card_frame = $1 WHERE guild_id = $2 AND user_id = $3",
+    )
+    .bind(frame)
+    .bind(guild_id)
+    .bind(user_id)
+    .execute(pool)
+    .await?;
+    Ok(())
+}
+
+pub async fn reset_rank_card_customization(
+    pool: &PgPool,
+    guild_id: i64,
+    user_id: i64,
+) -> sqlx::Result<()> {
+    sqlx::query(
+        r#"
+        UPDATE users_leveling
+        SET rank_card_background = 'default',
+            rank_card_color = '#00E5FF',
+            rank_card_text_color = '#FFFFFF',
+            rank_card_badge = 'none',
+            rank_card_frame = 'none'
+        WHERE guild_id = $1 AND user_id = $2
+        "#,
+    )
+    .bind(guild_id)
+    .bind(user_id)
+    .execute(pool)
+    .await?;
+    Ok(())
+}
+
+pub async fn user_owns_inventory_item(
+    pool: &PgPool,
+    guild_id: i64,
+    user_id: i64,
+    item_id: &str,
+) -> sqlx::Result<bool> {
+    let owned = sqlx::query_scalar::<_, bool>(
+        r#"
+        SELECT EXISTS(
+            SELECT 1
+            FROM economy_inventory
+            WHERE guild_id = $1
+              AND user_id = $2
+              AND item_id = $3
+              AND quantity > 0
+        )
+        "#,
+    )
+    .bind(guild_id)
+    .bind(user_id)
+    .bind(item_id)
+    .fetch_one(pool)
+    .await?;
+    Ok(owned)
+}
+
+pub async fn get_owned_rank_card_item_ids(
+    pool: &PgPool,
+    guild_id: i64,
+    user_id: i64,
+) -> sqlx::Result<Vec<String>> {
+    let rows = sqlx::query_scalar::<_, String>(
+        r#"
+        SELECT item_id
+        FROM economy_inventory
+        WHERE guild_id = $1
+          AND user_id = $2
+          AND quantity > 0
+        ORDER BY item_id
+        "#,
+    )
+    .bind(guild_id)
+    .bind(user_id)
+    .fetch_all(pool)
+    .await?;
+    Ok(rows)
+}
+
+pub async fn get_user_rank(
+    pool: &PgPool,
+    guild_id: i64,
+    user_id: i64,
+) -> sqlx::Result<Option<i64>> {
+    let rank = sqlx::query_scalar::<_, i64>(
+        r#"
+        SELECT rank::BIGINT
+        FROM (
+            SELECT user_id, RANK() OVER (ORDER BY xp DESC) AS rank
+            FROM users_leveling
+            WHERE guild_id = $1
+        ) ranked
+        WHERE user_id = $2
+        "#,
+    )
+    .bind(guild_id)
+    .bind(user_id)
+    .fetch_optional(pool)
+    .await?;
+    Ok(rank)
+}
+
 pub async fn get_leaderboard(
     pool: &PgPool,
     guild_id: i64,
     limit: i64,
 ) -> sqlx::Result<Vec<UserLeveling>> {
     sqlx::query_as::<_, UserLeveling>(
-        "SELECT guild_id, user_id, xp, level, last_msg, rank_card_background, rank_card_color, rank_card_text_color, created_at, updated_at FROM users_leveling WHERE guild_id = $1 ORDER BY xp DESC LIMIT $2",
+        "SELECT guild_id, user_id, xp, level, last_msg, COALESCE(rank_card_background, 'default') AS rank_card_background, COALESCE(rank_card_color, '#00E5FF') AS rank_card_color, COALESCE(rank_card_text_color, '#FFFFFF') AS rank_card_text_color, COALESCE(rank_card_badge, 'none') AS rank_card_badge, COALESCE(rank_card_frame, 'none') AS rank_card_frame, created_at, updated_at FROM users_leveling WHERE guild_id = $1 ORDER BY xp DESC LIMIT $2",
     )
     .bind(guild_id)
     .bind(limit)

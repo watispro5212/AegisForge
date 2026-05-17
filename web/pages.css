@@ -679,12 +679,104 @@
 
 .quick-setup-cta { text-align: center; margin-top: 3rem; }
 
+/* --- SUPPORT PLAYBOOK SECTION (INDEX) -------------- */
+.support-playbook-section {
+    width: min(1180px, 90vw);
+    margin: 0 auto;
+    padding: 30px 0 100px;
+}
+
+.support-playbook-section .subtitle {
+    color: var(--text-dim);
+    max-width: 700px;
+    margin: 1rem auto 0;
+}
+
+.support-playbook-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.support-playbook-card,
+.support-bot-strip {
+    background:
+        linear-gradient(180deg, rgba(255,255,255,0.046), rgba(255,255,255,0.018)),
+        rgba(6, 8, 18, 0.72);
+    border: 1px solid rgba(255,255,255,0.085);
+    border-radius: 18px;
+    box-shadow: 0 24px 70px rgba(0,0,0,0.26);
+}
+
+.support-playbook-card {
+    padding: 1.65rem;
+    min-height: 280px;
+    display: flex;
+    flex-direction: column;
+}
+
+.support-playbook-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 242, 255, 0.08);
+    border: 1px solid rgba(0, 242, 255, 0.16);
+    color: var(--cyan);
+    margin-bottom: 1.1rem;
+}
+
+.support-playbook-label {
+    display: block;
+    color: var(--cyan);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 1.3px;
+    text-transform: uppercase;
+    margin-bottom: 0.55rem;
+}
+
+.support-playbook-card h3,
+.support-bot-strip h3 {
+    font-size: clamp(1.1rem, 1.8vw, 1.45rem);
+    line-height: 1.15;
+    margin-bottom: 0.75rem;
+}
+
+.support-playbook-card p,
+.support-bot-strip p {
+    color: var(--text-dim);
+    font-size: 0.9rem;
+    line-height: 1.65;
+}
+
+.support-playbook-card .surface-command-list {
+    margin-top: auto;
+    padding-top: 1.4rem;
+}
+
+.support-bot-strip {
+    display: grid;
+    grid-template-columns: 0.85fr 1.15fr;
+    gap: 1.5rem;
+    align-items: center;
+    margin-top: 1rem;
+    padding: 1.6rem;
+}
+
 @media (max-width: 900px) {
     .quick-setup-grid { grid-template-columns: 1fr 1fr; }
+    .support-playbook-grid,
+    .support-bot-strip { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 600px) {
     .quick-setup-grid { grid-template-columns: 1fr; }
+    .support-playbook-section { width: min(94vw, 1180px); padding-bottom: 70px; }
+    .support-playbook-card { min-height: auto; }
 }
 
 /* --- ABOUT PAGE ------------------------------------ */

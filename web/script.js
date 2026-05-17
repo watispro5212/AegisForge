@@ -469,6 +469,8 @@ tiltCards.forEach(card => {
 
 // 3. Command Registry Rendering (Accordion)
 document.addEventListener('DOMContentLoaded', () => {
+    if (window.AEGISFORGE_CUSTOM_COMMANDS_PAGE) return;
+
     const accordionContainer = document.getElementById('commands-accordion');
     const searchInput = document.getElementById('cmd-search');
 

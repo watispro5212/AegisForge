@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Security | AegisForge v4.3 Ultimate</title>
-    <meta name="description" content="AegisForge v4.3 Ultimate security features � Sentinel Anti-Raid, Shadow Ban, AutoMod Suite, and Tactical Commands for high-stakes server protection.">
+    <title>Security | AegisForge v4.3</title>
+    <meta name="description" content="AegisForge v4.3 security features: Sentinel Anti-Raid, Shadow Ban, AutoMod Suite, Tactical Commands, and event logging for Discord servers.">
     <link rel="stylesheet" href="core.css">
     <link rel="stylesheet" href="components.css">
     <link rel="stylesheet" href="animations.css">
@@ -54,94 +54,48 @@
     </div>
 
     <main>
-
-        <!-- Hero -->
         <section class="security-hero">
             <div class="security-hero-inner">
-                <span class="section-tag" style="color:#FF4500;">v4.3 Ultimate Security</span>
-                <h1>Server protection for <span class="text-gradient-orange">elite communities</span>.</h1>
-                <p>AegisForge v4.3 Ultimate delivers a deep-layered security stack � Sentinel raid detection, silent shadow bans, and the AutoMod Elite suite. Built for speed and reliability.</p>
+                <span class="section-tag" style="color:#FF4500;">v4.3 Security</span>
+                <h1>Fast protection for <span class="text-gradient-orange">active Discord servers</span>.</h1>
+                <p>AegisForge combines Sentinel raid detection, silent shadow bans, modular AutoMod, tactical incident commands, and persistent event logs in one Rust-powered security stack.</p>
                 <div class="security-hero-btns">
                     <a href="https://discord.com/oauth2/authorize?client_id=1500582485367722004&permissions=8&scope=bot+applications.commands" target="_blank" rel="noopener noreferrer" class="btn-primary btn-icon shine-effect">
                         <i class="fa-brands fa-discord"></i>Add to Server
                     </a>
-                    <a href="commands.html" class="btn-secondary">View All Commands</a>
+                    <a href="commands.html" class="btn-secondary">View Commands</a>
                 </div>
             </div>
 
-            <!-- Threat matrix visual -->
             <div class="threat-matrix reveal-on-scroll">
                 <div class="threat-matrix-header">
                     <span class="threat-matrix-title">
                         <span class="status-dot online"></span>
-                        AegisForge Security � Active
+                        AegisForge Security | Active
                     </span>
                     <span class="threat-matrix-version">v4.3</span>
                 </div>
-                <div class="threat-row">
-                    <span class="threat-label">Sentinel Anti-Raid</span>
-                    <span class="threat-status threat-active">ARMED</span>
-                </div>
-                <div class="threat-row">
-                    <span class="threat-label">AutoMod � Anti-Spam</span>
-                    <span class="threat-status threat-active">ON</span>
-                </div>
-                <div class="threat-row">
-                    <span class="threat-label">AutoMod � Anti-Invite</span>
-                    <span class="threat-status threat-active">ON</span>
-                </div>
-                <div class="threat-row">
-                    <span class="threat-label">AutoMod � Anti-Caps</span>
-                    <span class="threat-status threat-active">ON</span>
-                </div>
-                <div class="threat-row">
-                    <span class="threat-label">AutoMod � Mass Mentions</span>
-                    <span class="threat-status threat-active">ON</span>
-                </div>
-                <div class="threat-row">
-                    <span class="threat-label">Shadow Ban</span>
-                    <span class="threat-status threat-ready">READY</span>
-                </div>
-                <div class="threat-row">
-                    <span class="threat-label">Tactical Intercept</span>
-                    <span class="threat-status threat-ready">READY</span>
-                </div>
-                <div class="threat-row threat-row-last">
-                    <span class="threat-label">Event Logging</span>
-                    <span class="threat-status threat-active">LOGGING</span>
-                </div>
+                <div class="threat-row"><span class="threat-label">Sentinel Anti-Raid</span><span class="threat-status threat-active">ARMED</span></div>
+                <div class="threat-row"><span class="threat-label">AutoMod | Anti-Spam</span><span class="threat-status threat-active">ON</span></div>
+                <div class="threat-row"><span class="threat-label">AutoMod | Anti-Invite</span><span class="threat-status threat-active">ON</span></div>
+                <div class="threat-row"><span class="threat-label">AutoMod | Anti-Caps</span><span class="threat-status threat-active">ON</span></div>
+                <div class="threat-row"><span class="threat-label">AutoMod | Mass Mentions</span><span class="threat-status threat-active">ON</span></div>
+                <div class="threat-row"><span class="threat-label">Shadow Ban</span><span class="threat-status threat-ready">READY</span></div>
+                <div class="threat-row"><span class="threat-label">Tactical Intercept</span><span class="threat-status threat-ready">READY</span></div>
+                <div class="threat-row threat-row-last"><span class="threat-label">Event Logging</span><span class="threat-status threat-active">LOGGING</span></div>
             </div>
         </section>
 
-        <!-- Sentinel -->
         <section class="security-feature-section">
             <div class="security-feature-inner">
                 <div class="security-feature-content reveal-on-scroll">
                     <span class="security-feature-tag" style="color:#FF4500;">Layer 1</span>
                     <h2>Sentinel Anti-Raid</h2>
-                    <p>Detects coordinated join spikes in real time. When the join rate exceeds your configured threshold, AegisForge auto-kicks every user who triggered the window and fires an Ember Orange alert to your mod log channel � all before a human would even notice.</p>
+                    <p>Detect coordinated join spikes in real time. When the join rate exceeds your configured threshold, AegisForge can auto-kick the users who triggered the window and post an alert to your mod log.</p>
                     <div class="security-feature-details">
-                        <div class="security-detail">
-                            <span class="security-detail-icon">?</span>
-                            <div>
-                                <strong>Sub-second response</strong>
-                                <p>Processed in-memory with DashMap � no database round-trip on every join.</p>
-                            </div>
-                        </div>
-                        <div class="security-detail">
-                            <span class="security-detail-icon">??</span>
-                            <div>
-                                <strong>Fully configurable</strong>
-                                <p>Set your own threshold and window per server. Default: 5 joins in 10 seconds.</p>
-                            </div>
-                        </div>
-                        <div class="security-detail">
-                            <span class="security-detail-icon">??</span>
-                            <div>
-                                <strong>Full audit trail</strong>
-                                <p>Every raid response is logged to your mod channel with user IDs and join counts.</p>
-                            </div>
-                        </div>
+                        <div class="security-detail"><span class="security-detail-icon"><i class="fa-solid fa-bolt"></i></span><div><strong>Fast response</strong><p>Join windows are processed in memory so the bot can react without waiting on a database round-trip.</p></div></div>
+                        <div class="security-detail"><span class="security-detail-icon"><i class="fa-solid fa-sliders"></i></span><div><strong>Configurable thresholds</strong><p>Set the joins and time window that fit your community's normal traffic.</p></div></div>
+                        <div class="security-detail"><span class="security-detail-icon"><i class="fa-solid fa-clipboard-check"></i></span><div><strong>Logged actions</strong><p>Every raid response can be routed into your mod log with counts and target details.</p></div></div>
                     </div>
                     <div class="security-commands">
                         <code>/sentinel enable</code>
@@ -153,60 +107,31 @@
                     <div class="security-embed">
                         <div class="embed-alert-bar"></div>
                         <div class="security-embed-inner">
-                            <div class="security-embed-title">?? Sentinel � Raid Detected</div>
-                            <div class="security-embed-desc"><strong>7</strong> users joined within <strong>10s</strong> � threshold exceeded.<br><code>@suspicious_user#0001</code> was flagged and actioned.</div>
+                            <div class="security-embed-title">Sentinel | Raid Detected</div>
+                            <div class="security-embed-desc"><strong>7</strong> users joined within <strong>10s</strong>; threshold exceeded.<br><code>@suspicious_user#0001</code> was flagged and actioned.</div>
                             <div class="security-embed-fields">
-                                <div class="security-embed-field"><span>Joins Detected</span><strong>7</strong></div>
+                                <div class="security-embed-field"><span>Joins</span><strong>7</strong></div>
                                 <div class="security-embed-field"><span>Threshold</span><strong>5</strong></div>
                                 <div class="security-embed-field"><span>Action</span><strong>Kicked</strong></div>
                             </div>
-                            <div class="security-embed-footer">AegisForge Sentinel � /sentinel disable to turn off</div>
+                            <div class="security-embed-footer">AegisForge Sentinel | /sentinel disable to turn off</div>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- AutoMod -->
         <section class="security-feature-section security-feature-alt">
             <div class="security-feature-inner security-feature-inner-reverse">
                 <div class="security-feature-content reveal-on-scroll">
                     <span class="security-feature-tag" style="color:#00E5FF;">Layer 2</span>
                     <h2>AutoMod Suite</h2>
-                    <p>Four independently toggleable protection modules, each with its own mod log alert. Enable what your server needs � disable what it doesn't. All configurable without a restart.</p>
+                    <p>Enable the modules your server needs: spam filtering, invite blocking, caps detection, mass mention cleanup, and blacklist phrases. Each module can be tuned without redeploying the bot.</p>
                     <div class="automod-modules">
-                        <div class="automod-module">
-                            <div class="automod-module-header">
-                                <span class="automod-module-icon">??</span>
-                                <strong>Anti-Spam</strong>
-                                <code class="automod-cmd">/automod spam on</code>
-                            </div>
-                            <p>Deletes repeated messages sent 3+ times within 10 seconds.</p>
-                        </div>
-                        <div class="automod-module">
-                            <div class="automod-module-header">
-                                <span class="automod-module-icon">??</span>
-                                <strong>Anti-Invite</strong>
-                                <code class="automod-cmd">/automod invites on</code>
-                            </div>
-                            <p>Blocks Discord invite links across all channels automatically.</p>
-                        </div>
-                        <div class="automod-module">
-                            <div class="automod-module-header">
-                                <span class="automod-module-icon">??</span>
-                                <strong>Anti-Caps</strong>
-                                <code class="automod-cmd">/automod caps on</code>
-                            </div>
-                            <p>Removes messages where over 70% of letters are uppercase.</p>
-                        </div>
-                        <div class="automod-module">
-                            <div class="automod-module-header">
-                                <span class="automod-module-icon">??</span>
-                                <strong>Anti-Mention Spam</strong>
-                                <code class="automod-cmd">/automod mentions on</code>
-                            </div>
-                            <p>Deletes messages containing 5 or more user or role mentions.</p>
-                        </div>
+                        <div class="automod-module"><div class="automod-module-header"><span class="automod-module-icon"><i class="fa-solid fa-repeat"></i></span><strong>Anti-Spam</strong><code class="automod-cmd">/automod spam on</code></div><p>Deletes repeated messages sent too quickly.</p></div>
+                        <div class="automod-module"><div class="automod-module-header"><span class="automod-module-icon"><i class="fa-solid fa-link-slash"></i></span><strong>Anti-Invite</strong><code class="automod-cmd">/automod invites on</code></div><p>Blocks Discord invite links across channels.</p></div>
+                        <div class="automod-module"><div class="automod-module-header"><span class="automod-module-icon"><i class="fa-solid fa-font"></i></span><strong>Anti-Caps</strong><code class="automod-cmd">/automod caps on</code></div><p>Removes messages dominated by uppercase text.</p></div>
+                        <div class="automod-module"><div class="automod-module-header"><span class="automod-module-icon"><i class="fa-solid fa-at"></i></span><strong>Anti-Mention Spam</strong><code class="automod-cmd">/automod mentions on</code></div><p>Deletes messages with too many user or role mentions.</p></div>
                     </div>
                     <div class="security-commands">
                         <code>/automod enable</code>
@@ -218,13 +143,13 @@
                     <div class="security-embed">
                         <div class="embed-alert-bar" style="background:#00E5FF;"></div>
                         <div class="security-embed-inner">
-                            <div class="security-embed-title">??? AutoMod � Status</div>
+                            <div class="security-embed-title">AutoMod | Status</div>
                             <div class="security-embed-fields security-embed-fields-2col">
-                                <div class="security-embed-field"><span>AutoMod</span><strong style="color:#57F287;">?? On</strong></div>
-                                <div class="security-embed-field"><span>Anti-Spam</span><strong style="color:#57F287;">?? On</strong></div>
-                                <div class="security-embed-field"><span>Anti-Invite</span><strong style="color:#57F287;">?? On</strong></div>
-                                <div class="security-embed-field"><span>Anti-Caps</span><strong style="color:#57F287;">?? On</strong></div>
-                                <div class="security-embed-field"><span>Anti-Mentions</span><strong style="color:#57F287;">?? On</strong></div>
+                                <div class="security-embed-field"><span>AutoMod</span><strong style="color:#57F287;">On</strong></div>
+                                <div class="security-embed-field"><span>Anti-Spam</span><strong style="color:#57F287;">On</strong></div>
+                                <div class="security-embed-field"><span>Anti-Invite</span><strong style="color:#57F287;">On</strong></div>
+                                <div class="security-embed-field"><span>Anti-Caps</span><strong style="color:#57F287;">On</strong></div>
+                                <div class="security-embed-field"><span>Anti-Mentions</span><strong style="color:#57F287;">On</strong></div>
                                 <div class="security-embed-field"><span>Blacklist</span><strong>3 phrases</strong></div>
                             </div>
                             <div class="security-embed-footer">AegisForge AutoMod | /automod to configure</div>
@@ -234,35 +159,16 @@
             </div>
         </section>
 
-        <!-- Shadow Ban -->
         <section class="security-feature-section">
             <div class="security-feature-inner">
                 <div class="security-feature-content reveal-on-scroll">
                     <span class="security-feature-tag" style="color:#BF5AF2;">Layer 3</span>
                     <h2>Shadow Ban System</h2>
-                    <p>Silently restrict a member without alerting them. The mute role is applied in the background � no DM, no public message, no indication to the target. The full audit trail goes only to your mod log channel.</p>
+                    <p>Silently restrict a member without sending a DM or public callout. The mute role is applied in the background and the action is logged for staff review.</p>
                     <div class="security-feature-details">
-                        <div class="security-detail">
-                            <span class="security-detail-icon">??</span>
-                            <div>
-                                <strong>Completely silent</strong>
-                                <p>Target receives no notification. They appear online but cannot interact.</p>
-                            </div>
-                        </div>
-                        <div class="security-detail">
-                            <span class="security-detail-icon">??</span>
-                            <div>
-                                <strong>Mod-eyes only</strong>
-                                <p>Command response is ephemeral. Only the executing moderator sees confirmation.</p>
-                            </div>
-                        </div>
-                        <div class="security-detail">
-                            <span class="security-detail-icon">??</span>
-                            <div>
-                                <strong>Persistent record</strong>
-                                <p>Stored in the <code>shadow_bans</code> table and logged as a mod case.</p>
-                            </div>
-                        </div>
+                        <div class="security-detail"><span class="security-detail-icon"><i class="fa-solid fa-user-lock"></i></span><div><strong>Silent restriction</strong><p>The target is not notified, keeping staff response calm and controlled.</p></div></div>
+                        <div class="security-detail"><span class="security-detail-icon"><i class="fa-solid fa-eye-low-vision"></i></span><div><strong>Moderator-visible response</strong><p>Confirmation can stay private to the executing moderator.</p></div></div>
+                        <div class="security-detail"><span class="security-detail-icon"><i class="fa-solid fa-database"></i></span><div><strong>Persistent record</strong><p>The action is stored and tied into moderation history.</p></div></div>
                     </div>
                     <div class="security-commands">
                         <code>/muterole role:@Muted</code>
@@ -274,14 +180,14 @@
                     <div class="security-embed" style="border-color:rgba(191,90,242,0.3);">
                         <div class="embed-alert-bar" style="background:#BF5AF2;"></div>
                         <div class="security-embed-inner">
-                            <div class="security-embed-title">?? Shadow Ban Applied</div>
-                            <div class="security-embed-desc"><strong>suspicious_user</strong> (<code>123456789012345678</code>) has been silently restricted.</div>
+                            <div class="security-embed-title">Shadow Ban Applied</div>
+                            <div class="security-embed-desc"><strong>suspicious_user</strong> has been silently restricted.</div>
                             <div class="security-embed-fields">
                                 <div class="security-embed-field"><span>Target</span><strong>@suspicious_user</strong></div>
                                 <div class="security-embed-field"><span>Moderator</span><strong>@admin</strong></div>
                                 <div class="security-embed-field"><span>Case</span><strong>#47</strong></div>
                             </div>
-                            <div class="security-embed-note">?? The target has not been notified.</div>
+                            <div class="security-embed-note">The target has not been notified.</div>
                             <div class="security-embed-footer">AegisForge Shadow Ban | Visible to moderators only</div>
                         </div>
                     </div>
@@ -289,42 +195,29 @@
             </div>
         </section>
 
-        <!-- Tactical -->
         <section class="security-feature-section security-feature-alt">
             <div class="security-feature-inner security-feature-inner-reverse">
                 <div class="security-feature-content reveal-on-scroll">
                     <span class="security-feature-tag" style="color:#FF4500;">Layer 4</span>
                     <h2>Tactical Commands</h2>
-                    <p>High-impact operations for active incidents � lock every channel server-wide, pull a user's full mod history, or breach-kick with message cleanup. Built for speed when things go wrong.</p>
+                    <p>High-impact operations for active incidents: lock the server, restore normal access, pull a user's moderation history, or kick with message cleanup.</p>
                     <div class="tactical-grid">
-                        <div class="tactical-item">
-                            <div class="tactical-cmd">/tactical intercept</div>
-                            <p>Locks every text channel in the server simultaneously. Use during active raids or emergencies.</p>
-                        </div>
-                        <div class="tactical-item">
-                            <div class="tactical-cmd">/tactical restore</div>
-                            <p>Lifts the intercept � unlocks all channels at once. One command to return to normal.</p>
-                        </div>
-                        <div class="tactical-item">
-                            <div class="tactical-cmd">/tactical report @user</div>
-                            <p>Full moderation history � every case, action type count, and timestamp in one embed.</p>
-                        </div>
-                        <div class="tactical-item">
-                            <div class="tactical-cmd">/tactical breach @user</div>
-                            <p>Kick the user and bulk-delete up to 50 of their recent messages from the current channel.</p>
-                        </div>
+                        <div class="tactical-item"><div class="tactical-cmd">/tactical intercept</div><p>Locks every text channel during active raids or emergencies.</p></div>
+                        <div class="tactical-item"><div class="tactical-cmd">/tactical restore</div><p>Unlocks channels and returns the server to normal.</p></div>
+                        <div class="tactical-item"><div class="tactical-cmd">/tactical report @user</div><p>Shows moderation history, action counts, and recent cases.</p></div>
+                        <div class="tactical-item"><div class="tactical-cmd">/tactical breach @user</div><p>Kicks the user and bulk-deletes recent messages from the channel.</p></div>
                     </div>
                 </div>
                 <div class="security-feature-visual reveal-on-scroll">
                     <div class="security-embed" style="border-color:rgba(255,69,0,0.3);">
                         <div class="embed-alert-bar"></div>
                         <div class="security-embed-inner">
-                            <div class="security-embed-title">?? Tactical Report � badactor</div>
-                            <div class="security-embed-desc"><strong>6</strong> total case(s) on record.<br><code>warn</code> �3 &nbsp; <code>timeout</code> �2 &nbsp; <code>kick</code> �1</div>
+                            <div class="security-embed-title">Tactical Report | badactor</div>
+                            <div class="security-embed-desc"><strong>6</strong> total case(s) on record.<br><code>warn</code> x3 &nbsp; <code>timeout</code> x2 &nbsp; <code>kick</code> x1</div>
                             <div class="security-embed-log">
-                                <div><code>#44</code> warn � <em>Spam in #general</em></div>
-                                <div><code>#45</code> timeout � <em>Repeated offence</em></div>
-                                <div><code>#46</code> kick � <em>Ban evasion attempt</em></div>
+                                <div><code>#44</code> warn - <em>Spam in #general</em></div>
+                                <div><code>#45</code> timeout - <em>Repeated offence</em></div>
+                                <div><code>#46</code> kick - <em>Ban evasion attempt</em></div>
                             </div>
                             <div class="security-embed-footer">AegisForge Tactical Report | Moderator eyes only</div>
                         </div>
@@ -333,108 +226,45 @@
             </div>
         </section>
 
-        <!-- Event Logging -->
         <section class="security-logging-section">
             <div class="section-header reveal-on-scroll">
                 <span class="section-tag">Observability</span>
-                <h2>Full Event Logging</h2>
+                <h2>Full event logging</h2>
                 <p class="subtitle">Every significant server event is captured, timestamped, and routed to your dedicated log channels.</p>
             </div>
             <div class="logging-grid">
-                <div class="logging-card reveal-on-scroll">
-                    <div class="logging-icon">??</div>
-                    <h3>Mod Log</h3>
-                    <p>Every moderation action � ban, kick, warn, shadow ban, automod hit, sentinel trigger � logged with moderator, target, reason, and case number.</p>
-                    <code>/logs channel:#mod-log</code>
-                </div>
-                <div class="logging-card reveal-on-scroll">
-                    <div class="logging-icon">??</div>
-                    <h3>Message Log</h3>
-                    <p>Message edits show before and after content. Deletes show the channel and message ID. Never lose track of what was said.</p>
-                    <code>/msglogs channel:#msg-log</code>
-                </div>
-                <div class="logging-card reveal-on-scroll">
-                    <div class="logging-icon">??</div>
-                    <h3>Member Log</h3>
-                    <p>Member leaves logged with account creation date, user ID, and server name. Catch ban-evaders by spotting new accounts.</p>
-                    <code>/memberlogs channel:#member-log</code>
-                </div>
+                <div class="logging-card reveal-on-scroll"><div class="logging-icon"><i class="fa-solid fa-shield-halved"></i></div><h3>Mod Log</h3><p>Moderation actions, AutoMod hits, and Sentinel triggers logged with moderator, target, reason, and case number.</p><code>/logs channel:#mod-log</code></div>
+                <div class="logging-card reveal-on-scroll"><div class="logging-icon"><i class="fa-solid fa-message"></i></div><h3>Message Log</h3><p>Message edits and deletes show useful context for review without cluttering public channels.</p><code>/msglogs channel:#msg-log</code></div>
+                <div class="logging-card reveal-on-scroll"><div class="logging-icon"><i class="fa-solid fa-user-clock"></i></div><h3>Member Log</h3><p>Member joins and leaves can include account age, user ID, and server context.</p><code>/memberlogs channel:#member-log</code></div>
             </div>
         </section>
 
-        <!-- Setup Guide -->
         <section class="security-setup-section">
             <div class="section-header reveal-on-scroll">
                 <span class="section-tag">Quick Setup</span>
                 <h2>Security in 5 commands</h2>
-                <p class="subtitle">Get full protection running in under two minutes.</p>
+                <p class="subtitle">Get the core protection stack running in a few minutes.</p>
             </div>
             <div class="setup-steps">
-                <div class="setup-step reveal-on-scroll">
-                    <div class="setup-step-num">01</div>
-                    <div class="setup-step-content">
-                        <h3>Set your log channels</h3>
-                        <div class="setup-codes">
-                            <code>/logs channel:#mod-log</code>
-                            <code>/msglogs channel:#msg-log</code>
-                            <code>/memberlogs channel:#member-log</code>
-                        </div>
-                    </div>
-                </div>
-                <div class="setup-step reveal-on-scroll">
-                    <div class="setup-step-num">02</div>
-                    <div class="setup-step-content">
-                        <h3>Enable Sentinel</h3>
-                        <div class="setup-codes">
-                            <code>/sentinel enable</code>
-                            <code>/sentinel threshold joins:5 window:10</code>
-                        </div>
-                    </div>
-                </div>
-                <div class="setup-step reveal-on-scroll">
-                    <div class="setup-step-num">03</div>
-                    <div class="setup-step-content">
-                        <h3>Turn on AutoMod</h3>
-                        <div class="setup-codes">
-                            <code>/automod enable</code>
-                            <code>/automod spam on</code>
-                            <code>/automod invites on</code>
-                        </div>
-                    </div>
-                </div>
-                <div class="setup-step reveal-on-scroll">
-                    <div class="setup-step-num">04</div>
-                    <div class="setup-step-content">
-                        <h3>Configure Shadow Ban role</h3>
-                        <div class="setup-codes">
-                            <code>/muterole role:@Muted</code>
-                        </div>
-                        <p class="setup-note">Create a role with Send Messages = Deny, then assign it here.</p>
-                    </div>
-                </div>
-                <div class="setup-step reveal-on-scroll">
-                    <div class="setup-step-num">05</div>
-                    <div class="setup-step-content">
-                        <h3>Done � you're protected</h3>
-                        <p>Check <code>/sentinel status</code> and <code>/automod status</code> anytime to review your configuration.</p>
-                    </div>
-                </div>
+                <div class="setup-step reveal-on-scroll"><div class="setup-step-num">01</div><div class="setup-step-content"><h3>Set your log channels</h3><div class="setup-codes"><code>/logs channel:#mod-log</code><code>/msglogs channel:#msg-log</code><code>/memberlogs channel:#member-log</code></div></div></div>
+                <div class="setup-step reveal-on-scroll"><div class="setup-step-num">02</div><div class="setup-step-content"><h3>Enable Sentinel</h3><div class="setup-codes"><code>/sentinel enable</code><code>/sentinel threshold joins:5 window:10</code></div></div></div>
+                <div class="setup-step reveal-on-scroll"><div class="setup-step-num">03</div><div class="setup-step-content"><h3>Turn on AutoMod</h3><div class="setup-codes"><code>/automod enable</code><code>/automod spam on</code><code>/automod invites on</code></div></div></div>
+                <div class="setup-step reveal-on-scroll"><div class="setup-step-num">04</div><div class="setup-step-content"><h3>Configure the muted role</h3><div class="setup-codes"><code>/muterole role:@Muted</code></div><p class="setup-note">Create a role with Send Messages denied, then assign it here.</p></div></div>
+                <div class="setup-step reveal-on-scroll"><div class="setup-step-num">05</div><div class="setup-step-content"><h3>Done: you're protected</h3><p>Check <code>/sentinel status</code> and <code>/automod status</code> anytime to review your configuration.</p></div></div>
             </div>
         </section>
 
-        <!-- CTA -->
         <section class="cta-section">
             <div class="cta-glow" style="background:radial-gradient(ellipse at center, rgba(255,69,0,0.15) 0%, transparent 70%);"></div>
             <h2>Ready to secure your server with <span class="text-gradient">AegisForge</span>?</h2>
-            <p>All security features are free, configurable, and operational in under two minutes.</p>
+            <p>All security features are free, configurable, and operational in a few minutes.</p>
             <div class="hero-btns">
                 <a href="https://discord.com/oauth2/authorize?client_id=1500582485367722004&permissions=8&scope=bot+applications.commands" target="_blank" rel="noopener noreferrer" class="btn-primary btn-lg shine-effect btn-icon">
                     <i class="fa-brands fa-discord"></i>Invite AegisForge
                 </a>
-                <a href="commands.html" class="btn-secondary btn-lg">View All Commands</a>
+                <a href="commands.html" class="btn-secondary btn-lg">View Commands</a>
             </div>
         </section>
-
     </main>
 
     <footer>
@@ -457,12 +287,10 @@
         </div>
         <div class="footer-bottom">
             <p>&copy; 2026 AegisForge. Built by watispro1.</p>
-            <p class="footer-tagline">Sentinel � AutoMod � Shadow Ban � Tactical Ops</p>
+            <p class="footer-tagline">Sentinel | AutoMod | Shadow Ban | Tactical Ops</p>
         </div>
     </footer>
 
     <script src="script.js?v=4.3"></script>
 </body>
 </html>
-
-

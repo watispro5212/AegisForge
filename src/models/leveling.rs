@@ -11,6 +11,8 @@ pub struct UserLeveling {
     pub rank_card_background: String,
     pub rank_card_color: String,
     pub rank_card_text_color: String,
+    pub rank_card_badge: String,
+    pub rank_card_frame: String,
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,
 }

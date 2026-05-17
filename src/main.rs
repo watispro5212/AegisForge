@@ -47,6 +47,63 @@ pub struct Data {
     pub spam_tracker: Arc<SpamTracker>,
 }
 
+async fn send_webhook_embed(webhook_url: &str, embed: serenity::builder::CreateEmbed) -> bool {
+    let http = serenity::http::Http::new("");
+    match serenity::model::webhook::Webhook::from_url(&http, webhook_url).await {
+        Ok(webhook) => {
+            let builder = serenity::builder::ExecuteWebhook::new().embed(embed);
+            webhook.execute(&http, false, builder).await.is_ok()
+        }
+        Err(err) => {
+            tracing::warn!("Failed to load Discord webhook: {}", err);
+            false
+        }
+    }
+}
+
+async fn send_startup_status_webhook(
+    webhook_url: String,
+    bot_name: String,
+    guild_count: usize,
+    user_count: usize,
+    command_count: usize,
+) {
+    let environment = std::env::var("APP_ENV")
+        .or_else(|_| std::env::var("FLY_APP_NAME").map(|_| "production".to_string()))
+        .unwrap_or_else(|_| "local".to_string());
+    let api_base = std::env::var("PUBLIC_API_URL")
+        .or_else(|_| std::env::var("BOT_STATS_URL"))
+        .unwrap_or_else(|_| "https://aegisforge-bot.fly.dev".to_string());
+    let started_at = chrono::Utc::now().timestamp();
+
+    let embed = serenity::builder::CreateEmbed::new()
+        .title("AegisForge Status - Online")
+        .description(format!(
+            "**{}** is online. Gateway, slash commands, stats API, vote rewards, Sentinel, AutoMod, economy, and leveling are ready.",
+            bot_name
+        ))
+        .field("State", "`Operational`", true)
+        .field("Version", format!("`v{}`", env!("CARGO_PKG_VERSION")), true)
+        .field("Environment", format!("`{}`", environment), true)
+        .field("Cached Servers", format!("`{}`", guild_count), true)
+        .field("Cached Users", format!("`{}`", user_count), true)
+        .field("Registered Commands", format!("`{}`", command_count), true)
+        .field("Health Check", format!("[GET /api/health]({}/api/health)", api_base.trim_end_matches('/')), false)
+        .field("Live Stats", format!("[GET /api/stats]({}/api/stats)", api_base.trim_end_matches('/')), false)
+        .field("Started", format!("<t:{}:F> (<t:{}:R>)", started_at, started_at), false)
+        .footer(serenity::builder::CreateEmbedFooter::new(
+            "AegisForge status webhook | monitor #status for incidents",
+        ))
+        .timestamp(serenity::Timestamp::now())
+        .color(0x00FF88);
+
+    if send_webhook_embed(&webhook_url, embed).await {
+        info!("Sent startup status webhook");
+    } else {
+        tracing::warn!("Startup status webhook was configured but could not be sent");
+    }
+}
+
 #[derive(Serialize)]
 struct ShardStatus {
     id: u32,
@@ -96,35 +153,40 @@ async fn handle_vote(
     .await;
 
     // notify webhook
-    if let Ok(webhook_url) = std::env::var("STATUS_WEBHOOK_URL") {
+    let vote_webhook_url =
+        std::env::var("VOTE_WEBHOOK_URL").or_else(|_| std::env::var("STATUS_WEBHOOK_URL"));
+
+    if let Ok(webhook_url) = vote_webhook_url {
         tokio::spawn(async move {
-            let http = serenity::http::Http::new("");
-            if let Ok(webhook) =
-                serenity::model::webhook::Webhook::from_url(&http, &webhook_url).await
-            {
-                let embed = serenity::builder::CreateEmbed::new()
-                    .title("AegisForge Vote Reward")
-                    .description(format!(
-                        "<@{}> voted on Top.gg and received **${}** across their economy profiles.",
-                        payload.user, bonus
-                    ))
-                    .field("Reward", format!("`${}`", bonus), true)
-                    .field(
-                        "Multiplier",
-                        if payload.is_weekend {
-                            "Weekend 2x"
-                        } else {
-                            "Standard"
-                        },
-                        true,
-                    )
-                    .footer(serenity::builder::CreateEmbedFooter::new(
-                        "AegisForge v4.2 - Vote Reward",
-                    ))
-                    .timestamp(serenity::Timestamp::now())
-                    .color(0x00FF88);
-                let builder = serenity::builder::ExecuteWebhook::new().embed(embed);
-                let _ = webhook.execute(&http, false, builder).await;
+            let voted_at = chrono::Utc::now().timestamp();
+            let embed = serenity::builder::CreateEmbed::new()
+                .title("AegisForge Vote Reward")
+                .description(format!(
+                    "<@{}> voted on Top.gg and received **${}** across their economy profiles.",
+                    payload.user, bonus
+                ))
+                .field("Status", "`Reward Applied`", true)
+                .field("Reward", format!("`${}`", bonus), true)
+                .field(
+                    "Multiplier",
+                    if payload.is_weekend {
+                        "`Weekend 2x`"
+                    } else {
+                        "`Standard`"
+                    },
+                    true,
+                )
+                .field("User ID", format!("`{}`", payload.user), true)
+                .field("Source", "`Top.gg vote webhook`", true)
+                .field("Processed", format!("<t:{}:R>", voted_at), true)
+                .footer(serenity::builder::CreateEmbedFooter::new(
+                    "AegisForge v4.3 | Vote rewards",
+                ))
+                .timestamp(serenity::Timestamp::now())
+                .color(0x00FF88);
+
+            if !send_webhook_embed(&webhook_url, embed).await {
+                tracing::warn!("Vote reward webhook was configured but could not be sent");
             }
         });
     }
@@ -154,6 +216,7 @@ struct Health {
     service: &'static str,
     version: &'static str,
     uptime_seconds: u64,
+    timestamp: String,
 }
 
 #[derive(Clone)]
@@ -231,11 +294,18 @@ async fn get_health(State(state): State<AppState>) -> Json<Health> {
         service: "aegisforge",
         version: env!("CARGO_PKG_VERSION"),
         uptime_seconds: state.start_time.elapsed().as_secs(),
+        timestamp: chrono::Utc::now().to_rfc3339(),
     })
 }
 
 pub type Error = Box<dyn std::error::Error + Send + Sync>;
 pub type Context<'a> = poise::Context<'a, Data, Error>;
+
+fn discovery_safe_commands_enabled() -> bool {
+    env::var("DISCOVERY_SAFE_COMMANDS")
+        .map(|value| matches!(value.to_lowercase().as_str(), "1" | "true" | "yes" | "on"))
+        .unwrap_or(false)
+}
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
@@ -254,7 +324,10 @@ async fn main() -> Result<(), Error> {
         .await
         .expect("Failed to connect for migrations");
     if let Err(e) = sqlx::migrate!("./migrations").run(&migrate_pool).await {
-        tracing::warn!("Migration error (likely VersionMismatch due to CRLF/LF): {}. Continuing anyway...", e);
+        tracing::warn!(
+            "Migration error (likely VersionMismatch due to CRLF/LF): {}. Continuing anyway...",
+            e
+        );
     }
     migrate_pool.close().await;
 
@@ -269,6 +342,12 @@ async fn main() -> Result<(), Error> {
     let token =
         env::var("DISCORD_TOKEN").map_err(|_| "Missing DISCORD_TOKEN environment variable")?;
     let start_time = std::time::Instant::now();
+    let economy_command = if discovery_safe_commands_enabled() {
+        info!("Discovery-safe command mode enabled; gambling-adjacent economy commands are hidden");
+        commands::economy::economy_discovery_safe()
+    } else {
+        commands::economy::economy()
+    };
 
     // setting up the commands
     let framework = poise::Framework::builder()
@@ -299,7 +378,7 @@ async fn main() -> Result<(), Error> {
                 commands::fun::fun(),
                 commands::fun::games(),
                 // economy
-                commands::economy::economy(),
+                economy_command,
                 // leveling
                 commands::leveling::leveling(),
                 // moderation
@@ -321,9 +400,21 @@ async fn main() -> Result<(), Error> {
                 commands::moderation::lock(),
                 commands::moderation::unlock(),
                 commands::moderation::tactical(),
+                // role management
+                commands::role::role(),
                 // giveaways
                 commands::giveaway::giveaway(),
                 // config
+                commands::config::logs(),
+                commands::config::msglogs(),
+                commands::config::memberlogs(),
+                commands::config::welcome(),
+                commands::config::goodbye(),
+                commands::config::autorole(),
+                commands::config::muterole(),
+                commands::config::prefix(),
+                commands::config::settings(),
+                commands::config::sentinel(),
                 commands::config::automod(),
             ],
             pre_command: |ctx| {
@@ -399,24 +490,41 @@ async fn main() -> Result<(), Error> {
                 let ctx_clone = ctx.clone();
                 Box::pin(async move {
                     info!("AegisForge online as {}", ready.user.name);
-                    
+
                     tokio::spawn(async move {
                         let statuses = [
-                            "v4.3 Elite",
-                            "Sentinel Anti-Raid",
-                            "/help | aegisforge.com",
-                            "AutoMod Active"
+                            "v4.3 | /help",
+                            "Sentinel watching raids",
+                            "AutoMod filtering spam",
+                            "Economy shops open",
+                            "Live stats online",
+                            "Support: discord.gg/HbmafcgjNa",
                         ];
                         let mut i = 0;
                         loop {
-                            let activity = serenity::ActivityData::playing(statuses[i % statuses.len()]);
+                            let activity =
+                                serenity::ActivityData::playing(statuses[i % statuses.len()]);
                             ctx_clone.set_presence(Some(activity), serenity::OnlineStatus::Online);
                             i += 1;
                             tokio::time::sleep(tokio::time::Duration::from_secs(30)).await;
                         }
                     });
-                    
+
                     poise::builtins::register_globally(ctx, &framework.options().commands).await?;
+                    if let Ok(status_webhook_url) = std::env::var("STATUS_WEBHOOK_URL") {
+                        let bot_name = ready.user.name.clone();
+                        let guild_count = ctx.cache.guild_count();
+                        let user_count = ctx.cache.user_count();
+                        let command_count = framework.options().commands.len();
+                        tokio::spawn(send_startup_status_webhook(
+                            status_webhook_url,
+                            bot_name,
+                            guild_count,
+                            user_count,
+                            command_count,
+                        ));
+                    }
+
                     Ok(Data {
                         database: db,
                         start_time,

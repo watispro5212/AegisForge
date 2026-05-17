@@ -57,20 +57,21 @@ pub async fn start(
             **Winners:** {} {}\n\
             **Hosted by:** <@{}>\n\
             **Ends:** <t:{}:R> (<t:{}:F>)",
-            prize, winners, winners_label, ctx.author().id, ends_at, ends_at
+            prize,
+            winners,
+            winners_label,
+            ctx.author().id,
+            ends_at,
+            ends_at
         ))
         .color(0xFFD700)
         .footer(CreateEmbedFooter::new(format!(
             "{} {} • AegisForge Giveaways",
             winners, winners_label
         )))
-        .timestamp(
-            Timestamp::from_unix_timestamp(ends_at).unwrap_or_else(|_| Timestamp::now()),
-        );
+        .timestamp(Timestamp::from_unix_timestamp(ends_at).unwrap_or_else(|_| Timestamp::now()));
 
-    let reply = ctx
-        .send(poise::CreateReply::default().embed(embed))
-        .await?;
+    let reply = ctx.send(poise::CreateReply::default().embed(embed)).await?;
     let msg = reply.into_message().await?;
     msg.react(
         ctx.http(),
@@ -136,10 +137,7 @@ pub async fn end(
     let picked: Vec<_> = eligible.iter().take(winner_count).collect();
 
     let (desc, color) = if picked.is_empty() {
-        (
-            format!("No valid entries for **{}**.", ga.prize),
-            0xFF3B3B,
-        )
+        (format!("No valid entries for **{}**.", ga.prize), 0xFF3B3B)
     } else {
         let mentions = picked
             .iter()
@@ -159,14 +157,16 @@ pub async fn end(
         g.ended = true;
     }
 
-    ctx.send(poise::CreateReply::default().embed(
-        CreateEmbed::new()
-            .title("🎊 Giveaway Ended!")
-            .description(desc)
-            .color(color)
-            .footer(CreateEmbedFooter::new("AegisForge Giveaways"))
-            .timestamp(Timestamp::now()),
-    ))
+    ctx.send(
+        poise::CreateReply::default().embed(
+            CreateEmbed::new()
+                .title("🎊 Giveaway Ended!")
+                .description(desc)
+                .color(color)
+                .footer(CreateEmbedFooter::new("AegisForge Giveaways"))
+                .timestamp(Timestamp::now()),
+        ),
+    )
     .await?;
 
     Ok(())
@@ -213,14 +213,16 @@ pub async fn reroll(
         "No eligible participants to reroll from.".into()
     };
 
-    ctx.send(poise::CreateReply::default().embed(
-        CreateEmbed::new()
-            .title("🎰 Giveaway Rerolled")
-            .description(desc)
-            .color(0x00E5FF)
-            .footer(CreateEmbedFooter::new("AegisForge Giveaways"))
-            .timestamp(Timestamp::now()),
-    ))
+    ctx.send(
+        poise::CreateReply::default().embed(
+            CreateEmbed::new()
+                .title("🎰 Giveaway Rerolled")
+                .description(desc)
+                .color(0x00E5FF)
+                .footer(CreateEmbedFooter::new("AegisForge Giveaways"))
+                .timestamp(Timestamp::now()),
+        ),
+    )
     .await?;
 
     Ok(())
@@ -239,12 +241,14 @@ pub async fn list(ctx: Context<'_>) -> Result<(), Error> {
         .collect();
 
     if active_list.is_empty() {
-        ctx.send(poise::CreateReply::default().embed(
-            CreateEmbed::new()
-                .title("🎉 Active Giveaways")
-                .description("No active giveaways in this server.")
-                .color(0x00E5FF),
-        ))
+        ctx.send(
+            poise::CreateReply::default().embed(
+                CreateEmbed::new()
+                    .title("🎉 Active Giveaways")
+                    .description("No active giveaways in this server.")
+                    .color(0x00E5FF),
+            ),
+        )
         .await?;
         return Ok(());
     }
@@ -259,16 +263,18 @@ pub async fn list(ctx: Context<'_>) -> Result<(), Error> {
         })
         .collect();
 
-    ctx.send(poise::CreateReply::default().embed(
-        CreateEmbed::new()
-            .title(format!("🎉 Active Giveaways — {}", active_list.len()))
-            .description(lines)
-            .color(0xFFD700)
-            .footer(CreateEmbedFooter::new(
-                "Use /giveaway end <message_id> to end early",
-            ))
-            .timestamp(Timestamp::now()),
-    ))
+    ctx.send(
+        poise::CreateReply::default().embed(
+            CreateEmbed::new()
+                .title(format!("🎉 Active Giveaways — {}", active_list.len()))
+                .description(lines)
+                .color(0xFFD700)
+                .footer(CreateEmbedFooter::new(
+                    "Use /giveaway end <message_id> to end early",
+                ))
+                .timestamp(Timestamp::now()),
+        ),
+    )
     .await?;
 
     Ok(())

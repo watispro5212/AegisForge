@@ -44,6 +44,9 @@ DISCORD_TOKEN=
 DATABASE_URL=
 DATABASE_POOL_URL=
 STATUS_WEBHOOK_URL=
+VOTE_WEBHOOK_URL=
+APP_ENV=production
+PUBLIC_API_URL=https://aegisforge-bot.fly.dev
 PORT=8080
 ```
 
@@ -56,6 +59,8 @@ BOT_STATS_URL=https://aegisforge-bot.fly.dev/api/stats
 ```
 
 If `BOT_STATS_URL` is not set, the website API route uses the production Fly.io stats endpoint by default.
+
+`VOTE_WEBHOOK_URL` is optional. If it is not set, Top.gg vote reward notifications fall back to `STATUS_WEBHOOK_URL`. `APP_ENV` and `PUBLIC_API_URL` are used to make startup status webhook messages clearer.
 
 ## Local Development
 

@@ -40,6 +40,38 @@ pub async fn economy(_ctx: Context<'_>) -> Result<(), Error> {
     Ok(())
 }
 
+/// Discovery-safe economy command group.
+///
+/// Discord App Directory content rules disallow gambling-adjacent/addictive
+/// behavior, so this variant excludes chance-betting, robbery, and crime
+/// commands while keeping the wallet, work, shop, inventory, and profile flow.
+#[poise::command(
+    slash_command,
+    rename = "economy",
+    subcommands(
+        "balance",
+        "daily",
+        "work",
+        "pay",
+        "leaderboard",
+        "global_leaderboard",
+        "beg",
+        "search",
+        "deposit",
+        "withdraw",
+        "shop",
+        "buy",
+        "inventory",
+        "profile",
+        "work_list"
+    ),
+    category = "economy",
+    guild_only
+)]
+pub async fn economy_discovery_safe(_ctx: Context<'_>) -> Result<(), Error> {
+    Ok(())
+}
+
 #[derive(Clone, Copy)]
 struct ShopItem {
     id: &'static str,
@@ -58,7 +90,7 @@ fn global_shop_items() -> &'static [ShopItem] {
             category: "Profile",
             price: 250,
             rarity: "Common",
-            description: "Starter profile badge for fresh economy players.",
+            description: "Starter badge that can be equipped on your rank card.",
         },
         ShopItem {
             id: "silver_badge",
@@ -66,7 +98,7 @@ fn global_shop_items() -> &'static [ShopItem] {
             category: "Profile",
             price: 1_000,
             rarity: "Common",
-            description: "Clean profile flex for consistent grinders.",
+            description: "Clean silver badge for your rank card.",
         },
         ShopItem {
             id: "gold_badge",
@@ -74,7 +106,7 @@ fn global_shop_items() -> &'static [ShopItem] {
             category: "Profile",
             price: 5_000,
             rarity: "Rare",
-            description: "Premium-looking badge for leaderboard climbers.",
+            description: "Premium rank-card badge for leaderboard climbers.",
         },
         ShopItem {
             id: "diamond_badge",
@@ -82,7 +114,7 @@ fn global_shop_items() -> &'static [ShopItem] {
             category: "Profile",
             price: 25_000,
             rarity: "Epic",
-            description: "High-end badge for economy veterans.",
+            description: "High-end rank-card badge for economy veterans.",
         },
         ShopItem {
             id: "forge_crown",
@@ -90,7 +122,7 @@ fn global_shop_items() -> &'static [ShopItem] {
             category: "Profile",
             price: 100_000,
             rarity: "Legendary",
-            description: "A crown for users with dangerous amounts of money.",
+            description: "Legendary rank-card badge for top earners.",
         },
         ShopItem {
             id: "neon_nameplate",
@@ -98,7 +130,7 @@ fn global_shop_items() -> &'static [ShopItem] {
             category: "Cosmetic",
             price: 7_500,
             rarity: "Rare",
-            description: "Bright profile styling for rank and economy displays.",
+            description: "Equippable neon rank-card background and accent.",
         },
         ShopItem {
             id: "carbon_nameplate",
@@ -106,7 +138,7 @@ fn global_shop_items() -> &'static [ShopItem] {
             category: "Cosmetic",
             price: 9_000,
             rarity: "Rare",
-            description: "Dark brushed-metal profile styling.",
+            description: "Equippable carbon rank-card background and accent.",
         },
         ShopItem {
             id: "aurora_frame",
@@ -114,7 +146,7 @@ fn global_shop_items() -> &'static [ShopItem] {
             category: "Cosmetic",
             price: 18_000,
             rarity: "Epic",
-            description: "Animated-feeling profile frame for top users.",
+            description: "Equippable aurora frame for your rank card.",
         },
         ShopItem {
             id: "obsidian_frame",
@@ -122,7 +154,7 @@ fn global_shop_items() -> &'static [ShopItem] {
             category: "Cosmetic",
             price: 30_000,
             rarity: "Epic",
-            description: "Stealth profile frame with sharp forge styling.",
+            description: "Equippable obsidian frame for your rank card.",
         },
         ShopItem {
             id: "founders_sigil",
@@ -709,7 +741,11 @@ pub async fn work(ctx: Context<'_>) -> Result<(), Error> {
                 .title(format!("🔨 Work Complete — {}", job))
                 .description(flavor)
                 .field("💵 Earned", format!("`+${}`", reward), true)
-                .field("⏰ Next Shift", "<t:{}:R>".replace("{}", &(chrono::Utc::now().timestamp() + 1800).to_string()), true)
+                .field(
+                    "⏰ Next Shift",
+                    "<t:{}:R>".replace("{}", &(chrono::Utc::now().timestamp() + 1800).to_string()),
+                    true,
+                )
                 .footer(serenity::CreateEmbedFooter::new(
                     "Work smarter, gamble harder",
                 ))
@@ -733,14 +769,24 @@ pub async fn work_list(ctx: Context<'_>) -> Result<(), Error> {
         "📦 Worked at the warehouse",
         "🛡️ Forged armor for the realm",
     ];
-    
-    ctx.send(poise::CreateReply::default().embed(
-        CreateEmbed::new()
-            .title("📋 Job Catalog")
-            .description(jobs.iter().map(|j| format!("• {}", j)).collect::<Vec<_>>().join("\n"))
-            .footer(serenity::CreateEmbedFooter::new("Payouts range from $50 to $200"))
-            .color(0x00E5FF)
-    )).await?;
+
+    ctx.send(
+        poise::CreateReply::default().embed(
+            CreateEmbed::new()
+                .title("📋 Job Catalog")
+                .description(
+                    jobs.iter()
+                        .map(|j| format!("• {}", j))
+                        .collect::<Vec<_>>()
+                        .join("\n"),
+                )
+                .footer(serenity::CreateEmbedFooter::new(
+                    "Payouts range from $50 to $200",
+                ))
+                .color(0x00E5FF),
+        ),
+    )
+    .await?;
     Ok(())
 }
 
@@ -1120,13 +1166,19 @@ pub async fn dice(
     #[description = "Amount to bet"] bet: i64,
 ) -> Result<(), Error> {
     ctx.defer().await?;
-    if guess < 1 || guess > 6 { return Err("Guess must be between 1 and 6.".into()); }
-    if bet < 10 { return Err("Minimum bet is $10.".into()); }
-    
+    if !(1..=6).contains(&guess) {
+        return Err("Guess must be between 1 and 6.".into());
+    }
+    if bet < 10 {
+        return Err("Minimum bet is $10.".into());
+    }
+
     let guild_id = ctx.guild_id().unwrap().get() as i64;
     let user_id = ctx.author().id.get() as i64;
     let eco = economy::get_user_economy(&ctx.data().database.pool, guild_id, user_id).await?;
-    if bet > eco.balance { return Err("Insufficient funds.".into()); }
+    if bet > eco.balance {
+        return Err("Insufficient funds.".into());
+    }
 
     let roll = rand::thread_rng().gen_range(1..=6);
     let win = roll == guess;
@@ -1134,19 +1186,38 @@ pub async fn dice(
     let dice_emojis = ["", "⚀", "⚁", "⚂", "⚃", "⚄", "⚅"];
     let mut embed = CreateEmbed::new()
         .title("🎲 Dice Roll")
-        .description(format!("The dice landed on **{} {}**!", dice_emojis[roll as usize], roll))
+        .description(format!(
+            "The dice landed on **{} {}**!",
+            dice_emojis[roll as usize], roll
+        ))
         .timestamp(serenity::Timestamp::now());
 
     if win {
         let reward = bet * 5;
         economy::update_balance(&ctx.data().database.pool, guild_id, user_id, reward).await?;
-        embed = embed.field("Result", format!("Correct! You won **${}** (5x multiplier)!", reward), false).color(0x00FF88);
+        embed = embed
+            .field(
+                "Result",
+                format!("Correct! You won **${}** (5x multiplier)!", reward),
+                false,
+            )
+            .color(0x00FF88);
     } else {
         economy::update_balance(&ctx.data().database.pool, guild_id, user_id, -bet).await?;
-        embed = embed.field("Result", format!("Wrong guess. You lost **${}**.", bet), false).color(0xFF3B3B);
+        embed = embed
+            .field(
+                "Result",
+                format!("Wrong guess. You lost **${}**.", bet),
+                false,
+            )
+            .color(0xFF3B3B);
     }
 
-    ctx.send(poise::CreateReply::default().embed(embed.footer(serenity::CreateEmbedFooter::new("AegisForge v4.2 Economy")))).await?;
+    ctx.send(
+        poise::CreateReply::default()
+            .embed(embed.footer(serenity::CreateEmbedFooter::new("AegisForge v4.2 Economy"))),
+    )
+    .await?;
     Ok(())
 }
 
@@ -1553,7 +1624,11 @@ pub async fn blackjack(
             .color(0xFF3B3B);
     }
 
-    ctx.send(poise::CreateReply::default().embed(embed.footer(serenity::CreateEmbedFooter::new("AegisForge v4.2 Economy")))).await?;
+    ctx.send(
+        poise::CreateReply::default()
+            .embed(embed.footer(serenity::CreateEmbedFooter::new("AegisForge v4.2 Economy"))),
+    )
+    .await?;
     Ok(())
 }
 
@@ -1565,15 +1640,27 @@ pub async fn coinflip(
     #[description = "Amount to bet"] bet: i64,
 ) -> Result<(), Error> {
     ctx.defer().await?;
-    if bet <= 0 { return Err("Bet must be positive.".into()); }
-    
+    if bet <= 0 {
+        return Err("Bet must be positive.".into());
+    }
+
     let guild_id = ctx.guild_id().unwrap().get() as i64;
     let user_id = ctx.author().id.get() as i64;
     let eco = economy::get_user_economy(&ctx.data().database.pool, guild_id, user_id).await?;
-    if bet > eco.balance { return Err("Insufficient funds.".into()); }
+    if bet > eco.balance {
+        return Err("Insufficient funds.".into());
+    }
 
     let win = rand::random::<bool>();
-    let side = if win { choice.clone() } else { if choice.to_lowercase() == "heads" { "Tails".into() } else { "Heads".into() } };
+    let side = if win {
+        choice.clone()
+    } else {
+        if choice.to_lowercase() == "heads" {
+            "Tails".into()
+        } else {
+            "Heads".into()
+        }
+    };
 
     let mut embed = CreateEmbed::new()
         .title("🪙 Coin Flip")
@@ -1582,12 +1669,20 @@ pub async fn coinflip(
 
     if win {
         economy::update_balance(&ctx.data().database.pool, guild_id, user_id, bet).await?;
-        embed = embed.field("Result", format!("You won **${}**!", bet), false).color(0x00FF88);
+        embed = embed
+            .field("Result", format!("You won **${}**!", bet), false)
+            .color(0x00FF88);
     } else {
         economy::update_balance(&ctx.data().database.pool, guild_id, user_id, -bet).await?;
-        embed = embed.field("Result", format!("You lost **${}**.", bet), false).color(0xFF3B3B);
+        embed = embed
+            .field("Result", format!("You lost **${}**.", bet), false)
+            .color(0xFF3B3B);
     }
 
-    ctx.send(poise::CreateReply::default().embed(embed.footer(serenity::CreateEmbedFooter::new("AegisForge v4.2 Economy")))).await?;
+    ctx.send(
+        poise::CreateReply::default()
+            .embed(embed.footer(serenity::CreateEmbedFooter::new("AegisForge v4.2 Economy"))),
+    )
+    .await?;
     Ok(())
 }

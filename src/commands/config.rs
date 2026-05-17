@@ -121,7 +121,8 @@ pub async fn prefix(
 )]
 pub async fn muterole(
     ctx: Context<'_>,
-    #[description = "The role to apply when a member is muted or shadow banned"] role: serenity::Role,
+    #[description = "The role to apply when a member is muted or shadow banned"]
+    role: serenity::Role,
 ) -> Result<(), Error> {
     let guild_id = ctx.guild_id().unwrap().get() as i64;
     crate::db::guild::set_mute_role(&ctx.data().database.pool, guild_id, role.id.get() as i64)
@@ -200,7 +201,12 @@ pub async fn settings(ctx: Context<'_>) -> Result<(), Error> {
     prefix_command,
     required_permissions = "MANAGE_GUILD",
     guild_only,
-    subcommands("sentinel_enable", "sentinel_disable", "sentinel_threshold", "sentinel_status")
+    subcommands(
+        "sentinel_enable",
+        "sentinel_disable",
+        "sentinel_threshold",
+        "sentinel_status"
+    )
 )]
 pub async fn sentinel(_ctx: Context<'_>) -> Result<(), Error> {
     Ok(())
@@ -214,7 +220,10 @@ pub async fn sentinel_enable(ctx: Context<'_>) -> Result<(), Error> {
         .sentinel_settings
         .entry(guild_id)
         .and_modify(|s| s.enabled = true)
-        .or_insert_with(|| SentinelConfig { enabled: true, ..Default::default() });
+        .or_insert_with(|| SentinelConfig {
+            enabled: true,
+            ..Default::default()
+        });
 
     ctx.send(poise::CreateReply::default().embed(
         serenity::CreateEmbed::new()
@@ -237,14 +246,19 @@ pub async fn sentinel_disable(ctx: Context<'_>) -> Result<(), Error> {
         .sentinel_settings
         .entry(guild_id)
         .and_modify(|s| s.enabled = false)
-        .or_insert_with(|| SentinelConfig { enabled: false, ..Default::default() });
+        .or_insert_with(|| SentinelConfig {
+            enabled: false,
+            ..Default::default()
+        });
 
-    ctx.send(poise::CreateReply::default().embed(
-        serenity::CreateEmbed::new()
-            .title("🔒 Sentinel Deactivated")
-            .description("Anti-raid detection has been **disabled** for this server.")
-            .color(0xFF4500),
-    ))
+    ctx.send(
+        poise::CreateReply::default().embed(
+            serenity::CreateEmbed::new()
+                .title("🔒 Sentinel Deactivated")
+                .description("Anti-raid detection has been **disabled** for this server.")
+                .color(0xFF4500),
+        ),
+    )
     .await?;
     Ok(())
 }
@@ -261,8 +275,9 @@ pub async fn sentinel_threshold(
         ctx.say("❌ Threshold must be at least 2.").await?;
         return Ok(());
     }
-    if window < 5 || window > 300 {
-        ctx.say("❌ Window must be between 5 and 300 seconds.").await?;
+    if !(5..=300).contains(&window) {
+        ctx.say("❌ Window must be between 5 and 300 seconds.")
+            .await?;
         return Ok(());
     }
 
@@ -280,17 +295,19 @@ pub async fn sentinel_threshold(
             window_secs: window as u64,
         });
 
-    ctx.send(poise::CreateReply::default().embed(
-        serenity::CreateEmbed::new()
-            .title("⚙️ Sentinel Threshold Updated")
-            .field("Joins", format!("`{}`", joins), true)
-            .field("Window", format!("`{}s`", window), true)
-            .description(format!(
-                "Sentinel will now trigger if **{}** or more users join within **{}s**.",
-                joins, window
-            ))
-            .color(0x00E5FF),
-    ))
+    ctx.send(
+        poise::CreateReply::default().embed(
+            serenity::CreateEmbed::new()
+                .title("⚙️ Sentinel Threshold Updated")
+                .field("Joins", format!("`{}`", joins), true)
+                .field("Window", format!("`{}s`", window), true)
+                .description(format!(
+                    "Sentinel will now trigger if **{}** or more users join within **{}s**.",
+                    joins, window
+                ))
+                .color(0x00E5FF),
+        ),
+    )
     .await?;
     Ok(())
 }
@@ -372,12 +389,15 @@ pub async fn automod_disable(ctx: Context<'_>) -> Result<(), Error> {
     let guild_id = ctx.guild_id().unwrap().get() as i64;
     crate::db::guild::set_automod_enabled(&ctx.data().database.pool, guild_id, false).await?;
     ctx.data().database.invalidate_cache(guild_id);
-    ctx.send(poise::CreateReply::default().embed(
-        serenity::CreateEmbed::new()
-            .title("🔓 AutoMod Disabled")
-            .description("Automatic moderation has been turned off.")
-            .color(0xFF4500),
-    )).await?;
+    ctx.send(
+        poise::CreateReply::default().embed(
+            serenity::CreateEmbed::new()
+                .title("🔓 AutoMod Disabled")
+                .description("Automatic moderation has been turned off.")
+                .color(0xFF4500),
+        ),
+    )
+    .await?;
     Ok(())
 }
 
@@ -386,25 +406,38 @@ pub async fn automod_status(ctx: Context<'_>) -> Result<(), Error> {
     ctx.defer().await?;
     let guild_id = ctx.guild_id().unwrap().get() as i64;
     let config = ctx.data().database.get_guild_config(guild_id).await?;
-    let blacklist = crate::db::guild::list_blacklist_phrases(&ctx.data().database.pool, guild_id).await.unwrap_or_default();
+    let blacklist = crate::db::guild::list_blacklist_phrases(&ctx.data().database.pool, guild_id)
+        .await
+        .unwrap_or_default();
 
     let on = |b: bool| if b { "`🟢 On`" } else { "`🔴 Off`" };
 
-    ctx.send(poise::CreateReply::default().embed(
-        serenity::CreateEmbed::new()
-            .title("🛡️ AutoMod — Status")
-            .field("AutoMod", on(config.automod_enabled), true)
-            .field("Anti-Spam", on(config.automod_spam), true)
-            .field("Anti-Invite", on(config.automod_invites), true)
-            .field("Anti-Caps", on(config.automod_caps), true)
-            .field("Anti-Mentions", on(config.automod_mentions), true)
-            .field(
-                "Blacklist",
-                if blacklist.is_empty() { "_Empty_".into() } else { format!("`{}`", blacklist.join("`, `")) },
-                false,
-            )
-            .color(if config.automod_enabled { 0x00E5FF } else { 0x2C2F33 }),
-    )).await?;
+    ctx.send(
+        poise::CreateReply::default().embed(
+            serenity::CreateEmbed::new()
+                .title("🛡️ AutoMod — Status")
+                .field("AutoMod", on(config.automod_enabled), true)
+                .field("Anti-Spam", on(config.automod_spam), true)
+                .field("Anti-Invite", on(config.automod_invites), true)
+                .field("Anti-Caps", on(config.automod_caps), true)
+                .field("Anti-Mentions", on(config.automod_mentions), true)
+                .field(
+                    "Blacklist",
+                    if blacklist.is_empty() {
+                        "_Empty_".into()
+                    } else {
+                        format!("`{}`", blacklist.join("`, `"))
+                    },
+                    false,
+                )
+                .color(if config.automod_enabled {
+                    0x00E5FF
+                } else {
+                    0x2C2F33
+                }),
+        ),
+    )
+    .await?;
     Ok(())
 }
 
@@ -417,7 +450,11 @@ pub async fn automod_spam(
     let guild_id = ctx.guild_id().unwrap().get() as i64;
     crate::db::guild::set_automod_spam(&ctx.data().database.pool, guild_id, val).await?;
     ctx.data().database.invalidate_cache(guild_id);
-    ctx.say(format!("✅ Anti-spam is now **{}**.", if val { "on" } else { "off" })).await?;
+    ctx.say(format!(
+        "✅ Anti-spam is now **{}**.",
+        if val { "on" } else { "off" }
+    ))
+    .await?;
     Ok(())
 }
 
@@ -430,7 +467,11 @@ pub async fn automod_invites(
     let guild_id = ctx.guild_id().unwrap().get() as i64;
     crate::db::guild::set_automod_invites(&ctx.data().database.pool, guild_id, val).await?;
     ctx.data().database.invalidate_cache(guild_id);
-    ctx.say(format!("✅ Anti-invite is now **{}**.", if val { "on" } else { "off" })).await?;
+    ctx.say(format!(
+        "✅ Anti-invite is now **{}**.",
+        if val { "on" } else { "off" }
+    ))
+    .await?;
     Ok(())
 }
 
@@ -443,7 +484,11 @@ pub async fn automod_caps(
     let guild_id = ctx.guild_id().unwrap().get() as i64;
     crate::db::guild::set_automod_caps(&ctx.data().database.pool, guild_id, val).await?;
     ctx.data().database.invalidate_cache(guild_id);
-    ctx.say(format!("✅ Anti-caps is now **{}**.", if val { "on" } else { "off" })).await?;
+    ctx.say(format!(
+        "✅ Anti-caps is now **{}**.",
+        if val { "on" } else { "off" }
+    ))
+    .await?;
     Ok(())
 }
 
@@ -456,7 +501,11 @@ pub async fn automod_mentions(
     let guild_id = ctx.guild_id().unwrap().get() as i64;
     crate::db::guild::set_automod_mentions(&ctx.data().database.pool, guild_id, val).await?;
     ctx.data().database.invalidate_cache(guild_id);
-    ctx.say(format!("✅ Anti-mention-spam is now **{}**.", if val { "on" } else { "off" })).await?;
+    ctx.say(format!(
+        "✅ Anti-mention-spam is now **{}**.",
+        if val { "on" } else { "off" }
+    ))
+    .await?;
     Ok(())
 }
 
@@ -466,9 +515,11 @@ pub async fn automod_blacklist_add(
     #[description = "Phrase to block"] phrase: String,
 ) -> Result<(), Error> {
     let guild_id = ctx.guild_id().unwrap().get() as i64;
-    crate::db::guild::add_blacklist_phrase(&ctx.data().database.pool, guild_id, phrase.trim()).await?;
+    crate::db::guild::add_blacklist_phrase(&ctx.data().database.pool, guild_id, phrase.trim())
+        .await?;
     ctx.data().database.invalidate_cache(guild_id);
-    ctx.say(format!("✅ `{}` added to the blacklist.", phrase.trim())).await?;
+    ctx.say(format!("✅ `{}` added to the blacklist.", phrase.trim()))
+        .await?;
     Ok(())
 }
 
@@ -478,12 +529,22 @@ pub async fn automod_blacklist_remove(
     #[description = "Phrase to unblock"] phrase: String,
 ) -> Result<(), Error> {
     let guild_id = ctx.guild_id().unwrap().get() as i64;
-    let removed = crate::db::guild::remove_blacklist_phrase(&ctx.data().database.pool, guild_id, phrase.trim()).await?;
+    let removed = crate::db::guild::remove_blacklist_phrase(
+        &ctx.data().database.pool,
+        guild_id,
+        phrase.trim(),
+    )
+    .await?;
     ctx.data().database.invalidate_cache(guild_id);
     if removed {
-        ctx.say(format!("✅ `{}` removed from the blacklist.", phrase.trim())).await?;
+        ctx.say(format!(
+            "✅ `{}` removed from the blacklist.",
+            phrase.trim()
+        ))
+        .await?;
     } else {
-        ctx.say(format!("❌ `{}` was not on the blacklist.", phrase.trim())).await?;
+        ctx.say(format!("❌ `{}` was not on the blacklist.", phrase.trim()))
+            .await?;
     }
     Ok(())
 }
@@ -492,60 +553,114 @@ pub async fn automod_blacklist_remove(
 pub async fn automod_blacklist_list(ctx: Context<'_>) -> Result<(), Error> {
     ctx.defer().await?;
     let guild_id = ctx.guild_id().unwrap().get() as i64;
-    let list = crate::db::guild::list_blacklist_phrases(&ctx.data().database.pool, guild_id).await.unwrap_or_default();
+    let list = crate::db::guild::list_blacklist_phrases(&ctx.data().database.pool, guild_id)
+        .await
+        .unwrap_or_default();
     let body = if list.is_empty() {
         "_No phrases on the blacklist._".into()
     } else {
-        list.iter().map(|p| format!("`{}`", p)).collect::<Vec<_>>().join("\n")
+        list.iter()
+            .map(|p| format!("`{}`", p))
+            .collect::<Vec<_>>()
+            .join("\n")
     };
-    ctx.send(poise::CreateReply::default().embed(
-        serenity::CreateEmbed::new()
-            .title(format!("🚫 Blacklist ({} phrase{})", list.len(), if list.len() == 1 { "" } else { "s" }))
-            .description(body)
-            .color(0x2C2F33),
-    )).await?;
+    ctx.send(
+        poise::CreateReply::default().embed(
+            serenity::CreateEmbed::new()
+                .title(format!(
+                    "🚫 Blacklist ({} phrase{})",
+                    list.len(),
+                    if list.len() == 1 { "" } else { "s" }
+                ))
+                .description(body)
+                .color(0x2C2F33),
+        ),
+    )
+    .await?;
     Ok(())
 }
 
 // ── Logging Channel Commands ──────────────────────────────────────────────────
 
 /// set the channel for message edit and delete logs
-#[poise::command(slash_command, prefix_command, required_permissions = "MANAGE_GUILD", guild_only)]
+#[poise::command(
+    slash_command,
+    prefix_command,
+    required_permissions = "MANAGE_GUILD",
+    guild_only
+)]
 pub async fn msglogs(
     ctx: Context<'_>,
     #[description = "Channel for message logs"] channel: serenity::GuildChannel,
 ) -> Result<(), Error> {
     let guild_id = ctx.guild_id().unwrap().get() as i64;
-    crate::db::guild::set_message_log_channel(&ctx.data().database.pool, guild_id, channel.id.get() as i64).await?;
+    crate::db::guild::set_message_log_channel(
+        &ctx.data().database.pool,
+        guild_id,
+        channel.id.get() as i64,
+    )
+    .await?;
     ctx.data().database.invalidate_cache(guild_id);
-    ctx.say(format!("✅ Message logs will be sent to <#{}>.", channel.id)).await?;
+    ctx.say(format!(
+        "✅ Message logs will be sent to <#{}>.",
+        channel.id
+    ))
+    .await?;
     Ok(())
 }
 
 /// set the channel for member join and leave logs
-#[poise::command(slash_command, prefix_command, required_permissions = "MANAGE_GUILD", guild_only)]
+#[poise::command(
+    slash_command,
+    prefix_command,
+    required_permissions = "MANAGE_GUILD",
+    guild_only
+)]
 pub async fn memberlogs(
     ctx: Context<'_>,
     #[description = "Channel for member join/leave logs"] channel: serenity::GuildChannel,
 ) -> Result<(), Error> {
     let guild_id = ctx.guild_id().unwrap().get() as i64;
-    crate::db::guild::set_member_log_channel(&ctx.data().database.pool, guild_id, channel.id.get() as i64).await?;
+    crate::db::guild::set_member_log_channel(
+        &ctx.data().database.pool,
+        guild_id,
+        channel.id.get() as i64,
+    )
+    .await?;
     ctx.data().database.invalidate_cache(guild_id);
-    ctx.say(format!("✅ Member logs will be sent to <#{}>.", channel.id)).await?;
+    ctx.say(format!("✅ Member logs will be sent to <#{}>.", channel.id))
+        .await?;
     Ok(())
 }
 
 /// set the goodbye message channel and text
-#[poise::command(slash_command, prefix_command, required_permissions = "MANAGE_GUILD", guild_only)]
+#[poise::command(
+    slash_command,
+    prefix_command,
+    required_permissions = "MANAGE_GUILD",
+    guild_only
+)]
 pub async fn goodbye(
     ctx: Context<'_>,
     #[description = "Channel for goodbye messages"] channel: serenity::GuildChannel,
-    #[description = "Message text (use {user} and {server} as placeholders)"] message: Option<String>,
+    #[description = "Message text (use {user} and {server} as placeholders)"] message: Option<
+        String,
+    >,
 ) -> Result<(), Error> {
     let guild_id = ctx.guild_id().unwrap().get() as i64;
     let msg = message.unwrap_or_else(|| "Goodbye, {user}. We will miss you.".into());
-    crate::db::guild::set_goodbye_channel(&ctx.data().database.pool, guild_id, channel.id.get() as i64, &msg).await?;
+    crate::db::guild::set_goodbye_channel(
+        &ctx.data().database.pool,
+        guild_id,
+        channel.id.get() as i64,
+        &msg,
+    )
+    .await?;
     ctx.data().database.invalidate_cache(guild_id);
-    ctx.say(format!("✅ Goodbye messages will be sent to <#{}>.\nMessage: `{}`", channel.id, msg)).await?;
+    ctx.say(format!(
+        "✅ Goodbye messages will be sent to <#{}>.\nMessage: `{}`",
+        channel.id, msg
+    ))
+    .await?;
     Ok(())
 }

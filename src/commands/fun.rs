@@ -40,15 +40,7 @@ pub async fn fun(_ctx: Context<'_>) -> Result<(), Error> {
 /// interactive mini-games
 #[poise::command(
     slash_command,
-    subcommands(
-        "rps",
-        "wyr",
-        "truth",
-        "dare",
-        "numberguess",
-        "scramble",
-        "trivia"
-    ),
+    subcommands("rps", "wyr", "truth", "dare", "numberguess", "scramble", "trivia"),
     category = "fun"
 )]
 pub async fn games(_ctx: Context<'_>) -> Result<(), Error> {
@@ -220,9 +212,7 @@ pub async fn fact(ctx: Context<'_>) -> Result<(), Error> {
             serenity::CreateEmbed::new()
                 .title("💡 Random Fact")
                 .description(f)
-                .footer(serenity::CreateEmbedFooter::new(
-                    "AegisForge Info",
-                ))
+                .footer(serenity::CreateEmbedFooter::new("AegisForge Info"))
                 .color(0x00E5FF),
         ),
     )
@@ -951,11 +941,7 @@ pub async fn rps(
         ("I win!", 0xFF3B3B)
     };
 
-    let emojis = [
-        ("rock", "🪨"),
-        ("paper", "📄"),
-        ("scissors", "✂️"),
-    ];
+    let emojis = [("rock", "🪨"), ("paper", "📄"), ("scissors", "✂️")];
     let user_emoji = emojis.iter().find(|(n, _)| n == &user_choice).unwrap().1;
     let bot_emoji = emojis.iter().find(|(n, _)| n == &bot_choice).unwrap().1;
 
@@ -981,9 +967,18 @@ pub async fn wyr(ctx: Context<'_>) -> Result<(), Error> {
         ("be able to fly", "be invisible"),
         ("always be 10 minutes late", "always be 20 minutes early"),
         ("lose all your money", "lose all your memories"),
-        ("never use the internet again", "never watch TV/movies again"),
-        ("know when you're going to die", "know how you're going to die"),
-        ("be the funniest person alive", "be the smartest person alive"),
+        (
+            "never use the internet again",
+            "never watch TV/movies again",
+        ),
+        (
+            "know when you're going to die",
+            "know how you're going to die",
+        ),
+        (
+            "be the funniest person alive",
+            "be the smartest person alive",
+        ),
         ("never be able to lie", "never be able to tell the truth"),
         ("have a rewind button for your life", "a pause button"),
         ("be famous but hated", "unknown but loved"),
@@ -991,13 +986,17 @@ pub async fn wyr(ctx: Context<'_>) -> Result<(), Error> {
     ];
     let idx = rand::thread_rng().gen_range(0..questions.len());
     let (a, b) = questions[idx];
-    ctx.send(poise::CreateReply::default().embed(
-        serenity::CreateEmbed::new()
-            .title("🤔 Would You Rather...")
-            .description(format!("🅰️ **{}**\n\n— OR —\n\n🅱️ **{}**", a, b))
-            .footer(serenity::CreateEmbedFooter::new("React or reply with your choice!"))
-            .color(0xBF5AF2),
-    ))
+    ctx.send(
+        poise::CreateReply::default().embed(
+            serenity::CreateEmbed::new()
+                .title("🤔 Would You Rather...")
+                .description(format!("🅰️ **{}**\n\n— OR —\n\n🅱️ **{}**", a, b))
+                .footer(serenity::CreateEmbedFooter::new(
+                    "React or reply with your choice!",
+                ))
+                .color(0xBF5AF2),
+        ),
+    )
     .await?;
     Ok(())
 }
@@ -1018,13 +1017,17 @@ pub async fn truth(ctx: Context<'_>) -> Result<(), Error> {
         "What's the longest you've gone without showering?",
     ];
     let q = truths[rand::thread_rng().gen_range(0..truths.len())];
-    ctx.send(poise::CreateReply::default().embed(
-        serenity::CreateEmbed::new()
-            .title("💬 Truth")
-            .description(q)
-            .footer(serenity::CreateEmbedFooter::new("You must answer honestly!"))
-            .color(0x00E5FF),
-    ))
+    ctx.send(
+        poise::CreateReply::default().embed(
+            serenity::CreateEmbed::new()
+                .title("💬 Truth")
+                .description(q)
+                .footer(serenity::CreateEmbedFooter::new(
+                    "You must answer honestly!",
+                ))
+                .color(0x00E5FF),
+        ),
+    )
     .await?;
     Ok(())
 }
@@ -1045,13 +1048,15 @@ pub async fn dare(ctx: Context<'_>) -> Result<(), Error> {
         "Reveal your top 3 most played songs right now.",
     ];
     let d = dares[rand::thread_rng().gen_range(0..dares.len())];
-    ctx.send(poise::CreateReply::default().embed(
-        serenity::CreateEmbed::new()
-            .title("😈 Dare")
-            .description(d)
-            .footer(serenity::CreateEmbedFooter::new("No backing out!"))
-            .color(0xFF5722),
-    ))
+    ctx.send(
+        poise::CreateReply::default().embed(
+            serenity::CreateEmbed::new()
+                .title("😈 Dare")
+                .description(d)
+                .footer(serenity::CreateEmbedFooter::new("No backing out!"))
+                .color(0xFF5722),
+        ),
+    )
     .await?;
     Ok(())
 }
@@ -1067,22 +1072,45 @@ pub async fn numberguess(
 
     let diff = (guess as i32 - secret as i32).abs();
     let (result, color, hint) = if guess == secret {
-        ("🎯 **Exact match!** You got it!", 0x00FF88, "Perfect score.".to_string())
+        (
+            "🎯 **Exact match!** You got it!",
+            0x00FF88,
+            "Perfect score.".to_string(),
+        )
     } else if diff <= 5 {
-        ("🔥 **Very close!**", 0xFFAA00, format!("The number was **{}** — just {} away!", secret, diff))
+        (
+            "🔥 **Very close!**",
+            0xFFAA00,
+            format!("The number was **{}** — just {} away!", secret, diff),
+        )
     } else if diff <= 20 {
-        ("🌡️ **Getting warmer...**", 0xFF8C00, format!("The number was **{}** — {} away.", secret, diff))
+        (
+            "🌡️ **Getting warmer...**",
+            0xFF8C00,
+            format!("The number was **{}** — {} away.", secret, diff),
+        )
     } else {
-        ("❄️ **Cold!**", 0x00E5FF, format!("The number was **{}** — {} away.", secret, diff))
+        (
+            "❄️ **Cold!**",
+            0x00E5FF,
+            format!("The number was **{}** — {} away.", secret, diff),
+        )
     };
 
-    ctx.send(poise::CreateReply::default().embed(
-        serenity::CreateEmbed::new()
-            .title("🔢 Number Guess")
-            .description(format!("You guessed: **{}**\n\n{}\n{}", guess, result, hint))
-            .footer(serenity::CreateEmbedFooter::new("Each game is a fresh random number"))
-            .color(color),
-    ))
+    ctx.send(
+        poise::CreateReply::default().embed(
+            serenity::CreateEmbed::new()
+                .title("🔢 Number Guess")
+                .description(format!(
+                    "You guessed: **{}**\n\n{}\n{}",
+                    guess, result, hint
+                ))
+                .footer(serenity::CreateEmbedFooter::new(
+                    "Each game is a fresh random number",
+                ))
+                .color(color),
+        ),
+    )
     .await?;
     Ok(())
 }
@@ -1091,9 +1119,21 @@ pub async fn numberguess(
 #[poise::command(slash_command)]
 pub async fn scramble(ctx: Context<'_>) -> Result<(), Error> {
     let words = [
-        "discord", "keyboard", "monitor", "server", "command",
-        "moderation", "economy", "gaming", "channel", "message",
-        "reaction", "premium", "profile", "leveling", "giveaway",
+        "discord",
+        "keyboard",
+        "monitor",
+        "server",
+        "command",
+        "moderation",
+        "economy",
+        "gaming",
+        "channel",
+        "message",
+        "reaction",
+        "premium",
+        "profile",
+        "leveling",
+        "giveaway",
     ];
     let word = words[rand::thread_rng().gen_range(0..words.len())];
     let mut chars: Vec<char> = word.chars().collect();
@@ -1104,16 +1144,20 @@ pub async fn scramble(ctx: Context<'_>) -> Result<(), Error> {
     }
     let scrambled: String = chars.iter().collect();
 
-    ctx.send(poise::CreateReply::default().embed(
-        serenity::CreateEmbed::new()
-            .title("🔀 Word Scramble")
-            .description(format!(
-                "**Unscramble this word:**\n\n```{}```\n||Answer: **{}**||",
-                scrambled, word
-            ))
-            .footer(serenity::CreateEmbedFooter::new("Click the spoiler to reveal the answer!"))
-            .color(0xBF5AF2),
-    ))
+    ctx.send(
+        poise::CreateReply::default().embed(
+            serenity::CreateEmbed::new()
+                .title("🔀 Word Scramble")
+                .description(format!(
+                    "**Unscramble this word:**\n\n```{}```\n||Answer: **{}**||",
+                    scrambled, word
+                ))
+                .footer(serenity::CreateEmbedFooter::new(
+                    "Click the spoiler to reveal the answer!",
+                ))
+                .color(0xBF5AF2),
+        ),
+    )
     .await?;
     Ok(())
 }

@@ -34,7 +34,10 @@ pub async fn add(
         poise::CreateReply::default().embed(
             CreateEmbed::new()
                 .title("🎭 Role Added")
-                .description(format!("Successfully assigned **{}** to <@{}>.", role.name, user.id))
+                .description(format!(
+                    "Successfully assigned **{}** to <@{}>.",
+                    role.name, user.id
+                ))
                 .footer(CreateEmbedFooter::new("AegisForge v4.2 | Role Management"))
                 .color(0x00FF88),
         ),
@@ -64,7 +67,10 @@ pub async fn remove(
         poise::CreateReply::default().embed(
             CreateEmbed::new()
                 .title("🎭 Role Removed")
-                .description(format!("Successfully removed **{}** from <@{}>.", role.name, user.id))
+                .description(format!(
+                    "Successfully removed **{}** from <@{}>.",
+                    role.name, user.id
+                ))
                 .footer(CreateEmbedFooter::new("AegisForge v4.2 | Role Management"))
                 .color(0xFF4500),
         ),
@@ -102,7 +108,12 @@ pub async fn list(ctx: Context<'_>) -> Result<(), Error> {
 }
 
 /// create a new role
-#[poise::command(slash_command, prefix_command, required_permissions = "MANAGE_ROLES", guild_only)]
+#[poise::command(
+    slash_command,
+    prefix_command,
+    required_permissions = "MANAGE_ROLES",
+    guild_only
+)]
 pub async fn create(
     ctx: Context<'_>,
     #[description = "Name of the role"] name: String,
@@ -114,7 +125,9 @@ pub async fn create(
         .and_then(|c| u32::from_str_radix(c.trim_start_matches('#'), 16).ok())
         .unwrap_or(0);
 
-    let role = guild_id.create_role(ctx.http(), EditRole::new().name(name).colour(color_val)).await?;
+    let role = guild_id
+        .create_role(ctx.http(), EditRole::new().name(name).colour(color_val))
+        .await?;
 
     ctx.send(
         poise::CreateReply::default().embed(
@@ -129,7 +142,12 @@ pub async fn create(
 }
 
 /// delete a role
-#[poise::command(slash_command, prefix_command, required_permissions = "MANAGE_ROLES", guild_only)]
+#[poise::command(
+    slash_command,
+    prefix_command,
+    required_permissions = "MANAGE_ROLES",
+    guild_only
+)]
 pub async fn delete(
     ctx: Context<'_>,
     #[description = "The role to delete"] role: Role,

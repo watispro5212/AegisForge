@@ -82,13 +82,11 @@ pub async fn get_case(
     guild_id: i64,
     case_number: i32,
 ) -> sqlx::Result<Option<ModCase>> {
-    sqlx::query_as::<_, ModCase>(
-        "SELECT * FROM mod_cases WHERE guild_id = $1 AND case_number = $2",
-    )
-    .bind(guild_id)
-    .bind(case_number)
-    .fetch_optional(pool)
-    .await
+    sqlx::query_as::<_, ModCase>("SELECT * FROM mod_cases WHERE guild_id = $1 AND case_number = $2")
+        .bind(guild_id)
+        .bind(case_number)
+        .fetch_optional(pool)
+        .await
 }
 
 /// fetch all cases that have expired and are still marked active.
@@ -117,7 +115,11 @@ pub async fn deactivate_case(pool: &PgPool, case_id: i64) -> sqlx::Result<()> {
 }
 
 /// deactivate all active warnings for a user in a guild.
-pub async fn clear_warns_for_user(pool: &PgPool, guild_id: i64, target_id: i64) -> sqlx::Result<u64> {
+pub async fn clear_warns_for_user(
+    pool: &PgPool,
+    guild_id: i64,
+    target_id: i64,
+) -> sqlx::Result<u64> {
     let result = sqlx::query(
         "UPDATE mod_cases SET active = FALSE WHERE guild_id = $1 AND target_id = $2 AND action = 'warn' AND active = TRUE",
     )

@@ -22,9 +22,9 @@ const commandsData = [
             { name: "/unlock", desc: "Remove the current channel lock.", usage: "/unlock" },
             { name: "/shadowban", desc: "Silently restrict a member using the mute role without notifying them. Logs internally only.", usage: "/shadowban user:@user reason:text" },
             { name: "/unshadowban", desc: "Lift a shadow ban and restore a member's ability to interact.", usage: "/unshadowban user:@user" },
-            { name: "/tactical report", desc: "Generate a full moderation history report for a user — all cases, action counts, and timestamps.", usage: "/tactical report user:@user" },
+            { name: "/tactical report", desc: "Generate a full moderation history report for a user: all cases, action counts, and timestamps.", usage: "/tactical report user:@user" },
             { name: "/tactical intercept", desc: "Lock every text channel across the entire server simultaneously.", usage: "/tactical intercept reason:text" },
-            { name: "/tactical restore", desc: "Lift a server-wide intercept — unlocks all text channels at once.", usage: "/tactical restore" },
+            { name: "/tactical restore", desc: "Lift a server-wide intercept and unlock all text channels at once.", usage: "/tactical restore" },
             { name: "/tactical breach", desc: "Kick a user and bulk-delete their recent messages from the current channel.", usage: "/tactical breach user:@user purge_count:int reason:text" }
         ]
     },

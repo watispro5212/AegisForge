@@ -79,9 +79,9 @@ pub async fn timeout(
     let guild_id = ctx.guild_id().ok_or("Must be in a guild")?;
     let reason_str = reason.as_deref().unwrap_or("No reason provided");
 
-    let until = Timestamp::from_unix_timestamp(
-        chrono::Utc::now().timestamp() + (minutes as i64 * 60),
-    ).map_err(|_| "Invalid timestamp")?;
+    let until =
+        Timestamp::from_unix_timestamp(chrono::Utc::now().timestamp() + (minutes as i64 * 60))
+            .map_err(|_| "Invalid timestamp")?;
 
     let mut member = guild_id.member(ctx.http(), user.id).await?;
     member
@@ -445,21 +445,34 @@ pub async fn nuke(ctx: Context<'_>) -> Result<(), Error> {
 pub async fn slowmode(
     ctx: Context<'_>,
     #[description = "Seconds of slowmode (0 to disable)"] seconds: u64,
-    #[description = "Channel to apply slowmode to (defaults to current)"] channel: Option<serenity::GuildChannel>,
+    #[description = "Channel to apply slowmode to (defaults to current)"] channel: Option<
+        serenity::GuildChannel,
+    >,
 ) -> Result<(), Error> {
     ctx.defer().await?;
     let target_channel = channel.map(|c| c.id).unwrap_or(ctx.channel_id());
-    
-    target_channel.edit(ctx.http(), serenity::EditChannel::new().rate_limit_per_user(seconds as u16)).await?;
-    
-    ctx.send(poise::CreateReply::default().embed(
-        CreateEmbed::new()
-            .title("🐌 Slowmode Updated")
-            .description(format!("Slowmode for <#{}> set to **{}s**.", target_channel, seconds))
-            .color(0xFFAA00)
-            .footer(serenity::CreateEmbedFooter::new("AegisForge v4.2"))
-    )).await?;
-    
+
+    target_channel
+        .edit(
+            ctx.http(),
+            serenity::EditChannel::new().rate_limit_per_user(seconds as u16),
+        )
+        .await?;
+
+    ctx.send(
+        poise::CreateReply::default().embed(
+            CreateEmbed::new()
+                .title("🐌 Slowmode Updated")
+                .description(format!(
+                    "Slowmode for <#{}> set to **{}s**.",
+                    target_channel, seconds
+                ))
+                .color(0xFFAA00)
+                .footer(serenity::CreateEmbedFooter::new("AegisForge v4.2")),
+        ),
+    )
+    .await?;
+
     Ok(())
 }
 
@@ -619,7 +632,8 @@ pub async fn shadowban(
     let mute_role_id = match config.mute_role_id {
         Some(id) => serenity::RoleId::new(id as u64),
         None => {
-            ctx.say("❌ No mute role configured. Set one first with `/muterole <role>`.").await?;
+            ctx.say("❌ No mute role configured. Set one first with `/muterole <role>`.")
+                .await?;
             return Ok(());
         }
     };
@@ -686,17 +700,19 @@ pub async fn shadowban(
     }
 
     // ephemeral confirmation — only the invoking mod sees this
-    ctx.send(poise::CreateReply::default().ephemeral(true).embed(
-        CreateEmbed::new()
-            .title("👤 Shadow Ban Applied")
-            .description(format!(
-                "**{}** has been silently restricted. They have not been notified.",
-                user.name
-            ))
-            .field("🆔 Case", format!("#{}", case.case_number), true)
-            .field("📝 Reason", reason_str, false)
-            .color(0x2C2F33),
-    ))
+    ctx.send(
+        poise::CreateReply::default().ephemeral(true).embed(
+            CreateEmbed::new()
+                .title("👤 Shadow Ban Applied")
+                .description(format!(
+                    "**{}** has been silently restricted. They have not been notified.",
+                    user.name
+                ))
+                .field("🆔 Case", format!("#{}", case.case_number), true)
+                .field("📝 Reason", reason_str, false)
+                .color(0x2C2F33),
+        ),
+    )
     .await?;
     Ok(())
 }
@@ -721,14 +737,17 @@ pub async fn unshadowban(
     let mute_role_id = match config.mute_role_id {
         Some(id) => serenity::RoleId::new(id as u64),
         None => {
-            ctx.say("❌ No mute role configured. Set one with `/muterole <role>`.").await?;
+            ctx.say("❌ No mute role configured. Set one with `/muterole <role>`.")
+                .await?;
             return Ok(());
         }
     };
 
-    let was_banned = crate::db::guild::remove_shadow_ban(pool, guild_id_i64, user.id.get() as i64).await?;
+    let was_banned =
+        crate::db::guild::remove_shadow_ban(pool, guild_id_i64, user.id.get() as i64).await?;
     if !was_banned {
-        ctx.say(format!("❌ **{}** is not shadow banned.", user.name)).await?;
+        ctx.say(format!("❌ **{}** is not shadow banned.", user.name))
+            .await?;
         return Ok(());
     }
 
@@ -776,13 +795,15 @@ pub async fn unshadowban(
             .await;
     }
 
-    ctx.send(poise::CreateReply::default().ephemeral(true).embed(
-        CreateEmbed::new()
-            .title("👤 Shadow Ban Lifted")
-            .description(format!("**{}** can interact normally again.", user.name))
-            .field("🆔 Case", format!("#{}", case.case_number), true)
-            .color(0x57F287),
-    ))
+    ctx.send(
+        poise::CreateReply::default().ephemeral(true).embed(
+            CreateEmbed::new()
+                .title("👤 Shadow Ban Lifted")
+                .description(format!("**{}** can interact normally again.", user.name))
+                .field("🆔 Case", format!("#{}", case.case_number), true)
+                .color(0x57F287),
+        ),
+    )
     .await?;
     Ok(())
 }
@@ -866,16 +887,17 @@ pub async fn report(
     let guild_id_i64 = guild_id.get() as i64;
 
     let cases =
-        crate::db::mod_cases::get_cases_for_user(pool, guild_id_i64, user.id.get() as i64)
-            .await?;
+        crate::db::mod_cases::get_cases_for_user(pool, guild_id_i64, user.id.get() as i64).await?;
 
     if cases.is_empty() {
-        ctx.send(poise::CreateReply::default().embed(
-            CreateEmbed::new()
-                .title(format!("📋 Tactical Report — {}", user.name))
-                .description("No moderation history found for this user.")
-                .color(0x2C2F33),
-        ))
+        ctx.send(
+            poise::CreateReply::default().embed(
+                CreateEmbed::new()
+                    .title(format!("📋 Tactical Report — {}", user.name))
+                    .description("No moderation history found for this user.")
+                    .color(0x2C2F33),
+            ),
+        )
         .await?;
         return Ok(());
     }
@@ -912,41 +934,39 @@ pub async fn report(
         .collect::<Vec<_>>()
         .join("  ");
 
-    ctx.send(poise::CreateReply::default().embed(
-        CreateEmbed::new()
-            .title(format!("📋 Tactical Report — {}", user.name))
-            .description(format!(
-                "**{}** total case(s) on record.\n\n{}",
-                cases.len(),
-                summary
-            ))
-            .thumbnail(user.face())
-            .field(
-                format!(
-                    "Recent Cases (showing {}/{})",
-                    recent.len(),
-                    cases.len()
-                ),
-                case_log,
-                false,
-            )
-            .field("🆔 User ID", format!("`{}`", user.id), true)
-            .field(
-                "📅 First Case",
-                format!("<t:{}:D>", cases.first().unwrap().created_at.timestamp()),
-                true,
-            )
-            .field(
-                "📅 Latest Case",
-                format!("<t:{}:D>", cases.last().unwrap().created_at.timestamp()),
-                true,
-            )
-            .footer(serenity::CreateEmbedFooter::new(
-                "AegisForge v4.2 Report | Moderator eyes only",
-            ))
-            .timestamp(serenity::Timestamp::now())
-            .color(0x2C2F33),
-    ))
+    ctx.send(
+        poise::CreateReply::default().embed(
+            CreateEmbed::new()
+                .title(format!("📋 Tactical Report — {}", user.name))
+                .description(format!(
+                    "**{}** total case(s) on record.\n\n{}",
+                    cases.len(),
+                    summary
+                ))
+                .thumbnail(user.face())
+                .field(
+                    format!("Recent Cases (showing {}/{})", recent.len(), cases.len()),
+                    case_log,
+                    false,
+                )
+                .field("🆔 User ID", format!("`{}`", user.id), true)
+                .field(
+                    "📅 First Case",
+                    format!("<t:{}:D>", cases.first().unwrap().created_at.timestamp()),
+                    true,
+                )
+                .field(
+                    "📅 Latest Case",
+                    format!("<t:{}:D>", cases.last().unwrap().created_at.timestamp()),
+                    true,
+                )
+                .footer(serenity::CreateEmbedFooter::new(
+                    "AegisForge v4.2 Report | Moderator eyes only",
+                ))
+                .timestamp(serenity::Timestamp::now())
+                .color(0x2C2F33),
+        ),
+    )
     .await?;
     Ok(())
 }
@@ -964,7 +984,9 @@ pub async fn intercept(
 ) -> Result<(), Error> {
     ctx.defer().await?;
     let guild_id = ctx.guild_id().ok_or("Must be in a guild")?;
-    let reason_str = reason.as_deref().unwrap_or("Tactical intercept ordered by staff");
+    let reason_str = reason
+        .as_deref()
+        .unwrap_or("Tactical intercept ordered by staff");
 
     let channels = guild_id.channels(ctx.http()).await?;
     let text_channels: Vec<_> = channels
@@ -981,15 +1003,17 @@ pub async fn intercept(
     };
 
     // acknowledge immediately — the channel loop takes time
-    ctx.send(poise::CreateReply::default().embed(
-        CreateEmbed::new()
-            .title("🔒 Lockdown — Initiating")
-            .description(format!(
-                "Locking **{}** channel(s) server-wide. Stand by.",
-                total
-            ))
-            .color(0xFF4500),
-    ))
+    ctx.send(
+        poise::CreateReply::default().embed(
+            CreateEmbed::new()
+                .title("🔒 Lockdown — Initiating")
+                .description(format!(
+                    "Locking **{}** channel(s) server-wide. Stand by.",
+                    total
+                ))
+                .color(0xFF4500),
+        ),
+    )
     .await?;
 
     let mut locked = 0usize;
@@ -1032,19 +1056,21 @@ pub async fn intercept(
             .await;
     }
 
-    ctx.send(poise::CreateReply::default().embed(
-        CreateEmbed::new()
-            .title("🔒 Lockdown — Complete")
-            .description(format!(
-                "**{}/{}** channels locked.\n📝 Reason: {}",
-                locked, total, reason_str
-            ))
-            .footer(serenity::CreateEmbedFooter::new(
-                "Use /unlock per channel to restore, or /tactical restore for full lift",
-            ))
-            .timestamp(serenity::Timestamp::now())
-            .color(0xFF4500),
-    ))
+    ctx.send(
+        poise::CreateReply::default().embed(
+            CreateEmbed::new()
+                .title("🔒 Lockdown — Complete")
+                .description(format!(
+                    "**{}/{}** channels locked.\n📝 Reason: {}",
+                    locked, total, reason_str
+                ))
+                .footer(serenity::CreateEmbedFooter::new(
+                    "Use /unlock per channel to restore, or /tactical restore for full lift",
+                ))
+                .timestamp(serenity::Timestamp::now())
+                .color(0xFF4500),
+        ),
+    )
     .await?;
     Ok(())
 }
@@ -1068,12 +1094,14 @@ pub async fn restore(ctx: Context<'_>) -> Result<(), Error> {
     let total = text_channels.len();
     let everyone = guild_id.everyone_role();
 
-    ctx.send(poise::CreateReply::default().embed(
-        CreateEmbed::new()
-            .title("🔓 Tactical Restore — Initiating")
-            .description(format!("Unlocking **{}** channel(s). Stand by.", total))
-            .color(0x57F287),
-    ))
+    ctx.send(
+        poise::CreateReply::default().embed(
+            CreateEmbed::new()
+                .title("🔓 Tactical Restore — Initiating")
+                .description(format!("Unlocking **{}** channel(s). Stand by.", total))
+                .color(0x57F287),
+        ),
+    )
     .await?;
 
     let mut restored = 0usize;
@@ -1103,7 +1131,11 @@ pub async fn restore(ctx: Context<'_>) -> Result<(), Error> {
                 "Server-wide lockdown lifted by <@{}>.",
                 ctx.author().id
             ))
-            .field("Channels Restored", format!("`{}/{}`", restored, total), true)
+            .field(
+                "Channels Restored",
+                format!("`{}/{}`", restored, total),
+                true,
+            )
             .timestamp(serenity::Timestamp::now())
             .color(0x57F287);
 
@@ -1115,16 +1147,18 @@ pub async fn restore(ctx: Context<'_>) -> Result<(), Error> {
             .await;
     }
 
-    ctx.send(poise::CreateReply::default().embed(
-        CreateEmbed::new()
-            .title("🔓 Tactical Restore — Complete")
-            .description(format!(
-                "**{}/{}** channels unlocked. The server is open again.",
-                restored, total
-            ))
-            .timestamp(serenity::Timestamp::now())
-            .color(0x57F287),
-    ))
+    ctx.send(
+        poise::CreateReply::default().embed(
+            CreateEmbed::new()
+                .title("🔓 Tactical Restore — Complete")
+                .description(format!(
+                    "**{}/{}** channels unlocked. The server is open again.",
+                    restored, total
+                ))
+                .timestamp(serenity::Timestamp::now())
+                .color(0x57F287),
+        ),
+    )
     .await?;
     Ok(())
 }
@@ -1139,7 +1173,9 @@ pub async fn restore(ctx: Context<'_>) -> Result<(), Error> {
 pub async fn breach(
     ctx: Context<'_>,
     #[description = "The user to breach"] user: serenity::User,
-    #[description = "Messages to purge from this channel (1-50, default 25)"] purge_count: Option<u8>,
+    #[description = "Messages to purge from this channel (1-50, default 25)"] purge_count: Option<
+        u8,
+    >,
     #[description = "Reason"] reason: Option<String>,
 ) -> Result<(), Error> {
     ctx.defer().await?;
@@ -1151,11 +1187,9 @@ pub async fn breach(
     // fetch recent messages and filter to target user
     let messages = ctx
         .channel_id()
-        .messages(
-            ctx.http(),
-            serenity::GetMessages::default().limit(100),
-        )
-        .await.map_err(|e| e.to_string())?;
+        .messages(ctx.http(), serenity::GetMessages::default().limit(100))
+        .await
+        .map_err(|e| e.to_string())?;
 
     let target_msgs: Vec<serenity::MessageId> = messages
         .iter()
@@ -1192,23 +1226,25 @@ pub async fn breach(
     )
     .await?;
 
-    ctx.send(poise::CreateReply::default().embed(
-        CreateEmbed::new()
-            .title("⚡ Moderation Action")
-            .description(format!(
-                "**{}** has been kicked and their message trail purged.",
-                user.name
-            ))
-            .field("👤 Target", format!("<@{}>", user.id), true)
-            .field("🗑️ Messages Purged", format!("`{}`", purged), true)
-            .field("🆔 Case", format!("#{}", case.case_number), true)
-            .field("📝 Reason", reason_str, false)
-            .footer(serenity::CreateEmbedFooter::new(
-                "Moderation Action Logged | AegisForge v4.2",
-            ))
-            .timestamp(serenity::Timestamp::now())
-            .color(0xFF4500),
-    ))
+    ctx.send(
+        poise::CreateReply::default().embed(
+            CreateEmbed::new()
+                .title("⚡ Moderation Action")
+                .description(format!(
+                    "**{}** has been kicked and their message trail purged.",
+                    user.name
+                ))
+                .field("👤 Target", format!("<@{}>", user.id), true)
+                .field("🗑️ Messages Purged", format!("`{}`", purged), true)
+                .field("🆔 Case", format!("#{}", case.case_number), true)
+                .field("📝 Reason", reason_str, false)
+                .footer(serenity::CreateEmbedFooter::new(
+                    "Moderation Action Logged | AegisForge v4.2",
+                ))
+                .timestamp(serenity::Timestamp::now())
+                .color(0xFF4500),
+        ),
+    )
     .await?;
     Ok(())
 }
@@ -1227,14 +1263,21 @@ pub async fn cases(
     ctx.defer().await.map_err(|e| e.to_string())?;
     let guild_id = ctx.guild_id().unwrap().get() as i64;
     let pool = &ctx.data().database.pool;
-    
-    let cases = crate::db::mod_cases::get_cases_for_user(pool, guild_id, user.id.get() as i64).await.map_err(|e| e.to_string())?;
-    
+
+    let cases = crate::db::mod_cases::get_cases_for_user(pool, guild_id, user.id.get() as i64)
+        .await
+        .map_err(|e| e.to_string())?;
+
     if cases.is_empty() {
-        ctx.say(format!("**{}** has a clean record. No cases found.", user.name)).await.map_err(|e| e.to_string())?;
+        ctx.say(format!(
+            "**{}** has a clean record. No cases found.",
+            user.name
+        ))
+        .await
+        .map_err(|e| e.to_string())?;
         return Ok(());
     }
-    
+
     let mut description = String::new();
     for case in cases.iter().rev().take(10) {
         description.push_str(&format!(
@@ -1246,15 +1289,22 @@ pub async fn cases(
             case.created_at.timestamp()
         ));
     }
-    
-    ctx.send(poise::CreateReply::default().embed(
-        CreateEmbed::new()
-            .title(format!("📜 Mod History — {}", user.name))
-            .description(description)
-            .footer(serenity::CreateEmbedFooter::new(format!("Showing latest {}/{} cases", cases.len().min(10), cases.len())))
-            .color(0x00E5FF)
-    )).await?;
-    
+
+    ctx.send(
+        poise::CreateReply::default().embed(
+            CreateEmbed::new()
+                .title(format!("📜 Mod History — {}", user.name))
+                .description(description)
+                .footer(serenity::CreateEmbedFooter::new(format!(
+                    "Showing latest {}/{} cases",
+                    cases.len().min(10),
+                    cases.len()
+                )))
+                .color(0x00E5FF),
+        ),
+    )
+    .await?;
+
     Ok(())
 }
 
@@ -1271,25 +1321,43 @@ pub async fn slowmode_global(
 ) -> Result<(), Error> {
     ctx.defer().await.map_err(|e| e.to_string())?;
     let guild_id = ctx.guild_id().unwrap();
-    let channels = guild_id.channels(ctx.http()).await.map_err(|e| e.to_string())?;
-    
+    let channels = guild_id
+        .channels(ctx.http())
+        .await
+        .map_err(|e| e.to_string())?;
+
     let mut count = 0;
     for channel in channels.values() {
-        if channel.kind == serenity::ChannelType::Text {
-            if channel.id.edit(ctx.http(), serenity::EditChannel::new().rate_limit_per_user(seconds as u16)).await.is_ok() {
-                count += 1;
-            }
+        if channel.kind == serenity::ChannelType::Text
+            && channel
+                .id
+                .edit(
+                    ctx.http(),
+                    serenity::EditChannel::new().rate_limit_per_user(seconds as u16),
+                )
+                .await
+                .is_ok()
+        {
+            count += 1;
         }
     }
-    
-    ctx.send(poise::CreateReply::default().embed(
-        CreateEmbed::new()
-            .title("🐌 Global Slowmode Deployed")
-            .description(format!("Slowmode of **{}s** applied to **{}** text channels.", seconds, count))
-            .color(0xFFAA00)
-            .footer(serenity::CreateEmbedFooter::new("AegisForge v4.2 | Crowd Control"))
-    )).await?;
-    
+
+    ctx.send(
+        poise::CreateReply::default().embed(
+            CreateEmbed::new()
+                .title("🐌 Global Slowmode Deployed")
+                .description(format!(
+                    "Slowmode of **{}s** applied to **{}** text channels.",
+                    seconds, count
+                ))
+                .color(0xFFAA00)
+                .footer(serenity::CreateEmbedFooter::new(
+                    "AegisForge v4.2 | Crowd Control",
+                )),
+        ),
+    )
+    .await?;
+
     Ok(())
 }
 
@@ -1307,14 +1375,16 @@ pub async fn warns(
     ctx.defer().await?;
     let guild_id = ctx.guild_id().unwrap().get() as i64;
     let pool = &ctx.data().database.pool;
-    
-    let warns = crate::db::mod_cases::get_warns_for_user(pool, guild_id, user.id.get() as i64).await?;
-    
+
+    let warns =
+        crate::db::mod_cases::get_warns_for_user(pool, guild_id, user.id.get() as i64).await?;
+
     if warns.is_empty() {
-        ctx.say(format!("**{}** has no active warnings.", user.name)).await?;
+        ctx.say(format!("**{}** has no active warnings.", user.name))
+            .await?;
         return Ok(());
     }
-    
+
     let mut description = String::new();
     for warn in warns.iter().rev() {
         description.push_str(&format!(
@@ -1325,15 +1395,21 @@ pub async fn warns(
             warn.created_at.timestamp()
         ));
     }
-    
-    ctx.send(poise::CreateReply::default().embed(
-        CreateEmbed::new()
-            .title(format!("⚠️ Active Warnings — {}", user.name))
-            .description(description)
-            .footer(serenity::CreateEmbedFooter::new(format!("Total Active Warnings: {}", warns.len())))
-            .color(0xFEE75C)
-    )).await?;
-    
+
+    ctx.send(
+        poise::CreateReply::default().embed(
+            CreateEmbed::new()
+                .title(format!("⚠️ Active Warnings — {}", user.name))
+                .description(description)
+                .footer(serenity::CreateEmbedFooter::new(format!(
+                    "Total Active Warnings: {}",
+                    warns.len()
+                )))
+                .color(0xFEE75C),
+        ),
+    )
+    .await?;
+
     Ok(())
 }
 
@@ -1351,16 +1427,24 @@ pub async fn clearwarns(
     ctx.defer().await.map_err(|e| e.to_string())?;
     let guild_id = ctx.guild_id().unwrap().get() as i64;
     let pool = &ctx.data().database.pool;
-    
-    let affected = crate::db::mod_cases::clear_warns_for_user(pool, guild_id, user.id.get() as i64).await.map_err(|e| e.to_string())?;
-    
-    ctx.send(poise::CreateReply::default().embed(
-        CreateEmbed::new()
-            .title("🧹 Warnings Cleared")
-            .description(format!("Successfully cleared **{}** active warning(s) for **{}**.", affected, user.name))
-            .color(0x57F287)
-            .footer(serenity::CreateEmbedFooter::new("AegisForge v4.2"))
-    )).await?;
-    
+
+    let affected = crate::db::mod_cases::clear_warns_for_user(pool, guild_id, user.id.get() as i64)
+        .await
+        .map_err(|e| e.to_string())?;
+
+    ctx.send(
+        poise::CreateReply::default().embed(
+            CreateEmbed::new()
+                .title("🧹 Warnings Cleared")
+                .description(format!(
+                    "Successfully cleared **{}** active warning(s) for **{}**.",
+                    affected, user.name
+                ))
+                .color(0x57F287)
+                .footer(serenity::CreateEmbedFooter::new("AegisForge v4.2")),
+        ),
+    )
+    .await?;
+
     Ok(())
 }

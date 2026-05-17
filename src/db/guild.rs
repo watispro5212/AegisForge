@@ -119,13 +119,11 @@ pub async fn set_prefix(pool: &PgPool, guild_id: i64, prefix: &str) -> sqlx::Res
 }
 
 pub async fn set_mute_role(pool: &PgPool, guild_id: i64, role_id: i64) -> sqlx::Result<()> {
-    sqlx::query(
-        "UPDATE guild_configs SET mute_role_id = $1 WHERE guild_id = $2",
-    )
-    .bind(role_id)
-    .bind(guild_id)
-    .execute(pool)
-    .await?;
+    sqlx::query("UPDATE guild_configs SET mute_role_id = $1 WHERE guild_id = $2")
+        .bind(role_id)
+        .bind(guild_id)
+        .execute(pool)
+        .await?;
     Ok(())
 }
 
@@ -153,18 +151,12 @@ pub async fn add_shadow_ban(
     Ok(())
 }
 
-pub async fn remove_shadow_ban(
-    pool: &PgPool,
-    guild_id: i64,
-    user_id: i64,
-) -> sqlx::Result<bool> {
-    let result = sqlx::query(
-        "DELETE FROM shadow_bans WHERE guild_id = $1 AND user_id = $2",
-    )
-    .bind(guild_id)
-    .bind(user_id)
-    .execute(pool)
-    .await?;
+pub async fn remove_shadow_ban(pool: &PgPool, guild_id: i64, user_id: i64) -> sqlx::Result<bool> {
+    let result = sqlx::query("DELETE FROM shadow_bans WHERE guild_id = $1 AND user_id = $2")
+        .bind(guild_id)
+        .bind(user_id)
+        .execute(pool)
+        .await?;
     Ok(result.rows_affected() > 0)
 }
 
@@ -172,31 +164,46 @@ pub async fn remove_shadow_ban(
 
 pub async fn set_automod_enabled(pool: &PgPool, guild_id: i64, val: bool) -> sqlx::Result<()> {
     sqlx::query("UPDATE guild_configs SET automod_enabled = $1 WHERE guild_id = $2")
-        .bind(val).bind(guild_id).execute(pool).await?;
+        .bind(val)
+        .bind(guild_id)
+        .execute(pool)
+        .await?;
     Ok(())
 }
 
 pub async fn set_automod_spam(pool: &PgPool, guild_id: i64, val: bool) -> sqlx::Result<()> {
     sqlx::query("UPDATE guild_configs SET automod_spam = $1 WHERE guild_id = $2")
-        .bind(val).bind(guild_id).execute(pool).await?;
+        .bind(val)
+        .bind(guild_id)
+        .execute(pool)
+        .await?;
     Ok(())
 }
 
 pub async fn set_automod_invites(pool: &PgPool, guild_id: i64, val: bool) -> sqlx::Result<()> {
     sqlx::query("UPDATE guild_configs SET automod_invites = $1 WHERE guild_id = $2")
-        .bind(val).bind(guild_id).execute(pool).await?;
+        .bind(val)
+        .bind(guild_id)
+        .execute(pool)
+        .await?;
     Ok(())
 }
 
 pub async fn set_automod_caps(pool: &PgPool, guild_id: i64, val: bool) -> sqlx::Result<()> {
     sqlx::query("UPDATE guild_configs SET automod_caps = $1 WHERE guild_id = $2")
-        .bind(val).bind(guild_id).execute(pool).await?;
+        .bind(val)
+        .bind(guild_id)
+        .execute(pool)
+        .await?;
     Ok(())
 }
 
 pub async fn set_automod_mentions(pool: &PgPool, guild_id: i64, val: bool) -> sqlx::Result<()> {
     sqlx::query("UPDATE guild_configs SET automod_mentions = $1 WHERE guild_id = $2")
-        .bind(val).bind(guild_id).execute(pool).await?;
+        .bind(val)
+        .bind(guild_id)
+        .execute(pool)
+        .await?;
     Ok(())
 }
 
@@ -206,40 +213,66 @@ pub async fn add_blacklist_phrase(pool: &PgPool, guild_id: i64, phrase: &str) ->
     sqlx::query(
         "INSERT INTO automod_blacklist (guild_id, phrase) VALUES ($1, $2) ON CONFLICT DO NOTHING",
     )
-    .bind(guild_id).bind(phrase).execute(pool).await?;
+    .bind(guild_id)
+    .bind(phrase)
+    .execute(pool)
+    .await?;
     Ok(())
 }
 
-pub async fn remove_blacklist_phrase(pool: &PgPool, guild_id: i64, phrase: &str) -> sqlx::Result<bool> {
-    let res = sqlx::query(
-        "DELETE FROM automod_blacklist WHERE guild_id = $1 AND phrase = $2",
-    )
-    .bind(guild_id).bind(phrase).execute(pool).await?;
+pub async fn remove_blacklist_phrase(
+    pool: &PgPool,
+    guild_id: i64,
+    phrase: &str,
+) -> sqlx::Result<bool> {
+    let res = sqlx::query("DELETE FROM automod_blacklist WHERE guild_id = $1 AND phrase = $2")
+        .bind(guild_id)
+        .bind(phrase)
+        .execute(pool)
+        .await?;
     Ok(res.rows_affected() > 0)
 }
 
 pub async fn list_blacklist_phrases(pool: &PgPool, guild_id: i64) -> sqlx::Result<Vec<String>> {
-    let rows = sqlx::query("SELECT phrase FROM automod_blacklist WHERE guild_id = $1 ORDER BY phrase")
-        .bind(guild_id)
-        .fetch_all(pool)
-        .await?;
-    Ok(rows.iter().map(|r| {
-        use sqlx::Row;
-        r.get::<String, _>("phrase")
-    }).collect())
+    let rows =
+        sqlx::query("SELECT phrase FROM automod_blacklist WHERE guild_id = $1 ORDER BY phrase")
+            .bind(guild_id)
+            .fetch_all(pool)
+            .await?;
+    Ok(rows
+        .iter()
+        .map(|r| {
+            use sqlx::Row;
+            r.get::<String, _>("phrase")
+        })
+        .collect())
 }
 
 // ── Log channel setters ───────────────────────────────────────────────────────
 
-pub async fn set_message_log_channel(pool: &PgPool, guild_id: i64, channel_id: i64) -> sqlx::Result<()> {
+pub async fn set_message_log_channel(
+    pool: &PgPool,
+    guild_id: i64,
+    channel_id: i64,
+) -> sqlx::Result<()> {
     sqlx::query("UPDATE guild_configs SET message_log_channel = $1 WHERE guild_id = $2")
-        .bind(channel_id).bind(guild_id).execute(pool).await?;
+        .bind(channel_id)
+        .bind(guild_id)
+        .execute(pool)
+        .await?;
     Ok(())
 }
 
-pub async fn set_member_log_channel(pool: &PgPool, guild_id: i64, channel_id: i64) -> sqlx::Result<()> {
+pub async fn set_member_log_channel(
+    pool: &PgPool,
+    guild_id: i64,
+    channel_id: i64,
+) -> sqlx::Result<()> {
     sqlx::query("UPDATE guild_configs SET member_log_channel = $1 WHERE guild_id = $2")
-        .bind(channel_id).bind(guild_id).execute(pool).await?;
+        .bind(channel_id)
+        .bind(guild_id)
+        .execute(pool)
+        .await?;
     Ok(())
 }
 
@@ -254,21 +287,19 @@ pub async fn set_goodbye_channel(
     sqlx::query(
         "UPDATE guild_configs SET goodbye_channel = $1, goodbye_message = $2 WHERE guild_id = $3",
     )
-    .bind(channel_id).bind(message).bind(guild_id).execute(pool).await?;
+    .bind(channel_id)
+    .bind(message)
+    .bind(guild_id)
+    .execute(pool)
+    .await?;
     Ok(())
 }
 
-pub async fn is_shadow_banned(
-    pool: &PgPool,
-    guild_id: i64,
-    user_id: i64,
-) -> sqlx::Result<bool> {
-    let row = sqlx::query(
-        "SELECT 1 FROM shadow_bans WHERE guild_id = $1 AND user_id = $2",
-    )
-    .bind(guild_id)
-    .bind(user_id)
-    .fetch_optional(pool)
-    .await?;
+pub async fn is_shadow_banned(pool: &PgPool, guild_id: i64, user_id: i64) -> sqlx::Result<bool> {
+    let row = sqlx::query("SELECT 1 FROM shadow_bans WHERE guild_id = $1 AND user_id = $2")
+        .bind(guild_id)
+        .bind(user_id)
+        .fetch_optional(pool)
+        .await?;
     Ok(row.is_some())
 }
