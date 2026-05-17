@@ -1,9 +1,60 @@
 // ── Scroll-based nav opacity ──────────────────────────
+function initSiteChrome() {
+    if (!document.querySelector('.skip-link')) {
+        const skipLink = document.createElement('a');
+        skipLink.className = 'skip-link';
+        skipLink.href = '#main-content';
+        skipLink.textContent = 'Skip to content';
+        document.body.prepend(skipLink);
+    }
+
+    const main = document.querySelector('main, header.hero, .page-content, .eco-hero, .commands-shell, .status-page');
+    if (main && !main.id) {
+        main.id = 'main-content';
+        main.tabIndex = -1;
+    }
+
+    if (!document.querySelector('.scroll-progress')) {
+        const progress = document.createElement('div');
+        progress.className = 'scroll-progress';
+        progress.setAttribute('aria-hidden', 'true');
+        document.body.appendChild(progress);
+
+        const updateProgress = () => {
+            const max = document.documentElement.scrollHeight - window.innerHeight;
+            const value = max > 0 ? (window.scrollY / max) * 100 : 0;
+            progress.style.width = `${Math.min(100, Math.max(0, value))}%`;
+        };
+
+        updateProgress();
+        window.addEventListener('scroll', updateProgress, { passive: true });
+        window.addEventListener('resize', updateProgress);
+    }
+
+    if (!document.querySelector('.quick-actions')) {
+        const quickActions = document.createElement('div');
+        quickActions.className = 'quick-actions';
+        quickActions.setAttribute('aria-label', 'Quick actions');
+        quickActions.innerHTML = `
+            <a href="https://discord.com/oauth2/authorize?client_id=1500582485367722004&permissions=8&scope=bot+applications.commands" target="_blank" rel="noopener noreferrer" title="Invite AegisForge" aria-label="Invite AegisForge"><i class="fa-brands fa-discord"></i></a>
+            <a href="commands.html" title="Browse commands" aria-label="Browse commands"><i class="fa-solid fa-terminal"></i></a>
+            <a href="#top" title="Back to top" aria-label="Back to top"><i class="fa-solid fa-arrow-up"></i></a>
+        `;
+        document.body.appendChild(quickActions);
+    }
+
+    if (document.body && !document.body.id) {
+        document.body.id = 'top';
+    }
+}
+
+initSiteChrome();
+
 const navbar = document.getElementById('navbar');
 if (navbar) {
     window.addEventListener('scroll', () => {
         navbar.classList.toggle('scrolled', window.scrollY > 40);
-    });
+    }, { passive: true });
 }
 
 // ── Mobile menu toggle ────────────────────────────────
@@ -14,20 +65,30 @@ if (mobileMenuBtn && mobileNav) {
         const isOpen = mobileNav.classList.toggle('open');
         mobileMenuBtn.classList.toggle('active', isOpen);
         mobileMenuBtn.setAttribute('aria-expanded', isOpen);
+        document.body.classList.toggle('nav-locked', isOpen);
     });
     document.addEventListener('click', (e) => {
         if (navbar && !navbar.contains(e.target) && !mobileNav.contains(e.target)) {
             mobileNav.classList.remove('open');
             mobileMenuBtn.classList.remove('active');
             mobileMenuBtn.setAttribute('aria-expanded', 'false');
+            document.body.classList.remove('nav-locked');
         }
+    });
+    mobileNav.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+            mobileNav.classList.remove('open');
+            mobileMenuBtn.classList.remove('active');
+            mobileMenuBtn.setAttribute('aria-expanded', 'false');
+            document.body.classList.remove('nav-locked');
+        });
     });
 }
 
 // ── Active nav link highlight ─────────────────────────
 (function highlightActiveNav() {
     const current = window.location.pathname.split('/').pop() || 'index.html';
-    document.querySelectorAll('.nav-links a').forEach(link => {
+    document.querySelectorAll('.nav-links a, .mobile-nav a, .footer-links a').forEach(link => {
         const href = link.getAttribute('href');
         if (!href) return;
         const linkPage = href.split('#')[0].split('/').pop();
@@ -429,43 +490,47 @@ if (statsSection) {
 // This is now handled in initReveals()
 
 // 2. Refined 3D Tilt Effect for Cards
-const tiltCards = document.querySelectorAll('.tilt-card, .feature-card, .dashboard-card, .stack-card, .ops-card');
+const canUseTilt = window.matchMedia('(hover: hover) and (pointer: fine)').matches
+    && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-tiltCards.forEach(card => {
-    card.style.transformStyle = 'preserve-3d';
-    card.style.transition = 'transform 0.2s cubic-bezier(0.16, 1, 0.3, 1)';
-    
-    Array.from(card.children).forEach(child => {
-        if (!child.style.transform && !child.classList.contains('hero-glow') && !child.classList.contains('cta-glow')) {
-            child.style.transform = 'translateZ(30px)';
-        }
-    });
+if (canUseTilt) {
+    const tiltCards = document.querySelectorAll('.tilt-card, .feature-card, .dashboard-card, .stack-card, .ops-card');
 
-    card.addEventListener('mousemove', e => {
-        const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        
-        const centerX = rect.width / 2;
-        const centerY = rect.height / 2;
-        
-        const rotateX = ((y - centerY) / centerY) * -8;
-        const rotateY = ((x - centerX) / centerX) * 8;
-        
-        card.style.transform = `perspective(1200px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.03, 1.03, 1.03)`;
-        
-        // Add a subtle dynamic glow based on mouse position
-        const glowX = (x / rect.width) * 100;
-        const glowY = (y / rect.height) * 100;
-        card.style.background = `radial-gradient(circle at ${glowX}% ${glowY}%, var(--bg-card-hover) 0%, var(--bg-card) 70%)`;
-    });
+    tiltCards.forEach(card => {
+        card.style.transformStyle = 'preserve-3d';
+        card.style.transition = 'transform 0.2s cubic-bezier(0.16, 1, 0.3, 1)';
 
-    card.addEventListener('mouseleave', () => {
-        card.style.transform = `perspective(1200px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
-        card.style.background = '';
-        card.style.transition = 'transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)';
+        Array.from(card.children).forEach(child => {
+            if (!child.style.transform && !child.classList.contains('hero-glow') && !child.classList.contains('cta-glow')) {
+                child.style.transform = 'translateZ(18px)';
+            }
+        });
+
+        card.addEventListener('mousemove', e => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+
+            const rotateX = ((y - centerY) / centerY) * -4;
+            const rotateY = ((x - centerX) / centerX) * 4;
+
+            card.style.transform = `perspective(1200px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-3px)`;
+
+            const glowX = (x / rect.width) * 100;
+            const glowY = (y / rect.height) * 100;
+            card.style.background = `radial-gradient(circle at ${glowX}% ${glowY}%, var(--bg-card-hover) 0%, var(--bg-card) 72%)`;
+        });
+
+        card.addEventListener('mouseleave', () => {
+            card.style.transform = 'perspective(1200px) rotateX(0deg) rotateY(0deg) translateY(0)';
+            card.style.background = '';
+            card.style.transition = 'transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)';
+        });
     });
-});
+}
 
 // 3. Command Registry Rendering (Accordion)
 document.addEventListener('DOMContentLoaded', () => {
@@ -577,14 +642,17 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // 4. Interactive Cursor Glow
-const cursorGlow = document.createElement('div');
-cursorGlow.className = 'cursor-glow';
-document.body.appendChild(cursorGlow);
+if (window.matchMedia('(hover: hover) and (pointer: fine)').matches
+    && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const cursorGlow = document.createElement('div');
+    cursorGlow.className = 'cursor-glow';
+    document.body.appendChild(cursorGlow);
 
-document.addEventListener('mousemove', (e) => {
-    cursorGlow.style.left = e.clientX + 'px';
-    cursorGlow.style.top = e.clientY + 'px';
-});
+    document.addEventListener('mousemove', (e) => {
+        cursorGlow.style.left = e.clientX + 'px';
+        cursorGlow.style.top = e.clientY + 'px';
+    }, { passive: true });
+}
 
 // 5. Page Initialization
 function initApp() {
