@@ -3,7 +3,11 @@ name = "aegisforge"
 version = "4.3.0"
 edition = "2021"
 authors = ["Watispro"]
+<<<<<<< HEAD
 description = "AegisForge v4.3 - High-performance Discord automation, economy, security, and server operations."
+=======
+description = "AegisForge v4.3 - High-performance Discord automation, economy, and server operations."
+>>>>>>> 464415d48bbb577285feea95e643bf0a924170dd
 
 [dependencies]
 # Discord

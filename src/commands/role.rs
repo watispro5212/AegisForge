@@ -34,11 +34,16 @@ pub async fn add(
         poise::CreateReply::default().embed(
             CreateEmbed::new()
                 .title("🎭 Role Added")
+<<<<<<< HEAD
                 .description(format!(
                     "Successfully assigned **{}** to <@{}>.",
                     role.name, user.id
                 ))
                 .footer(CreateEmbedFooter::new("AegisForge v4.2 | Role Management"))
+=======
+                .description(format!("Successfully assigned **{}** to <@{}>.", role.name, user.id))
+                .footer(CreateEmbedFooter::new("AegisForge v4.3 | Role Management"))
+>>>>>>> 464415d48bbb577285feea95e643bf0a924170dd
                 .color(0x00FF88),
         ),
     )
@@ -67,11 +72,16 @@ pub async fn remove(
         poise::CreateReply::default().embed(
             CreateEmbed::new()
                 .title("🎭 Role Removed")
+<<<<<<< HEAD
                 .description(format!(
                     "Successfully removed **{}** from <@{}>.",
                     role.name, user.id
                 ))
                 .footer(CreateEmbedFooter::new("AegisForge v4.2 | Role Management"))
+=======
+                .description(format!("Successfully removed **{}** from <@{}>.", role.name, user.id))
+                .footer(CreateEmbedFooter::new("AegisForge v4.3 | Role Management"))
+>>>>>>> 464415d48bbb577285feea95e643bf0a924170dd
                 .color(0xFF4500),
         ),
     )

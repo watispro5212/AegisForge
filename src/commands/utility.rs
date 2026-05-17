@@ -64,6 +64,7 @@ pub async fn serverinfo(ctx: Context<'_>) -> Result<(), Error> {
                 .field("👥 Members", format!("`{}`", guild.member_count), true)
                 .field("📺 Channels", format!("`{}`", guild.channels.len()), true)
                 .field("📜 Roles", format!("`{}`", guild.roles.len()), true)
+<<<<<<< HEAD
                 .field(
                     "🚀 Boosts",
                     format!(
@@ -78,6 +79,10 @@ pub async fn serverinfo(ctx: Context<'_>) -> Result<(), Error> {
                     format!("Level `{:?}`", guild.verification_level),
                     true,
                 )
+=======
+                .field("🚀 Boosts", format!("`{}` (Tier {})", guild.premium_subscription_count.unwrap_or(0), u8::from(guild.premium_tier)), true)
+                .field("🛡️ Security", format!("Level `{:?}`", guild.verification_level), true)
+>>>>>>> 464415d48bbb577285feea95e643bf0a924170dd
                 .field(
                     "📅 Created",
                     format!(
@@ -125,7 +130,7 @@ pub async fn whois(
                     ),
                     false,
                 )
-                .footer(serenity::CreateEmbedFooter::new("AegisForge v4.2"))
+                .footer(serenity::CreateEmbedFooter::new("AegisForge v4.3"))
                 .timestamp(serenity::Timestamp::now())
                 .color(0x00E5FF),
         ),
@@ -177,7 +182,7 @@ pub async fn uptime(ctx: Context<'_>) -> Result<(), Error> {
                     "Current session uptime: **{}d {}h {}m**.",
                     days, hours, minutes
                 ))
-                .footer(serenity::CreateEmbedFooter::new("AegisForge v4.2"))
+                .footer(serenity::CreateEmbedFooter::new("AegisForge v4.3"))
                 .color(0x00E5FF),
         ),
     )
@@ -251,7 +256,7 @@ pub async fn stats(ctx: Context<'_>) -> Result<(), Error> {
 
     embed = embed
         .footer(serenity::CreateEmbedFooter::new(
-            "Powered by Rust + Tokio | AegisForge v4.2",
+            "Powered by Rust + Tokio | AegisForge v4.3",
         ))
         .timestamp(serenity::Timestamp::now())
         .color(0x00E5FF);
@@ -298,7 +303,7 @@ pub async fn botinfo(ctx: Context<'_>) -> Result<(), Error> {
 
     ctx.send(poise::CreateReply::default().embed(
         CreateEmbed::new()
-            .title("AegisForge v4.2 - Bot Info")
+            .title("AegisForge v4.3 - Bot Info")
             .description("Runtime, network, economy, and stats for the current bot process.")
             .field("Version", format!("v{}", env!("CARGO_PKG_VERSION")), true)
             .field("Runtime", "Rust + Tokio", true)
@@ -535,6 +540,7 @@ pub async fn help(
 
     ctx.send(poise::CreateReply::default().embed(
         CreateEmbed::new()
+<<<<<<< HEAD
             .title("AegisForge v4.3 - Command Center")
             .description("Use `/help command:<name>` for focused command help, or open the website registry for the full searchable command surface.")
             .field("Security", "`sentinel`, `automod`, `shadowban`, `tactical`, `logs`, `msglogs`, `memberlogs`", false)
@@ -545,6 +551,19 @@ pub async fn help(
             .field("Community", "`fun`, `games`, `giveaway`, role and server config commands", false)
             .field("Links", "[Command Registry](https://aegisforge-vert.vercel.app/commands.html) | [Support Server](https://discord.gg/HbmafcgjNa) | [Security Setup](https://aegisforge-vert.vercel.app/security.html)", false)
             .footer(serenity::CreateEmbedFooter::new("AegisForge v4.3 | Secure | Powerful | Fast"))
+=======
+            .title("🛡️ AegisForge v4.3 — Command Center")
+            .description("Server protection, economy, leveling, utilities, and high-performance automation. Use `/` to browse all slash commands.")
+            .field("⚙️ Utility", "`ping`, `server`, `user`, `avatar`, `uptime`, `stats`, `embed`, `qr`, `math`, `weather`, `worldclock`, `poll`, `timestamp`, `remind`, `help`", false)
+            .field("🛡️ Moderation", "`ban`, `softban`, `unban`, `kick`, `mute`, `unmute`, `timeout`, `warn`, `purge`, `nuke`, `slowmode`, `cases`, `slowmode_global`, `lock`, `unlock`", false)
+            .field("💰 Economy", "`balance`, `daily`, `work`, `pay`, `deposit`, `withdraw`, `beg`, `search`, `slots`, `blackjack`, `coinflip`, `shop`, `buy`, `inventory`, `rob`, `crime`, `fish`, `hunt`, `leaderboard`, `gamble_info`", false)
+            .field("📈 Leveling", "`rank`, `leaderboard`, `set_xp`, `reset_user` (staff only)", false)
+            .field("🎮 Fun", "`coinflip`, `dice`, `eightball`, `joke`, `fact`, `ship`, `rate`, `mock`, `reverse`, `ascii`, `choose`, `trivia`, `roast`, `compliment`, `meme`", false)
+            .field("🔧 Config", "`logs`, `welcome`, `goodbye`, `autorole`, `prefix`, `settings`, `sentinel`, `automod` (staff only)", false)
+            .field("👤 Roles", "`/role add`, `/role remove`, `/role list`, `/role create`, `/role delete` (staff only)", false)
+            .field("🔗 Links", "[Website](https://aegisforge-vert.vercel.app/) | [Support Server](https://discord.gg/HbmafcgjNa)", false)
+            .footer(serenity::CreateEmbedFooter::new("AegisForge v4.3 | Secure • Powerful • Fast"))
+>>>>>>> 464415d48bbb577285feea95e643bf0a924170dd
             .timestamp(serenity::Timestamp::now())
             .color(0x00E5FF),
     )).await?;
@@ -724,7 +743,7 @@ pub async fn remind(
                 ))
                 .field("Scheduled For", format!("<t:{}:F>", expires_at), true)
                 .field("Time Remaining", format!("<t:{}:R>", expires_at), true)
-                .footer(serenity::CreateEmbedFooter::new("AegisForge v4.2"))
+                .footer(serenity::CreateEmbedFooter::new("AegisForge v4.3"))
                 .color(0x00E5FF),
         ),
     )

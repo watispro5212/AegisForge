@@ -276,8 +276,12 @@ pub async fn sentinel_threshold(
         return Ok(());
     }
     if !(5..=300).contains(&window) {
+<<<<<<< HEAD
         ctx.say("❌ Window must be between 5 and 300 seconds.")
             .await?;
+=======
+        ctx.say("❌ Window must be between 5 and 300 seconds.").await?;
+>>>>>>> 464415d48bbb577285feea95e643bf0a924170dd
         return Ok(());
     }
 

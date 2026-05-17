@@ -544,7 +544,7 @@ pub async fn profile(
         poise::CreateReply::default().embed(
             CreateEmbed::new()
                 .title(format!("{}'s Economy Profile", target.name))
-                .description("A v4.1 snapshot of wallet health, rankings, and owned shop items.")
+                .description("A v4.3 snapshot of wallet health, rankings, and owned shop items.")
                 .thumbnail(target.face())
                 .field("Wallet", format!("`${}`", eco.balance), true)
                 .field("Bank", format!("`${}`", eco.bank), true)
@@ -603,7 +603,7 @@ pub async fn balance(
                     ),
                     false,
                 )
-                .footer(serenity::CreateEmbedFooter::new("AegisForge v4.2 Economy"))
+                .footer(serenity::CreateEmbedFooter::new("AegisForge v4.3 Economy"))
                 .color(0x00E5FF),
         ),
     )
@@ -818,6 +818,13 @@ pub async fn pay(
         .into());
     }
 
+    // prevent overflow when receiving
+    let target_id = user.id.get() as i64;
+    let target_eco = economy::get_user_economy(&ctx.data().database.pool, guild_id, target_id).await?;
+    if target_eco.balance.checked_add(amount).is_none() {
+         return Err("The recipient's wallet cannot hold that much more money.".into());
+    }
+
     economy::update_balance(&ctx.data().database.pool, guild_id, author_id, -amount).await?;
     economy::update_balance(
         &ctx.data().database.pool,
@@ -918,16 +925,23 @@ pub async fn leaderboard(
 #[poise::command(slash_command, guild_only)]
 pub async fn deposit(
     ctx: Context<'_>,
-    #[description = "Amount to deposit"] amount: i64,
+    #[description = "Amount to deposit (use -1 for all)"] amount: i64,
 ) -> Result<(), Error> {
     ctx.defer().await?;
+    let guild_id = ctx.guild_id().unwrap().get() as i64;
+    let user_id = ctx.author().id.get() as i64;
+    let eco = economy::get_user_economy(&ctx.data().database.pool, guild_id, user_id).await?;
+
+    let amount = if amount == -1 {
+        eco.balance
+    } else {
+        amount
+    };
+
     if amount <= 0 {
         return Err("Amount must be positive.".into());
     }
-    let guild_id = ctx.guild_id().unwrap().get() as i64;
-    let user_id = ctx.author().id.get() as i64;
 
-    let eco = economy::get_user_economy(&ctx.data().database.pool, guild_id, user_id).await?;
     if amount > eco.balance {
         return Err(format!("You only have `${}` in your wallet.", eco.balance).into());
     }
@@ -958,16 +972,23 @@ pub async fn deposit(
 #[poise::command(slash_command, guild_only)]
 pub async fn withdraw(
     ctx: Context<'_>,
-    #[description = "Amount to withdraw"] amount: i64,
+    #[description = "Amount to withdraw (use -1 for all)"] amount: i64,
 ) -> Result<(), Error> {
     ctx.defer().await?;
+    let guild_id = ctx.guild_id().unwrap().get() as i64;
+    let user_id = ctx.author().id.get() as i64;
+    let eco = economy::get_user_economy(&ctx.data().database.pool, guild_id, user_id).await?;
+
+    let amount = if amount == -1 {
+        eco.bank
+    } else {
+        amount
+    };
+
     if amount <= 0 {
         return Err("Amount must be positive.".into());
     }
-    let guild_id = ctx.guild_id().unwrap().get() as i64;
-    let user_id = ctx.author().id.get() as i64;
 
-    let eco = economy::get_user_economy(&ctx.data().database.pool, guild_id, user_id).await?;
     if amount > eco.bank {
         return Err(format!("You only have `${}` in your bank.", eco.bank).into());
     }
@@ -1166,6 +1187,7 @@ pub async fn dice(
     #[description = "Amount to bet"] bet: i64,
 ) -> Result<(), Error> {
     ctx.defer().await?;
+<<<<<<< HEAD
     if !(1..=6).contains(&guess) {
         return Err("Guess must be between 1 and 6.".into());
     }
@@ -1173,6 +1195,11 @@ pub async fn dice(
         return Err("Minimum bet is $10.".into());
     }
 
+=======
+    if !(1..=6).contains(&guess) { return Err("Guess must be between 1 and 6.".into()); }
+    if bet < 10 { return Err("Minimum bet is $10.".into()); }
+    
+>>>>>>> 464415d48bbb577285feea95e643bf0a924170dd
     let guild_id = ctx.guild_id().unwrap().get() as i64;
     let user_id = ctx.author().id.get() as i64;
     let eco = economy::get_user_economy(&ctx.data().database.pool, guild_id, user_id).await?;
@@ -1213,11 +1240,15 @@ pub async fn dice(
             .color(0xFF3B3B);
     }
 
+<<<<<<< HEAD
     ctx.send(
         poise::CreateReply::default()
             .embed(embed.footer(serenity::CreateEmbedFooter::new("AegisForge v4.2 Economy"))),
     )
     .await?;
+=======
+    ctx.send(poise::CreateReply::default().embed(embed.footer(serenity::CreateEmbedFooter::new("AegisForge v4.3 Economy")))).await?;
+>>>>>>> 464415d48bbb577285feea95e643bf0a924170dd
     Ok(())
 }
 
@@ -1624,11 +1655,15 @@ pub async fn blackjack(
             .color(0xFF3B3B);
     }
 
+<<<<<<< HEAD
     ctx.send(
         poise::CreateReply::default()
             .embed(embed.footer(serenity::CreateEmbedFooter::new("AegisForge v4.2 Economy"))),
     )
     .await?;
+=======
+    ctx.send(poise::CreateReply::default().embed(embed.footer(serenity::CreateEmbedFooter::new("AegisForge v4.3 Economy")))).await?;
+>>>>>>> 464415d48bbb577285feea95e643bf0a924170dd
     Ok(())
 }
 
@@ -1679,10 +1714,14 @@ pub async fn coinflip(
             .color(0xFF3B3B);
     }
 
+<<<<<<< HEAD
     ctx.send(
         poise::CreateReply::default()
             .embed(embed.footer(serenity::CreateEmbedFooter::new("AegisForge v4.2 Economy"))),
     )
     .await?;
+=======
+    ctx.send(poise::CreateReply::default().embed(embed.footer(serenity::CreateEmbedFooter::new("AegisForge v4.3 Economy")))).await?;
+>>>>>>> 464415d48bbb577285feea95e643bf0a924170dd
     Ok(())
 }
