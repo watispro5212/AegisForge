@@ -261,7 +261,7 @@ pub async fn sentinel_threshold(
         ctx.say("❌ Threshold must be at least 2.").await?;
         return Ok(());
     }
-    if window < 5 || window > 300 {
+    if !(5..=300).contains(&window) {
         ctx.say("❌ Window must be between 5 and 300 seconds.").await?;
         return Ok(());
     }
