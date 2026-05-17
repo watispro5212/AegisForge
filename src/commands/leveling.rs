@@ -150,7 +150,7 @@ pub async fn customize(
                 .title("🎨 Rank Card Updated")
                 .description("Your rank card preferences have been saved successfully!")
                 .footer(serenity::CreateEmbedFooter::new(
-                    "AegisForge v4.2 Customization",
+                    "AegisForge v4.3 Customization",
                 ))
                 .color(0x00FF88),
         ),

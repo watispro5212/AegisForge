@@ -41,7 +41,7 @@ function normalizeStats(stats, source) {
         shards_total: toNumber(stats.shards_total || shards.length),
         shards_online: toNumber(stats.shards_online),
         shards,
-        version: stats.version || '4.1.0',
+        version: stats.version || '4.3.0',
         source
     };
 }
@@ -84,7 +84,7 @@ module.exports = async function handler(req, res) {
             shards_total: 0,
             shards_online: 0,
             shards: [],
-            version: '4.2.5',
+            version: '4.3.0',
         }, 'vercel-neon'));
     } catch (error) {
         console.error('Database query failed:', error);

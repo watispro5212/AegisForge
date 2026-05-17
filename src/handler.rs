@@ -1,5 +1,4 @@
 use poise::serenity_prelude as serenity;
-use std::collections::VecDeque;
 use std::time::{Duration, Instant};
 use tracing::{error, info, warn};
 
@@ -19,15 +18,15 @@ pub async fn event_handler(
             let guild_count = ctx.cache.guild_count();
             set_presence(ctx, guild_count, 0);
 
-            // rotating presence — cycles every 60s through branded status messages
+            // rotating presence — cycles every 30s through branded status messages
             let ctx_clone = ctx.clone();
             tokio::spawn(async move {
                 let mut idx: usize = 1;
                 loop {
-                    tokio::time::sleep(Duration::from_secs(60)).await;
+                    tokio::time::sleep(Duration::from_secs(30)).await;
                     let guilds = ctx_clone.cache.guild_count();
                     set_presence(&ctx_clone, guilds, idx);
-                    idx = (idx + 1) % 4;
+                    idx = (idx + 1) % 6;
                 }
             });
 
@@ -83,23 +82,27 @@ pub async fn event_handler(
                     let guild_id = guild.id;
 
                     tokio::spawn(async move {
-                        if let Ok(webhook) =
-                            serenity::model::webhook::Webhook::from_url(&http, &webhook_url).await
+                        match serenity::model::webhook::Webhook::from_url(&http, &webhook_url).await
                         {
-                            let embed = serenity::builder::CreateEmbed::new()
-                                .title("📥 New Server Joined")
-                                .description(format!("AegisForge was added to **{}**.", guild_name))
-                                .field("Members", format!("`{}`", member_count), true)
-                                .field("Total Servers", format!("`{}`", guild_count), true)
-                                .field("Server ID", format!("`{}`", guild_id), true)
-                                .footer(serenity::builder::CreateEmbedFooter::new(format!(
-                                    "AegisForge v{} - Member Joined",
-                                    env!("CARGO_PKG_VERSION")
-                                )))
-                                .timestamp(serenity::Timestamp::now())
-                                .color(0x57F287);
-                            let builder = serenity::builder::ExecuteWebhook::new().embed(embed);
-                            let _ = webhook.execute(&http, false, builder).await;
+                            Ok(webhook) => {
+                                let embed = serenity::builder::CreateEmbed::new()
+                                    .title("📥 New Server Joined")
+                                    .description(format!("AegisForge was added to **{}**.", guild_name))
+                                    .field("Members", format!("`{}`", member_count), true)
+                                    .field("Total Servers", format!("`{}`", guild_count), true)
+                                    .field("Server ID", format!("`{}`", guild_id), true)
+                                    .footer(serenity::builder::CreateEmbedFooter::new(format!(
+                                        "AegisForge v{} - Member Joined",
+                                        env!("CARGO_PKG_VERSION")
+                                    )))
+                                    .timestamp(serenity::Timestamp::now())
+                                    .color(0x57F287);
+                                let builder = serenity::builder::ExecuteWebhook::new().embed(embed);
+                                if let Err(e) = webhook.execute(&http, false, builder).await {
+                                    error!("Failed to execute join webhook: {}", e);
+                                }
+                            }
+                            Err(e) => error!("Failed to load join webhook: {}", e),
                         }
                     });
                 }
@@ -134,7 +137,7 @@ pub async fn event_handler(
                         let mut entry = data
                             .raid_tracker
                             .entry(guild_id_u64)
-                            .or_insert_with(std::collections::VecDeque::new);
+                            .or_default();
                         entry.retain(|(t, _)| now.duration_since(*t) < window);
                         entry.push_back((now, user_id));
                         entry.len()
@@ -453,7 +456,7 @@ pub async fn event_handler(
                         let mut entry = data
                             .spam_tracker
                             .entry((guild_id_u64, user_id_u64))
-                            .or_insert_with(VecDeque::new);
+                            .or_default();
                         entry.retain(|(t, _)| now.duration_since(*t) < Duration::from_secs(10));
                         entry.push_back((now, msg_text.clone()));
                         entry.iter().filter(|(_, c)| c == &msg_text).count()
@@ -478,22 +481,30 @@ pub async fn event_handler(
         }
 
         // ── Message Delete Logging ───────────────────────────────────
-        serenity::FullEvent::MessageDelete { channel_id, deleted_message_id, guild_id, .. } => {
-            if let Some(gid) = guild_id {
-                let guild_id_i64 = gid.get() as i64;
-                if let Ok(config) = data.database.get_guild_config(guild_id_i64).await {
-                    if let Some(lc) = config.message_log_channel {
-                        let embed = serenity::builder::CreateEmbed::new()
-                            .title("🗑️ Message Deleted")
-                            .field("Channel", format!("<#{}>", channel_id), true)
-                            .field("Message ID", format!("`{}`", deleted_message_id), true)
-                            .footer(serenity::builder::CreateEmbedFooter::new("AegisForge Message Log"))
-                            .timestamp(serenity::Timestamp::now())
-                            .color(0xFF4500);
-                        let _ = serenity::ChannelId::new(lc as u64)
-                            .send_message(&ctx.http, serenity::builder::CreateMessage::new().embed(embed))
-                            .await;
-                    }
+        serenity::FullEvent::MessageDelete {
+            channel_id,
+            deleted_message_id,
+            guild_id: Some(gid),
+            ..
+        } => {
+            let guild_id_i64 = gid.get() as i64;
+            if let Ok(config) = data.database.get_guild_config(guild_id_i64).await {
+                if let Some(lc) = config.message_log_channel {
+                    let embed = serenity::builder::CreateEmbed::new()
+                        .title("🗑️ Message Deleted")
+                        .field("Channel", format!("<#{}>", channel_id), true)
+                        .field("Message ID", format!("`{}`", deleted_message_id), true)
+                        .footer(serenity::builder::CreateEmbedFooter::new(
+                            "AegisForge Message Log",
+                        ))
+                        .timestamp(serenity::Timestamp::now())
+                        .color(0xFF4500);
+                    let _ = serenity::ChannelId::new(lc as u64)
+                        .send_message(
+                            &ctx.http,
+                            serenity::builder::CreateMessage::new().embed(embed),
+                        )
+                        .await;
                 }
             }
         }
@@ -595,11 +606,11 @@ pub async fn event_handler(
     Ok(())
 }
 
-/// set the bot's Discord presence. `idx` rotates through 4 branded status messages.
+/// set the bot's Discord presence. `idx` rotates through branded status messages.
 fn set_presence(ctx: &serenity::Context, guild_count: usize, idx: usize) {
-    let (activity, status) = match idx % 4 {
+    let (activity, status) = match idx % 6 {
         0 => (
-            serenity::ActivityData::watching(format!("{} servers | v4.2", guild_count)),
+            serenity::ActivityData::watching(format!("{} servers | v4.3", guild_count)),
             serenity::OnlineStatus::Online,
         ),
         1 => (
@@ -610,8 +621,16 @@ fn set_presence(ctx: &serenity::Context, guild_count: usize, idx: usize) {
             serenity::ActivityData::watching(format!("over {} communities grow", guild_count)),
             serenity::OnlineStatus::Online,
         ),
-        _ => (
+        3 => (
             serenity::ActivityData::listening("aegisforge-vert.vercel.app"),
+            serenity::OnlineStatus::Online,
+        ),
+        4 => (
+            serenity::ActivityData::playing("Sentinel Anti-Raid Active"),
+            serenity::OnlineStatus::Online,
+        ),
+        _ => (
+            serenity::ActivityData::playing("AutoMod Protection Active"),
             serenity::OnlineStatus::Online,
         ),
     };

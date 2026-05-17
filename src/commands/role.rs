@@ -35,7 +35,7 @@ pub async fn add(
             CreateEmbed::new()
                 .title("🎭 Role Added")
                 .description(format!("Successfully assigned **{}** to <@{}>.", role.name, user.id))
-                .footer(CreateEmbedFooter::new("AegisForge v4.2 | Role Management"))
+                .footer(CreateEmbedFooter::new("AegisForge v4.3 | Role Management"))
                 .color(0x00FF88),
         ),
     )
@@ -65,7 +65,7 @@ pub async fn remove(
             CreateEmbed::new()
                 .title("🎭 Role Removed")
                 .description(format!("Successfully removed **{}** from <@{}>.", role.name, user.id))
-                .footer(CreateEmbedFooter::new("AegisForge v4.2 | Role Management"))
+                .footer(CreateEmbedFooter::new("AegisForge v4.3 | Role Management"))
                 .color(0xFF4500),
         ),
     )

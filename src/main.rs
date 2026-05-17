@@ -87,44 +87,49 @@ async fn handle_vote(
     let pool = &state.database.pool;
 
     // update all records for this user across all guilds
-    let _ = sqlx::query(
+    if let Err(e) = sqlx::query(
         "UPDATE users_economy SET balance = balance + $1, total_earned = total_earned + $1 WHERE user_id = $2"
     )
     .bind(bonus)
     .bind(user_id)
     .execute(pool)
-    .await;
+    .await {
+        error!("Failed to update economy for vote reward: {}", e);
+    }
 
     // notify webhook
     if let Ok(webhook_url) = std::env::var("STATUS_WEBHOOK_URL") {
         tokio::spawn(async move {
             let http = serenity::http::Http::new("");
-            if let Ok(webhook) =
-                serenity::model::webhook::Webhook::from_url(&http, &webhook_url).await
-            {
-                let embed = serenity::builder::CreateEmbed::new()
-                    .title("AegisForge Vote Reward")
-                    .description(format!(
-                        "<@{}> voted on Top.gg and received **${}** across their economy profiles.",
-                        payload.user, bonus
-                    ))
-                    .field("Reward", format!("`${}`", bonus), true)
-                    .field(
-                        "Multiplier",
-                        if payload.is_weekend {
-                            "Weekend 2x"
-                        } else {
-                            "Standard"
-                        },
-                        true,
-                    )
-                    .footer(serenity::builder::CreateEmbedFooter::new(
-                        "AegisForge v4.2 - Vote Reward",
-                    ))
-                    .timestamp(serenity::Timestamp::now())
-                    .color(0x00FF88);
-                let builder = serenity::builder::ExecuteWebhook::new().embed(embed);
-                let _ = webhook.execute(&http, false, builder).await;
+            match serenity::model::webhook::Webhook::from_url(&http, &webhook_url).await {
+                Ok(webhook) => {
+                    let embed = serenity::builder::CreateEmbed::new()
+                        .title("AegisForge Vote Reward")
+                        .description(format!(
+                            "<@{}> voted on Top.gg and received **${}** across their economy profiles.",
+                            payload.user, bonus
+                        ))
+                        .field("Reward", format!("`${}`", bonus), true)
+                        .field(
+                            "Multiplier",
+                            if payload.is_weekend {
+                                "Weekend 2x"
+                            } else {
+                                "Standard"
+                            },
+                            true,
+                        )
+                        .footer(serenity::builder::CreateEmbedFooter::new(
+                            "AegisForge v4.3 - Vote Reward",
+                        ))
+                        .timestamp(serenity::Timestamp::now())
+                        .color(0x00FF88);
+                    let builder = serenity::builder::ExecuteWebhook::new().embed(embed);
+                    if let Err(e) = webhook.execute(&http, false, builder).await {
+                        error!("Failed to execute vote reward webhook: {}", e);
+                    }
+                }
+                Err(e) => error!("Failed to load vote reward webhook: {}", e),
             }
         });
     }
@@ -253,8 +258,17 @@ async fn main() -> Result<(), Error> {
         .connect(&direct_url)
         .await
         .expect("Failed to connect for migrations");
-    if let Err(e) = sqlx::migrate!("./migrations").run(&migrate_pool).await {
-        tracing::warn!("Migration error (likely VersionMismatch due to CRLF/LF): {}. Continuing anyway...", e);
+    match sqlx::migrate!("./migrations").run(&migrate_pool).await {
+        Ok(_) => info!("Migrations completed successfully."),
+        Err(e) => {
+            let err_msg = e.to_string();
+            if err_msg.contains("VersionMismatch") {
+                 tracing::warn!("Migration VersionMismatch (likely CRLF/LF line ending conflict): {}. Continuing as schema is likely compatible.", e);
+            } else {
+                 error!("Critical migration error: {}. Shutting down.", e);
+                 return Err(e.into());
+            }
+        }
     }
     migrate_pool.close().await;
 
@@ -338,14 +352,16 @@ async fn main() -> Result<(), Error> {
             post_command: |ctx| {
                 Box::pin(async move {
                     let pool = &ctx.data().database.pool;
-                    let _ = sqlx::query(
+                    if let Err(e) = sqlx::query(
                         "INSERT INTO global_stats (stat_key, stat_value) \
                          VALUES ('total_commands_executed', 1) \
                          ON CONFLICT (stat_key) \
                          DO UPDATE SET stat_value = global_stats.stat_value + 1",
                     )
                     .execute(pool)
-                    .await;
+                    .await {
+                        error!("Failed to update global stats: {}", e);
+                    }
                 })
             },
             on_error: |error| {
@@ -396,25 +412,9 @@ async fn main() -> Result<(), Error> {
             let database = Arc::clone(&database);
             move |ctx, ready, framework| {
                 let db = Arc::clone(&database);
-                let ctx_clone = ctx.clone();
                 Box::pin(async move {
                     info!("AegisForge online as {}", ready.user.name);
                     
-                    tokio::spawn(async move {
-                        let statuses = [
-                            "v4.3 Elite",
-                            "Sentinel Anti-Raid",
-                            "/help | aegisforge.com",
-                            "AutoMod Active"
-                        ];
-                        let mut i = 0;
-                        loop {
-                            let activity = serenity::ActivityData::playing(statuses[i % statuses.len()]);
-                            ctx_clone.set_presence(Some(activity), serenity::OnlineStatus::Online);
-                            i += 1;
-                            tokio::time::sleep(tokio::time::Duration::from_secs(30)).await;
-                        }
-                    });
                     
                     poise::builtins::register_globally(ctx, &framework.options().commands).await?;
                     Ok(Data {
