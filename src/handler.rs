@@ -1,6 +1,6 @@
 use poise::serenity_prelude as serenity;
 use std::time::{Duration, Instant};
-use tracing::{info, warn};
+use tracing::{error, info, warn};
 
 pub async fn event_handler(
     ctx: &serenity::Context,
@@ -17,59 +17,6 @@ pub async fn event_handler(
 
             let guild_count = ctx.cache.guild_count();
             set_presence(ctx, guild_count, 0);
-<<<<<<< HEAD
-=======
-
-            // rotating presence — cycles every 30s through branded status messages
-            let ctx_clone = ctx.clone();
-            tokio::spawn(async move {
-                let mut idx: usize = 1;
-                loop {
-                    tokio::time::sleep(Duration::from_secs(30)).await;
-                    let guilds = ctx_clone.cache.guild_count();
-                    set_presence(&ctx_clone, guilds, idx);
-                    idx = (idx + 1) % 6;
-                }
-            });
-
-            // startup webhook notification — only on shard 0 to avoid spam lol
-            if ctx.shard_id.0 == 0 {
-                if let Ok(webhook_url) = std::env::var("STATUS_WEBHOOK_URL") {
-                    let http = ctx.http.clone();
-                    tokio::spawn(async move {
-                        match serenity::model::webhook::Webhook::from_url(&http, &webhook_url).await
-                        {
-                            Ok(webhook) => {
-                                let embed = serenity::builder::CreateEmbed::new()
-                                    .title("✅ AegisForge Online")
-                                    .description(format!(
-                                        "Bot initialized successfully across **{}** guild(s).",
-                                        guild_count
-                                    ))
-                                    .field(
-                                        "Version",
-                                        format!("`v{}`", env!("CARGO_PKG_VERSION")),
-                                        true,
-                                    )
-                                    .field("Language", "`Rust`", true)
-                                    .field("Status", "🟢 Operational", true)
-                                    .footer(serenity::builder::CreateEmbedFooter::new(format!(
-                                        "AegisForge v{}",
-                                        env!("CARGO_PKG_VERSION")
-                                    )))
-                                    .timestamp(serenity::Timestamp::now())
-                                    .color(0x57F287);
-                                let builder = serenity::builder::ExecuteWebhook::new().embed(embed);
-                                if let Err(e) = webhook.execute(&http, false, builder).await {
-                                    error!("Failed to send startup webhook: {:?}", e);
-                                }
-                            }
-                            Err(e) => error!("Failed to load status webhook: {:?}", e),
-                        }
-                    });
-                }
-            }
->>>>>>> 464415d48bbb577285feea95e643bf0a924170dd
         }
 
         serenity::FullEvent::GuildCreate { guild, is_new } => {
@@ -90,7 +37,10 @@ pub async fn event_handler(
                             Ok(webhook) => {
                                 let embed = serenity::builder::CreateEmbed::new()
                                     .title("📥 New Server Joined")
-                                    .description(format!("AegisForge was added to **{}**.", guild_name))
+                                    .description(format!(
+                                        "AegisForge was added to **{}**.",
+                                        guild_name
+                                    ))
                                     .field("Members", format!("`{}`", member_count), true)
                                     .field("Total Servers", format!("`{}`", guild_count), true)
                                     .field("Server ID", format!("`{}`", guild_id), true)
@@ -137,14 +87,7 @@ pub async fn event_handler(
                     let user_id = new_member.user.id.get();
 
                     let count = {
-<<<<<<< HEAD
                         let mut entry = data.raid_tracker.entry(guild_id_u64).or_default();
-=======
-                        let mut entry = data
-                            .raid_tracker
-                            .entry(guild_id_u64)
-                            .or_default();
->>>>>>> 464415d48bbb577285feea95e643bf0a924170dd
                         entry.retain(|(t, _)| now.duration_since(*t) < window);
                         entry.push_back((now, user_id));
                         entry.len()
@@ -696,15 +639,11 @@ pub async fn event_handler(
 fn set_presence(ctx: &serenity::Context, guild_count: usize, idx: usize) {
     let (activity, status) = match idx % 6 {
         0 => (
-<<<<<<< HEAD
             serenity::ActivityData::watching(format!(
                 "{} servers | v{}",
                 guild_count,
                 env!("CARGO_PKG_VERSION")
             )),
-=======
-            serenity::ActivityData::watching(format!("{} servers | v4.3", guild_count)),
->>>>>>> 464415d48bbb577285feea95e643bf0a924170dd
             serenity::OnlineStatus::Online,
         ),
         1 => (

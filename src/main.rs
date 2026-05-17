@@ -160,7 +160,6 @@ async fn handle_vote(
 
     if let Ok(webhook_url) = vote_webhook_url {
         tokio::spawn(async move {
-<<<<<<< HEAD
             let voted_at = chrono::Utc::now().timestamp();
             let embed = serenity::builder::CreateEmbed::new()
                 .title("AegisForge Vote Reward")
@@ -190,38 +189,6 @@ async fn handle_vote(
 
             if !send_webhook_embed(&webhook_url, embed).await {
                 tracing::warn!("Vote reward webhook was configured but could not be sent");
-=======
-            let http = serenity::http::Http::new("");
-            match serenity::model::webhook::Webhook::from_url(&http, &webhook_url).await {
-                Ok(webhook) => {
-                    let embed = serenity::builder::CreateEmbed::new()
-                        .title("AegisForge Vote Reward")
-                        .description(format!(
-                            "<@{}> voted on Top.gg and received **${}** across their economy profiles.",
-                            payload.user, bonus
-                        ))
-                        .field("Reward", format!("`${}`", bonus), true)
-                        .field(
-                            "Multiplier",
-                            if payload.is_weekend {
-                                "Weekend 2x"
-                            } else {
-                                "Standard"
-                            },
-                            true,
-                        )
-                        .footer(serenity::builder::CreateEmbedFooter::new(
-                            "AegisForge v4.3 - Vote Reward",
-                        ))
-                        .timestamp(serenity::Timestamp::now())
-                        .color(0x00FF88);
-                    let builder = serenity::builder::ExecuteWebhook::new().embed(embed);
-                    if let Err(e) = webhook.execute(&http, false, builder).await {
-                        error!("Failed to execute vote reward webhook: {}", e);
-                    }
-                }
-                Err(e) => error!("Failed to load vote reward webhook: {}", e),
->>>>>>> 464415d48bbb577285feea95e643bf0a924170dd
             }
         });
     }
@@ -358,25 +325,11 @@ async fn main() -> Result<(), Error> {
         .connect(&direct_url)
         .await
         .expect("Failed to connect for migrations");
-<<<<<<< HEAD
     if let Err(e) = sqlx::migrate!("./migrations").run(&migrate_pool).await {
         tracing::warn!(
             "Migration error (likely VersionMismatch due to CRLF/LF): {}. Continuing anyway...",
             e
         );
-=======
-    match sqlx::migrate!("./migrations").run(&migrate_pool).await {
-        Ok(_) => info!("Migrations completed successfully."),
-        Err(e) => {
-            let err_msg = e.to_string();
-            if err_msg.contains("VersionMismatch") {
-                 tracing::warn!("Migration VersionMismatch (likely CRLF/LF line ending conflict): {}. Continuing as schema is likely compatible.", e);
-            } else {
-                 error!("Critical migration error: {}. Shutting down.", e);
-                 return Err(e.into());
-            }
-        }
->>>>>>> 464415d48bbb577285feea95e643bf0a924170dd
     }
     migrate_pool.close().await;
 
@@ -485,7 +438,8 @@ async fn main() -> Result<(), Error> {
                          DO UPDATE SET stat_value = global_stats.stat_value + 1",
                     )
                     .execute(pool)
-                    .await {
+                    .await
+                    {
                         error!("Failed to update global stats: {}", e);
                     }
                 })
@@ -538,9 +492,9 @@ async fn main() -> Result<(), Error> {
             let database = Arc::clone(&database);
             move |ctx, ready, framework| {
                 let db = Arc::clone(&database);
+                let ctx_clone = ctx.clone();
                 Box::pin(async move {
                     info!("AegisForge online as {}", ready.user.name);
-<<<<<<< HEAD
 
                     tokio::spawn(async move {
                         let statuses = [
@@ -561,10 +515,6 @@ async fn main() -> Result<(), Error> {
                         }
                     });
 
-=======
-                    
-                    
->>>>>>> 464415d48bbb577285feea95e643bf0a924170dd
                     poise::builtins::register_globally(ctx, &framework.options().commands).await?;
                     if let Ok(status_webhook_url) = std::env::var("STATUS_WEBHOOK_URL") {
                         let bot_name = ready.user.name.clone();

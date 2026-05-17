@@ -470,11 +470,7 @@ pub async fn customize(
                 .title("🎨 Rank Card Updated")
                 .description(applied.join("\n"))
                 .footer(serenity::CreateEmbedFooter::new(
-<<<<<<< HEAD
                     "Run /leveling rank to preview your upgraded card.",
-=======
-                    "AegisForge v4.3 Customization",
->>>>>>> 464415d48bbb577285feea95e643bf0a924170dd
                 ))
                 .color(
                     final_color

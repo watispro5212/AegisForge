@@ -463,7 +463,6 @@ pub async fn slowmode(
 ) -> Result<(), Error> {
     ctx.defer().await?;
     let target_channel = channel.map(|c| c.id).unwrap_or(ctx.channel_id());
-<<<<<<< HEAD
 
     target_channel
         .edit(
@@ -486,19 +485,6 @@ pub async fn slowmode(
     )
     .await?;
 
-=======
-    
-    target_channel.edit(ctx.http(), serenity::EditChannel::new().rate_limit_per_user(seconds as u16)).await?;
-    
-    ctx.send(poise::CreateReply::default().embed(
-        CreateEmbed::new()
-            .title("🐌 Slowmode Updated")
-            .description(format!("Slowmode for <#{}> set to **{}s**.", target_channel, seconds))
-            .color(0xFFAA00)
-            .footer(serenity::CreateEmbedFooter::new("AegisForge v4.3"))
-    )).await?;
-    
->>>>>>> 464415d48bbb577285feea95e643bf0a924170dd
     Ok(())
 }
 
@@ -960,7 +946,6 @@ pub async fn report(
         .collect::<Vec<_>>()
         .join("  ");
 
-<<<<<<< HEAD
     ctx.send(
         poise::CreateReply::default().embed(
             CreateEmbed::new()
@@ -994,43 +979,6 @@ pub async fn report(
                 .color(0x2C2F33),
         ),
     )
-=======
-    ctx.send(poise::CreateReply::default().embed(
-        CreateEmbed::new()
-            .title(format!("📋 Tactical Report — {}", user.name))
-            .description(format!(
-                "**{}** total case(s) on record.\n\n{}",
-                cases.len(),
-                summary
-            ))
-            .thumbnail(user.face())
-            .field(
-                format!(
-                    "Recent Cases (showing {}/{})",
-                    recent.len(),
-                    cases.len()
-                ),
-                case_log,
-                false,
-            )
-            .field("🆔 User ID", format!("`{}`", user.id), true)
-            .field(
-                "📅 First Case",
-                format!("<t:{}:D>", cases.first().unwrap().created_at.timestamp()),
-                true,
-            )
-            .field(
-                "📅 Latest Case",
-                format!("<t:{}:D>", cases.last().unwrap().created_at.timestamp()),
-                true,
-            )
-            .footer(serenity::CreateEmbedFooter::new(
-                "AegisForge v4.3 Report | Moderator eyes only",
-            ))
-            .timestamp(serenity::Timestamp::now())
-            .color(0x2C2F33),
-    ))
->>>>>>> 464415d48bbb577285feea95e643bf0a924170dd
     .await?;
     Ok(())
 }
@@ -1290,7 +1238,6 @@ pub async fn breach(
     )
     .await?;
 
-<<<<<<< HEAD
     ctx.send(
         poise::CreateReply::default().embed(
             CreateEmbed::new()
@@ -1310,25 +1257,6 @@ pub async fn breach(
                 .color(0xFF4500),
         ),
     )
-=======
-    ctx.send(poise::CreateReply::default().embed(
-        CreateEmbed::new()
-            .title("⚡ Moderation Action")
-            .description(format!(
-                "**{}** has been kicked and their message trail purged.",
-                user.name
-            ))
-            .field("👤 Target", format!("<@{}>", user.id), true)
-            .field("🗑️ Messages Purged", format!("`{}`", purged), true)
-            .field("🆔 Case", format!("#{}", case.case_number), true)
-            .field("📝 Reason", reason_str, false)
-            .footer(serenity::CreateEmbedFooter::new(
-                "Moderation Action Logged | AegisForge v4.3",
-            ))
-            .timestamp(serenity::Timestamp::now())
-            .color(0xFF4500),
-    ))
->>>>>>> 464415d48bbb577285feea95e643bf0a924170dd
     .await?;
     Ok(())
 }
@@ -1425,7 +1353,6 @@ pub async fn slowmode_global(
             count += 1;
         }
     }
-<<<<<<< HEAD
 
     ctx.send(
         poise::CreateReply::default().embed(
@@ -1443,17 +1370,6 @@ pub async fn slowmode_global(
     )
     .await?;
 
-=======
-    
-    ctx.send(poise::CreateReply::default().embed(
-        CreateEmbed::new()
-            .title("🐌 Global Slowmode Deployed")
-            .description(format!("Slowmode of **{}s** applied to **{}** text channels.", seconds, count))
-            .color(0xFFAA00)
-            .footer(serenity::CreateEmbedFooter::new("AegisForge v4.3 | Crowd Control"))
-    )).await?;
-    
->>>>>>> 464415d48bbb577285feea95e643bf0a924170dd
     Ok(())
 }
 
@@ -1523,7 +1439,6 @@ pub async fn clearwarns(
     ctx.defer().await.map_err(|e| e.to_string())?;
     let guild_id = ctx.guild_id().unwrap().get() as i64;
     let pool = &ctx.data().database.pool;
-<<<<<<< HEAD
 
     let affected = crate::db::mod_cases::clear_warns_for_user(pool, guild_id, user.id.get() as i64)
         .await
@@ -1543,18 +1458,5 @@ pub async fn clearwarns(
     )
     .await?;
 
-=======
-    
-    let affected = crate::db::mod_cases::clear_warns_for_user(pool, guild_id, user.id.get() as i64).await.map_err(|e| e.to_string())?;
-    
-    ctx.send(poise::CreateReply::default().embed(
-        CreateEmbed::new()
-            .title("🧹 Warnings Cleared")
-            .description(format!("Successfully cleared **{}** active warning(s) for **{}**.", affected, user.name))
-            .color(0x57F287)
-            .footer(serenity::CreateEmbedFooter::new("AegisForge v4.3"))
-    )).await?;
-    
->>>>>>> 464415d48bbb577285feea95e643bf0a924170dd
     Ok(())
 }
